@@ -2,8 +2,8 @@ import React from 'react'
 
 const LandingFooter = () => {
   return (
-    <footer className="footer" style={{ height: '80vh'}}>
-    <div className="container">
+    <footer className="footer" >
+    <div className="container" style={{ height: '80vh'}}>
         <div className="row">
             <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
                 <div className="information">
@@ -14,12 +14,7 @@ const LandingFooter = () => {
             <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
                 <div className="resources">
                     <h6 className="footer-heading text-uppercase text-white fw-bold">Resources</h6>
-                    <ul className="list-unstyled footer-link mt-4">
-                        <li className="mb-1"><a href="https://codepen.io/Gaurav-Rana-the-reactor" className="text-white text-decoration-none fw-semibold">API</a></li>
-                        <li className="mb-1"><a href="https://codepen.io/Gaurav-Rana-the-reactor" className="text-white text-decoration-none fw-semibold">Website Tutorials</a></li>
-                        <li className="mb-1"><a href="https://codepen.io/Gaurav-Rana-the-reactor" className="text-white text-decoration-none fw-semibold">Third Party</a></li>
-                        <li className=""><a href="https://codepen.io/Gaurav-Rana-the-reactor" className="text-white text-decoration-none fw-semibold">Video Lectures</a></li>
-                    </ul>
+          
                 </div>
             </div>
             <div className="col-sm-6 col-md-4 mt-4 col-lg-2 text-center text-sm-start">
@@ -44,9 +39,9 @@ const LandingFooter = () => {
             </div>
         </div>
     </div>
-    {/* <div className="text-center" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', textAlign: 'center', padding: '10px' }}>
+    <div className="text-center bg-dark text-white mt-4 p-1" >
         <p className="mb-0 fw-bold">2023 © Gaurav Rana, All Rights Reserved</p>
-    </div> */}
+    </div>
   </footer>
   )
 }

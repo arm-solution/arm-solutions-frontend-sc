@@ -9,8 +9,8 @@ function App() {
   <>
       <LandingNavbar />
       <Carousel />
-      {/* <ServiceCardSlides /> */}
-      {/* <LandingFooter /> */}
+      <ServiceCardSlides />
+      <LandingFooter />
   </>
   );
 }

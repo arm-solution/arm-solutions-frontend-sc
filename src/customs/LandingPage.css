@@ -147,25 +147,10 @@ nav .icon-burger .line {
 
 /* For the card slide */
 
-@media screen and (min-width: 768px) {
-
-	.cards-wrapper {
-		display: flex;
-	}
-	
-	.card {
-		margin: 0;
-		width: calc(100%/3);
-	}
-
-	/* .img-wrapper {
-		height: 22vh;
-		margin: 0 auto;
-	}
-
-
-}
-
+/* .img-wrapper {
+	height: 22vh;
+	margin: 0 auto;
+} */
 .cards-wrapper {
 	display: flex;
 	justify-content: center;
@@ -180,9 +165,11 @@ nav .icon-burger .line {
 	border: none;
 	border-radius: 0;
   }
-  .carousel-inner {
+
+  /* the problem */
+  /* .carousel-inner {
 	padding: 1em;
-  }
+  } */
   
   .prev-custom,
   .next-custom {
@@ -192,15 +179,15 @@ nav .icon-burger .line {
 	border-radius: 50% !important;
 	transform: translateY(500%) !important;
 	/* transform: translateX(0%); */
+  
   }
-
 
   .prev-custom span,
   .next-custom span {
 	width: 1.5rem;
 	height: 1.5rem;
   }
-
+	
   .img-wrapper img {
 	max-width: 100%;
 	max-height: 100%;
@@ -208,7 +195,19 @@ nav .icon-burger .line {
 
   /* Footer */
 
-  /* .footer {
+  .footer {
 	background-color: #841a21;
 	max-height: 80% !important;
-  } */
+  }
+
+  .bottom-style {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		background-color: #f0f0f0;
+		padding: 10px;
+		box-sizing: border-box;
+	  
+  }
+
+
