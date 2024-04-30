@@ -5,18 +5,25 @@ const LandingFooter = () => {
     <footer className="footer" >
     <div className="container" style={{ height: '80vh'}}>
         <div className="row">
-            <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
-                <div className="information">
-                    <h6 className="footer-heading text-uppercase text-white fw-bold">Information</h6>
-                    
-                </div>
+            <div className="col-sm-6 col-md-12 mt-4 col-lg-6 text-center text-sm-start">
+
+            <form>
+            <div className="form-group">
+                <label for="exampleInputEmail1" className='text-light'>Email address</label>
+                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
             </div>
-            <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
-                <div className="resources">
-                    <h6 className="footer-heading text-uppercase text-white fw-bold">Resources</h6>
-          
-                </div>
+            <div className="form-group mt-3">
+                <label for="exampleFormControlTextarea1" class="form-label text-light">Message</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
+     
+            <button type="submit" className="btn btn-primary mt-4">Submit</button>
+            </form>
+ 
+            </div>
+            {/* <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
+
+            </div> */}
             <div className="col-sm-6 col-md-4 mt-4 col-lg-2 text-center text-sm-start">
               <div className="social">
                   <h6 className="footer-heading text-uppercase text-white fw-bold">Social</h6>
