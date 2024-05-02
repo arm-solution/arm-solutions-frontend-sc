@@ -4,8 +4,8 @@ import cardImage from './../assets/images/cardImage.png';
 const ServiceCardSlides = () => {
   return (
     <>
-    <div className="container">
-    
+    <div className="container container-animation">
+
     {/* carousel for bigger screen */}
     <div id="carouselExampleControls" className="carousel carousel-dark slide d-none d-sm-block" data-bs-ride="carousel">
     <div className="carousel-inner">

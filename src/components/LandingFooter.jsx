@@ -3,22 +3,20 @@ import React from 'react'
 const LandingFooter = () => {
   return (
     <footer className="footer" >
-    <div className="container" style={{ height: '80vh'}}>
+    <div className="container footer-container">
         <div className="row">
             <div className="col-sm-6 col-md-12 mt-4 col-lg-6 text-center text-sm-start">
 
-            <form>
             <div className="form-group">
-                <label for="exampleInputEmail1" className='text-light'>Email address</label>
-                <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
+            <label htmlFor="emaol" className='text-light'> Email</label>
+            <input type="text" className="form-control" />
             </div>
-            <div className="form-group mt-3">
-                <label for="exampleFormControlTextarea1" class="form-label text-light">Message</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+
+            <div className="form-group">
+              <label htmlFor="message" className='text-light'>Message</label>
+              <textarea name="" className='form-control' id=""  rows="2"></textarea>
             </div>
-     
-            <button type="submit" className="btn btn-primary mt-4">Submit</button>
-            </form>
+      
  
             </div>
             {/* <div className="col-sm-6 col-md-4 mt-4 col-lg-3 text-center text-sm-start">
@@ -46,8 +44,8 @@ const LandingFooter = () => {
             </div>
         </div>
     </div>
-    <div className="text-center bg-dark text-white mt-4 p-1" >
-        <p className="mb-0 fw-bold">2023 © Gaurav Rana, All Rights Reserved</p>
+    <div className="text-center bg-dark text-white mt-4" >
+        <p className="mb-0">Copyright @ 2024 Arm Solution , All Rights Reserved</p>
     </div>
   </footer>
   )
