@@ -1,6 +1,7 @@
 import React from 'react'
 import './../customs/LandingPage.css';
 import logo from './../assets/images/logo.png'
+import { Link } from 'react-router-dom';
 
 const LandingNavbar = () => {
 
@@ -15,7 +16,9 @@ const LandingNavbar = () => {
             <li><a href="#projects">Projects</a></li>
             <li><a href="#projects">Clients</a></li>
             <li><a href="#contact">Contact</a></li>
-            <li><a href="#projects" className='btn btn-secondary'>Login</a></li>
+            <li>
+             <Link to='/login'  className='btn btn-secondary'> Login</Link>
+            </li>
         </ul>
         <label for="nav-toggle" className="icon-burger">
             <div className="line"></div>
