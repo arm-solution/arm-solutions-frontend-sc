@@ -12,10 +12,7 @@ function App() {
       <Carousel />
       <ServiceCardSlides />
       <Clients />
-<<<<<<< Updated upstream
-=======
       {/* <MessengerChat /> */}
->>>>>>> Stashed changes
       <LandingFooter />
   </>
   );
