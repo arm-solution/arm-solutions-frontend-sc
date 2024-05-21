@@ -156,6 +156,7 @@ a.sidebar-link:hover {
     border: 0;
     padding: 1rem 1.5rem;
     margin: 0 !important;
+    /* margin-right: 16px; */
 }
 
 .toggle-btn-mobile i {
@@ -163,6 +164,38 @@ a.sidebar-link:hover {
     color: #FFF;
 }
 
+.navbar-mobile {
+    position: fixed !important;
+    top: 0 !important;
+    width: 100% !important;
+    background-color: #0E2238 !important;
+    overflow: hidden !important;
+    z-index: 1000 !important; /* Ensure the navbar is on top of other content */
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 4rem;
+}
+
+.flex-grow-1 {
+    flex-grow: 1; /* Allows the text to grow and center itself */
+}
+
+.text-center {
+    display: flex;
+    justify-content: center;
+}
+
+.text-white {
+    color: #f2f2f2 !important;
+}
+
+.m-0 {
+    margin: 0 !important;
+}
+
+.mx-3 {
+    margin-right: 45px !important; /* Add margin-right to the p tag */
+}
 
 /* this is for mobile base */
 @media (max-width: 600px) {
@@ -181,6 +214,10 @@ a.sidebar-link:hover {
 /* for desktop base */
 @media (min-width: 600px) {
     .button-toggle-mobile {
+        display: none;
+    }
+
+    .navbar-mobile {
         display: none;
     }
 
