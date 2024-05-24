@@ -26,12 +26,12 @@ const AdminDashboard = () => {
         <SideNavigation handleToggle={handleToggle} isExpanded={isExpanded} showSideNav={showSideNav} />
 
         <div className="main p-3">
-         <MobileFirstNavigation handleToggle={handleToggle} className="mb-3"/>
+         <MobileFirstNavigation handleToggle={handleToggle} className="mb-3git "/>
 
       
             <div className="text-center mt-5">
                 <h1>
-                    Sidebar Bootstrap 5
+                    Sidebar Bootstrap 55
 
                     <Outlet />
 
