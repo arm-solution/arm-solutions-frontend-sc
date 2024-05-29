@@ -1,0 +1,14 @@
+
+@media screen and (max-width: 768px) {
+    @media (max-width: 768px) {
+        .bar-chart {
+          height: 50vh;
+          width: 100% !important;
+          margin: 0 !important;
+        }
+        .bar-container canvas {
+            height: 80% !important; /* 50% of the viewport height */
+          }
+      }
+      
+}

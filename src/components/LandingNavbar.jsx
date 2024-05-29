@@ -1,5 +1,4 @@
 import React from 'react'
-import './../customs/LandingPage.css';
 import logo from './../assets/images/logo.png'
 import { Link } from 'react-router-dom';
 

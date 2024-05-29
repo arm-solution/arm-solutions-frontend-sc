@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import SideNavigation from '../../components/SideNavigation'
-import './../../customs/AdminDashboard.css';
-import MobileFirstNavigation from '../../components/MobileFirstNavigation'
+import SideNavigation from '../../../components/SideNavigation'
+import './AdminDashboard.css';
+import MobileFirstNavigation from '../../../components/MobileFirstNavigation'
 import { Outlet } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -29,14 +29,11 @@ const AdminDashboard = () => {
          <MobileFirstNavigation handleToggle={handleToggle} className="mb-3"/>
 
       
-            <div className="text-center mt-5">
-                <h1>
-                    Sidebar Bootstrap 5
-
+            {/* <div className="text-center mt-5" style={{ border: '1px solid red' }}>
+            </div> */}
+                <div className="container mt-5 bar-container">
                     <Outlet />
-
-                </h1>
-            </div>
+                </div>
         </div>
 
     </div>

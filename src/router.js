@@ -1,10 +1,10 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import LandingPage from './pages/LandingPage'
-import Login from './pages/Login';
-import NotFound from './pages/NotFound';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import EmplyeesList from './pages/admin/EmplyeesList';
-import Analytics from './pages/admin/Analytics';
+import LandingPage from './pages/landingPage/LandingPage'
+import Login from './pages/loginPage/Login';
+import NotFound from './pages/NotFoundPage/NotFound';
+import AdminDashboard from './pages/admin/admin-dashboard/AdminDashboard';
+import EmplyeesList from './pages/admin/employeeList/EmplyeesList';
+import Analytics from './pages/admin/analytics/Analytics';
 
 export const router = createBrowserRouter(createRoutesFromElements(
     <Route>
