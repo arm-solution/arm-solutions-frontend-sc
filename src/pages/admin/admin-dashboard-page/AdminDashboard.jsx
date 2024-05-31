@@ -5,28 +5,16 @@ import MobileFirstNavigation from '../../../components/MobileFirstNavigation'
 import { Outlet } from 'react-router-dom';
 
 const AdminDashboard = () => {
-
-  const [isExpanded, setIsExpanded] = useState(false);
   const [showSideNav, setShowSideNav] = useState(false)
 
-
-  const handleToggle = () => {
-    setShowSideNav(!showSideNav);
-    setIsExpanded(!isExpanded);
-  };
-
-  // const handleMobileNav = () => {
-  //   setShowSideNav(!showSideNav);
-  //   setIsExpanded(!isExpanded);
-  // } 
 
   return (
     <>
     <div className="wrapper">
-        <SideNavigation handleToggle={handleToggle} isExpanded={isExpanded} showSideNav={showSideNav} />
+        <SideNavigation handleToggle={ () => setShowSideNav(!showSideNav) } isExpanded={showSideNav} showSideNav={showSideNav} />
 
         <div className="main p-3">
-         <MobileFirstNavigation handleToggle={handleToggle} className="mb-3"/>
+         <MobileFirstNavigation handleToggle={ () => setShowSideNav(!showSideNav) }  className="mb-3"/>
 
       
             {/* <div className="text-center mt-5" style={{ border: '1px solid red' }}>
