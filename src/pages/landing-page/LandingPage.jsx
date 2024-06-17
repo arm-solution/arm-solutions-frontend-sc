@@ -5,7 +5,7 @@ import Clients from './../../components/Clients';
 import LandingFooter from './../../components/LandingFooter';
 import LandingNavbar from './../../components/LandingNavbar';
 import ServiceCardSlides from './../../components/ServiceCardSlides';
-import MessengerChat from '../../components/MessengerChat';
+// import MessengerChat from '../../components/MessengerChat';
 
 const LandingPage = () => {
   return (
@@ -14,7 +14,7 @@ const LandingPage = () => {
       <Carousel />
       <ServiceCardSlides />
       <Clients />
-      <MessengerChat />
+      {/* <MessengerChat /> */}
       <LandingFooter />
     </>
   )

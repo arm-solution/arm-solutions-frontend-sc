@@ -1,18 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './Employees.css';
-import { useScreenWidth } from '../../../customs/global/forMobile' 
+import React, { useEffect, useState } from 'react'
+
+import './Attendance.css';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from '../../../store/features/userSlice';
 
+const AttendancePage = () => {
 
-
-const EmplyeesList = () => {
-  
-  const isWidth768 = useScreenWidth();
   const dispatch = useDispatch();
   
   const users = useSelector((state) => state.user);
+
 
   const columns = [
     {header: 'Fullname', accessor: 'name'},
@@ -34,21 +32,24 @@ const EmplyeesList = () => {
     alert('deleted'+ id);
   }
   
+
   return (
     <>
-      <h1 className='text-center'>EMPLOYEES</h1>
 
-      <DataTable 
-      data={users.data}
-      columns={columns}
-      actions={{ handleViewEmployee, handleDeleteEmployee }}
-      perPage={10}
-      showAddButtonAndSearchInput={ true }
-      tableLabel = 'Employees list'
-      />
-        
+    <h1 className='text-center'>My Attendance</h1>
+
+    <DataTable 
+    data={users.data}
+    columns={columns}
+    actions={{ handleViewEmployee, handleDeleteEmployee }}
+    perPage={10}
+    showAddButtonAndSearchInput={ false }
+    tableLabel = 'Records'
+    />
+
+
     </>
   )
 }
 
-export default EmplyeesList
+export default AttendancePage

@@ -16,12 +16,9 @@ const AdminDashboard = () => {
         <div className="main p-3">
          <MobileFirstNavigation handleToggle={ () => setShowSideNav(!showSideNav) }  className="mb-3"/>
 
-      
-            {/* <div className="text-center mt-5" style={{ border: '1px solid red' }}>
-            </div> */}
-                <div className="container mt-5 bar-container">
+                {/* <div className="container mt-5 bar-container"> */}
                     <Outlet />
-                </div>
+                {/* </div> */}
         </div>
 
     </div>
