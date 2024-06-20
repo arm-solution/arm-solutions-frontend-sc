@@ -1,0 +1,88 @@
+/* Footer.css */
+
+.footer {
+    margin-top: 30px;
+    background-color: #343a40; /* Dark background color */
+    color: white;
+    padding: 20px 0;
+  }
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .contact {
+    margin-top: 20px;
+  }
+  
+  .contact h6 {
+    margin-bottom: 20px;
+  }
+
+
+  .bottom-style {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .certifications {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 10px; /* Adjust the spacing between certification containers */
+  }
+  
+  .certification-container {
+    padding: 10px;
+    background-color: aliceblue;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5rem; /* Set a fixed width */
+    height: 5rem; /* Set a fixed height */
+  }
+  
+  .certification-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%; /* Adjust border radius if needed */
+  }
+
+  .certification-container.zoom-in img {
+    object-fit: cover; /* Zoom in on the image */
+  }
+  
+  /* Mobile specific styles */
+  @media (max-width: 576px) {
+
+    .text-sm-start {
+      text-align: center !important;
+    }
+  
+    .text-sm-center {
+      text-align: center !important;
+    }
+
+    .certification-container {
+      padding: 10px;
+      background-color: aliceblue;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 3rem; /* Set a fixed width */
+      height: 3rem; /* Set a fixed height */
+    }
+  }
+  

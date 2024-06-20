@@ -1,8 +1,9 @@
-import { createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import LandingPage from './pages/landing-page/LandingPage'
 import NotFound from './pages/notFound-page/NotFound';
 import Loading from './components/Loading';
+
 
 const AdminDashboard = lazy(() => import('./pages/admin/admin-dashboard-page/AdminDashboard'));
 const Analytics = lazy(() => import('./pages/admin/analytics-page/Analytics'));

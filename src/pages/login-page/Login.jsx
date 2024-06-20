@@ -3,20 +3,43 @@ import './LoginPage.css'
 
 const Login = () => {
   return (
-    <section className=" py-3 py-md-5 py-xl-8" >
+    <section className=" py-3 py-md-5 py-xl-8 login-section" >
       <div className="container">
         <div className="row gy-4 align-items-center">
           <div className="col-12 col-md-6 col-xl-7">
             <div className="d-flex justify-content-center back-text">
               <div className="col-12 col-xl-9">
-                {/* <h3>
-                Arm Solution Enterprises Portal 
-                </h3> */}
-                <h2 className="h2 mb-4">Arm Solution Enterprises Portal</h2>
+
+                <h2 className="h2 mb-4 mt-0">Arm Solution Enterprises Portal</h2>
                 {/* <img className="img-fluid rounded mb-4" loading="lazy" src="./assets/img/bsb-logo-light.svg" width="245" height="80" alt="BootstrapBrain Logo"/> */}
+                
                 <hr className="border-primary-subtle mb-4"/>
-                <h2 className="h4 mb-4">We make digital products that drive you to stand out.</h2>
-                <p className="lead mb-5">We write words, take photos, make videos, and interact with artificial intelligence.</p>
+                
+                <div className="mission-visson" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <h2 className="h4 mb-4">Mission</h2>
+                  <p className="lead mb-5">
+                  Our core mission is straightforward - to answer the current and future needs
+                  of different industries through our provision of excellent products and services,
+                  which are guaranteed safe, cost-effective, and highly efficient.
+                  </p>
+
+                  <p className="lead mb-5">
+                  We aim to offer our clients with the most technical solutions  in meeting their
+                  specific requirements at the most affordable cost. We are considerate of our clients
+                  varying needs and financial condition in addressing their need with satisfaction guaranteed.
+                  </p>
+
+                  <h2 className="h4 mb-4">Vision</h2>
+                  <p className="lead mb-5">
+                  To be the country's most comprehensive and professional solution provider
+                  and to promote customer satisfaction by providing them with innovative products, professional
+                  consultation, and service maintenance
+                  </p>
+
+                </div>
+
+
+                
                 <div className="text-endx">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-grip-horizontal" viewBox="0 0 16 16">
                     <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
