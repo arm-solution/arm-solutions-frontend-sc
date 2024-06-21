@@ -6,6 +6,7 @@ import LandingFooter from './../../components/footer/LandingFooter';
 import LandingNavbar from './../../components/landing-navigation/LandingNavbar';
 import ServiceCardSlides from '../../components/services/ServiceCardSlides';
 import OnTopButton from '../../components/ontop-button/OnTopButton';
+import WhyArms from '../../components/why-arms/WhyArms';
 // import MessengerChat from '../../components/MessengerChat';
 
 const LandingPage = () => {
@@ -19,6 +20,7 @@ const LandingPage = () => {
       <Carousel />
       <ServiceCardSlides />
       <Clients />
+      <WhyArms />
       {/* <MessengerChat /> */}
       <OnTopButton  />
       <LandingFooter />

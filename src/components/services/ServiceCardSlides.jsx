@@ -82,7 +82,7 @@ const ServiceCardSlides = () => {
                       <div className="card-body">
                         <h5 className="card-title">{card.title}</h5>
                         <p className="card-text">{card.description}</p>
-                        <a href="#" className="btn btn-primary">{card.buttonLabel}</a>
+                        <a href="#" className="btn btn-secondary">{card.buttonLabel}</a>
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import logo from './../../assets/images/logo.png'
+// import logoCircle from './../../assets/images/arm-cir-adobe.png'
 import './LandingNav.css'
 import { Link } from 'react-router-dom';
 
@@ -45,7 +46,7 @@ const LandingNavbar = () => {
             ref={dropdownRef}
             onClick={toggleDropdown}
         >
-            <a href="#services">Work / Services</a>
+            <a href="#services">Services</a>
             {dropdownOpen && (
                 <ul className="dropdown-menu">
                     <li><a href="#design">Design</a></li>
@@ -56,9 +57,9 @@ const LandingNavbar = () => {
         </li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#clients">Clients</a></li>
-        <li><a href="#footer">Contact Us</a></li>
+        <li><a href="#footer">Contact</a></li>
         <li>
-            <Link to='/login' className='btn btn-success btn-sm login-btn'> Login</Link>
+            <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
         </li>
     </ul>
     <label htmlFor="nav-toggle" className="icon-burger">

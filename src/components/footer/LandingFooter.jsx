@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css';
-import { bps, pcab, pifpo, sopi, pcab2 } from './../../customs/global/certifications';
+import { bps, pifpo, sopi, pcab2 } from './../../customs/global/certifications';
 
 const LandingFooter = () => {
   return (
@@ -42,16 +42,16 @@ const LandingFooter = () => {
               <div className="certifications">
 
                 <div className="certification-container">
-                   <img src={pifpo} alt="" srcset="" />
+                   <img src={pifpo} alt="" />
                 </div>
                 <div className="certification-container">
-                  <img src={bps} alt="" srcset="" />
+                  <img src={bps} alt=""  />
                 </div>
                 <div className="certification-container">
-                  <img src={sopi} alt="" srcset="" />
+                  <img src={sopi} alt=""  />
                 </div>
                 <div className="certification-container">
-                  <img src={pcab2} alt="" srcset="" />
+                  <img src={pcab2} alt=""  />
                 </div>
 
               </div>

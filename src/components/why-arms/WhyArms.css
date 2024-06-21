@@ -1,0 +1,103 @@
+.why-con {
+    margin: 0 0 !important;
+    /* border: 3px solid red; */
+
+}
+
+.mobileVisible {
+    display: none;
+}
+
+.why-con h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+    margin-left: 0;
+    font-weight: bold;
+}
+
+span {
+    color: red;
+    font-weight: 900;
+}
+
+.why-con ul li {
+    font-size: 1.3rem;
+}
+
+.fire-con {
+    width: 70% !important;
+    /* padding-top: 70% !important; */
+    position: relative !important;
+}
+
+
+.fire-con img {
+
+    margin-left: 25%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+@media (max-width: 900px) {
+
+    #whyArms {
+        margin-top: 50px;
+    }
+
+    .container {
+        margin-top: 20px;
+    }
+
+    .why-con {
+        display: flex;
+        flex-direction: column;
+        margin-top: 0;
+        /* width: 100vw !important; */
+        /* border: 1px solid red; */
+    }  
+
+    .why-con h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        margin-left: 0;
+        font-weight: bold;
+        width: 100vw !important;
+    }
+
+    .why-con ul li {
+        font-size: 1rem;
+        width: 100% !important;
+        /* border: 1px solid red; */
+        width: 70vw !important;
+    }
+
+    .fire-con img {
+        display: none;
+    }
+
+    .mobileVisible {
+        display: block;
+        margin-left: 0!important;
+        width: 100vw;
+        height: 50vw; /* Make the height equal to the width to form a square */
+        /* border: 2px solid green; */
+    }
+
+    .mobileVisible img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensure the image covers the area */
+        margin-left: 0 !important;
+    }
+
+    .order-1 {
+        order: 1 !important;
+    }
+
+    .order-2 {
+        order: 2 !important;
+    }
+    
+}

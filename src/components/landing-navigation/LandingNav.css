@@ -32,6 +32,8 @@ nav .logo {
 .logo-image {
     width: 100px;
 	height: 60px;
+	/* background-color: #fff; */
+	border-radius: 5%;
     margin-top: 15px;
 }
 nav .links {
@@ -135,7 +137,7 @@ nav .dropdown-menu li a {
 
 
 .login-btn {
-	padding: 1rem !important;
+	padding: .5rem 1rem !important;
 	display: none;
 }
 
@@ -143,7 +145,7 @@ nav .dropdown-menu li a {
 
 
 /* this is for mobile */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 1000px) {
 	nav .logo {
 		float: none;
 		width: auto;
