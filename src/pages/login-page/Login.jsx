@@ -1,7 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect  } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginEmployee } from '../../store/features/authEmployee';
 import './LoginPage.css'
+import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
+
 
 const Login = () => {
+
+  const [errmessage, setErrMessage] = useState('')
+  const [loginData, setLoginData] = useState({
+      employee_no: '',
+      employee_password: ''
+  })
+
+  const employeeAuth = useSelector((state) => state.auth)
+  const { isSuccess } = employeeAuth; 
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(isSuccess) {
+      checkAuthAndNavigate(navigate)
+    }
+  }, [isSuccess, navigate]);
+  
+
+  const handleChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+
+    setLoginData({
+      ...loginData,
+      [name]: value
+    })
+
+  }
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    dispatch(loginEmployee(loginData));
+  }
+
   return (
     <section className=" py-3 py-md-5 py-xl-8 login-section" >
       <div className="container">
@@ -58,18 +99,18 @@ const Login = () => {
                     </div>
                   </div>
                 </div>
-                <form action="#!">
+        
                   <div className="row gy-3 overflow-hidden">
                     <div className="col-12">
                       <div className="form-floating mb-3">
-                        <input type="email" className="form-control" name="email" id="email" placeholder="name@example.com" required />
-                        <label for="email" className="form-label">Email</label>
+                        <input type="text" className="form-control" name="employee_no" id="employee_no" onChange={handleChange}  required />
+                        <label htmlFor="employee_no" className="form-label">Employee No.</label>
                       </div>
                     </div>
                     <div className="col-12">
                       <div className="form-floating mb-3">
-                        <input type="password" className="form-control" name="password" id="password" value="" placeholder="Password" required />
-                        <label for="password" className="form-label">Password</label>
+                        <input type="password" className="form-control" name="employee_password" id="employee_password" onChange={handleChange}  required />
+                        <label htmlFor="employee_password" className="form-label">Password</label>
                       </div>
                     </div>
                     <div className="col-12">
@@ -77,11 +118,11 @@ const Login = () => {
                     </div>
                     <div className="col-12">
                       <div className="d-grid">
-                        <button className="btn btn-danger btn-lg" type="submit">Log in now</button>
+                        <button className="btn btn-danger btn-lg" onClick={handleLogin}>Log in now</button>
                       </div>
                     </div>
                   </div>
-                </form>
+    
                 <div className="row">
                   <div className="col-12">
                     <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end mt-4">

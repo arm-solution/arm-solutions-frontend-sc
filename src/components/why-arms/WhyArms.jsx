@@ -13,9 +13,6 @@ const WhyArms = () => {
         <div className="container">
 
 
-            
-       
-
           <div className="row why-con">
             <div className="col col-md-7">
      

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useScreenWidth } from '../customs/global/forMobile';
 import './../customs/css/Table.css';
-import EmployeesForm from './modals-forms/employees-form/EmployeesForm';
 
 const DataTable = (props) => {
     // for mobile condition
@@ -46,7 +45,7 @@ const DataTable = (props) => {
     <div className="row">
       <div className="col col-md-6">
 
-      { props.showAddButtonAndSearchInput ? (
+      { props.showAddButtonAndSearchInput.searchInput ? (
         
         <input
           type="text"
@@ -62,18 +61,17 @@ const DataTable = (props) => {
 
       </div>
       <div className="col col-md-6 text-end">
-        {props.showAddButtonAndSearchInput && ( 
+        {props.showAddButtonAndSearchInput.addButton && ( 
           // <button className="add-employee-btn mb-3">Add Data</button>
 
-          <button type="button" className="add-employee-btn mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <button type="button" className="add-employee-btn mb-3" data-bs-toggle="modal" data-bs-target={props.targetForm}>
             Add
           </button>
         )}
       </div>
     </div>
     
-    {/* This ids for modal employees */}
-    <EmployeesForm />
+ 
 
     <div className="card" >
       <div className="card-header">

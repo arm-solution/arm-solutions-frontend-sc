@@ -4,6 +4,7 @@ import { useScreenWidth } from '../../../customs/global/forMobile'
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from '../../../store/features/userSlice';
+import EmployeesForm from './../../../components/modals-forms/employees-form/EmployeesForm';
 
 
 
@@ -22,7 +23,7 @@ const EmplyeesList = () => {
   
   useEffect(() => {
     dispatch(getUser())
-  }, [dispatch])
+  }, [dispatch]);
   
 
 
@@ -43,9 +44,12 @@ const EmplyeesList = () => {
       columns={columns}
       actions={{ handleViewEmployee, handleDeleteEmployee }}
       perPage={10}
-      showAddButtonAndSearchInput={ true }
+      showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
       tableLabel = 'Employees list'
+      targetForm= '#employeeForm'
       />
+
+      <EmployeesForm />
         
     </>
   )

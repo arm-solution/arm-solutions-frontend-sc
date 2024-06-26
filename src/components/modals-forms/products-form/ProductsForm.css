@@ -1,0 +1,9 @@
+.product-img {
+    width: 15%;
+    border-radius: 50%;
+  }
+
+  .save-product {
+    width: 10rem;
+    margin-right: 1rem;
+  }
