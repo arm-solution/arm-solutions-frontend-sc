@@ -2,7 +2,16 @@ import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 
-export const addNewProduct = createAsyncThunk('addNewProduct', async () => {
+export const addNewProduct = createAsyncThunk('addNewProduct', async (product, {rejectWithValue}) => {
+    
+    try {
+
+        const res = axios.post('http://localhost:5000/products/save-product', product);
+        return res.data;
+
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
     
 })
 
@@ -10,7 +19,6 @@ export const addNewProduct = createAsyncThunk('addNewProduct', async () => {
 export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
     try {
         const response = await axios.get('http://localhost:5000/products/get-products');
-        console.log('response', response)
         return [...response.data]
     } catch (error) {
         return error.message;
@@ -23,7 +31,7 @@ const productSlice = createSlice({
         data: [],
         isSuccess: false,
         loading: true,
-        message: '',
+        message: 'lance jared cabiscuelas',
     },
     reducers: {
         // addProduct: {
@@ -53,6 +61,17 @@ const productSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload;
+        })
+        .addCase(addNewProduct.pending, (state, action) => {
+                state.loading = true;
+        })
+        .addCase(addNewProduct.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+        })
+        .addCase(addNewProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
         })
 
         

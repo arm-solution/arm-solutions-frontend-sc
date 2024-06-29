@@ -58,7 +58,6 @@ const getTimeIn = async () => {
 
           setAttendanceDetails(coords);
           const response = await axios.post('http://localhost:5000/users/timein', coords);
-          console.log('this is the api response ', response);
          
       }, showError);
   } else {

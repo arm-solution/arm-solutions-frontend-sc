@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProductsForm from '../../../components/modals-forms/products-form/ProductsForm';
 import CardProduct from '../../../components/card-product/CardProduct';
 import { getAllProducts } from '../../../store/features/productSlice';
+import EditProduct from '../../../components/modals-forms/edit-product-modal/EditProduct';
 
 const Products = () => {
   const [selectedTab, setSelectedTab] = useState('tab-one');
@@ -69,6 +70,7 @@ const Products = () => {
           </div>
         </div>
       </div>
+
     </>
   );
 };
