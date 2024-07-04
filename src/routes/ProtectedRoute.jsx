@@ -4,10 +4,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
   const authData = localStorage.getItem('authEmployee');
-
+  console.log('authData', authData)
   if (authData) {
     const { data } = JSON.parse(authData);
-    const role = data.length > 0 ? data[0].role : null;
+    const role = data.length > 0 ? data[0].user_type : null;
 
     if (role === 'admin') {
       return <Navigate to="/admin" />;

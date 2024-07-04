@@ -18,6 +18,9 @@ const AttendancePage = lazy(() => import('../pages/employee/attendance-page/Atte
 const UserProfilePage = lazy(() => import('../pages/common-pages/user-profile-page/UserProfilePage'));
 const Services = lazy(() => import('../pages/common-pages/services-page/Services'));
 const Products = lazy(() => import('../pages/common-pages/products-page/Products'));
+const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/MarketingDashboard'));
+const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet')); 
+const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'))
 
 const CommonRoutes = () => (
     <>
@@ -46,6 +49,26 @@ const CommonRoutes = () => (
             </Suspense>
         } />
 
+        <Route path='my-attendance' element={ 
+            <Suspense fallback={ <Loading /> }>
+                <AttendancePage /> 
+            </Suspense>
+        }/>
+ 
+
+
+        <Route path='my-payslip' element={ 
+            <Suspense fallback={ <Loading /> }>
+                <PaySlipPage /> 
+            </Suspense>
+        }/>
+
+        <Route path='qoutations' element={ 
+            <Suspense fallback={ <Loading /> }>
+                 <Qoutations /> 
+            </Suspense>
+        }/>
+
     </Route>
     </>
 )
@@ -63,20 +86,21 @@ export const router = createBrowserRouter(createRoutesFromElements(
         </Route>
 
 
-
+        {/* Admin Routing */}
         <Route element={<RequireAuth />}>
-            <Route path='/admin' element={ 
-                <Suspense fallback={<Loading />}>
-                    <AdminDashboard />
-                </Suspense>
-            } >
+
+                <Route path='/admin' element={ 
+                    <Suspense fallback={<Loading />}>
+                        <AdminDashboard />
+                    </Suspense>
+                } >
 
 
                 <Route path='' element={ 
-                    <Suspense fallback={<Loading />}>
-                        <Analytics />
-                    </Suspense>
-                } />
+                        <Suspense fallback={<Loading />}>
+                            <Analytics />
+                        </Suspense>
+                 } />
 
                 <Route path='employees' element={
                     <Suspense fallback={<Loading />}>
@@ -89,9 +113,11 @@ export const router = createBrowserRouter(createRoutesFromElements(
             </Route>
         
         </Route>
-            <Route element={<RequireAuth />}>
-            
+
+        {/* Employees routing */}
+        <Route element={<RequireAuth />}>
             <Route path='employees' element={<OutletPage />}>
+            
 
                 <Route path='' element={ 
                     <Suspense fallback={ <Loading /> }>
@@ -99,21 +125,32 @@ export const router = createBrowserRouter(createRoutesFromElements(
                     </Suspense>
                 }/>
 
-                <Route path='my-attendance' element={ 
-                    <Suspense fallback={ <Loading /> }>
-                        <AttendancePage /> 
-                    </Suspense>
-                }/>
-
-                <Route path='my-payslip' element={ 
-                    <Suspense fallback={ <Loading /> }>
-                        <PaySlipPage /> 
-                    </Suspense>
-                }/>
 
                 {CommonRoutes()}
 
             </Route>
+        
+        </Route>
+
+
+        {/* Marketing Routing */}
+        <Route element={<RequireAuth />}>
+
+                <Route path='marketing' element={ <MarketingOutlet /> } >
+
+                    <Route path='' element={ 
+                        <Suspense fallback={ <Loading /> }>
+                            <MarketingDashboard /> 
+                        </Suspense>
+                    }/>
+
+
+
+
+                    {CommonRoutes()}
+
+
+                </Route>
         
         </Route>
 

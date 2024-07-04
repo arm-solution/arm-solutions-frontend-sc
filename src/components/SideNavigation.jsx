@@ -1,19 +1,23 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+import { getLoggedInUser, logout } from '../customs/global/manageLocalStorage';
+import { Link, useNavigate } from 'react-router-dom';
 import "./../customs/css/SideNavigation.css";
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
 
-    const style = { 
-        display: !showSideNav &&  'flex',
-        // width: '260px',
-        // minWidth: '260px'
-        }
+    const navigate = useNavigate();
+
+    const style = { display: !showSideNav &&  'flex' }
+
+    const handleLogout = () => {
+        logout(navigate);
+    };
     
   return (
     <>
 
-
+    {console.log(getLoggedInUser().user_type)}
         <aside id="sidebar" className={isExpanded ? 'expand' : ''} style={style}> 
             <div className="d-flex">
                 <button className="toggle-btn" type="button" onClick={handleToggle}>
@@ -25,33 +29,37 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
             </div>
             <ul className="sidebar-nav">
                 <li className="sidebar-item">
-                    <a href="#" className="sidebar-link">
-                        <i className="lni lni-user"></i>
-                        <span>Profile</span>
-                    </a>
+                    <Link to='' className="sidebar-link">
+                        <i className="lni lni-bar-chart"></i>
+                        <span>Analytics</span>
+                    </Link>
                 </li>
                 <li className="sidebar-item">
-                    <a href="#" className="sidebar-link">
+                    <Link to='common/qoutations' className="sidebar-link">
                         <i className="lni lni-agenda"></i>
-                        <span>Task</span>
-                    </a>
+                        <span>Proposal</span>
+                    </Link>
                 </li>
                 <li className="sidebar-item">
                     <a href="#" className="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                         data-bs-target="#auth" aria-expanded="false" aria-controls="auth">
                         <i className="lni lni-protection"></i>
-                        <span>Auth</span>
+                        <span>My Records</span>
                     </a>
                     <ul id="auth" className="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                         <li className="sidebar-item">
-                            <a href="#" className="sidebar-link">Login</a>
+                            <Link to='common/my-payslip' className="sidebar-link">Pay Slip</Link>
                         </li>
                         <li className="sidebar-item">
-                            <a href="#" className="sidebar-link">Register</a>
+                            <Link to='common/my-attendance' className="sidebar-link">My Attendance</Link>
                         </li>
                     </ul>
                 </li>
-                <li className="sidebar-item">
+
+                
+
+
+                {/* <li className="sidebar-item">
                     <a href="#" className="sidebar-link collapsed has-dropdown" data-bs-toggle="collapse"
                         data-bs-target="#multi" aria-expanded="false" aria-controls="multi">
                         <i className="lni lni-layout"></i>
@@ -73,25 +81,25 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             </ul>
                         </li>
                     </ul>
+                </li> */}
+                <li className="sidebar-item">
+                    <Link to='employees' className="sidebar-link">
+                        <i className="lni lni-consulting"></i>
+                        <span>Employees</span>
+                    </Link>
                 </li>
                 <li className="sidebar-item">
-                    <a href="#" className="sidebar-link">
-                        <i className="lni lni-popup"></i>
-                        <span>Notification</span>
-                    </a>
-                </li>
-                <li className="sidebar-item">
-                    <a href="#" className="sidebar-link">
+                    <Link to={`common/user-profile/${getLoggedInUser().id}`} className="sidebar-link">
                         <i className="lni lni-cog"></i>
-                        <span>Setting</span>
-                    </a>
+                        <span>Account Setting</span>
+                    </Link>
                 </li>
             </ul>
             <div className="sidebar-footer">
-                <a href="#" className="sidebar-link">
+                <Link className="sidebar-link" onClick={handleLogout}>
                     <i className="lni lni-exit"></i>
                     <span>Logout</span>
-                </a>
+                </Link>
             </div>
         </aside>
     

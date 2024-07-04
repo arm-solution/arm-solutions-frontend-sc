@@ -6,7 +6,6 @@ const DataTable = (props) => {
     // for mobile condition
     const isWidth768 = useScreenWidth();
  
-
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -19,32 +18,37 @@ const DataTable = (props) => {
     }
     
     const handleSearchChange = (e) => {
+      // console.log(props.data);
         setSearchTerm(e.target.value);
     };
+
+  // if need to combine on one column
+   const combinedData = props.data.map(d => ({
+      ...d,
+      fullname: d.firstname && d.lastname ? `${d.firstname} ${d.lastname}` : undefined
+    }));
     
-    const fileteredData = props.data.filter( d =>
-      props.columns.some((column) =>
-        d[column.accessor].toString().toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = combinedData.filter(d =>
+      props.columns.some(column =>
+        (d[column.accessor] && d[column.accessor].toString().toLowerCase().includes(searchTerm.toLowerCase()))
       )
     );
 
-    const totalPages = Math.ceil(fileteredData.length / parseInt(props.perPage, 10));
+    const totalPages = Math.ceil(filteredData.length / parseInt(props.perPage, 10));
 
     const handlePrevPage = () => {
         setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
-      };
+    };
     
-      const handleNextPage = () => {
+    const handleNextPage = () => {
         setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
-      };
+    };
 
 
   return (
     <>
-
     <div className="row">
       <div className="col col-md-6">
-
       { props.showAddButtonAndSearchInput.searchInput ? (
         
         <input
@@ -89,23 +93,23 @@ const DataTable = (props) => {
         </thead>
         <tbody>
 
-            {/* { props.renderTableRows(fileteredData, getIndex().start, getIndex().end) } */}
-            { fileteredData.slice(getIndex().start, getIndex().end).map((row, rowIndex) => (
+            {/* { props.renderTableRows(filteredData, getIndex().start, getIndex().end) } */}
+            { filteredData.slice(getIndex().start, getIndex().end).map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {props.columns.map((column, colIndex) => (
                   <td key={colIndex}>{row[column.accessor]}</td>
                 ))}
                 <td>
                 <div className="btn-group" role="group" aria-label="Basic example">
-                  <button className="btn btn-info btn-sm text-white" onClick={() => props.actions.handleViewEmployee(row.id)}>Details</button>
-                  <button className="btn btn-danger btn-sm" onClick={() =>  props.actions.handleDeleteEmployee(row.id)}>Delete</button>
+                  <button className="btn btn-info btn-sm text-white" onClick={() => props.actions.handleView(row.id)}>Details</button>
+                  <button className="btn btn-danger btn-sm" onClick={() =>  props.actions.handleDelete(row.id)}>Delete</button>
                 </div>
                 </td>
               </tr>
             ))}
         </tbody>
       </table>
-        { fileteredData.length === 0 && (<p className='text-center'><span className="badge bg-secondary">No Data Found</span></p>)}
+        { filteredData.length === 0 && (<p className='text-center'><span className="badge bg-secondary">No Data Found</span></p>)}
 
       <div className="row">
 
@@ -122,11 +126,6 @@ const DataTable = (props) => {
 
       </div>
     </div>
-
-
-
-
-
     
     </>
   )

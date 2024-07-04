@@ -1,0 +1,19 @@
+.qoutation .container {
+    background-color: #ECF0F1;
+    border-radius: 10px;
+}
+
+.row-form {
+    display: flex !important;
+    flex-direction: row !important;
+    border: 2px solid red;
+}
+
+.row .form-group {
+    display: flex !important;
+    flex-direction: row !important;
+}
+
+label {
+    margin-right: 1rem;
+}

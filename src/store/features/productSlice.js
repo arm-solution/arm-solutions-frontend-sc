@@ -31,7 +31,7 @@ const productSlice = createSlice({
         data: [],
         isSuccess: false,
         loading: true,
-        message: 'lance jared cabiscuelas',
+        message: '',
     },
     reducers: {
         // addProduct: {

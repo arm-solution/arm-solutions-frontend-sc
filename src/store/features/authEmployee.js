@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios'
 
-export const loginEmployee = createAsyncThunk('employee/login', async ({ employee_no, employee_password }, { rejectWithValue }) => {
+export const loginEmployee = createAsyncThunk('employee/login', async ({ employee_id, user_password }, { rejectWithValue }) => {
     try {
-        const res = await axios.post('http://localhost:5000/employees/login', { employee_no, employee_password });
+        const res = await axios.post('http://localhost:5000/employees/login', { employee_id, user_password });
         return res.data;
     } catch (error) {
         rejectWithValue(error.response.data);
@@ -37,7 +37,8 @@ const employeeAuthSlice = createSlice({
             state.data = data
 
             // Store token and user data in localStorage
-        localStorage.setItem('authEmployee', JSON.stringify({ token: token, data: data }));
+        localStorage.setItem('authEmployee', JSON.stringify({ data: data }));
+        localStorage.setItem('token', JSON.stringify(token));
         })
         .addCase(loginEmployee.rejected, (state, action) => {
             const { message } = action.payload; 

@@ -1,0 +1,14 @@
+/* EditableTable.css */
+.table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table th, .table td {
+    width: 10.33%; /* Ensures each column takes up 1/3 of the table width */
+    text-align: center;
+}
+
+.table .form-control {
+    width: 100%; /* Ensures input fields take up the full width of their cells */
+}

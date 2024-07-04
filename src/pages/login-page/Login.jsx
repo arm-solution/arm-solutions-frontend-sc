@@ -10,8 +10,8 @@ const Login = () => {
 
   const [errmessage, setErrMessage] = useState('')
   const [loginData, setLoginData] = useState({
-      employee_no: '',
-      employee_password: ''
+      employee_id: '',
+      user_password: ''
   })
 
   const employeeAuth = useSelector((state) => state.auth)
@@ -103,14 +103,14 @@ const Login = () => {
                   <div className="row gy-3 overflow-hidden">
                     <div className="col-12">
                       <div className="form-floating mb-3">
-                        <input type="text" className="form-control" name="employee_no" id="employee_no" onChange={handleChange}  required />
-                        <label htmlFor="employee_no" className="form-label">Employee No.</label>
+                        <input type="text" className="form-control" name="employee_id" id="employee_id" onChange={handleChange}  required />
+                        <label htmlFor="employee_id" className="form-label">Employee No.</label>
                       </div>
                     </div>
                     <div className="col-12">
                       <div className="form-floating mb-3">
-                        <input type="password" className="form-control" name="employee_password" id="employee_password" onChange={handleChange}  required />
-                        <label htmlFor="employee_password" className="form-label">Password</label>
+                        <input type="password" className="form-control" name="user_password" id="user_password" onChange={handleChange}  required />
+                        <label htmlFor="user_password" className="form-label">Password</label>
                       </div>
                     </div>
                     <div className="col-12">

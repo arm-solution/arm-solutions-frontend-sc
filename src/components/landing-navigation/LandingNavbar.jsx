@@ -3,6 +3,7 @@ import logo from './../../assets/images/logo.png'
 // import logoCircle from './../../assets/images/arm-cir-adobe.png'
 import './LandingNav.css'
 import { Link } from 'react-router-dom';
+import { checkedIfLoggedIn } from '../../customs/global/manageLocalStorage';
 
 const LandingNavbar = () => {
 
@@ -59,7 +60,14 @@ const LandingNavbar = () => {
         <li><a href="#clients">Clients</a></li>
         <li><a href="#footer">Contact</a></li>
         <li>
+      
+          {checkedIfLoggedIn().status ?  (
+            
+            <Link to={`/${checkedIfLoggedIn().path}`} className='btn btn-success btn-sm login-btn'>Dashboard</Link>
+          ) : (
+            
             <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
+          )}
         </li>
     </ul>
     <label htmlFor="nav-toggle" className="icon-burger">
