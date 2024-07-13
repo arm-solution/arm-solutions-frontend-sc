@@ -133,8 +133,8 @@ const QoutationTableEditable = (props) => {
                                 )}
                             </td>
                             { !screenMobile() && <td>{row.unit}</td> }
-                            <td>{row.price}</td>
-                            <td>{row.qty * row.price}</td>
+                            <td>{row.base_price}</td>
+                            <td>{row.qty * row.base_price}</td>
                             <td>
                                 {row.isEditing ? (
                                     <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Save</button>
