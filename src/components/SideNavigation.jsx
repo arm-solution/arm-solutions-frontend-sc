@@ -16,8 +16,6 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     
   return (
     <>
-
-    {console.log(getLoggedInUser().user_type)}
         <aside id="sidebar" className={isExpanded ? 'expand' : ''} style={style}> 
             <div className="d-flex">
                 <button className="toggle-btn" type="button" onClick={handleToggle}>

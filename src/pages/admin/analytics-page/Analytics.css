@@ -1,14 +1,31 @@
 
-@media screen and (max-width: 768px) {
-    @media (max-width: 768px) {
-        .bar-chart {
-          height: 50vh;
-          width: 100% !important;
-          margin: 0 !important;
-        }
-        .bar-container canvas {
-            height: 80% !important; /* 50% of the viewport height */
-          }
-      }
-      
+.graph {
+  width: 100vw;
+}
+.graph-container {
+  width: 100%;
+  overflow-x: auto; 
+  margin-top: 5rem;
+}
+
+@media (max-width: 768px) { 
+  .graph-container {
+    overflow-x: scroll; 
+    -webkit-overflow-scrolling: touch; 
+  }
+}
+
+.graph-container::-webkit-scrollbar {
+  height: 8px; 
+}
+
+.graph-container::-webkit-scrollbar-thumb {
+  background-color: gray; 
+  border-radius: 10px; 
+}
+
+
+.graph-container {
+  scrollbar-color: gray transparent;
+  scrollbar-width: thin; 
 }

@@ -68,6 +68,38 @@
 
 
   
+  @media (max-width: 900px) { 
+    .panel {
+      width: 100%;
+
+      overflow-x: hidden; 
+      overflow-y: hidden; 
+
+      display: flex;
+      margin: 0!important;
+    }
+
+    /* .panel {
+   
+      scrollbar-width: thin;
+      scrollbar-color: #888 transparent; 
+    }
+    
+   
+    .panel::-webkit-scrollbar {
+      width: 6px; 
+    }
+    
+    .panel::-webkit-scrollbar-track {
+      background: transparent; 
+    }
+    
+    .panel::-webkit-scrollbar-thumb {
+      background-color: #888; 
+      border-radius: 6px;
+    } */
+  }
+
   @media (max-width: 600px) {
     .flex-tabs {
       flex-direction: column;

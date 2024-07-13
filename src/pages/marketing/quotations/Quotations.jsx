@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import './Quotations.css';
 import QoutationForm from '../../../components/modals-forms/qoutation-form/QoutationForm';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,10 +8,10 @@ import { getAllProposal } from '../../../store/features/proposalSlice';
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
-
+ 
     const dispatch = useDispatch();
 
-    const proposal = useSelector(state => state.proposals);
+    const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
 
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
@@ -25,7 +25,8 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      dispatch(getAllProposal())
+      dispatch(getAllProposal());
+      // dispatch(resetState());
     }, [dispatch]);
 
 
@@ -68,19 +69,23 @@ const Quotations = () => {
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Qoutation Lists</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-                <QoutationForm />   
+
+                <QoutationForm proposalStatus={proposalStatus}  loadingProposal={loadingProposal}/> 
+
           </div>
 
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
-          <DataTable 
-          data={proposal.data}
-          columns={columns}
-          actions={{ handleView, handleDelete }}
-          perPage={10}
-          showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
-          tableLabel = 'Employees list'
-          // targetForm= '#employeeForm'
-          />
+
+                <DataTable 
+                data={proposalData}
+                columns={columns}
+                actions={{ handleView, handleDelete }}
+                perPage={10}
+                showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
+                tableLabel = 'Employees list'
+                // targetForm= '#employeeForm'
+                />
+
           </div>
         </div>
       </div>

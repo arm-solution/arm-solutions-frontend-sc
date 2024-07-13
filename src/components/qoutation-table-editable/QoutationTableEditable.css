@@ -12,3 +12,60 @@
 .table .form-control {
     width: 100%; /* Ensures input fields take up the full width of their cells */
 }
+
+.btn:disabled {
+    background-color: #007bff; /* Change to desired background color */
+    opacity: 0.65; /* Makes the button appear "disabled" */
+    cursor: not-allowed; /* Changes the cursor to a "not-allowed" symbol */
+}
+
+.btn-primary:disabled {
+    background-color: #007bff; /* Primary button background color */
+    border-color: #007bff; /* Primary button border color */
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+@media (max-width: 900px) { 
+    .table-editable-container {
+        width: 80vw;
+
+        overflow-x: scroll; 
+        overflow-y: hidden; 
+  
+        display: flex;
+    }
+
+    .table-editable-container {
+   
+        scrollbar-width: thin;
+        scrollbar-color: #888 transparent; 
+      }
+      
+     
+      .table-editable-container::-webkit-scrollbar {
+        width: 6px; 
+      }
+      
+      .table-editable-container::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      
+      .table-editable-container::-webkit-scrollbar-thumb {
+        background-color: #888; 
+        border-radius: 6px;
+      }
+
+      .table th, .table td {
+        width: 15.33%; /* Ensures each column takes up 1/3 of the table width */
+        text-align: center;
+    }
+
+    .table td input{
+        width: 3rem !important;
+    }
+  
+
+
+
+}

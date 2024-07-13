@@ -1,15 +1,15 @@
 import { useEffect, useState} from 'react'
 
 const checkWidth = () => {
-    return window.innerWidth < 768;
+    return window.innerWidth < 900;
   };
   
   export const useScreenWidth = () => {
-    const [isWidth768, setIsWidth768] = useState(checkWidth());
+    const [isWidth900, setIsWidth900] = useState(checkWidth());
   
     useEffect(() => {
       const handleResize = () => {
-        setIsWidth768(checkWidth());
+        setIsWidth900(checkWidth());
       };
   
       window.addEventListener('resize', handleResize); // Add event listener for window resize
@@ -19,7 +19,7 @@ const checkWidth = () => {
       };
     }, []);
   
-    return isWidth768;
+    return isWidth900;
   };
 
 

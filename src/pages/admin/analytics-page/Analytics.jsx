@@ -5,7 +5,12 @@ import './Analytics.css'
 const Analytics = () => {
   return (
     <>
-      <Charts />
+      <div className="graph-container">
+        <div className="graph">
+          <Charts />
+
+        </div>
+      </div>
     </>
   )
 }

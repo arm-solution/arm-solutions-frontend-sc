@@ -9,7 +9,7 @@ const AttendancePage = () => {
 
   const dispatch = useDispatch();
   
-  const users = useSelector((state) => state.user);
+  const users = useSelector((state) => state.users);
 
 
   const columns = [

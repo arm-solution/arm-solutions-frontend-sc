@@ -1,0 +1,42 @@
+.float-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000; 
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .alert-success {
+    background-color: #196F3D;
+    color: #fff;
+  }
+  
+  .alert-error {
+    background-color: #641E16;
+    color: #fff;
+  }
+  
+  .float-notification span {
+    margin-right: 10px;
+  }
+  
+  .close-icon {
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .close-icon i {
+    font-size: 18px;
+    color: white; /* Close icon color */
+  }
+  
+  .close-icon:hover i {
+    color: #721c24; /* Close icon color on hover */
+  }
+  
