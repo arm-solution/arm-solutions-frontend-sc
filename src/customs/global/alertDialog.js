@@ -74,3 +74,14 @@ export const errorDialog = (title, text) => {
     text: text || "",
   });
 }
+
+
+export const successDialog = (message) => {
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: message || "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500
+  })
+}

@@ -1,37 +1,53 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Quotations.css';
 import QoutationForm from '../../../components/modals-forms/qoutation-form/QoutationForm';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../components/DataTable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
+import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
 
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
- 
+    
     const dispatch = useDispatch();
-
+    
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
+    const { data: proposalItemData, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
 
+    // propsal data for editing
+    const [proposalEdit, setProposalEdit] = useState()
+    // proposal items getting by id
+    const [proposalItemEdit, setProposalItemEdit] = useState(proposalItemData);
+    
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
     };
 
+
+
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
       {header: 'Estemate', accessor: 'total_estemate'},
-      {header: 'Date', accessor: 'proposal_date'},
+      {header: 'Date', accessor: 'date_created'},
       {header: 'Status', accessor: 'status'},
     ]
 
     useEffect(() => {
       dispatch(getAllProposal());
       // dispatch(resetState());
-    }, [dispatch]);
+    }, [dispatch, ]);
+    
+    useEffect(() => {
+      setProposalItemEdit(proposalItemData)
+    }, [proposalItemData])
+    
 
-
-    const handleView = (id) => {
-      alert(id);
+    // handle view details and edit
+    const handleView = async(row) => {
+      setSelectedTab('tab-one')
+      setProposalEdit(row);
+      await dispatch(getProposalItemsByProposalId(row.id));
     }
   
     const handleDelete = (id) => {
@@ -41,7 +57,7 @@ const Quotations = () => {
     
   return (
     <>
-
+    <h1>{ proposalItemData.length ? proposalItemData[0].product_name : 'No data found' }</h1>
         <div className="worko-tabs">
 
         <input
@@ -69,8 +85,14 @@ const Quotations = () => {
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Qoutation Lists</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-
-                <QoutationForm proposalStatus={proposalStatus}  loadingProposal={loadingProposal}/> 
+            
+                <QoutationForm 
+                proposalStatus={proposalStatus}
+                loadingProposal={loadingProposal}
+                proposalItemEdit={proposalItemEdit}
+                proposalEdit={proposalEdit}
+                proposalItemData={proposalItemData}
+                /> 
 
           </div>
 
@@ -82,13 +104,15 @@ const Quotations = () => {
                 actions={{ handleView, handleDelete }}
                 perPage={10}
                 showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
-                tableLabel = 'Employees list'
+                tableLabel = 'Proposal Lists'
                 // targetForm= '#employeeForm'
                 />
 
           </div>
         </div>
       </div>
+
+
 
     </>
   )

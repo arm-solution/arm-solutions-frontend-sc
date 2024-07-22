@@ -3,7 +3,8 @@ import userSlice from "./features/userSlice";
 import employeeAuthSlice from "./features/authEmployee";
 import productSlice from "./features/productSlice";
 import proposalSlice from "./features/proposalSlice";
-import clientSlice from './features/clientsSlice'
+import clientSlice from './features/clientsSlice';
+import proposalItemSlice from "./features/proposalItemSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
         auth: employeeAuthSlice.reducer,
         products: productSlice.reducer,
         proposals: proposalSlice.reducer,
-        clients: clientSlice.reducer
+        clients: clientSlice.reducer,
+        proposalItems: proposalItemSlice
     }
 })

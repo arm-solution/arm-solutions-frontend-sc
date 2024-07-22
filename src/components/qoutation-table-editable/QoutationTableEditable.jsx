@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import './QoutationTableEditable.css';
-import { useScreenWidth } from '../../customs/global/forMobile';
 
 
 const QoutationTableEditable = (props) => {
     const [products, setProducts] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
 
+    // calling product api for select options
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -22,27 +22,36 @@ const QoutationTableEditable = (props) => {
         fetchData();
     }, []);
 
+
+    //  useeffect for edit items
+    useEffect(() => {
+      setProductDetails(props.proposalItemEdit)
+    }, [props.proposalItemEdit])
+    
+
     const handleInputChange = (e, id, field) => {
         const value = e.target.value;
+
         setProductDetails(prevDetails => prevDetails.map(row =>
             row.id === id ? { ...row, [field]: value } : row
         ));
     };
 
+
+    // adding row in the table
     const addRow = () => {
-        const newId = productDetails.length > 0 ? productDetails[productDetails.length - 1].id + 1 : 1;
-        setProductDetails([...productDetails, { id: 0, name: '', category_name: '', qty: 0, unit: '', price: 0, amount: 0, isEditing: true }]);
+        setProductDetails([...productDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', price: 0, amount: 0, isEditing: true }]);
     };
 
+    // delete row in the table 
     const deleteRow = (id) => {
         setProductDetails(productDetails.filter(row => row.id !== id));
     };
 
+    // save and edit row
     const toggleSaveAndEdit = (id) => {
 
        const checkProduct = productDetails.find(p => parseInt(p.qty) === 0 || p.name === '')
-
-       console.log(productDetails);
 
        if(checkProduct) {
         errorDialog("All Fields Are Required")
@@ -50,11 +59,25 @@ const QoutationTableEditable = (props) => {
         return;
        }
 
+    // reshaping data
+     const updatedQoutationItems = productDetails.map(data => ({
+        proposal_id: 0,
+        product_id: data.id,
+        quantity: parseInt(data.qty),
+        price: parseInt(data.base_price),
+        proposal_item_id: data.proposal_item_id | 0,
+        sku: data.sku
+      }));
+
+    
+     props.setQoutationItem(updatedQoutationItems);
+
         setProductDetails(prevDetails => prevDetails.map(row =>
             row.id === id ? { ...row, isEditing: !row.isEditing } : row
         ));
     };
 
+    // handle product onchange select dropdown
     const handleProduct = (e, rowId) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
@@ -62,13 +85,18 @@ const QoutationTableEditable = (props) => {
         const productExist = productDetails.find(p => p.id === selectedProductId);
 
         if (productExist) {
-            alert('Product already exists in the table.');
+            props.setNotification({
+                    message: 'Product Already Exist on the Table',
+                    type: 'error'
+            })
             return;
         }
 
-        setProductDetails(prevDetails => prevDetails.map(row =>
+        setProductDetails(prevDetails => prevDetails.map(row => 
             row.id === rowId ? { ...row, ...selectedProduct, isEditing: true } : row
+        
         ));
+
     };
 
     const anyRowEditing = productDetails.some(row => row.isEditing);
@@ -101,6 +129,7 @@ const QoutationTableEditable = (props) => {
                 <tbody>
                     {productDetails.map((row, index) => (
                         <tr key={index}>
+                            
                             { !screenMobile() && <td>{index + 1}</td>}
                             <td>
                                 {row.isEditing ? (
@@ -108,6 +137,7 @@ const QoutationTableEditable = (props) => {
                                         className="form-select"
                                         aria-label="Default select example"
                                         defaultValue='0'
+                                        name="product_id"
                                         onChange={(e) => handleProduct(e, row.id)}
                                     >
                                         <option value='0' disabled>Products</option>
@@ -126,6 +156,7 @@ const QoutationTableEditable = (props) => {
                                         type="number"
                                         className="form-control"
                                         value={row.qty}
+                                        name='qty'
                                         onChange={(e) => handleInputChange(e, row.id, 'qty')}
                                     />
                                 ) : (
@@ -133,8 +164,8 @@ const QoutationTableEditable = (props) => {
                                 )}
                             </td>
                             { !screenMobile() && <td>{row.unit}</td> }
-                            <td>{row.base_price}</td>
-                            <td>{row.qty * row.base_price}</td>
+                            <td>{row.base_price | 0}</td>
+                            <td>{row.qty * row.base_price || 0}</td>
                             <td>
                                 {row.isEditing ? (
                                     <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Save</button>

@@ -101,7 +101,7 @@ const DataTable = (props) => {
                 ))}
                 <td>
                 <div className="btn-group" role="group" aria-label="Basic example">
-                  <button className="btn btn-info btn-sm text-white" onClick={() => props.actions.handleView(row.id)}>Details</button>
+                  <button className="btn btn-info btn-sm text-white" onClick={() => props.actions.handleView(row)}>Details</button>
                   <button className="btn btn-danger btn-sm" onClick={() =>  props.actions.handleDelete(row.id)}>Delete</button>
                 </div>
                 </td>

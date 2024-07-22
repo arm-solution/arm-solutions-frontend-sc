@@ -5,19 +5,22 @@ import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate } from '../../../customs/global/manageDates';
-import { errorDialog } from '../../../customs/global/alertDialog';
+import { getCurrentDate, formatDateReadable } from '../../../customs/global/manageDates';
+import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
+import { saveProposalItems } from '../../../store/features/proposalItemSlice';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
+    const [creator, setCreator] = useState('');
     const [notification, setNotification] = useState({
         message: '',
         type: ''
     });
+
     const [qoutation, setQoutation] = useState({
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
@@ -30,11 +33,7 @@ const QoutationForm = (props) => {
         contact_person: ''
     });
 
-    const [qoutationItem, setQoutationItem] = useState({
-        proposal_id: 0,
-        product_id: 0,
-        quantity: 0
-    });
+    const [qoutationItem, setQoutationItem] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -49,27 +48,26 @@ const QoutationForm = (props) => {
     useEffect(() => {
         setProposalIsSuccess(props.proposalStatus);
     }, [props.proposalStatus, proposalIsSuccess])
-    
-    const handleQoutationItemInput = (e) => {
-        e.preventDefault();
 
-        setQoutationItem({
-            ...qoutationItem,
-            [e.target.name]: e.target.value
-        });
-    };
 
-    const handleQoutationInput = (e) => {
-        e.preventDefault();
-        setQoutation({
-            ...qoutation,
-            [e.target.name]: e.target.value
-        });
+
+    useEffect(() => {
+        if (props.proposalEdit) {
+            setQoutation(props.proposalEdit);
+        }
+    }, [props.proposalEdit]);
+
+    const handleQoutationInput = (event) => {
+        const { name, value } = event.target;
+        setQoutation(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
 
     const handleAddQoutation = async () => {
-    
+
         if (qoutation.client_id === 0 || qoutation.created_by === 0) {
                 setNotification({
                     message: 'All Fields Are Required',
@@ -77,15 +75,32 @@ const QoutationForm = (props) => {
                 });
                 return;
         }
-            
-            try {
-                await dispatch(createProposal(qoutation)).then((d) => {
-                    // payload from the api/backend
-                    const { success, lastid } = d.payload;
-                    if(success) {
-                        alert("Success");
+       
+
+        try {
+            await dispatch(createProposal(qoutation)).then( (d) => {
+                // payload from the api/backend
+                const { lastid } = d.payload;
+
+                    if(lastid > 0) {
+                        const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+                        setQoutationItem(updatedQoutationItems);
+
+                        // removing proposal_item_id in create qoutation because is not required on backend
+                        dispatch(saveProposalItems(updatedQoutationItems.map(({proposal_item_id, ...rest}) => rest)))
+                        .then((s) => {
+                            if(s.payload.success) {
+                                successDialog('Qoutation is now available')
+                            } else {
+                                errorDialog('Failed to create a Qoutation');
+                            }
+                        }) 
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                            
                     } else {
-                        alert("Failed");
+                        errorDialog('Failed to create a Qoutation');
                     }
                 }) 
 
@@ -93,9 +108,22 @@ const QoutationForm = (props) => {
             } catch (error) {
                 errorDialog('Failed To Save The Qoutation');
             }
-        
-
     };
+
+    const handleUpdateQoutation =  () => {
+        
+        console.log('baseItem proposalItem from redux ', props.proposalItemData);
+        console.log('new sets of items ', qoutationItem)
+
+        const addEditItem = qoutationItem.filter(item2 =>
+            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        );
+
+        console.log('final data to update ', addEditItem);
+
+    }
+
+
 
     return (
         <>
@@ -107,7 +135,7 @@ const QoutationForm = (props) => {
                         <div className="col col-md-6">
                             <div className="form-group">
                                 <label htmlFor="client">Client</label>
-                                <select className="form-select form-select-sm" name='client_id' aria-label=".form-select-sm example" onChange={handleQoutationInput} defaultValue='0'>
+                                <select className="form-select form-select-sm" name='client_id' aria-label=".form-select-sm example" onChange={handleQoutationInput} value={qoutation.client_id} >
                                     <option value='0' disabled>Select Client</option>
                                     {clientData.map(client => <option key={client.id} value={client.id}>{client.name}</option>)}
                                 </select>
@@ -116,7 +144,7 @@ const QoutationForm = (props) => {
                         <div className="col col-md-6">
                             <div className="form-group justify-content-center">
                                 <label htmlFor="date">Date : </label>
-                                <p>{currentDate.toDateString()}</p>
+                                <p>{props.proposalEdit ? formatDateReadable(props.proposalEdit.date_created) : currentDate.toDateString()}</p>
                             </div>
                         </div>
                     </div>
@@ -125,13 +153,13 @@ const QoutationForm = (props) => {
                         <div className="col col-md-6">
                             <div className="form-group">
                                 <label htmlFor="client">Contact Person</label>
-                                <input type="text" className="form-control" name='contact_person' onChange={handleQoutationInput} />
+                                <input type="text" className="form-control" name='contact_person' onChange={handleQoutationInput} value={qoutation.contact_person}/>
                             </div>
                         </div>
                         <div className="col col-md-6 ">
                             <div className="form-group justify-content-center">
                                 <label htmlFor="date">Prepared By </label>
-                                <p>{getLoggedInFullname()}</p>
+                                <p>{ creator ? creator : getLoggedInFullname()}</p>
                             </div>
                         </div>
                     </div>
@@ -139,7 +167,7 @@ const QoutationForm = (props) => {
                     <div className="row">
                         <div className="form-group">
                             <label> Subject / Title</label>
-                            <textarea className="form-control" id="subject" name='description' onChange={handleQoutationInput} rows="5"></textarea>
+                            <textarea className="form-control" id="subject" name='description' onChange={handleQoutationInput} rows="5" value={qoutation.description} ></textarea>
                         </div>
                     </div>
 
@@ -151,10 +179,19 @@ const QoutationForm = (props) => {
 
 
                     <div className="row table-editable">
-                        <QoutationTableEditable setQoutationItem={setQoutationItem} qoutationItem={qoutationItem} />
+                        <QoutationTableEditable
+                         setQoutationItem={setQoutationItem}
+                         proposalItemEdit={props.proposalItemEdit}
+                         setNotification={ setNotification }
+                         />
                     </div>
                     <div className="row row-btn-qout mt-3 mr-auto">
+
+                        {props.proposalEdit ? 
+                        <button className='btn-qoutation' onClick={handleUpdateQoutation}>Save</button>
+                        :
                         <button className="btn-qoutation" onClick={handleAddQoutation}>Create Qoutation</button>
+                        }
                     </div>
                 </div>
             </div>

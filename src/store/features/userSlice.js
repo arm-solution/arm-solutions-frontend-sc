@@ -45,7 +45,9 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
 
 })
 
-
+export const getUserById = createAsyncThunk('user/getUserById', async (id, { rejectWithValue }) => {
+    
+}) 
 
 
 

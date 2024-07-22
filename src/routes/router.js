@@ -20,7 +20,8 @@ const Services = lazy(() => import('../pages/common-pages/services-page/Services
 const Products = lazy(() => import('../pages/common-pages/products-page/Products'));
 const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/MarketingDashboard'));
 const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet')); 
-const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'))
+const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
+const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'));
 
 const CommonRoutes = () => (
     <>
@@ -153,6 +154,13 @@ export const router = createBrowserRouter(createRoutesFromElements(
                 </Route>
         
         </Route>
+
+        {/* pdf viewer */}
+        <Route path='pdf-viewer' element={
+            <Suspense fallback={<Loading/> } >
+                <PdfViewPage />
+            </Suspense>
+        } />
 
 
 

@@ -56,7 +56,7 @@ const Login = () => {
                 
                 <hr className="border-primary-subtle mb-4"/>
                 
-                <div className="mission-visson" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <div className="mission-visson">
                   <h2 className="h4 mb-4">Mission</h2>
                   <p className="lead mb-5">
                   Our core mission is straightforward - to answer the current and future needs
