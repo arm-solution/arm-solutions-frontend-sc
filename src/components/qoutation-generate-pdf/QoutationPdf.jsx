@@ -60,34 +60,6 @@ const styles = StyleSheet.create({
     width: '90%',
     left: 30
   },
-
-
-  table: {
-    display: "table",
-    width: "auto",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-  },
-  tableRow: {
-    margin: "auto",
-    flexDirection: "row",
-  },
-  tableCol: {
-    width: "50%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-
-  },
-  tableCell: {
-    margin: "auto",
-    marginTop: 5,
-    fontSize: 12,
-    fontWeight: 'normal',
-  },
   bold: {
     fontFamily: 'RobotoBold',
     fontWeight: 'bold',
@@ -104,7 +76,58 @@ const styles = StyleSheet.create({
     height: '55%',
     zIndex: -1, 
     opacity: 0.3
+  },
+
+  table: {
+    marginTop: 45,
+    width: '90%',
+    display: "table",
+    left: 35  ,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderBottomWidth: 0
+  },
+  tableRow: {
+    margin: "auto",
+    flexDirection: "row"
+  },
+  tableHeaderRow: {
+    flexDirection: "row",
+    backgroundColor: '#d3d3d3'
+  },
+  tableCol: {
+    width: "15%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0
+  },
+  tableCellHeader: {
+    margin: 5,
+    fontSize: 12,
+    fontWeight: 'bold'
+  },
+  tableCell: {
+    margin: 5,
+    fontSize: 10
+  },
+  descriptionRow: {
+    width: "40%", // Wider width for the "Name" column
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0
+  },
+  fullRow: {
+    width: "100%", // Wider width for the "Name" column
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0
   }
+
+  
 });
 
 // Sample data
@@ -142,7 +165,7 @@ const PDFDocument = () => (
 
         </View>
 
-        <View style={{ right: 40}}> 
+        <View style={{ right: 40 }}> 
           <View style={{ display: 'flex', flexDirection: 'row'}}>
             <Text style={[styles.bold, styles.textSize]}>Contact Number: </Text>
             <View style={styles.textSize}>
@@ -222,6 +245,85 @@ const PDFDocument = () => (
 
       <View style={ [styles.bold, { display: 'flex', flexDirection: 'row', justifyContent: 'center', fontSize: 12, top: 25}] }>
         <Text>PERFORMA INVOICE</Text>
+      </View>
+
+    {/* table */}
+
+    <View style={styles.table}>
+        {/* Table Header */}
+        <View style={styles.tableHeaderRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCellHeader}>QTY</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCellHeader}>UNIT</Text>
+          </View>
+          <View style={styles.descriptionRow}>
+            <Text style={styles.tableCellHeader}>DESCRIPTION</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCellHeader}>UNIT PRICE</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCellHeader}>AMOUNT</Text>
+          </View>
+        </View>
+        {/* Table Content */}
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>John Doe</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>John Doe</Text>
+          </View>
+          <View style={styles.descriptionRow}>
+            <Text style={styles.tableCell}>
+            Paragraphs are the building blocks of papers. Many students define paragraphs in terms of length: a paragraph is a group of at least five sentences, a paragraph is half a page long, etc. In reality, though, the unity and coherence of ideas among sentences is what constitutes a paragraph. A paragraph is defined as “a group of sentences or a single sentence that forms a unit” (Lunsford and Connors 116). Length and appearance do not determine whether a section in a paper is a paragraph. For instance, in some styles of writing, particularly journalistic styles, 
+            </Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>1234 Main St</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>555-1234</Text>
+          </View>
+        </View>
+        {/* row 100% */}
+        <View>
+          <View style={styles.fullRow}>
+            <Text style={styles.tableCell}>555-1234</Text>
+          </View>
+        </View>
+
+
+        <View style={styles.tableRow}>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>John Doe</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>John Doe</Text>
+          </View>
+          <View style={styles.descriptionRow}>
+            <Text style={styles.tableCell}>
+            Paragraphs are the building blocks of papers. Many students define paragraphs in terms of length: a paragraph is a group of at least five sentences, a paragraph is half a page long, etc. In reality, though, the unity and coherence of ideas among sentences is what constitutes a paragraph. A paragraph is defined as “a group of sentences or a single sentence that forms a unit” (Lunsford and Connors 116). Length and appearance do not determine whether a section in a paper is a paragraph. For instance, in some styles of writing, particularly journalistic styles, 
+            </Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>1234 Main St</Text>
+          </View>
+          <View style={styles.tableCol}>
+            <Text style={styles.tableCell}>555-1234</Text>
+          </View>
+        </View>
+
+        {/* row 100% */}
+        <View>
+          <View style={styles.fullRow}>
+            <Text style={styles.tableCell}>555-1234</Text>
+          </View>
+        </View>
+
+        {/* Add more rows as needed */}
       </View>
 
 

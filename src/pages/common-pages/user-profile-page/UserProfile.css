@@ -1,0 +1,25 @@
+.card {
+    width: 80%;
+    margin: auto;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    gap: 1rem; 
+  }
+  
+  .form-group {
+    flex: 1; 
+    min-width: 150px;
+  }
+  
+
+  @media (max-width: 780px) { 
+    .card {
+        width: 100%;
+        margin: auto;
+    }
+
+  }

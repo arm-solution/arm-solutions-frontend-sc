@@ -77,4 +77,4 @@ const proposalItemSlice = createSlice({
     }
 })
 
-export default proposalItemSlice.reducer;
+export default proposalItemSlice;

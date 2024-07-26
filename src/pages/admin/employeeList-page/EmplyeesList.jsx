@@ -1,58 +1,73 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Employees.css';
-import { useScreenWidth } from '../../../customs/global/forMobile' 
+import { useScreenWidth } from '../../../customs/global/forMobile';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from '../../../store/features/userSlice';
+import { getUser, getUserById } from '../../../store/features/userSlice';
 import EmployeesForm from './../../../components/modals-forms/employees-form/EmployeesForm';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 
-
-
-const EmplyeesList = () => {
-  
+const EmployeesList = () => {
+  const modalRef = useRef(null);
   const isWidth768 = useScreenWidth();
   const dispatch = useDispatch();
-  
-  const users = useSelector((state) => state.users);
+
+  // Separate state for handling selected user detail
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  // userData will be ensured to always be an array
+  const { data: userData = [], loading: userLoading, error: userError } = useSelector(
+    (state) => state.users
+  );
 
   const columns = [
-    {header: 'Fullname', accessor: 'fullname'},
-    {header: 'Emp Id', accessor: 'employee_id'},
-    {header: 'Email', accessor: 'email'},
-    {header: 'Contact No', accessor: 'contact_number'},
-    // {header: 'Department', accessor: 'department'}
-  ]
-  
-  useEffect(() => {
-    dispatch(getUser())
-  }, [dispatch]);
-  
+    { header: 'Fullname', accessor: 'fullname' },
+    { header: 'Emp Id', accessor: 'employee_id' },
+    { header: 'Email', accessor: 'email' },
+    { header: 'Contact No', accessor: 'contact_number' },
+    // { header: 'Department', accessor: 'department' }
+  ];
 
-  const handleView = (id) => {
-    alert(id);
-  }
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  const handleView = (emp) => {
+    const modalElement = modalRef.current;
+    const modal = new Modal(modalElement);
+    setSelectedUser(emp);
+
+    modal.show();
+  };
 
   const handleDelete = (id) => {
-    alert('deleted'+ id);
+    alert('Deleted ' + id);
+  };
+
+  const resetModalFormAdd = () => {
+    const modalElement = modalRef.current;
+    const modal = new Modal(modalElement);
+
+    modal.show();
   }
-  
+
   return (
     <>
       <h1 className='text-center'>EMPLOYEES</h1>
-      <DataTable 
-      data={users.data}
-      columns={columns}
-      actions={{ handleView, handleDelete }}
-      perPage={10}
-      showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
-      tableLabel = 'Employees list'
-      targetForm= '#employeeForm'
-      />
+        <DataTable
+          data={Array.isArray(userData) ? userData : []} // Ensure data is an array
+          columns={columns}
+          actions={{ handleView, handleDelete }}
+          perPage={10}
+          showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
+          tableLabel='Employees list'
+          addData={resetModalFormAdd}
+        />
 
-      <EmployeesForm />
-        
+
+      <EmployeesForm modalRef={modalRef} selectedUser={selectedUser} />
     </>
-  )
-}
+  );
+};
 
-export default EmplyeesList
+export default EmployeesList;

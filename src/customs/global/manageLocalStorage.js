@@ -99,6 +99,22 @@ export const checkAuthAndNavigate = (navigate) => {
       return { path: '', status: false} ;
     }
   };
+
+  export const getToken = () => {
+    try {
+      const tokenString = localStorage.getItem('token');
+      
+      if (!tokenString) {
+          throw new Error('No token found');
+      }
+
+      const token = tokenString.replace(/^"(.*)"$/, '$1');
+
+      return token;
+    } catch (error) {
+      console.log("Error getting the token")
+    }
+  }
   
   
   

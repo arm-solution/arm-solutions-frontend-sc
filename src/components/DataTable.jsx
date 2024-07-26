@@ -47,7 +47,7 @@ const DataTable = (props) => {
 
   return (
     <>
-    <div className="row">
+    <div className="row searc-container">
       <div className="col col-md-6">
       { props.showAddButtonAndSearchInput.searchInput ? (
         
@@ -68,7 +68,7 @@ const DataTable = (props) => {
         {props.showAddButtonAndSearchInput.addButton && ( 
           // <button className="add-employee-btn mb-3">Add Data</button>
 
-          <button type="button" className="add-employee-btn mb-3" data-bs-toggle="modal" data-bs-target={props.targetForm}>
+          <button type="button" className="add-employee-btn mb-3" onClick={props.addData}>
             Add
           </button>
         )}

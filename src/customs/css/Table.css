@@ -13,6 +13,12 @@
     border: 1px solid #fff;
 }
 
+.searc-container {
+    margin: auto;
+    /* border: 2px solid red; */
+    width: 80%;
+}
+
 .table-container {
     border: 2px solid black;
 }
@@ -28,7 +34,8 @@
 
 .card {
     /* Ensure the card does not exceed its parent container */
-    max-width: 100%;
+    margin: auto;
+    max-width: 80%;
     overflow-x: auto; /* Enable horizontal scrolling */
     white-space: nowrap; /* Prevent text wrapping */
 }
@@ -99,5 +106,8 @@
     .search-date {
         width: 20rem;
         margin-top: 3rem;
+    }
+    .card {
+        max-width: 100% !important;
     }
  }
