@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route } from 'react-rout
 import { lazy, Suspense } from 'react';
 import LandingPage from '../pages/landing-page/LandingPage'
 import NotFound from '../pages/notFound-page/NotFound';
-import Loading from '../components/Loading';
+import Loading from '../components/loading-spinner/Loading';
 import ProtectedRoute from './ProtectedRoute';
 import RequireAuth from './RequireAuth';
 
@@ -22,6 +22,7 @@ const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/Marke
 const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet')); 
 const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
 const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'));
+const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
 
 const CommonRoutes = () => (
     <>
@@ -109,6 +110,14 @@ export const router = createBrowserRouter(createRoutesFromElements(
                     </Suspense>
                 } />
 
+                <Route path='message-request' element={
+                    <Suspense fallback={<Loading />}>
+                        <MessageRequest />
+                    </Suspense>
+                } >
+
+                </Route>
+
                 {CommonRoutes()}
 
             </Route>
@@ -156,7 +165,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
         </Route>
 
         {/* pdf viewer */}
-        <Route path='pdf-viewer' element={
+        <Route path='pdf-viewer/:name' element={
             <Suspense fallback={<Loading/> } >
                 <PdfViewPage />
             </Suspense>

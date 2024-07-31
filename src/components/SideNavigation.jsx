@@ -87,6 +87,12 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
+                    <Link to='message-request' className="sidebar-link">
+                        <i class="lni lni-popup"></i>
+                        <span>Employees</span>
+                    </Link>
+                </li>
+                <li className="sidebar-item">
                     <Link to={`common/user-profile/${getLoggedInUser().id}`} className="sidebar-link">
                         <i className="lni lni-cog"></i>
                         <span>Account Setting</span>

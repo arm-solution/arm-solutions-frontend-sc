@@ -85,7 +85,7 @@ const DataTable = (props) => {
 
 
       <table className="table table-striped tbl-sm">
-        <thead className="table-dark">
+        <thead className={props.headerColor ?  props.headerColor : 'table-success'}>
           <tr>
             { props.columns.map((head, index ) => (<th key={index} >{head.header}</th>)) }
             <th>Actions</th>

@@ -57,7 +57,6 @@ const Quotations = () => {
     
   return (
     <>
-    <h1>{ proposalItemData.length ? proposalItemData[0].product_name : 'No data found' }</h1>
         <div className="worko-tabs">
 
         <input

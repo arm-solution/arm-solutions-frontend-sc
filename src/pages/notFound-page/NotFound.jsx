@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import Loading from '../../components/loading-spinner/Loading';
 
 const NotFound = () => {
   return (

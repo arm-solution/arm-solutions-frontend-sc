@@ -1,7 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font } from '@react-pdf/renderer';
-import RobotoBold from './../../assets/fonts/Roboto-Black.ttf'; // Adjust the path if necessary
-import RobotoItalic from './../../assets/fonts/Roboto-Italic.ttf'; // Adjust the path if necessary
+import RobotoBold from './../../assets/fonts/Roboto-Black.ttf'; 
+import RobotoItalic from './../../assets/fonts/Roboto-Italic.ttf'; 
 import Logo from './../../assets/images/logo.png';
 import backgroundImage from './../../assets/images/arm_circle_logo-nbg.png'
 
