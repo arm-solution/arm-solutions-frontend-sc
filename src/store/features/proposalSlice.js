@@ -40,7 +40,7 @@ const proposalSlice = createSlice({
             state.data = [];
             state.isSuccess = false;
             state.loading = true;
-            state.message = 'jjiaj';
+            state.message = '';
         }
     },
     extraReducers(builder) {

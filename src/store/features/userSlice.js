@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getToken } from '../../customs/global/manageLocalStorage';
 import axios from 'axios';
+import { dateFormatted } from '../../customs/global/manageDates';
 
 export const getUser = createAsyncThunk('user/getAllUser', async (_, { rejectWithValue }) => {
     try {        
@@ -10,7 +11,6 @@ export const getUser = createAsyncThunk('user/getAllUser', async (_, { rejectWit
             }
         });
 
-        // console.log(data);
         return data;
         
     } catch (error) {
@@ -22,7 +22,9 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
 
     try {
 
-        const employee = [...employeeData];
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/add-user`, employeeData);
+        
+        return data;
         
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -44,7 +46,23 @@ export const getUserById = createAsyncThunk('user/getUserById', async (id, { rej
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
-}) 
+})
+
+export const updateUser = createAsyncThunk('user/updateUser', async(user, { rejectWithValue }) => {
+    try {
+        if(user.id) {
+            // removing id from user 
+            const { id, employee_id, fullname, created, start_date,  ...rest } = user;
+            const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${user.id}`, {...rest, birthday: dateFormatted(rest.birthday)});
+        
+            return data;
+        } else {
+            return rejectWithValue({ error: "No ID selected"});
+        }
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
 
 
 

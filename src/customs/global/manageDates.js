@@ -23,3 +23,10 @@ export const formatDateReadable = (isoDate) => {
         hour12: true
     });
 }
+
+export const dateFormatted = (isoDate) => {
+    const date = new Date(isoDate);
+    const formattedDate = date.toISOString().split('T')[0];
+
+    return formattedDate
+}

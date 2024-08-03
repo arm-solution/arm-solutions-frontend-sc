@@ -35,7 +35,6 @@ const Quotations = () => {
 
     useEffect(() => {
       dispatch(getAllProposal());
-      // dispatch(resetState());
     }, [dispatch, ]);
     
     useEffect(() => {
@@ -104,7 +103,6 @@ const Quotations = () => {
                 perPage={10}
                 showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
                 tableLabel = 'Proposal Lists'
-                // targetForm= '#employeeForm'
                 />
 
           </div>

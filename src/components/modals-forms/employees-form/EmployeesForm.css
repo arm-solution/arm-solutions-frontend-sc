@@ -9,37 +9,93 @@
     display: flex;
     flex-direction: column;
   }
+  .modal-container {
+    /* Ensure scrollbar styles apply to the container */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
 
-  .modal-container::-webkit-scrollbar {
+.city-mun-container {
+  position: relative;
+}
+
+.city-mun-search {
+  padding-right: 35px;
+}
+
+.city-mun-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.city-mun-suggestions li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.city-mun-suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+.city-mun-select {
+  display: none;
+}
+/* WebKit browsers */
+.modal-container::-webkit-scrollbar {
     width: 12px;
-  }
-  
-  .modal-container::-webkit-scrollbar-track {
+}
+
+.modal-container::-webkit-scrollbar-track {
     background: linear-gradient(180deg, #f1f1f1, #e0e0e0);
     border-radius: 10px;
-  }
-  
-  .modal-container::-webkit-scrollbar-thumb {
+}
+
+.modal-container::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #888, #555);
     border-radius: 10px;
     border: 2px solid #f1f1f1;
-  }
-  
-  .modal-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #555, #333);
-  }
+    transition: background 0.3s ease; /* Smooth transition for hover effect */
+}
 
-  @media screen and (max-width: 768px) { 
+.modal-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #555, #333);
+}
+  @media (width < 922px) { 
 
     .modal-container {
         width: 100%;
         height: 100vh;
-        overflow-x: hidden; 
+        overflow-x: scroll; 
         overflow-y: scroll; 
       }
-
+      
       .modal-container .row {
-        display: flex;
+        display: flex !important;
         flex-direction: column;
       }
+
+      .modal-container .row .form-group {
+        width: 30rem !important;
+        /* display: none; */
+      }
+
+    }
+
+  @media screen and (width > 922px) { 
+
+    .modal-container {
+        width: 100%;
+        height: 100%;
+        overflow-x: scroll; 
+        overflow-y: hidden; 
+      }
+
   }

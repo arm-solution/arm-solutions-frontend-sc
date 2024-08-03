@@ -12,11 +12,11 @@ const PaySlipForm = () => {
             <p>Date: July 24, 2024</p>
             </div>
 
-            <div class="custom-line"></div>
+            <div className="custom-line"></div>
 
             <div className="row">
             
-            <table class="payslip-table">
+            <table className="payslip-table">
             <thead>
                 <tr>
                     <th>Description</th>
@@ -44,7 +44,7 @@ const PaySlipForm = () => {
                     <td>Other Benefits</td>
                     <td>$150.00</td>
                 </tr>
-                <tr class="total-row">
+                <tr className="total-row">
                     <td><strong>Total Earnings</strong></td>
                     <td><strong>$3,500.00</strong></td>
                 </tr>
@@ -64,14 +64,14 @@ const PaySlipForm = () => {
                     <td>Other Deductions</td>
                     <td>$25.00</td>
                 </tr>
-                <tr class="net-salary-row">
+                <tr className="net-salary-row">
                     <td><strong>Net Salary</strong></td>
                     <td><strong>$2,850.00</strong></td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2" class="note">
+                    <td colspan="2" className="note">
                         <strong>Note:</strong> Please contact HR for any discrepancies in your payslip.
                     </td>
                 </tr>

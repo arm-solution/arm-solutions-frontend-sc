@@ -88,7 +88,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                 </li>
                 <li className="sidebar-item">
                     <Link to='message-request' className="sidebar-link">
-                        <i class="lni lni-popup"></i>
+                        <i className="lni lni-popup"></i>
                         <span>Employees</span>
                     </Link>
                 </li>
