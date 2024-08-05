@@ -36,8 +36,7 @@ const MessageRequest = () => {
   return (
     <>
     <div className="table-message">
-        <button onClick={inquireModal}>Test</button>
-
+      
         <DataTable
           data={[]}
           columns={columns}

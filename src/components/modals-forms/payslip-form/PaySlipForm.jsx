@@ -71,7 +71,7 @@ const PaySlipForm = () => {
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="2" className="note">
+                    <td colSpan="2" className="note">
                         <strong>Note:</strong> Please contact HR for any discrepancies in your payslip.
                     </td>
                 </tr>

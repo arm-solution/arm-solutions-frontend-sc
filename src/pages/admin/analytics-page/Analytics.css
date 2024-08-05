@@ -1,17 +1,46 @@
 
-.graph {
-  width: 100vw;
+.card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 2rem;
 }
+
+.card-container .card-dashboard {
+  margin: 0 0 0 15px;
+}
+
+
 .graph-container {
   width: 100%;
   overflow-x: auto; 
   margin-top: 5rem;
 }
 
+.graph {
+  height: 50% !important;
+}
+
 @media (max-width: 768px) { 
   .graph-container {
     overflow-x: scroll; 
     -webkit-overflow-scrolling: touch; 
+  }
+
+  .graph {
+    width: 100vw;
+    height: 50%;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card-container .card-dashboard {
+    width: 100%;
+    margin-bottom: 1rem;
   }
 }
 
