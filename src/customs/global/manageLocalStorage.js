@@ -115,6 +115,26 @@ export const checkAuthAndNavigate = (navigate) => {
       console.log("Error getting the token")
     }
   }
+
+  export const getLoggedInID = () => {
+    const loginUser = localStorage.getItem('authEmployee');
+  
+    if (!loginUser) {
+      return { message: 'No ID found', status: false };
+    }
+  
+    try {
+      const parsedUser = JSON.parse(loginUser);
+  
+      if (parsedUser && parsedUser.data && parsedUser.data.length > 0) {
+        return parsedUser.data[0].id;
+      } else {
+        return { message: 'Invalid data format', status: false };
+      }
+    } catch (error) {
+      return { message: 'Failed to parse data', status: false };
+    }
+  }
   
   
   

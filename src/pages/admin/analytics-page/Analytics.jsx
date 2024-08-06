@@ -8,9 +8,9 @@ const Analytics = () => {
     <>
       <div className="card-container">
         <DashboardCard />
-        <DashboardCard />
-        <DashboardCard />
-        <DashboardCard />
+        <DashboardCard headerColor='#A52A2A' />
+        <DashboardCard headerColor='#FF6347' />
+        <DashboardCard headerColor='#ADD8E6' />
       </div>
       <div className="graph-container">
         <div className="graph">

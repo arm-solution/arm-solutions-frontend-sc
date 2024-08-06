@@ -27,7 +27,7 @@ const MessageRequest = lazy(() => import('./../pages/message-request-page/Messag
 const CommonRoutes = () => (
     <>
     <Route path='common'>
-        <Route path='user-profile/:id' element={
+        <Route path='user-profile' element={
             <Suspense fallback={ <Loading /> }>
                 <UserProfilePage />
             </Suspense>

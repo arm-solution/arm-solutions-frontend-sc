@@ -64,6 +64,22 @@ export const updateUser = createAsyncThunk('user/updateUser', async(user, { reje
     }
 })
 
+export const deleteUser = createAsyncThunk('user/deleteUser', async (id, {rejectWithValue}) => {
+    try {
+
+        if(id) {
+            const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/`)
+
+            return data;
+        } else {
+            return rejectWithValue({ error: 'No id identified' })
+        }
+        
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 
 
 const userSlice = createSlice({

@@ -192,12 +192,12 @@ const EmployeesForm = (props) => {
     e.preventDefault();
 
     if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
-      alert('Please fill in all required fields.');
+      errorDialog('Please fill in all required fields.');
       return;
     }
 
     if(employeeData.user_password !== conPass) {
-      alert("Password not match");
+      errorDialog("Password not match");
       return;
     }
 

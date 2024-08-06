@@ -6,8 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUser, getUserById } from '../../../store/features/userSlice';
 import EmployeesForm from './../../../components/modals-forms/employees-form/EmployeesForm';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
-import axios from 'axios';
-import { errorDialog } from '../../../customs/global/alertDialog';
+
 
 const EmployeesList = () => {
   const modalRef = useRef(null);

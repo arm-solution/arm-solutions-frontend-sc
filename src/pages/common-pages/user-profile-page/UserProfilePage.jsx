@@ -4,11 +4,12 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartment } from '../../../store/features/departmentSlice';
 import { getUserById } from '../../../store/features/userSlice';
+import { getLoggedInID, logout } from '../../../customs/global/manageLocalStorage';
+import { errorDialog } from './../../../customs/global/alertDialog'
 
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
-  const { id } = useParams();
   const dispatch = useDispatch();
 
   const { data: userData, loading: userLoading } = useSelector(state => state.users); 
@@ -16,10 +17,11 @@ const UserProfilePage = () => {
 
 
   useEffect(() => {
-   dispatch(getUserById(id));
+   dispatch(getUserById(getLoggedInID()));
    dispatch(getDepartment());
   }, [dispatch])
-  
+
+    
   useEffect(() => {
     if(userData[0]) {
       setMyAccountData(userData[0])
