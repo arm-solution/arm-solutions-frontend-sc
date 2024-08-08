@@ -68,9 +68,9 @@ export const deleteUser = createAsyncThunk('user/deleteUser', async (id, {reject
     try {
 
         if(id) {
-            const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/`)
+            const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/employees/delete-user/${id}`);
 
-            return data;
+            return { ...data, empId: id };
         } else {
             return rejectWithValue({ error: 'No id identified' })
         }
@@ -119,6 +119,22 @@ const userSlice = createSlice({
 
         })
         .addCase(getUserById.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload
+        })
+
+        .addCase(deleteUser.pending, (state, action) =>{
+            state.loading = true;
+        })
+        .addCase(deleteUser.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.data = state.data.filter(user => user.id !== action.payload.empId);
+
+        })
+        .addCase(deleteUser.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload

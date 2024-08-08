@@ -3,10 +3,10 @@ import './Employees.css';
 import { useScreenWidth } from '../../../customs/global/forMobile';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser, getUserById } from '../../../store/features/userSlice';
+import { deleteUser, getUser } from '../../../store/features/userSlice';
 import EmployeesForm from './../../../components/modals-forms/employees-form/EmployeesForm';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
-
+import { deleteConfirmation } from '../../../customs/global/alertDialog';
 
 const EmployeesList = () => {
   const modalRef = useRef(null);
@@ -15,15 +15,7 @@ const EmployeesList = () => {
 
   // Separate state for handling selected user detail
   const [selectedUser, setSelectedUser] = useState(null);
-
-  // For province municipality and barangay selected 
-  const [province, setProvince] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [city, setCity] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("")
-  const [barangay, setBarangay] = useState([]);
-  const [selectedBarangay, setSelectedBarangay] = useState("")
-  
+  const [employees, setEmployees] = useState([])
 
   // userData will be ensured to always be an array
   const { data: userData = [], loading: userLoading, error: userError } = useSelector(
@@ -41,22 +33,39 @@ const EmployeesList = () => {
   useEffect(() => {
     dispatch(getUser());
   }, [dispatch]);
+   
 
   // HANDLE FOR OPEN MODAL
   const handleView = async (emp) => {
-
-    emp.province_code && setSelectedProvince(emp.province_code);
-    emp.city_mun_code && setSelectedCity(emp.city_mun_code);
-    emp.barangay_code && setSelectedBarangay(emp.barangay_code);
-
     const modalElement = modalRef.current;
     const modal = new Modal(modalElement);
     setSelectedUser(emp);
     modal.show();
   };
 
-  const handleDelete = (id) => {
-    alert('Deleted ' + id);
+
+  const handleDelete = async (id) => {
+    deleteConfirmation({
+    title: "",
+    text: "",
+    icon: "",
+    confirmButtonText: "",
+    cancelButtonText: "",
+    deleteTitle: "",
+    deleteText: "",
+    successTitle: "", 
+    successText: ""
+    }, async () => {
+      await dispatch(deleteUser(id)).then(u => {
+        const { payload } = u;
+
+        const result = payload.affectedRows > 0 ? true : false
+        return result
+      }) 
+    })
+
+    // dispatch(deleteUser(id))
+
   };
 
   const resetModalFormAdd = () => {
@@ -83,12 +92,6 @@ const EmployeesList = () => {
         <EmployeesForm 
         modalRef={modalRef}
         selectedUser={selectedUser} 
-        province = {{ province, setProvince}}
-        city =  {{ city, setCity }}
-        barangay = {{ barangay, setBarangay}}
-        selectedProvince = {{ selectedProvince, setSelectedProvince }}
-        selectedCity = {{ selectedCity, setSelectedCity }}
-        selectedBarangay = {{ selectedBarangay, setSelectedBarangay }}
         />
     </>
   );

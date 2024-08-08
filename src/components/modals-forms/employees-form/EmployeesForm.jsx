@@ -5,8 +5,8 @@ import { addUser, updateUser } from '../../../store/features/userSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
-import axios from 'axios';
 import { dateFormatted } from '../../../customs/global/manageDates';
+import { fetchAllBarangays, fetchAllCities, fetchAllProvince } from '../../../store/features/getProvince';
 
 const EmployeesForm = (props) => {
   const dispatch = useDispatch();
@@ -14,6 +14,9 @@ const EmployeesForm = (props) => {
   const { data: deptData } = useSelector((state) => state.departments);
 
 
+  const { provinces, cities, barangays,
+    isSuccess: provincesStatus,
+    loading: loadingProvinces } = useSelector(state => state.provinces);
 
   // Utility function to format today's date
   const formattedDateNow = new Date().toISOString().split('T')[0];
@@ -52,68 +55,31 @@ const EmployeesForm = (props) => {
 
   const [employeeData, setEmployeeData] = useState(getInitialEmployeeData());
 
-    // GET ALL PROVINCE FIRST LOAD
-    const fetchProvince = async () => {
-      try {
-        const { data } = await axios.get('https://psgc.cloud/api/provinces');
-        props.province.setProvince(data.sort((a, b) => a.name.localeCompare(b.name)));
-      } catch (error) {
-        console.log('error fetching provinces', error);
-      }
-    };
 
-    useEffect(() => {
-      fetchProvince();
-    }, []);
+  // Fetch department data when the component mounts
+  useEffect(() => {
+    dispatch(getDepartment());
+    dispatch(fetchAllProvince());
+  }, [dispatch]);
+  
   
     const handleSelectedProvince = async (e) => {
+      e.preventDefault();
       const name = e.target.options[e.target.selectedIndex].text;
       const { value } = e.target;
     
       setEmployeeData({ ...employeeData, province: name, province_code: value });
-      props.selectedProvince.setSelectedProvince(value);
-    
-      try {
-        // Fetch both cities and municipalities in parallel
-        const [cityResponse, municipalityResponse] = await Promise.all([
-          axios.get(`https://psgc.cloud/api/provinces/${value}/cities`),
-          axios.get(`https://psgc.cloud/api/provinces/${value}/municipalities`),
-        ]);
-    
-        // Extract data from responses
-        const cityData = cityResponse.data;
-        const municipalityData = municipalityResponse.data;
-    
-        // Combine the city and municipality data
-        props.city.setCity([...cityData, ...municipalityData]);
-      } catch (error) {
-        console.error("Error loading cities/municipalities:", error);
-    
-        // Optional: Provide user feedback
-        errorDialog("Failed to load cities and municipalities. Please try again.");
-      }
+      dispatch(fetchAllCities(value))
     };
 
 
    const handleSelectedCity = async (e) => {
+      e.preventDefault();
       const name = e.target.options[e.target.selectedIndex].text;
       const { value } = e.target;
 
       setEmployeeData({ ...employeeData, citymun: name, city_mun_code: value });
-    
-      try {
-        
-        const { data } = await axios.get(`https://psgc.cloud/api/cities-municipalities/${value}/barangays`)
-
-        // console.log('barangay ', data);
-        props.barangay.setBarangay(data);
-
-      } catch (error) {
-        console.error("Error loading Barangay:", error);
-    
-        // Optional: Provide user feedback
-        errorDialog("Failed to load Barangay. Please try again.");
-      }
+      dispatch(fetchAllBarangays(value));
 
    }
 
@@ -122,47 +88,20 @@ const EmployeesForm = (props) => {
     const { value } = e.target;
 
     setEmployeeData({ ...employeeData, barangay: name, barangay_code: value})
-    props.selectedBarangay.setSelectedBarangay(value)
    }
 
-  // Fetch department data when the component mounts
-  useEffect(() => {
-    dispatch(getDepartment());
-  }, [dispatch]);
-
-  const getBarangayCitySelected = async () => {
-    try {
-      if(props.selectedCity.selectedCity && props.selectedProvince.selectedProvince) {
-
-        // Fetch both cities and municipalities in parallel
-        const [cityResponse, municipalityResponse, barangayResponse] = await Promise.all([
-          axios.get(`https://psgc.cloud/api/provinces/${props.selectedProvince.selectedProvince}/cities`),
-          axios.get(`https://psgc.cloud/api/provinces/${props.selectedProvince.selectedProvince}/municipalities`),
-          axios.get(`https://psgc.cloud/api/cities-municipalities/${props.selectedCity.selectedCity}/barangays`)
-        ]);
-                  
-        // Extract data from responses
-        const cityData = cityResponse.data;
-        const municipalityData = municipalityResponse.data;
-        const barangayData = barangayResponse.data;
-                  
-        // Combine the city and municipality data
-        props.city.setCity([...cityData, ...municipalityData]);
-        props.barangay.setBarangay(barangayData);
-      } else {
-        props.barangay.setBarangay([]);
-      }
-
-    } catch (error) {
-      console.log('Error while getting data', error);
-    }
-  }
 
   // Update employee data based on the selected user
   useEffect(() => {
     if (props.selectedUser) {
 
-      getBarangayCitySelected();
+      if(props.selectedUser.province_code != null) {
+        dispatch(fetchAllCities(props.selectedUser.province_code))
+        if(props.selectedUser.city_mun_code != null) {
+          dispatch(fetchAllBarangays(props.selectedUser.city_mun_code))
+        }
+      }
+      
 
       setEmployeeData({
         ...props.selectedUser,
@@ -182,6 +121,13 @@ const EmployeesForm = (props) => {
       [name]: value,
     }));
   };
+
+
+  useEffect(() => {
+  
+
+  }, [])
+  
 
   const confirmPassword = (e) => {
     setConPass(e.target.value); 
@@ -203,10 +149,15 @@ const EmployeesForm = (props) => {
 
     try {
       await dispatch(addUser(employeeData)).then(s => {
-        if(s.payload.success) {
-          successDialog('New Employee are added');
+        if(s.payload.message) {
+          errorDialog(s.payload.message);
+          return;
         } else {
-          errorDialog('Failed to add new employee');
+          if(s.payload.success) {
+            successDialog('New Employee are added');
+          } else {
+            errorDialog('Failed to add new employee');
+          }
         }
       }).catch((error) => {
         console.log('Error: ', error);
@@ -371,9 +322,9 @@ const EmployeesForm = (props) => {
                       <label htmlFor="province">Province</label>
                       {/* <input type="text" className="form-control" name="province" value={employeeData.province || ''} onChange={handleEmployeeFormInput}/> */}
 
-                      <select className="form-select" name="province" value={props.selectedProvince.selectedProvince || '' } onChange={handleSelectedProvince} >
+                      <select className="form-select" name="province" value={employeeData.province_code || '' } onChange={handleSelectedProvince} >
                         <option value="" disabled> Select </option>
-                        {props.province.province.map(p => (
+                        {provinces.map(p => (
                           <option key={p.id} value={p.code}> {p.name} </option>
                         ))}
                       </select>
@@ -385,9 +336,9 @@ const EmployeesForm = (props) => {
                  <div className="col col-md-4">
                   <div className="form-group">
                     <label htmlFor="citymun">City/Municipality</label>
-                    <select className="form-select" name="citynum" value={props.selectedCity.selectedCity ? props.selectedCity.selectedCity : employeeData.city_mun_code || '' } onChange={handleSelectedCity} >
+                    <select className="form-select" name="citynum" value={employeeData.city_mun_code || '' } onChange={handleSelectedCity} >
                         <option value="" disabled> Select </option>
-                        {!props.city ? [] : props.city.city.map(p => (
+                        {!cities ? [] : cities.map(p => (
                           <option key={p.id} value={p.code}> {p.name} </option>
                         ))}
                     </select>
@@ -396,12 +347,10 @@ const EmployeesForm = (props) => {
 
                   <div className="col col-md-4">
                     <div className="form-group">
-                      <label htmlFor="barangay">Barangay</label>
-                      {/* <input type="text" className="form-control" name="barangay" value={employeeData.barangay || ''} onChange={handleEmployeeFormInput} /> */}
-                    
-                      <select className="form-select" name="barangay" value={props.selectedBarangay.selectedBarangay ? props.selectedBarangay.selectedBarangay : employeeData.barangay_code || ''  } onChange={handleSelectedBarangay} >
+                      <label htmlFor="barangay">Barangay</label>  
+                      <select className="form-select" name="barangay" value={ employeeData.barangay_code || ''  } onChange={handleSelectedBarangay} >
                         <option value="" disabled> Select </option>
-                        {!props.barangay ? [] : props.barangay.barangay.map(p => (
+                        {!barangays ? [] : barangays.map(p => (
                           <option key={p.id} value={p.code}> {p.name} </option>
                         ))}
                      </select>

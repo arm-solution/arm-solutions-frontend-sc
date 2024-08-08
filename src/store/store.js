@@ -6,6 +6,7 @@ import proposalSlice from "./features/proposalSlice";
 import clientSlice from './features/clientsSlice';
 import proposalItemSlice from "./features/proposalItemSlice";
 import departmentSlice from "./features/departmentSlice";
+import provinceSlice from "./features/getProvince";
 
 export const store = configureStore({
     reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
         proposals: proposalSlice.reducer,
         clients: clientSlice.reducer,
         proposalItems: proposalItemSlice.reducer,
-        departments: departmentSlice.reducer
+        departments: departmentSlice.reducer,
+        provinces: provinceSlice.reducer
     }
 })

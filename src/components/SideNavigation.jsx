@@ -34,13 +34,13 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     <li className="sidebar-item">
                         <Link to='' className="sidebar-link">
                             {/* <i className="lni lni-bar-chart"></i> */}
-                            <i class="lni lni-stats-up"></i>
+                            <i className="lni lni-stats-up"></i>
                             <span>Analytics</span>
                         </Link>
                     </li>
                     <li className="sidebar-item">
                         <Link to='common/qoutations' className="sidebar-link">
-                            <i class="lni lni-handshake"></i>
+                            <i className="lni lni-handshake"></i>
                             <span>Proposal</span>
                         </Link>
                     </li>
@@ -98,12 +98,12 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             aria-expanded={expandedDropdown === 'products'}
                             onClick={() => toggleDropdown('products')}
                         >
-                            <i class="lni lni-package"></i>
+                            <i className="lni lni-package"></i>
                             <span>Products</span>
                         </a>
                         <ul id="products" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'products' ? 'show' : ''}`}>
                             <li className="sidebar-item">
-                                <Link to='' className="sidebar-link">Installment</Link>
+                                <Link to='' className="sidebar-link">Fire Extinguisher</Link>
                             </li>
                             <li className="sidebar-item">
                                 <Link to='' className="sidebar-link">Maintenance</Link>
@@ -114,14 +114,14 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     {/* Employees */}
                     <li className="sidebar-item">
                         <Link to='employees' className="sidebar-link">
-                             <i class="lni lni-network"></i>
+                             <i className="lni lni-network"></i>
                             <span>Clients</span>
                         </Link>
                     </li>
 
                     <li className="sidebar-item">
                         <Link to='employees' className="sidebar-link">
-                            <i class="lni lni-list"></i>
+                            <i className="lni lni-list"></i>
                             <span>Employees</span>
                         </Link>
                     </li>
@@ -129,6 +129,12 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         <Link to='message-request' className="sidebar-link">
                             <i className="lni lni-popup"></i>
                             <span>Inquiries</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-item">
+                        <Link to='/under-maintenace' className="sidebar-link">
+                            <i className="lni lni-bullhorn"></i>
+                            <span>Announcement</span>
                         </Link>
                     </li>
                     <li className="sidebar-item">

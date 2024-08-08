@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './UserProfile.css';
-import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartment } from '../../../store/features/departmentSlice';
 import { getUserById } from '../../../store/features/userSlice';
-import { getLoggedInID, logout } from '../../../customs/global/manageLocalStorage';
-import { errorDialog } from './../../../customs/global/alertDialog'
+import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
+import { fetchAllProvince, fetchAllCities, fetchAllBarangays } from '../../../store/features/getProvince'; 
 
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
   const dispatch = useDispatch();
+
+  const { provinces, cities, barangays,
+     isSuccess: provincesStatus,
+     loading: loadingProvinces } = useSelector(state => state.provinces);
 
   const { data: userData, loading: userLoading } = useSelector(state => state.users); 
   const { data: deptData } = useSelector(state => state.departments);
@@ -19,22 +22,64 @@ const UserProfilePage = () => {
   useEffect(() => {
    dispatch(getUserById(getLoggedInID()));
    dispatch(getDepartment());
+   dispatch(fetchAllProvince());
   }, [dispatch])
 
     
   useEffect(() => {
     if(userData[0]) {
-      setMyAccountData(userData[0])
+      setMyAccountData(userData[0]);
+
     } else {
       setMyAccountData([]);
     }
   }, [userData]);
 
+  
+  useEffect(() => {
+    if(userData[0]) {
+  
+      if(userData[0].province !== null && userData[0].province_code !==  null) {
+        dispatch(fetchAllCities(userData[0].province_code));
+      } 
+  
+      if(userData[0].city_mun_code !== null && userData[0].citymun !==  null) {
+        dispatch(fetchAllBarangays(userData[0].city_mun_code));
+      } 
+
+    }
+  }, [])
+  
+
   const handleAccountFormChange = (e) => {
     e.preventDefault();
 
   }
+  
 
+  const handleSelectedProvince = async(e) => {
+    const name = e.target.options[e.target.selectedIndex].text;
+    const { value } = e.target;
+
+    setMyAccountData({ ...myAccountData, province: name, province_code: value})
+    await dispatch(fetchAllCities(value));
+
+  }
+
+  const handleSelectedCity = async (e) => {
+    const name = e.target.options[e.target.selectedIndex].text;
+    const { value } = e.target;
+
+    setMyAccountData({ ...myAccountData, citymun: name, city_mun_code: value});
+    await dispatch(fetchAllBarangays(value));
+  }
+
+  const handleSelectedBarangay = (e) => {
+    const name = e.target.options[e.target.selectedIndex].text;
+    const { value } = e.target;
+
+    setMyAccountData({ ...myAccountData, barangay: name, barangay_code: value})
+  }
   
   return (
     <>
@@ -129,18 +174,38 @@ const UserProfilePage = () => {
         <div className="row flex-container">
 
           <div className="form-group">
-            <label htmlFor="barangay">Barangay</label>
-            <input type="text" className='form-control' name='barangay' value={myAccountData?.barangay || ''} onChange={handleAccountFormChange}/>
+              <label htmlFor="province">Province</label>
+              {/* <input type="text" className="form-control" name="province" value={employeeData.province || ''} onChange={handleEmployeeFormInput}/> */}
+
+              <select className="form-select" name="province" value={myAccountData?.province_code || '' } onChange={handleSelectedProvince}>
+                <option value="" disabled> Select </option>
+                {provinces.map(p => (
+                  <option key={p.id} value={p.code}> {p.name} </option>
+                ))}
+              </select>
           </div>
 
           <div className="form-group">
             <label htmlFor="citymun">City/Municipality</label>
-            <input type="text" className='form-control' name='citymun' value={myAccountData?.citymun || ''} onChange={handleAccountFormChange}/>
+            <select className="form-select" name="citynum" value={myAccountData?.city_mun_code || '' }  onChange={handleSelectedCity}>
+                <option value="" disabled> Select </option>
+                {!cities ? [] : cities.map(p => (
+                  <option key={p.id} value={p.code}> {p.name} </option>
+                ))}
+            </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="province">Province</label>
-            <input type="text" className='form-control' name='province' value={myAccountData?.province || ''} onChange={handleAccountFormChange}/>
+            <label htmlFor="barangay">Barangay</label>
+            {/* <input type="text" className="form-control" name="barangay" value={employeeData.barangay || ''} onChange={handleEmployeeFormInput} /> */}
+                    
+            <select className="form-select" name="barangay" value={myAccountData?.barangay_code || '' } onChange={handleSelectedBarangay} >
+              <option value="" disabled> Select </option>
+              {!barangays ? [] : barangays.map(p => (
+                <option key={p.id} value={p.code}> {p.name} </option>
+              ))}
+            </select>
+
           </div>
 
         </div>

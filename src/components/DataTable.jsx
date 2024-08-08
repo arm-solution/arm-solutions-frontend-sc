@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { useScreenWidth } from '../customs/global/forMobile';
 import './../customs/css/Table.css';
 
 const DataTable = (props) => {
-    // for mobile condition
-    const isWidth768 = useScreenWidth();
  
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -93,7 +90,6 @@ const DataTable = (props) => {
         </thead>
         <tbody>
 
-            {/* { props.renderTableRows(filteredData, getIndex().start, getIndex().end) } */}
             { filteredData.slice(getIndex().start, getIndex().end).map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {props.columns.map((column, colIndex) => (
