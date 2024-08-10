@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-export const saveProposalItems = createAsyncThunk('proposals/addProposalItems', async (proposalItems, { rejectWithValue }) => {
+export const saveProposalItems = createAsyncThunk('proposalItems/addProposalItems', async (proposalItems, { rejectWithValue }) => {
     try {
         const result = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/add-proposal-items`, proposalItems);
         return result.data;
@@ -10,7 +10,7 @@ export const saveProposalItems = createAsyncThunk('proposals/addProposalItems', 
     }
 });
 
-export const getProposalItemsByProposalId = createAsyncThunk('proposal/getitembyproposalid', async (proposal_id, { rejectWithValue }) => {
+export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/getitembyproposalid', async (proposal_id, { rejectWithValue }) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/get-item/${proposal_id}`);
         // console.log('result data ',result.data)
@@ -31,6 +31,28 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposal/getitemby
 
         return newSet
 
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+})
+
+
+export const updateProposalItems = createAsyncThunk('proposalItems/updateProposalItems', async(items, {rejectWithValue}) =>{
+    try {
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/update-multiple-proposal-item`, items);
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+});
+
+
+export const deleteProposalItem = createAsyncThunk('proposalItems/deleteProposalItem', async(id, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-item/${id}`);
+
+        return data;
     } catch (error) {
         return rejectWithValue(error.response.data);
     }
@@ -70,6 +92,32 @@ const proposalItemSlice = createSlice({
                 state.data = action.payload;
             })
             .addCase(getProposalItemsByProposalId.rejected, (state, action) => {
+                state.loading = false;
+                state.isSuccess = false;
+                state.message = "rejected";
+            })
+            .addCase(updateProposalItems.pending, (state) => {
+                state.loading = true;
+                state.isSuccess = false;
+            })
+            .addCase(updateProposalItems.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isSuccess = true;
+            })
+            .addCase(updateProposalItems.rejected, (state, action) => {
+                state.loading = false;
+                state.isSuccess = false;
+                state.message = "rejected";
+            })
+            .addCase(deleteProposalItem.pending, (state) => {
+                state.loading = true;
+                state.isSuccess = false;
+            })
+            .addCase(deleteProposalItem.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isSuccess = true;
+            })
+            .addCase(deleteProposalItem.rejected, (state, action) => {
                 state.loading = false;
                 state.isSuccess = false;
                 state.message = "rejected";

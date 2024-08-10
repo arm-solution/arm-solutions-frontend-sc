@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 
@@ -17,6 +17,17 @@ export const createProposal = createAsyncThunk('proposals/createProposal', async
 
     try {
       const result =  await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal/add-proposal`, proposalData);
+        // return getState().proposals;
+        return result.data 
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+})
+
+export const updateProposal = createAsyncThunk('proposals/updateProposal', async({proposalFinal, id}, {rejectWithValue}) => {
+
+    try {
+        const result =  await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal/edit-proposal/${id}`, proposalFinal);
         // return getState().proposals;
         return result.data 
     } catch (error) {
@@ -69,6 +80,19 @@ const proposalSlice = createSlice({
             state.isSuccess = false;
         })
         .addCase(createProposal.rejected, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
+            state.message = "rejected"
+        })
+        .addCase(updateProposal.pending, (state, action) => {
+            state.loading = true;
+            state.isSuccess = false
+        })
+        .addCase(updateProposal.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
+        })
+        .addCase(updateProposal.rejected, (state, action) => {
             state.loading = false;
             state.isSuccess = false;
             state.message = "rejected"

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
+import { useDispatch } from 'react-redux';
+import { deleteProposalItem } from '../../store/features/proposalItemSlice';
+import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 
 
 const QoutationTableEditable = (props) => {
     const [products, setProducts] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
+
+    const dispatch = useDispatch();
 
     // calling product api for select options
     useEffect(() => {
@@ -44,8 +49,26 @@ const QoutationTableEditable = (props) => {
     };
 
     // delete row in the table 
-    const deleteRow = (id) => {
-        setProductDetails(productDetails.filter(row => row.id !== id));
+    const deleteRow = (id, item_id) => {
+        deleteConfirmation({
+            title: "",
+            text: "",
+            icon: "",
+            confirmButtonText: "",
+            cancelButtonText: "",
+            deleteTitle: "",
+            deleteText: "",
+            successTitle: "", 
+            successText: ""
+        }, async () => {
+              await dispatch(deleteProposalItem(item_id)).then(u => {
+                const { payload } = u;
+        
+                const result = payload.affectedRows > 0 ? true : false
+                setProductDetails(productDetails.filter(row => row.id !== id));
+                return result
+              }) 
+            })
     };
 
     // save and edit row
@@ -172,7 +195,7 @@ const QoutationTableEditable = (props) => {
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}
-                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id)}>Delete</button>
+                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id)}>Delete</button>
                             </td>
                         </tr>
 

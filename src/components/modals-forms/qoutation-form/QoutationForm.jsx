@@ -5,11 +5,12 @@ import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate, formatDateReadable } from '../../../customs/global/manageDates';
+import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
-import { createProposal } from '../../../store/features/proposalSlice';
+import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
-import { saveProposalItems } from '../../../store/features/proposalItemSlice';
+import { saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
+import { deepEqual } from './../../../customs/global/manageObjects';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
@@ -110,19 +111,38 @@ const QoutationForm = (props) => {
             }
     };
 
-    const handleUpdateQoutation =  () => {
-        
-        console.log('baseItem proposalItem from redux ', props.proposalItemData);
-        console.log('new sets of items ', qoutationItem)
+    const handleUpdateQoutation = () => {
 
+        let status = false 
+        
         const addEditItem = qoutationItem.filter(item2 =>
             !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
         );
+     
+        const {firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
+        const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
+        // console.log('final data to update ', addEditItem);
 
-        console.log('final data to update ', addEditItem);
+        if(!deepEqual(props.proposalEdit, qoutation)) {
+            dispatch(updateProposal({proposalFinal, id: qoutation.id}));
+            status = true;
+        } 
 
+        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
+
+        if(addEditItem.length > 0) {
+            dispatch(updateProposalItems(itemsWithProId));
+            status = true;
+        }
+
+        if(status) {
+            successDialog("Updated Successfully");
+        } else {
+            errorDialog("No changes detected!");
+        }
+
+        
     }
-
 
 
     return (

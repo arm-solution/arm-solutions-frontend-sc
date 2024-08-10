@@ -5,10 +5,13 @@ import { getDepartment } from '../../../store/features/departmentSlice';
 import { getUserById } from '../../../store/features/userSlice';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { fetchAllProvince, fetchAllCities, fetchAllBarangays } from '../../../store/features/getProvince'; 
+import { errorDialog } from './../../../customs/global/alertDialog';
+import { dateFormatted } from '../../../customs/global/manageDates';
 
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
+  const [conPass, setConPass] = useState("")
   const dispatch = useDispatch();
 
   const { provinces, cities, barangays,
@@ -53,7 +56,11 @@ const UserProfilePage = () => {
 
   const handleAccountFormChange = (e) => {
     e.preventDefault();
-
+    const { name, value } = e.target;
+    setMyAccountData({
+      ...myAccountData,
+      [name]: value
+    })
   }
   
 
@@ -79,6 +86,18 @@ const UserProfilePage = () => {
     const { value } = e.target;
 
     setMyAccountData({ ...myAccountData, barangay: name, barangay_code: value})
+  }
+
+
+  const saveChanges = (e) => {
+    e.preventDefault();
+
+    // if(myAccountData.user_password !== conPass) {
+    //   errorDialog("Password not match!");
+    // }
+
+    console.log(myAccountData)
+  
   }
   
   return (
@@ -124,7 +143,7 @@ const UserProfilePage = () => {
 
           <div className="form-group">
             <label htmlFor="birthday">Birthday</label>
-            <input type="date" className='form-control' name='birthday' value={myAccountData?.birthday || ''} onChange={handleAccountFormChange} />
+            <input type="date" className='form-control' name='birthday' value={myAccountData?.birthday ? dateFormatted(myAccountData?.birthday) : ''} onChange={handleAccountFormChange} />
           </div>
 
         </div>
@@ -234,6 +253,21 @@ const UserProfilePage = () => {
 
         </div>
 
+        <div className="row flex-container">
+
+          <div className="form-group">
+            <label htmlFor="user_password">Password</label>
+            <input type="password" className='form-control' name='user_password' value={myAccountData?.user_password || ''} onChange={handleAccountFormChange}/>
+          </div>
+
+
+          <div className="form-group">
+            <label htmlFor="con-pass">Confirm-Password</label>
+            <input type="password" className='form-control' name='con-pass' value={conPass} onChange={(e) => setConPass(e.target.value)}/>
+          </div>
+
+        </div>
+
         <hr />
 
         <div className="row flex-container" style={{ backgroundColor: '#D5DBDB', borderRadius: '10px', paddingTop: '10px'}}>
@@ -245,13 +279,13 @@ const UserProfilePage = () => {
 
           <div className="form-group">
             <label htmlFor="start_date">Date started</label>
-            <p className='text-center'><b>July 1, 2024</b></p>
+            <p className='text-center'><b></b></p>
           </div>
 
 
           <div className="form-group">
             <label htmlFor="salary_grade">Salary</label>
-            <p className='text-center'><b>₱450</b></p>
+            <p className='text-center'><b>₱{myAccountData?.salary_grade ? myAccountData.salary_grade : '---'}</b></p>
           </div>
 
 
@@ -268,6 +302,9 @@ const UserProfilePage = () => {
 
         </div>
 
+        <div className="row save-changes-btn-con">
+          <button className="btn btn-secondary save-changes-btn" onClick={(e) => saveChanges(e) }>Save Changes</button>
+        </div>
 
       </div>
     </div>
