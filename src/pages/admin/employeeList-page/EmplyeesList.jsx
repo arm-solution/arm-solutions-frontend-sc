@@ -56,12 +56,10 @@ const EmployeesList = () => {
     successTitle: "", 
     successText: ""
     }, async () => {
-      await dispatch(deleteUser(id)).then(u => {
-        const { payload } = u;
+     const { payload } =  await dispatch(deleteUser(id)) 
+     const result = payload.affectedRows > 0 ? true : false;
 
-        const result = payload.affectedRows > 0 ? true : false
-        return result
-      }) 
+     return result;
     })
 
     // dispatch(deleteUser(id))

@@ -13,18 +13,14 @@ const Quotations = () => {
     const dispatch = useDispatch();
     
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
-    const { data: proposalItemData, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
+    const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
 
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
-    // proposal items getting by id
-    const [proposalItemEdit, setProposalItemEdit] = useState(proposalItemData);
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
     };
-
-
 
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
@@ -35,11 +31,7 @@ const Quotations = () => {
 
     useEffect(() => {
       dispatch(getAllProposal());
-    }, [dispatch, ]);
-    
-    useEffect(() => {
-      setProposalItemEdit(proposalItemData)
-    }, [proposalItemData])
+    }, [dispatch]);
     
 
     // handle view details and edit
@@ -87,9 +79,10 @@ const Quotations = () => {
                 <QoutationForm 
                 proposalStatus={proposalStatus}
                 loadingProposal={loadingProposal}
-                proposalItemEdit={proposalItemEdit}
                 proposalEdit={proposalEdit}
                 proposalItemData={proposalItemData}
+                proposalItemLoading={proposalItemLoading}
+                proposalItemSuccess={proposalItemSuccess}
                 /> 
 
           </div>

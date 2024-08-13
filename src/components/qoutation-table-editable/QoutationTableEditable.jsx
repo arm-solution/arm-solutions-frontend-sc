@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
-import { deleteProposalItem } from '../../store/features/proposalItemSlice';
+import { deleteProposalItem, deleteProposalItems } from '../../store/features/proposalItemSlice';
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 
@@ -10,6 +10,8 @@ import './QoutationTableEditable.css';
 const QoutationTableEditable = (props) => {
     const [products, setProducts] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [selectedRow, setSelectedRow] = useState([])
 
     const dispatch = useDispatch();
 
@@ -43,13 +45,14 @@ const QoutationTableEditable = (props) => {
     };
 
 
-    // adding row in the table
+    // adding row template in the table
     const addRow = () => {
         setProductDetails([...productDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
     const deleteRow = (id, item_id) => {
+
         deleteConfirmation({
             title: "",
             text: "",
@@ -61,14 +64,19 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-              await dispatch(deleteProposalItem(item_id)).then(u => {
-                const { payload } = u;
-        
-                const result = payload.affectedRows > 0 ? true : false
+
+            // checking if id from the database is exist
+            if(item_id) {
+                const { payload } = await dispatch(deleteProposalItem(item_id))
+                const result = payload.affectedRows > 0 ? true : false;
                 setProductDetails(productDetails.filter(row => row.id !== id));
-                return result
-              }) 
-            })
+                
+                return result; 
+            } else {
+                setProductDetails(productDetails.filter(row => row.id !== id));
+                return true;
+            }
+        })
     };
 
     // save and edit row
@@ -78,7 +86,6 @@ const QoutationTableEditable = (props) => {
 
        if(checkProduct) {
         errorDialog("All Fields Are Required")
-
         return;
        }
 
@@ -92,12 +99,15 @@ const QoutationTableEditable = (props) => {
         sku: data.sku
       }));
 
-    
+    // this is the state  that going to save to database 
+    // on QoutationForm jsx
      props.setQoutationItem(updatedQoutationItems);
-
+        
+    // saving another row on the table
         setProductDetails(prevDetails => prevDetails.map(row =>
             row.id === id ? { ...row, isEditing: !row.isEditing } : row
         ));
+
     };
 
     // handle product onchange select dropdown
@@ -131,6 +141,48 @@ const QoutationTableEditable = (props) => {
             return false
         }
     }
+    
+    const handleCheckbox = (rowId, item_id, e) => {
+
+        if(e.target.checked) {
+            if(rowId > 0) {
+                setSelectedRow(pre => [...pre, rowId]);
+            }
+            if(item_id) {
+                setSelectedIds(pre => [...pre, item_id])
+            }
+        } else {
+            setSelectedIds(prev => prev.filter(itemId => itemId !== item_id));
+            setSelectedRow(prev => prev.filter(rowID => rowID !== rowId));
+        }
+    }
+
+    const deleteCheckedItems = () => {
+
+        deleteConfirmation({
+            title: "",
+            text: "",
+            icon: "",
+            confirmButtonText: "",
+            cancelButtonText: "",
+            deleteTitle: "",
+            deleteText: "",
+            successTitle: "", 
+            successText: ""
+        }, async () => {
+            const response = await dispatch(deleteProposalItems(selectedIds))
+            
+            if(response.payload.success) {
+                setProductDetails(productDetails.filter(row => !selectedRow.includes(row.id)));
+                return true;
+            } else {
+                return false;
+            }
+           
+        })
+
+    }
+
 
     return (
         <div className="table-editable-container">
@@ -139,7 +191,7 @@ const QoutationTableEditable = (props) => {
             <table className="table table-bordered">
                 <thead>
                     <tr>
-                    { !screenMobile() && <th>Item#</th> }
+                        <th>Item#</th>
                         <th>Product</th>
                         <th>Category</th>
                         <th>Qty</th>
@@ -153,7 +205,11 @@ const QoutationTableEditable = (props) => {
                     {productDetails.map((row, index) => (
                         <tr key={index}>
                             
-                            { !screenMobile() && <td>{index + 1}</td>}
+                            <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" onChange={(e) => handleCheckbox(row.id, row.proposal_item_id, e)} style={{ border: '1px solid black'}} />
+         
+                            </td>
                             <td>
                                 {row.isEditing ? (
                                     <select
@@ -195,7 +251,7 @@ const QoutationTableEditable = (props) => {
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}
-                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id)}>Delete</button>
+                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id)} disabled={selectedIds.length}>Delete</button>
                             </td>
                         </tr>
 
@@ -210,6 +266,9 @@ const QoutationTableEditable = (props) => {
             >
                 Add Item
             </button>
+            { selectedIds.length ? (
+                <button className="btn btn-danger m-2" onClick={deleteCheckedItems}>Delete</button>
+            ): ''}
         </div>
         </div>
 

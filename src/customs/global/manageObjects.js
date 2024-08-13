@@ -46,3 +46,11 @@ export function deepEqual(obj1, obj2) {
 
     return true;
 }
+
+export function compareIfExist(array1, array2) {
+    return array2.some(obj2 => 
+      array1.some(obj1 => 
+        obj1.product_id === obj2.product_id
+      )
+    );
+  }

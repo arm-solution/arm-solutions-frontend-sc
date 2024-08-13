@@ -26,6 +26,8 @@
     cursor: not-allowed;
 }
 
+
+
 @media (max-width: 900px) { 
     .table-editable-container {
         width: 80vw;

@@ -25,6 +25,12 @@
     margin: auto;
   }
 
+  .btn-change-password {
+    width: 20%;
+    margin-left: auto;
+    margin-right: 7%;
+  }
+
   @media (max-width: 780px) { 
     .card {
         width: 100%;

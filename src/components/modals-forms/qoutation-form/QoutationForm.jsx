@@ -9,8 +9,8 @@ import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../cust
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
-import { saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { deepEqual } from './../../../customs/global/manageObjects';
+import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
+import { compareIfExist, deepEqual } from './../../../customs/global/manageObjects';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
@@ -21,6 +21,7 @@ const QoutationForm = (props) => {
         message: '',
         type: ''
     });
+
 
     const [qoutation, setQoutation] = useState({
         client_id: 0,
@@ -45,12 +46,9 @@ const QoutationForm = (props) => {
         dispatch(getAllCleints());
     }, [dispatch])
 
-
     useEffect(() => {
         setProposalIsSuccess(props.proposalStatus);
     }, [props.proposalStatus, proposalIsSuccess])
-
-
 
     useEffect(() => {
         if (props.proposalEdit) {
@@ -66,8 +64,7 @@ const QoutationForm = (props) => {
         }));
     };
 
-
-    const handleAddQoutation = async () => {
+    const handleAddNewQoutation = async () => {
 
         if (qoutation.client_id === 0 || qoutation.created_by === 0) {
                 setNotification({
@@ -110,37 +107,40 @@ const QoutationForm = (props) => {
                 errorDialog('Failed To Save The Qoutation');
             }
     };
+    
 
-    const handleUpdateQoutation = () => {
-
+    const handleUpdateQoutation = async () => {
         let status = false 
-        
+
         const addEditItem = qoutationItem.filter(item2 =>
             !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
         );
-     
+         
         const {firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
         const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
-        // console.log('final data to update ', addEditItem);
-
+        
+        // This is for qoutation/proposal form
         if(!deepEqual(props.proposalEdit, qoutation)) {
             dispatch(updateProposal({proposalFinal, id: qoutation.id}));
             status = true;
         } 
-
+        
+        // adding proposal id for every items
         const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
-
+        //  this is for proposalItem editable table update
         if(addEditItem.length > 0) {
-            dispatch(updateProposalItems(itemsWithProId));
-            status = true;
+                // dispatch update the items
+                await dispatch(updateProposalItems(itemsWithProId));
+                //  refreshing the table to get the new ID from the database
+                await dispatch(getProposalItemsByProposalId(qoutation.id));
+                status = true;
         }
-
+        
         if(status) {
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
         }
-
         
     }
 
@@ -196,12 +196,11 @@ const QoutationForm = (props) => {
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
 
-
-
                     <div className="row table-editable">
                         <QoutationTableEditable
                          setQoutationItem={setQoutationItem}
-                         proposalItemEdit={props.proposalItemEdit}
+                         proposalItemEdit={props.proposalItemData}
+                         proposalItemSuccess={props.proposalItemSuccess}
                          setNotification={ setNotification }
                          />
                     </div>
@@ -210,7 +209,7 @@ const QoutationForm = (props) => {
                         {props.proposalEdit ? 
                         <button className='btn-qoutation' onClick={handleUpdateQoutation}>Save</button>
                         :
-                        <button className="btn-qoutation" onClick={handleAddQoutation}>Create Qoutation</button>
+                        <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Qoutation</button>
                         }
                     </div>
                 </div>

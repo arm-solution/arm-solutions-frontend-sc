@@ -58,6 +58,22 @@ export const deleteProposalItem = createAsyncThunk('proposalItems/deleteProposal
     }
 })
 
+export const deleteProposalItems = createAsyncThunk('proposalItems/deleteProposalItems', async (ids, { rejectWithValue }) => {
+   
+      try {
+        const { data } = await axios.delete(
+          `${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, 
+          { data: ids }
+        );
+
+        return data;
+      } catch (error) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+  
+
 const proposalItemSlice = createSlice({
     name: 'proposalItem',
     initialState: {
@@ -77,12 +93,12 @@ const proposalItemSlice = createSlice({
                 state.loading = false;
                 state.isSuccess = true;
             })
-            .addCase(saveProposalItems.rejected, (state, action) => {
+            .addCase(saveProposalItems.rejected, (state, _) => {
                 state.loading = false;
                 state.isSuccess = false;
                 state.message = "rejected";
             })
-            .addCase(getProposalItemsByProposalId.pending, (state) => {
+            .addCase(getProposalItemsByProposalId.pending, (state, _ ) => {
                 state.loading = true;
                 state.isSuccess = false;
             })
@@ -91,7 +107,7 @@ const proposalItemSlice = createSlice({
                 state.isSuccess = true;
                 state.data = action.payload;
             })
-            .addCase(getProposalItemsByProposalId.rejected, (state, action) => {
+            .addCase(getProposalItemsByProposalId.rejected, (state, _) => {
                 state.loading = false;
                 state.isSuccess = false;
                 state.message = "rejected";
@@ -103,25 +119,39 @@ const proposalItemSlice = createSlice({
             .addCase(updateProposalItems.fulfilled, (state, action) => {
                 state.loading = false;
                 state.isSuccess = true;
+
             })
-            .addCase(updateProposalItems.rejected, (state, action) => {
+            .addCase(updateProposalItems.rejected, (state, _) => {
                 state.loading = false;
                 state.isSuccess = false;
                 state.message = "rejected";
             })
-            .addCase(deleteProposalItem.pending, (state) => {
+            .addCase(deleteProposalItem.pending, (state, _) => {
                 state.loading = true;
                 state.isSuccess = false;
             })
-            .addCase(deleteProposalItem.fulfilled, (state, action) => {
+            .addCase(deleteProposalItem.fulfilled, (state, _) => {
                 state.loading = false;
                 state.isSuccess = true;
             })
-            .addCase(deleteProposalItem.rejected, (state, action) => {
+            .addCase(deleteProposalItem.rejected, (state, _) => {
                 state.loading = false;
                 state.isSuccess = false;
                 state.message = "rejected";
-            });
+            })
+            // .addCase(deleteProposalItems.pending, (state) => {
+            //     state.loading = true;
+            //     state.isSuccess = false;
+            // })
+            // .addCase(deleteProposalItems.fulfilled, (state, _) => {
+            //     state.loading = false;
+            //     state.isSuccess = true;
+            // })
+            // .addCase(deleteProposalItems.rejected, (state, _) => {
+            //     state.loading = false;
+            //     state.isSuccess = false;
+            //     state.message = "rejected";
+            // });
     }
 })
 

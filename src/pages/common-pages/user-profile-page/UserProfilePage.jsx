@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './UserProfile.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartment } from '../../../store/features/departmentSlice';
@@ -7,12 +7,16 @@ import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { fetchAllProvince, fetchAllCities, fetchAllBarangays } from '../../../store/features/getProvince'; 
 import { errorDialog } from './../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import ChangePassword from '../../../components/modals-forms/change-password-modal/ChangePassword';
 
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
   const [conPass, setConPass] = useState("")
   const dispatch = useDispatch();
+
+  const modalRef = useRef(null);
 
   const { provinces, cities, barangays,
      isSuccess: provincesStatus,
@@ -62,6 +66,15 @@ const UserProfilePage = () => {
       [name]: value
     })
   }
+
+  const passwordModal = (e, message) => {
+    e.preventDefault();
+
+    const modalElement = modalRef.current;
+    const modal = new Modal(modalElement);
+
+    modal.show();
+}
   
 
   const handleSelectedProvince = async(e) => {
@@ -253,20 +266,12 @@ const UserProfilePage = () => {
 
         </div>
 
-        <div className="row flex-container">
-
-          <div className="form-group">
-            <label htmlFor="user_password">Password</label>
-            <input type="password" className='form-control' name='user_password' value={myAccountData?.user_password || ''} onChange={handleAccountFormChange}/>
-          </div>
-
-
-          <div className="form-group">
-            <label htmlFor="con-pass">Confirm-Password</label>
-            <input type="password" className='form-control' name='con-pass' value={conPass} onChange={(e) => setConPass(e.target.value)}/>
-          </div>
-
+        <div className="row">
+          <button className="btn btn-outline-danger btn-change-password" onClick={passwordModal}>Change my password</button>
         </div>
+
+
+        <ChangePassword modalRef={modalRef} />
 
         <hr />
 
