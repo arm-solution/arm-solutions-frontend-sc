@@ -15,7 +15,6 @@ const EmployeesList = () => {
 
   // Separate state for handling selected user detail
   const [selectedUser, setSelectedUser] = useState(null);
-  const [employees, setEmployees] = useState([])
 
   // userData will be ensured to always be an array
   const { data: userData = [], loading: userLoading, error: userError } = useSelector(
@@ -45,6 +44,7 @@ const EmployeesList = () => {
 
 
   const handleDelete = async (id) => {
+
     deleteConfirmation({
     title: "",
     text: "",

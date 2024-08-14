@@ -53,7 +53,7 @@ export const updateUser = createAsyncThunk('user/updateUser', async(user, { reje
         if(user.id) {
             // removing id from user 
             const { id, employee_id, fullname, created, start_date,  ...rest } = user;
-            const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${user.id}`, {...rest, birthday: dateFormatted(rest.birthday)});
+            const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${id}`, {...rest, birthday: dateFormatted(rest.birthday)});
         
             return data;
         } else {
@@ -79,8 +79,6 @@ export const deleteUser = createAsyncThunk('user/deleteUser', async (id, {reject
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 })
-
-
 
 const userSlice = createSlice({
     name: 'users',
@@ -131,6 +129,7 @@ const userSlice = createSlice({
             state.loading = false;
             state.isSuccess = true;
 
+            // this is for removing in the table instantly
             state.data = state.data.filter(user => user.id !== action.payload.empId);
 
         })

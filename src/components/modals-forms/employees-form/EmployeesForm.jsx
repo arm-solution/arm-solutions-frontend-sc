@@ -137,13 +137,8 @@ const EmployeesForm = (props) => {
   const saveNewEmployee = async (e) => {
     e.preventDefault();
 
-    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
+    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
       errorDialog('Please fill in all required fields.');
-      return;
-    }
-
-    if(employeeData.user_password !== conPass) {
-      errorDialog("Password not match");
       return;
     }
 
@@ -173,6 +168,7 @@ const EmployeesForm = (props) => {
   const saveEditedEmployee = async(e) => {
     e.preventDefault();
 
+    const oldEmailRef = props.selectedUser ? props.selectedUser.email : '';
 
     if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
       alert('Please fill in all required fields.');
@@ -180,25 +176,31 @@ const EmployeesForm = (props) => {
     }
 
     if(employeeData.user_password !== conPass) {
-      alert("Password not match");
+      errorDialog('Password not match');
       return;
     }
 
+    // remove unecessary property that backend not allowing
+    let { fullname, created, start_date, email, ...modifyEmployeeData } = employeeData;
+
+    // adding email property if the email input is modified or change
+    if (email !== oldEmailRef) {
+      modifyEmployeeData.email = email;
+    }
+
+
     try {
-      await dispatch(updateUser(employeeData)).then(s => {
-        if(s.payload.success) {
-          successDialog('Updated Success');
-        } else {
-          errorDialog('Failed to update the employee');
-        }
-      }).catch(error => {
-        errorDialog('Failed to update employee ', error)
-      })
+     const  { payload } = await dispatch(updateUser({...modifyEmployeeData, birthday: modifyEmployeeData.birthday ? dateFormatted(modifyEmployeeData.birthday) : ''}))
       
+      if(payload.success) {
+        successDialog('Updated Success');
+      } else {
+        errorDialog('Failed to update the employee');
+      }
+
     } catch (error) {
       errorDialog('Failed to update employee')
     }
-
 
   }
 

@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import './UserProfile.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getDepartment } from '../../../store/features/departmentSlice';
-import { getUserById } from '../../../store/features/userSlice';
+import { getUserById, updateUser } from '../../../store/features/userSlice';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { fetchAllProvince, fetchAllCities, fetchAllBarangays } from '../../../store/features/getProvince'; 
-import { errorDialog } from './../../../customs/global/alertDialog';
+import { errorDialog, successDialog } from './../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import ChangePassword from '../../../components/modals-forms/change-password-modal/ChangePassword';
@@ -13,7 +13,11 @@ import ChangePassword from '../../../components/modals-forms/change-password-mod
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
-  const [conPass, setConPass] = useState("")
+  const [newPassword, setNewPassword] = useState({
+    user_password: '',
+    new_password: '',
+    confirm_password: ''
+  })
   const dispatch = useDispatch();
 
   const modalRef = useRef(null);
@@ -102,14 +106,23 @@ const UserProfilePage = () => {
   }
 
 
-  const saveChanges = (e) => {
+  const saveChanges = async(e) => {
     e.preventDefault();
 
-    // if(myAccountData.user_password !== conPass) {
-    //   errorDialog("Password not match!");
-    // }
+    // remove unecessary propertis
+    const { user_password, email, ...modifiedData} = myAccountData;
 
-    console.log(myAccountData)
+    if(modifiedData.email === userData[0].email) {
+      modifiedData.email = email;
+    }
+
+    const { payload } = await dispatch(updateUser({...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''}))
+
+    if(payload.success) {
+      successDialog('Updated Success');
+    } else {
+      errorDialog('Failed to update the employee');
+    }
   
   }
   
@@ -271,7 +284,7 @@ const UserProfilePage = () => {
         </div>
 
 
-        <ChangePassword modalRef={modalRef} />
+        <ChangePassword modalRef={modalRef} newPassword={newPassword} setNewPassword={setNewPassword}/>
 
         <hr />
 
