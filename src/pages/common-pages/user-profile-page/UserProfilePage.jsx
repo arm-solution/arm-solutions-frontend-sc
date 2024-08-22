@@ -13,11 +13,6 @@ import ChangePassword from '../../../components/modals-forms/change-password-mod
 const UserProfilePage = () => {
  
   const [myAccountData, setMyAccountData] = useState();
-  const [newPassword, setNewPassword] = useState({
-    user_password: '',
-    new_password: '',
-    confirm_password: ''
-  })
   const dispatch = useDispatch();
 
   const modalRef = useRef(null);
@@ -26,7 +21,7 @@ const UserProfilePage = () => {
      isSuccess: provincesStatus,
      loading: loadingProvinces } = useSelector(state => state.provinces);
 
-  const { data: userData, loading: userLoading } = useSelector(state => state.users); 
+  const { data: userData, loading: userLoading, message: userMessage, isSuccess: userStatus } = useSelector(state => state.users); 
   const { data: deptData } = useSelector(state => state.departments);
 
 
@@ -283,8 +278,9 @@ const UserProfilePage = () => {
           <button className="btn btn-outline-danger btn-change-password" onClick={passwordModal}>Change my password</button>
         </div>
 
-
-        <ChangePassword modalRef={modalRef} newPassword={newPassword} setNewPassword={setNewPassword}/>
+        <ChangePassword modalRef={modalRef} 
+        currentPassword={myAccountData?.user_password } 
+        />
 
         <hr />
 
@@ -328,7 +324,7 @@ const UserProfilePage = () => {
     </div>
     
     </>
-  )
+  ) 
 }
 
 export default UserProfilePage

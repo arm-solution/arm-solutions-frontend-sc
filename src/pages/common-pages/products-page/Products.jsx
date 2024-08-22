@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Products.css';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductsForm from '../../../components/modals-forms/products-form/ProductsForm';
-import CardProduct from '../../../components/card-product/CardProduct';
 import { getAllProducts } from '../../../store/features/productSlice';
 import EditProduct from '../../../components/modals-forms/edit-product-modal/EditProduct';
+import Card from '../../../components/card-product-v1/CardProduct';
 
 const Products = () => {
   const [selectedTab, setSelectedTab] = useState('tab-one');
@@ -62,7 +62,7 @@ const Products = () => {
           </div>
 
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
-            <CardProduct
+            <Card
               products={products.data}
               columns={columns}
               perPage={5}

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-export const getAllCleints = createAsyncThunk('getAllCleints', async (clients, {rejectWithValue}) => {
+export const getAllCleints = createAsyncThunk('getAllCleints', async (_, {rejectWithValue}) => {
 
     try {
         const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients`);

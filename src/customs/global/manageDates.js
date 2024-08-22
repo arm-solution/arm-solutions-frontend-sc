@@ -30,3 +30,20 @@ export const dateFormatted = (isoDate) => {
 
     return formattedDate
 }
+
+export const formatDateTime = (dateTimeStr) => {
+    // Remove 'T' and 'Z'
+    let formattedStr = dateTimeStr.replace('T', ' ').replace('Z', '');
+
+    // Optional: If you want to further format the date and time
+    let date = new Date(formattedStr);
+    let day = String(date.getDate()).padStart(2, '0');
+    let month = String(date.getMonth() + 1).padStart(2, '0'); // January is 0
+    let year = date.getFullYear();
+    let hours = String(date.getHours()).padStart(2, '0');
+    let minutes = String(date.getMinutes()).padStart(2, '0');
+    let seconds = String(date.getSeconds()).padStart(2, '0');
+
+    // Format as 'YYYY-MM-DD HH:MM:SS'
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}

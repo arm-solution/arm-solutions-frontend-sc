@@ -5,7 +5,7 @@ import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
+import { getCurrentDate, formatDateReadable, dateFormatted, formatDateTime } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
@@ -26,12 +26,12 @@ const QoutationForm = (props) => {
     const [qoutation, setQoutation] = useState({
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
-        proposal_date: getCurrentDate().id,
-        status: 'pending',
+        proposal_date: dateFormatted(getCurrentDate()),
+        status: 'jared',
         description: '',
         total_estimate: 0,
         proposal_document: '',
-        date_created: getCurrentDate(),
+        date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
     });
 
@@ -40,7 +40,6 @@ const QoutationForm = (props) => {
     const dispatch = useDispatch();
 
     const { loading: clientLoading, data: clientData } = useSelector(state => state.clients);
-
     
     useLayoutEffect(() => {
         dispatch(getAllCleints());
@@ -80,13 +79,15 @@ const QoutationForm = (props) => {
                 // payload from the api/backend
                 const { lastid } = d.payload;
 
-                    if(lastid > 0) {
+                    if(lastid > 0 && qoutationItem.length > 0) {
                         const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
                         setQoutationItem(updatedQoutationItems);
 
+                        // console.log({proposal_item_id, ...rest})
                         // removing proposal_item_id in create qoutation because is not required on backend
                         dispatch(saveProposalItems(updatedQoutationItems.map(({proposal_item_id, ...rest}) => rest)))
                         .then((s) => {
+
                             if(s.payload.success) {
                                 successDialog('Qoutation is now available')
                             } else {
@@ -98,7 +99,11 @@ const QoutationForm = (props) => {
                         });
                             
                     } else {
-                        errorDialog('Failed to create a Qoutation');
+                        if(d.payload.success) {
+                            successDialog('Qoutation is now available')
+                        } else {
+                            errorDialog('Failed to create a Qoutation ');
+                        }
                     }
                 }) 
 
@@ -112,7 +117,7 @@ const QoutationForm = (props) => {
     const handleUpdateQoutation = async () => {
         let status = false 
 
-        const addEditItem = qoutationItem.filter(item2 =>
+        let addEditItem = qoutationItem.filter(item2 =>
             !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
         );
          
@@ -129,10 +134,11 @@ const QoutationForm = (props) => {
         const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
         //  this is for proposalItem editable table update
         if(addEditItem.length > 0) {
-                // dispatch update the items
+                // dispatch update the items 
                 await dispatch(updateProposalItems(itemsWithProId));
                 //  refreshing the table to get the new ID from the database
                 await dispatch(getProposalItemsByProposalId(qoutation.id));
+                setQoutationItem([]);
                 status = true;
         }
         

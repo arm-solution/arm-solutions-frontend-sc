@@ -80,6 +80,19 @@ export const deleteUser = createAsyncThunk('user/deleteUser', async (id, {reject
     }
 })
 
+
+export const changePassword = createAsyncThunk('update/userPassword', async ( userInformation, {rejectWithValue}) => {
+    try {
+        if(userInformation) {
+            const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-password`, userInformation);
+
+            return data; 
+        }
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message); 
+    }
+})
+
 const userSlice = createSlice({
     name: 'users',
     initialState: {
@@ -137,6 +150,17 @@ const userSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload
+        })
+        .addCase(changePassword.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(changePassword.fulfilled, (state, action) => {
+            state.isSuccess = true;
+            state.message = action.payload.message;
+        })
+        .addCase(changePassword.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.message = action.payload.message
         })
 
     }

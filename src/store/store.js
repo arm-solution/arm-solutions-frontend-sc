@@ -7,6 +7,7 @@ import clientSlice from './features/clientsSlice';
 import proposalItemSlice from "./features/proposalItemSlice";
 import departmentSlice from "./features/departmentSlice";
 import provinceSlice from "./features/getProvince";
+import dtrSlice from "./features/dtrSlice";
 
 export const store = configureStore({
     reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
         clients: clientSlice.reducer,
         proposalItems: proposalItemSlice.reducer,
         departments: departmentSlice.reducer,
-        provinces: provinceSlice.reducer
+        provinces: provinceSlice.reducer,
+        dtr: dtrSlice.reducer
     }
 })

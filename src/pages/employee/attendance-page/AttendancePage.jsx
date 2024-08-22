@@ -4,6 +4,7 @@ import './Attendance.css';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUser } from '../../../store/features/userSlice';
+import AttendanceTable from '../../../components/attendance-table/AttendanceTable';
 
 const AttendancePage = () => {
 
@@ -38,14 +39,17 @@ const AttendancePage = () => {
 
     <h1 className='text-center'>My Attendance</h1>
 
-    <DataTable 
+    {/* <DataTable 
     data={users.data}
     columns={columns}
     actions={{ handleViewEmployee, handleDeleteEmployee }}
     perPage={10}
     showAddButtonAndSearchInput={ false }
     tableLabel = 'Records'
-    />
+    /> */}
+
+
+    <AttendanceTable />
 
 
     </>

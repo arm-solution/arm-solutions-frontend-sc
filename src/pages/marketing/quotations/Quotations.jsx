@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../components/DataTable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
+import { formatDateTime } from '../../../customs/global/manageDates';
 
 const Quotations = () => {
 
@@ -21,6 +22,15 @@ const Quotations = () => {
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
     };
+
+    const clientDataWithFormattedDate = proposalData.map(d => ({
+      ...d,
+      date_created: formatDateTime(d.date_created)
+    }))
+
+
+
+
 
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
@@ -90,7 +100,7 @@ const Quotations = () => {
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
 
                 <DataTable 
-                data={proposalData}
+                data={clientDataWithFormattedDate}
                 columns={columns}
                 actions={{ handleView, handleDelete }}
                 perPage={10}

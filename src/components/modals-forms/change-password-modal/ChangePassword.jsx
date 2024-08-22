@@ -1,24 +1,65 @@
 import React, { useState } from 'react'
+import { getLoggedInID } from '../../../customs/global/manageLocalStorage'
+import { changePassword } from '../../../store/features/userSlice'
+import { useDispatch } from 'react-redux'
+import { successDialog } from '../../../customs/global/alertDialog'
 
 
 
 const ChangePassword = (props) => {
 
+ const dispatch = useDispatch();
+
  const [updatePassword, setUpdatePassword] = useState({
-    old_password: "",
-    new_password: "",
+    userId: getLoggedInID(),
+    currentPassword: "",
+    newPassword: "",
     confirm_password: "",
  })
 
+ const [error, seterror] = useState({
+    status: false,
+    message: ''
+ });
+
  const handlePasswordChange = (e) => {
     e.preventDefault();
-
     setUpdatePassword({
         ...updatePassword,
         [e.target.name]: e.target.value
     })
  }
+ 
 
+ const saveNewPassword = async () => {
+   const {confirm_password, ...newPass} = updatePassword;
+
+   if(updatePassword.newPassword === '') {
+    seterror({
+        status: true,
+        message: "All fields are required"
+    });
+
+    return;
+   }
+   await dispatch(changePassword(newPass)).then(d => {
+      if(d.payload.success) {
+        successDialog('Password Change Successfully');
+        setUpdatePassword({
+            userId: getLoggedInID(),
+            currentPassword: "",
+            newPassword: "",
+            confirm_password: "",
+        })
+      } else {
+        seterror({
+            status: true,
+            message: d.payload.message
+        })
+      }
+   })
+ }
+ 
 
   return (
     <>
@@ -30,17 +71,27 @@ const ChangePassword = (props) => {
             </div>
             <div className="modal-body">
 
+            <div className="row m-2">
+            { error.status &&   (
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                <p className='text-center'>{ error.message }</p>
+                <button type="button btn-sm" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            )}
+
+            </div>
+
             <div className="row" style={{ display: 'flex', flexDirection: 'column'}}>
 
             <div className="form-group">
-            <label htmlFor="old_pasword">Password</label>
-            <input type="password" className='form-control' name='old_pasword' value={updatePassword.old_password} onChange={handlePasswordChange}/>
+            <label htmlFor="currentPassword">Password</label>
+            <input type="password" className='form-control' name='currentPassword' value={updatePassword.currentPassword} onChange={handlePasswordChange}/>
             </div>
 
 
             <div className="form-group">
-            <label htmlFor="new_password">New-Password</label>
-            <input type="password" className='form-control' name='new_password' value={updatePassword.new_password} onChange={handlePasswordChange}/>
+            <label htmlFor="newPassword">New-Password</label>
+            <input type="password" className='form-control' name='newPassword' value={updatePassword.newPassword} onChange={handlePasswordChange}/>
             </div>
 
             <div className="form-group">
@@ -49,12 +100,10 @@ const ChangePassword = (props) => {
             </div>
 
             <div className="form-group" style={{ display: 'flex', justifyContent: 'end' }}>
-                <button className='btn btn-primary'>Save</button>
+                <button className='btn btn-primary' onClick={saveNewPassword}>Save</button>
             </div>
 
             </div>
-
-
 
             </div>
             <div className="modal-footer">
