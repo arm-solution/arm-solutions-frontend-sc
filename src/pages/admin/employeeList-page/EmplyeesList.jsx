@@ -10,7 +10,7 @@ import { deleteConfirmation } from '../../../customs/global/alertDialog';
 
 const EmployeesList = () => {
   const modalRef = useRef(null);
-  // const isWidth768 = useScreenWidth();
+
   const dispatch = useDispatch();
 
   // Separate state for handling selected user detail
@@ -35,7 +35,7 @@ const EmployeesList = () => {
    
 
   // HANDLE FOR OPEN MODAL
-  const handleView = async (emp) => {
+  const handleView = (emp) => {
     const modalElement = modalRef.current;
     const modal = new Modal(modalElement);
     setSelectedUser(emp);

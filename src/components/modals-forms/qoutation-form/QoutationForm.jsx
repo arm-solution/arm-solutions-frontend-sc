@@ -11,6 +11,7 @@ import { createProposal, updateProposal } from '../../../store/features/proposal
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
 import { compareIfExist, deepEqual } from './../../../customs/global/manageObjects';
+import TaxTable from '../../tax-table/TaxTable';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
@@ -22,6 +23,11 @@ const QoutationForm = (props) => {
         type: ''
     });
 
+    const columns = [
+        { header: 'Name', accessor: 'name'},
+        { header: 'Age', accessor: 'age'}
+    ]
+
 
     const [qoutation, setQoutation] = useState({
         client_id: 0,
@@ -29,7 +35,7 @@ const QoutationForm = (props) => {
         proposal_date: dateFormatted(getCurrentDate()),
         status: 'jared',
         description: '',
-        total_estimate: 0,
+        sub_total: 0,
         proposal_document: '',
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
@@ -210,6 +216,12 @@ const QoutationForm = (props) => {
                          setNotification={ setNotification }
                          />
                     </div>
+
+                    <TaxTable
+                    columns={columns}
+                    />
+
+
                     <div className="row row-btn-qout mt-3 mr-auto">
 
                         {props.proposalEdit ? 

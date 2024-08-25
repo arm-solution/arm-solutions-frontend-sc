@@ -24,6 +24,7 @@ const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations
 const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'));
 const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
 const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
+const CompanyClient = lazy(() => import('../pages/client-page/Client'));
 
 const CommonRoutes = () => (
     <>
@@ -72,6 +73,12 @@ const CommonRoutes = () => (
             </Suspense>
         }/>
 
+        <Route path='clients' element={ 
+            <Suspense fallback={ <Loading /> }>
+                 <CompanyClient /> 
+            </Suspense>
+        }/>
+
     </Route>
     </>
 )
@@ -80,6 +87,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
     <Route>
         <Route path='/' element={ <LandingPage /> } />
 
+        {/* this is checking not to access the login if you are already login */}
         <Route element={<ProtectedRoute />}>
             <Route path='/login' element={ 
                 <Suspense fallback={ <Loading />}>
@@ -178,6 +186,12 @@ export const router = createBrowserRouter(createRoutesFromElements(
                 <UnderMaintenace />
             </Suspense>
         } />
+
+        {/* <Route path='company-profile' element={
+            <Suspense fallback={<Loading/> } >
+                <Profile />
+            </Suspense>
+        } /> */}
 
 
 

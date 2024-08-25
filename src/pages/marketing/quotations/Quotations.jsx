@@ -28,13 +28,9 @@ const Quotations = () => {
       date_created: formatDateTime(d.date_created)
     }))
 
-
-
-
-
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
-      {header: 'Estemate', accessor: 'total_estemate'},
+      {header: 'Estemate', accessor: 'sub_total'},
       {header: 'Date', accessor: 'date_created'},
       {header: 'Status', accessor: 'status'},
     ]

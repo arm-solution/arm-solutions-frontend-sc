@@ -113,7 +113,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
 
                     {/* Employees */}
                     <li className="sidebar-item">
-                        <Link to='employees' className="sidebar-link">
+                        <Link to='common/clients' className="sidebar-link">
                              <i className="lni lni-network"></i>
                             <span>Clients</span>
                         </Link>

@@ -4,18 +4,25 @@ import { useNavigate } from 'react-router-dom';
 import { loginEmployee } from '../../store/features/authEmployee';
 import './LoginPage.css'
 import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
+import { unwrapResult } from '@reduxjs/toolkit';
+
 
 
 const Login = () => {
 
-  const [errmessage, setErrMessage] = useState('')
+  const employeeAuth = useSelector((state) => state.auth)
+  const { isSuccess, message } = employeeAuth;
+
+
+  const [errmessage, setErrMessage] = useState({
+    status: false,
+    message: message
+  })
   const [loginData, setLoginData] = useState({
       employee_id: '',
       user_password: ''
   })
 
-  const employeeAuth = useSelector((state) => state.auth)
-  const { isSuccess } = employeeAuth; 
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -38,9 +45,37 @@ const Login = () => {
 
   }
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(loginEmployee(loginData));
+    if(loginData.employee_id === '' || loginData.user_password === '') {
+      setErrMessage({
+        status: true,
+        message: "All fields are required!"
+      })
+      return;
+    }
+    try {
+      let logresult;
+      logresult = await dispatch(loginEmployee(loginData));
+
+      // this is from payload
+      const res = unwrapResult(logresult);
+
+      if(res.message) {
+        setErrMessage({
+          status: true,
+          message: res.message
+        })
+
+        return;
+      }
+      
+    } catch (error) {
+      setErrMessage({
+        status: false,
+        message: 'An unexpected error occurred'
+      })
+    }
   }
 
   return (
@@ -120,6 +155,14 @@ const Login = () => {
                       <div className="d-grid">
                         <button className="btn btn-danger btn-lg" onClick={handleLogin}>Log in now</button>
                       </div>
+                    </div>
+                    <div className="col-12">
+                      {errmessage.status && (
+                        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                          <strong>{ errmessage.message }</strong>
+                          <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setErrMessage(e => e.status = false)}></button>
+                        </div>
+                      )}
                     </div>
                   </div>
     

@@ -23,22 +23,25 @@ const employeeAuthSlice = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder 
-        .addCase(loginEmployee.pending, (state, action) => {
+        .addCase(loginEmployee.pending, (state, _) => {
             state.loading = true;
             state.isSuccess = false;
         })
         .addCase(loginEmployee.fulfilled, (state, action) => {
 
-            const { data, token } = action.payload; 
-            state.loading = false;
-            state.isSuccess = true;
+            const { data, token, success } = action.payload; 
 
-            state.token = token
-            state.data = data
-
-            // Store token and user data in localStorage
-        localStorage.setItem('authEmployee', JSON.stringify({ data: data }));
-        localStorage.setItem('token', JSON.stringify(token));
+            if(success) {
+                state.loading = false;
+                state.isSuccess = true;
+    
+                state.token = token
+                state.data = data
+    
+                // Store token and user data in localStorage
+                localStorage.setItem('authEmployee', JSON.stringify({ data: data }));
+                localStorage.setItem('token', JSON.stringify(token));
+            }
         })
         .addCase(loginEmployee.rejected, (state, action) => {
             const { message } = action.payload; 

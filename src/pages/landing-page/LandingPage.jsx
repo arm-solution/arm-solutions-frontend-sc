@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './LandingPage.css';
 import Carousel from './../../components/carousel-image/Carousel'
 import Clients from '../../components/clients/Clients';
@@ -7,22 +7,41 @@ import LandingNavbar from './../../components/landing-navigation/LandingNavbar';
 import ServiceCardSlides from '../../components/services/ServiceCardSlides';
 import OnTopButton from '../../components/ontop-button/OnTopButton';
 import WhyArms from '../../components/why-arms/WhyArms';
+import Profile from '../company-profile/Profile';
+import CompanyHistory from '../../components/company-history/CompanyHistory';
 // import MessengerChat from '../../components/MessengerChat';
 
 const LandingPage = () => {
-  const handleClick = () => {
-    alert('Floating button clicked!');
-  };
+  const [showAboutUs, setShowAboutUs] = useState(false);
 
-  return (
+  const handleAboutUsPage = () => {
+    setShowAboutUs(true);
+  }
+
+  const handleBackToLandingPage = () => {
+    setShowAboutUs(false);
+  }
+
+ return (
     <>
-      <LandingNavbar />
-      <Carousel />
-      <ServiceCardSlides />
-      <Clients />
-      <WhyArms />
-      {/* <MessengerChat /> */}
-      <OnTopButton  />
+      <LandingNavbar handleAboutUsPage={handleAboutUsPage} handleBackToLandingPage={handleBackToLandingPage}/>
+      {showAboutUs ? (
+        <>        
+        <Profile />
+        <CompanyHistory />
+        </>
+      ) : (
+        <>
+        <Carousel />
+        <ServiceCardSlides />
+        <Clients />
+        <WhyArms />
+        {/* <MessengerChat /> */}
+        <OnTopButton  />
+        </>
+      )}
+
+
       <LandingFooter />
     </>
   )
