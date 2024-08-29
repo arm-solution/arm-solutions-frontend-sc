@@ -5,12 +5,12 @@ import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage'
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate, formatDateReadable, dateFormatted, formatDateTime } from '../../../customs/global/manageDates';
+import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { compareIfExist, deepEqual } from './../../../customs/global/manageObjects';
+import { deepEqual } from './../../../customs/global/manageObjects';
 import TaxTable from '../../tax-table/TaxTable';
 
 const QoutationForm = (props) => {
@@ -191,7 +191,7 @@ const QoutationForm = (props) => {
                         <div className="col col-md-6 ">
                             <div className="form-group justify-content-center">
                                 <label htmlFor="date">Prepared By </label>
-                                <p>{ creator ? creator : getLoggedInFullname()}</p>
+                                <p>{ creator ? creator : getLoggedInFullname() }</p>
                             </div>
                         </div>
                     </div>

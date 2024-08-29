@@ -55,16 +55,12 @@ const Login = () => {
       return;
     }
     try {
-      let logresult;
-      logresult = await dispatch(loginEmployee(loginData));
+      const { payload } = await dispatch(loginEmployee(loginData));
 
-      // this is from payload
-      const res = unwrapResult(logresult);
-
-      if(res.message) {
+      if(payload.message) {
         setErrMessage({
           status: true,
-          message: res.message
+          message: payload.message
         })
 
         return;

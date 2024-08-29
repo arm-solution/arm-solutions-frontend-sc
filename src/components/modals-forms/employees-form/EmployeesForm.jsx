@@ -7,6 +7,7 @@ import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
 import { fetchAllBarangays, fetchAllCities, fetchAllProvince } from '../../../store/features/getProvince';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const EmployeesForm = (props) => {
   const dispatch = useDispatch();
@@ -143,20 +144,19 @@ const EmployeesForm = (props) => {
     }
 
     try {
-      await dispatch(addUser(employeeData)).then(s => {
-        if(s.payload.message) {
-          errorDialog(s.payload.message);
+
+     const { payload } = await dispatch(addUser(employeeData))
+
+     if(payload.message) {
+          errorDialog(payload.message);
           return;
-        } else {
-          if(s.payload.success) {
+     } else {
+          if(payload.success) {
             successDialog('New Employee are added');
           } else {
             errorDialog('Failed to add new employee');
           }
-        }
-      }).catch((error) => {
-        console.log('Error: ', error);
-      })
+     }
       
     } catch (error) {
       errorDialog('Failed to add new employee')

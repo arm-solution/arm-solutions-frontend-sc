@@ -6,6 +6,7 @@ export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async
 
     try {
         const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
+        
         return res.data;
 
     } catch (error) {

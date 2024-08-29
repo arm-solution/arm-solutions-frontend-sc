@@ -8,6 +8,8 @@ import './QoutationTableEditable.css';
 
 
 const QoutationTableEditable = (props) => {
+
+    const [inputAccessNumDays, setInputAccessNumDays] = useState(false);
     const [products, setProducts] = useState([]);
     const [productDetails, setProductDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -47,7 +49,7 @@ const QoutationTableEditable = (props) => {
 
     // adding row template in the table
     const addRow = () => {
-        setProductDetails([...productDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', price: 0, amount: 0, isEditing: true }]);
+        setProductDetails([...productDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
@@ -84,20 +86,26 @@ const QoutationTableEditable = (props) => {
 
        const checkProduct = productDetails.find(p => parseInt(p.qty) === 0 || p.name === '')
 
-       if(checkProduct) {
-        errorDialog("All Fields Are Required")
-        return;
-       }
+       const getProductDetails = productDetails.find(d => d.id === id);
 
-    // reshaping data
-     const updatedQoutationItems = productDetails.map(data => ({
-        proposal_id: 0,
-        product_id: data.id,
-        quantity: parseInt(data.qty),
-        price: parseInt(data.base_price),
-        proposal_item_id: data.proposal_item_id | 0,
-        sku: data.sku
-      }));
+       if(getProductDetails.name !== 'Man Power') {
+        setInputAccessNumDays(true);
+       }
+       
+       if(checkProduct) {
+           errorDialog("All Fields Are Required")
+           return;
+        }
+        
+        // reshaping data
+        const updatedQoutationItems = productDetails.map(data => ({
+            proposal_id: 0,
+            product_id: data.id,
+            quantity: parseInt(data.qty),
+            price: parseInt(data.base_price),
+            proposal_item_id: data.proposal_item_id | 0,
+            sku: data.sku
+        }));
 
     // this is the state  that going to save to database 
     // on QoutationForm jsx
@@ -116,6 +124,12 @@ const QoutationTableEditable = (props) => {
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
         const productExist = productDetails.find(p => p.id === selectedProductId);
+
+        if(selectedProduct.name === 'Man Power') {
+            setInputAccessNumDays(false)
+        } else {
+            setInputAccessNumDays(true)
+        }
 
         if (productExist) {
             props.setNotification({
@@ -195,7 +209,8 @@ const QoutationTableEditable = (props) => {
                         <th>Product</th>
                         <th>Category</th>
                         <th>Qty</th>
-                    { !screenMobile() && <th>Unit</th> }
+                       { !screenMobile() && <th>Unit</th> }
+                        <th>No. Days</th>
                         <th>Price</th>
                         <th>Amount</th>
                         <th></th>
@@ -243,6 +258,23 @@ const QoutationTableEditable = (props) => {
                                 )}
                             </td>
                             { !screenMobile() && <td>{row.unit}</td> }
+
+                                <td>
+                                 {row.isEditing ? (
+                                     <input
+                                         type="number"
+                                         className="form-control"
+                                         value={row.number_of_days}
+                                         name='days'
+                                         onChange={(e) => handleInputChange(e, row.id, 'number_of_days')}
+                                         disabled={inputAccessNumDays}
+                                     />
+                                 ) : (
+                                     row.number_of_days
+                                 )}
+
+                                </td>
+
                             <td>{row.base_price | 0}</td>
                             <td>{row.qty * row.base_price || 0}</td>
                             <td>
