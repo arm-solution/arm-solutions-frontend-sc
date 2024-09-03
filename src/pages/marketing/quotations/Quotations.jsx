@@ -40,7 +40,7 @@ const Quotations = () => {
     }, [dispatch]);
     
 
-    // handle view details and edit
+    // handle view details and edit on table proposal
     const handleView = async(row) => {
       setSelectedTab('tab-one')
       setProposalEdit(row);

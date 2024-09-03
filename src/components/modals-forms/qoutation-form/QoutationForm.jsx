@@ -11,29 +11,26 @@ import { createProposal, updateProposal } from '../../../store/features/proposal
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
 import { deepEqual } from './../../../customs/global/manageObjects';
-import TaxTable from '../../tax-table/TaxTable';
+import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState('');
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [tax, setTax] = useState([])
+    const [discount, setDiscount] = useState([])
     const [notification, setNotification] = useState({
         message: '',
         type: ''
     });
-
-    const columns = [
-        { header: 'Name', accessor: 'name'},
-        { header: 'Age', accessor: 'age'}
-    ]
-
-
+ 
     const [qoutation, setQoutation] = useState({
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
         proposal_date: dateFormatted(getCurrentDate()),
-        status: 'jared',
+        status: 'pending',
         description: '',
         sub_total: 0,
         proposal_document: '',
@@ -42,6 +39,7 @@ const QoutationForm = (props) => {
     });
 
     const [qoutationItem, setQoutationItem] = useState([]);
+    
 
     const dispatch = useDispatch();
 
@@ -156,7 +154,6 @@ const QoutationForm = (props) => {
         
     }
 
-
     return (
         <>
             <div className="qoutation">
@@ -214,13 +211,34 @@ const QoutationForm = (props) => {
                          proposalItemEdit={props.proposalItemData}
                          proposalItemSuccess={props.proposalItemSuccess}
                          setNotification={ setNotification }
+                         totalAmount={{ totalAmount, setTotalAmount }}
                          />
                     </div>
 
-                    <TaxTable
-                    columns={columns}
-                    />
 
+                    {parseInt(totalAmount) > 0 && (
+                        <>
+                        <h2>Additional Items</h2>
+                        <TaxDiscountTable
+                            type="additional"
+                            totalAmount={totalAmount}
+                            taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
+                        />
+
+                        <h2>Discount Items</h2>
+                        <TaxDiscountTable
+                            type="discount"
+                            totalAmount={totalAmount}
+                            taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
+                        />
+                        </>
+                    )}
+
+
+                    <div className="row total-amount mt-3 mr-auto">
+                        <p className='label-text'>Total Amount</p>
+                        <p className="total-amout-text mr-auto">₱ <span>{totalAmount || 0.0}</span></p>
+                    </div>
 
                     <div className="row row-btn-qout mt-3 mr-auto">
 

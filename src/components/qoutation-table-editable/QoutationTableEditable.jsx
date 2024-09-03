@@ -11,9 +11,9 @@ const QoutationTableEditable = (props) => {
 
     const [inputAccessNumDays, setInputAccessNumDays] = useState(false);
     const [products, setProducts] = useState([]);
-    const [productDetails, setProductDetails] = useState([]);
+    const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
-    const [selectedRow, setSelectedRow] = useState([])
+    const [selectedRow, setSelectedRow] = useState([]);
 
     const dispatch = useDispatch();
 
@@ -32,29 +32,53 @@ const QoutationTableEditable = (props) => {
     }, []);
 
 
-    //  useeffect for edit items
+    // useeffect for edit items
     useEffect(() => {
-      setProductDetails(props.proposalItemEdit)
+      setProductItemDetails(props.proposalItemEdit)
     }, [props.proposalItemEdit])
+
+
+    // calculate the total amount
+    const calculateAmount = (row) => {
+        // Convert all relevant fields to numbers
+        const basePrice = parseFloat(row.base_price) || 0;
+        const quantity = parseInt(row.qty, 10) || 0; // Changed to `qty`
+        const numberOfDays = parseInt(row.number_of_days, 10) || 0;
     
-
-    const handleInputChange = (e, id, field) => {
-        const value = e.target.value;
-
-        setProductDetails(prevDetails => prevDetails.map(row =>
-            row.id === id ? { ...row, [field]: value } : row
-        ));
+        return row.name === 'Man Power'
+            ? basePrice * quantity * numberOfDays
+            : basePrice * quantity;
     };
+    
+    const handleInputChange = (e, id) => {
+        const { value, name } = e.target;
+    
+        // Update the field first
+        setProductItemDetails(prevDetails => {
+            const updatedDetails = prevDetails.map(row =>
+                row.id === id
+                    ? {
+                        ...row,
+                        [name]: value, // Update the field first
+                        amount: calculateAmount({ ...row, [name]: value }) // Recalculate amount
+                    }
+                    : row
+            );
+    
+            return updatedDetails;
+        });
+    };
+    
+    
 
 
     // adding row template in the table
     const addRow = () => {
-        setProductDetails([...productDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
+        setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
     const deleteRow = (id, item_id) => {
-
         deleteConfirmation({
             title: "",
             text: "",
@@ -66,29 +90,45 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-
+    
+            let updatedDetails;
+    
             // checking if id from the database is exist
             if(item_id) {
-                const { payload } = await dispatch(deleteProposalItem(item_id))
+                const { payload } = await dispatch(deleteProposalItem(item_id));
                 const result = payload.affectedRows > 0 ? true : false;
-                setProductDetails(productDetails.filter(row => row.id !== id));
-                
-                return result; 
+                if (result) {
+                    updatedDetails = productItemDetails.filter(row => row.id !== id);
+                }
+
             } else {
-                setProductDetails(productDetails.filter(row => row.id !== id));
+                updatedDetails = productItemDetails.filter(row => row.id !== id);
+            }
+    
+            // Updating state and then calculating total amount
+            if (updatedDetails) {
+                setProductItemDetails(updatedDetails);
+                props.totalAmount.setTotalAmount(
+                    updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+                );
+
                 return true;
             }
-        })
+        });
     };
 
     // save and edit row
     const toggleSaveAndEdit = (id) => {
 
-       const checkProduct = productDetails.find(p => parseInt(p.qty) === 0 || p.name === '')
+       const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
 
-       const getProductDetails = productDetails.find(d => d.id === id);
+       props.totalAmount.setTotalAmount(productItemDetails.reduce(
+        (sum, item) => sum + item.amount, 0
+       ))
 
-       if(getProductDetails.name !== 'Man Power') {
+       const getproductItemDetails = productItemDetails.find(d => d.id === id);
+
+       if(getproductItemDetails.name !== 'Man Power') {
         setInputAccessNumDays(true);
        }
        
@@ -98,7 +138,7 @@ const QoutationTableEditable = (props) => {
         }
         
         // reshaping data
-        const updatedQoutationItems = productDetails.map(data => ({
+        const updatedQoutationItems = productItemDetails.map(data => ({
             proposal_id: 0,
             product_id: data.id,
             quantity: parseInt(data.qty),
@@ -112,7 +152,7 @@ const QoutationTableEditable = (props) => {
      props.setQoutationItem(updatedQoutationItems);
         
     // saving another row on the table
-        setProductDetails(prevDetails => prevDetails.map(row =>
+        setProductItemDetails(prevDetails => prevDetails.map(row =>
             row.id === id ? { ...row, isEditing: !row.isEditing } : row
         ));
 
@@ -123,7 +163,7 @@ const QoutationTableEditable = (props) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
-        const productExist = productDetails.find(p => p.id === selectedProductId);
+        const productExist = productItemDetails.find(p => p.id === selectedProductId);
 
         if(selectedProduct.name === 'Man Power') {
             setInputAccessNumDays(false)
@@ -139,14 +179,14 @@ const QoutationTableEditable = (props) => {
             return;
         }
 
-        setProductDetails(prevDetails => prevDetails.map(row => 
+        setProductItemDetails(prevDetails => prevDetails.map(row => 
             row.id === rowId ? { ...row, ...selectedProduct, isEditing: true } : row
         
         ));
 
     };
 
-    const anyRowEditing = productDetails.some(row => row.isEditing);
+    const anyRowEditing = productItemDetails.some(row => row.isEditing);
 
     const screenMobile = () => {
         if(window.innerWidth < 900){
@@ -187,7 +227,7 @@ const QoutationTableEditable = (props) => {
             const response = await dispatch(deleteProposalItems(selectedIds))
             
             if(response.payload.success) {
-                setProductDetails(productDetails.filter(row => !selectedRow.includes(row.id)));
+                setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
                 return false;
@@ -217,7 +257,7 @@ const QoutationTableEditable = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {productDetails.map((row, index) => (
+                    {productItemDetails.map((row, index) => (
                         <tr key={index}>
                             
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -251,7 +291,7 @@ const QoutationTableEditable = (props) => {
                                         className="form-control"
                                         value={row.qty}
                                         name='qty'
-                                        onChange={(e) => handleInputChange(e, row.id, 'qty')}
+                                        onChange={(e) => handleInputChange(e, row.id)}
                                     />
                                 ) : (
                                     row.qty
@@ -265,8 +305,8 @@ const QoutationTableEditable = (props) => {
                                          type="number"
                                          className="form-control"
                                          value={row.number_of_days}
-                                         name='days'
-                                         onChange={(e) => handleInputChange(e, row.id, 'number_of_days')}
+                                         name='number_of_days'
+                                         onChange={(e) => handleInputChange(e, row.id)}
                                          disabled={inputAccessNumDays}
                                      />
                                  ) : (
@@ -276,7 +316,7 @@ const QoutationTableEditable = (props) => {
                                 </td>
 
                             <td>{row.base_price | 0}</td>
-                            <td>{row.qty * row.base_price || 0}</td>
+                            <td>{row.amount | 0}</td>
                             <td>
                                 {row.isEditing ? (
                                     <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Save</button>

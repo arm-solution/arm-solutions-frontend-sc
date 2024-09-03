@@ -46,6 +46,22 @@ label {
 }
 
 
+.total-amout-text {
+    text-align: end;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.label-text {
+    text-align: end;
+    font-size: large;
+    font-weight: bold;
+}
+
+.total-amout-text span {
+    color: rgb(233, 26, 26);
+}
+
 @media (max-width: 900px) {
 
     .qoutation .container{
