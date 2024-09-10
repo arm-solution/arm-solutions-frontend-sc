@@ -312,7 +312,15 @@ const QoutationTableEditable = (props) => {
 
                                 </td>
 
-                            <td>{row.base_price | 0}</td>
+                            {/* <td>{row.base_price | 0}</td> */}
+                            <td>
+                                <input type="text"
+                                value={ row.base_price | 0 }
+                                name='base_price' 
+                                onChange={(e) => handleInputChange(e, row.id)}
+                                className="form-control" 
+                                />
+                            </td>
                             <td>{row.amount | 0}</td>
                             <td>
                                 {row.isEditing ? (
