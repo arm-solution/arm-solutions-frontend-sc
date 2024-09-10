@@ -19,6 +19,7 @@ const QoutationForm = (props) => {
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState('');
     const [totalAmount, setTotalAmount] = useState(0)
+    const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
     const [notification, setNotification] = useState({
@@ -52,6 +53,14 @@ const QoutationForm = (props) => {
     useEffect(() => {
         setProposalIsSuccess(props.proposalStatus);
     }, [props.proposalStatus, proposalIsSuccess])
+
+    useEffect(() => {
+        if(totalAmount <= 0) {
+            setTax([]);
+            setDiscount([]);
+        }
+    }, [totalAmount])
+    
 
     useEffect(() => {
         if (props.proposalEdit) {
@@ -212,24 +221,29 @@ const QoutationForm = (props) => {
                          proposalItemSuccess={props.proposalItemSuccess}
                          setNotification={ setNotification }
                          totalAmount={{ totalAmount, setTotalAmount }}
+                         setTotalAmountref={setTotalAmountref}
                          />
                     </div>
 
 
                     {parseInt(totalAmount) > 0 && (
                         <>
-                        <h2>Additional Items</h2>
                         <TaxDiscountTable
                             type="additional"
                             totalAmount={totalAmount}
+                            setTotalAmount={setTotalAmount}
                             taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
+                            totalAmountref={totalAmountref}
+                            mergeDiscountTax={[...tax, ...discount]}
                         />
 
-                        <h2>Discount Items</h2>
                         <TaxDiscountTable
                             type="discount"
                             totalAmount={totalAmount}
+                            setTotalAmount={setTotalAmount}
                             taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
+                            totalAmountref={totalAmountref}
+                            mergeDiscountTax={[...tax, ...discount]}
                         />
                         </>
                     )}

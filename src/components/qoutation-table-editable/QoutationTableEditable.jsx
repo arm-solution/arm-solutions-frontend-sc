@@ -108,10 +108,9 @@ const QoutationTableEditable = (props) => {
             // Updating state and then calculating total amount
             if (updatedDetails) {
                 setProductItemDetails(updatedDetails);
-                props.totalAmount.setTotalAmount(
-                    updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                );
-
+                const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+                props.totalAmount.setTotalAmount(totalItemAmount);
+                props.setTotalAmountref(totalItemAmount)
                 return true;
             }
         });
@@ -121,11 +120,9 @@ const QoutationTableEditable = (props) => {
     const toggleSaveAndEdit = (id) => {
 
        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-
-       props.totalAmount.setTotalAmount(productItemDetails.reduce(
-        (sum, item) => sum + item.amount, 0
-       ))
-
+       const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
+       props.totalAmount.setTotalAmount(totalItemAmount)
+       props.setTotalAmountref(totalItemAmount)
        const getproductItemDetails = productItemDetails.find(d => d.id === id);
 
        if(getproductItemDetails.name !== 'Man Power') {
