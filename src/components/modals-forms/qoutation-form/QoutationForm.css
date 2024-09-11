@@ -48,14 +48,11 @@ label {
 
 .total-amout-text {
     text-align: end;
-    font-size: x-large;
     font-weight: bold;
 }
 
 .label-text {
     text-align: end;
-    font-size: large;
-    font-weight: bold;
 }
 
 .total-amout-text span {
