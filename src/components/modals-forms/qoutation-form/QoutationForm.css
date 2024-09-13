@@ -46,18 +46,6 @@ label {
 }
 
 
-.total-amout-text {
-    text-align: end;
-    font-weight: bold;
-}
-
-.label-text {
-    text-align: end;
-}
-
-.total-amout-text span {
-    color: rgb(233, 26, 26);
-}
 
 @media (max-width: 900px) {
 
