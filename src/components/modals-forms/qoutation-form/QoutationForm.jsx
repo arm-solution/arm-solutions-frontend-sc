@@ -23,6 +23,7 @@ const QoutationForm = (props) => {
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
+    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ additional: 0, discount: 0 })
     const [notification, setNotification] = useState({
         message: '',
         type: ''
@@ -141,6 +142,17 @@ const QoutationForm = (props) => {
         
         }
       }, [totalAmountref])
+
+      useEffect(() => {
+        if(totalAmountref > 0) {
+            const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+            const totalTaxDiscount = getTotalTax(updatedRows);
+  
+            setTaxDiscountTotal(totalTaxDiscount);
+          }
+  
+      }, [tax, discount])
+      
       
 
     const handleAddNewQoutation = async () => {
@@ -320,6 +332,7 @@ const QoutationForm = (props) => {
                     <TotalAmount 
                         totalAmountref={totalAmountref}
                         totalAmount={totalAmount}
+                        taxDiscountTotal={taxDiscountTotal}
                     />
 
                     <div className="row row-btn-qout mt-3 mr-auto">
