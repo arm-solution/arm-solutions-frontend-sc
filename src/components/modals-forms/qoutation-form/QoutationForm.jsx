@@ -122,10 +122,11 @@ const QoutationForm = (props) => {
         if(totalAmountref > 0) {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
+          
           setTotalAmount(parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
         }
-        // for reference you can add calculateAllTaxDiscount to dependency array for realtime calculation
-      }, [totalAmountref]);
+
+      }, [calculateAllTaxDiscount, totalAmountref]);
 
       useEffect(() => {
         if(totalAmountref > 0) {
