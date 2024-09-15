@@ -57,9 +57,8 @@ const QoutationForm = (props) => {
     }, [props.proposalStatus, proposalIsSuccess])
 
     useEffect(() => {
-        if(totalAmount <= 0) {
-            setTax([]);
-            setDiscount([]);
+        if(totalAmount < 0) {
+            errorDialog("The Grand Total must be not negative!");
         }
     }, [totalAmount])
     
@@ -156,7 +155,7 @@ const QoutationForm = (props) => {
       
 
     const handleAddNewQoutation = async () => {
-
+       
         if (qoutation.client_id === 0 || qoutation.created_by === 0) {
                 setNotification({
                     message: 'All Fields Are Required',
@@ -164,6 +163,16 @@ const QoutationForm = (props) => {
                 });
             return;
         }
+
+        const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
+
+        if(checkEditing) {
+            setNotification({
+                message: 'Need to save some changes',
+                type: 'error'
+            });
+            return;
+        } 
        
         try {
             await dispatch(createProposal(qoutation)).then( (d) => {
