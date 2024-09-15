@@ -35,6 +35,7 @@ const QoutationTableEditable = (props) => {
     // useeffect for edit items
     useEffect(() => {
       setProductItemDetails(props.proposalItemEdit)
+      console.log("pro edit", props.proposalItemEdit)
     }, [props.proposalItemEdit])
 
 

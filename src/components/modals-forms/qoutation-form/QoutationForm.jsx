@@ -10,6 +10,7 @@ import { errorDialog, successDialog  } from '../../../customs/global/alertDialog
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
+import { postDiscountAndTax } from '../../../store/features/taxDiscountSlice';
 import { deepEqual } from './../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
@@ -36,7 +37,9 @@ const QoutationForm = (props) => {
         status: 'pending',
         description: '',
         sub_total: 0,
-        proposal_document: '',
+        deductions: 0,
+        additional_payments: 0,
+        grand_total: 0,
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
     });
@@ -46,7 +49,7 @@ const QoutationForm = (props) => {
 
     const dispatch = useDispatch();
 
-    const { loading: clientLoading, data: clientData } = useSelector(state => state.clients);
+    const { data: clientData } = useSelector(state => state.clients);
     
     useLayoutEffect(() => {
         dispatch(getAllCleints());
@@ -65,9 +68,16 @@ const QoutationForm = (props) => {
 
     useEffect(() => {
         if (props.proposalEdit) {
+            const t = props.taxDiscountData.filter(d => d.option_type === 'additional')
             setQoutation(props.proposalEdit);
+            setTotalAmountref(props.proposalEdit?.sub_total)
+            setTotalAmount(props.proposalEdit?.grand_total)
+            console.log('data', props.taxDiscountData)
+            setTax(t)
+            setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
+            setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
         }
-    }, [props.proposalEdit]);
+    }, [props.proposalEdit, props.taxDiscountData]);
 
     const handleQoutationInput = (event) => {
         const { name, value } = event.target;
@@ -149,7 +159,6 @@ const QoutationForm = (props) => {
   
             setTaxDiscountTotal(totalTaxDiscount);
           }
-  
       }, [tax, discount])
       
       
@@ -175,42 +184,47 @@ const QoutationForm = (props) => {
         } 
        
         try {
-            await dispatch(createProposal(qoutation)).then( (d) => {
-                // payload from the api/backend
-                const { lastid } = d.payload;
+            const qoutationResponse = await dispatch(createProposal({
+                ...qoutation,
+                additional_payments: taxDiscountTotal.additional,
+                deductions: taxDiscountTotal.discount,
+                sub_total: totalAmountref,
+                grand_total: totalAmount
+            }));
 
-                    if(lastid > 0 && qoutationItem.length > 0) {
-                        const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-                        setQoutationItem(updatedQoutationItems);
+            const { lastid, success: qoutationSuccess } = qoutationResponse.payload;
 
-                        // console.log({proposal_item_id, ...rest})
-                        // removing proposal_item_id in create qoutation because is not required on backend
-                        dispatch(saveProposalItems(updatedQoutationItems.map(({proposal_item_id, ...rest}) => rest)))
-                        .then((s) => {
+            if(lastid > 0 && qoutationItem.length > 0) {
+                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+                setQoutationItem(updatedQoutationItems);
 
-                            if(s.payload.success) {
-                                successDialog('Qoutation is now available')
-                            } else {
-                                errorDialog('Failed to create a Qoutation');
-                            }
-                        }) 
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
-                            
-                    } else {
-                        if(d.payload.success) {
-                            successDialog('Qoutation is now available')
-                        } else {
-                            errorDialog('Failed to create a Qoutation ');
-                        }
-                    }
-                }) 
+                const [saveItemsResponse, saveTaxDiscountResponse] = await Promise.all([
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest))),
+                    taxAndDiscountMerge.length > 0
+                    ? dispatch(postDiscountAndTax(taxAndDiscountMerge))
+                    : Promise.resolve({ payload: { success: true } })
+                ]);
 
-            
-            } catch (error) {
-                errorDialog('Failed To Save The Qoutation');
+                const { success: itemsSuccess } = saveItemsResponse.payload;
+                const { success: taxDiscountSuccess } = saveTaxDiscountResponse.payload;
+        
+                if (itemsSuccess && taxDiscountSuccess) {
+                    successDialog('Qoutation is now available');
+                } else {
+                    errorDialog('Failed to create a Qoutation');
+                }
+
+            } else {
+                if(qoutationSuccess)  {
+                    successDialog('Qoutation is now available')
+                } else {
+                    errorDialog('Failed to create a Qoutation ');
+                }
             }
+        } catch (error) {
+            errorDialog('Failed To Save The Qoutation');
+        }
     };
     
 

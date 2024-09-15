@@ -21,12 +21,21 @@ export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAl
     }
 });
 
-export const postDiscountAndTax = createAsyncThunk()
+
+export const postDiscountAndTax = createAsyncThunk('taxDiscount/addTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/add-additional-proposal-items`, taxDiscount);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
 
 const taxDiscountSlice = createSlice({
     name: 'additional',
     initialState: {
         data: [],
+        postStatus: [],
         isSuccess: false,
         loading: true,
         message: ''
@@ -47,6 +56,19 @@ const taxDiscountSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload
+        })
+        .addCase(postDiscountAndTax.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(postDiscountAndTax.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true; 
+
+            state.postStatus = action.payload;
+        })
+        .addCase(postDiscountAndTax.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
         })
     }
 });

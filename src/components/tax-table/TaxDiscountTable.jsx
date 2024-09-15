@@ -78,8 +78,8 @@ const TaxDiscountTable = (props) => {
           </tr>
         </thead>
         <tbody>
-          {props.taxDiscount.taxDiscount.map(row => (
-            <tr key={row.rowId}>
+          {props.taxDiscount.taxDiscount.map((row, index) => (
+            <tr key={index}>
               <td>
               <input
                     type="text"

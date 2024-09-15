@@ -6,7 +6,7 @@ const TotalAmount = ({totalAmountref, totalAmount, taxDiscountTotal}) => {
     <>
         <div className="row total-amount mt-3 mr-auto">
             <p className='label-text'>Sub Total</p>
-            <p className="total-amout-text mr-auto">Php <span>{totalAmountref}</span></p>
+            <p className="total-amout-text mr-auto">Php <span>{totalAmountref || 0}</span></p>
             <p className='label-text'>Deduction</p>
             <p className="total-amout-text mr-auto">Php <span>{taxDiscountTotal?.additional}</span></p>
             <p className='label-text'>Additional</p>
