@@ -52,7 +52,7 @@ export const updateUser = createAsyncThunk('user/updateUser', async(user, { reje
     try {
         if(user.id) {
             // removing id from user 
-            const { id, employee_id, fullname, created, start_date,  ...rest } = user;
+            const { id, fullname, created, start_date,  ...rest } = user;
             const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${id}`, {...rest, birthday: dateFormatted(rest.birthday)});
         
             return data;
