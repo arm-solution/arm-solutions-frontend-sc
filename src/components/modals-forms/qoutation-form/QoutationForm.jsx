@@ -59,21 +59,20 @@ const QoutationForm = (props) => {
         setProposalIsSuccess(props.proposalStatus);
     }, [props.proposalStatus, proposalIsSuccess])
 
+
     useEffect(() => {
         if(totalAmount < 0) {
             errorDialog("The Grand Total must be not negative!");
         }
-    }, [totalAmount])
+    }, [props.proposalItemData, totalAmount])
     
 
     useEffect(() => {
         if (props.proposalEdit) {
-            const t = props.taxDiscountData.filter(d => d.option_type === 'additional')
             setQoutation(props.proposalEdit);
-            setTotalAmountref(props.proposalEdit?.sub_total)
-            setTotalAmount(props.proposalEdit?.grand_total)
-            console.log('data', props.taxDiscountData)
-            setTax(t)
+            setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
+            setTotalAmount(parseInt(props.proposalEdit?.grand_total))
+            setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
             setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
             setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
         }
@@ -231,38 +230,42 @@ const QoutationForm = (props) => {
     const handleUpdateQoutation = async () => {
         let status = false 
 
-        let addEditItem = qoutationItem.filter(item2 =>
-            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
-        );
+        console.log('tax and discount ', [...tax, ...discount])
+
+        // let addEditItem = qoutationItem.filter(item2 =>
+        //     !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        // );
          
-        const {firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
-        const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
+        // const {firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
+        // const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
         
-        // This is for qoutation/proposal form
-        if(!deepEqual(props.proposalEdit, qoutation)) {
-            dispatch(updateProposal({proposalFinal, id: qoutation.id}));
-            status = true;
-        } 
+        // // This is for qoutation/proposal form
+        // if(!deepEqual(props.proposalEdit, qoutation)) {
+        //     dispatch(updateProposal({proposalFinal, id: qoutation.id}));
+        //     status = true;
+        // } 
         
-        // adding proposal id for every items
-        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
-        //  this is for proposalItem editable table update
-        if(addEditItem.length > 0) {
-                // dispatch update the items 
-                await dispatch(updateProposalItems(itemsWithProId));
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getProposalItemsByProposalId(qoutation.id));
-                setQoutationItem([]);
-                status = true;
-        }
+        // // adding proposal id for every items
+        // const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
+        // //  this is for proposalItem editable table update
+        // if(addEditItem.length > 0) {
+        //         // dispatch update the items 
+        //         await dispatch(updateProposalItems(itemsWithProId));
+        //         //  refreshing the table to get the new ID from the database
+        //         await dispatch(getProposalItemsByProposalId(qoutation.id));
+        //         setQoutationItem([]);
+        //         status = true;
+        // }
         
-        if(status) {
-            successDialog("Updated Successfully");
-        } else {
-            errorDialog("No changes detected!");
-        }
+        // if(status) {
+        //     successDialog("Updated Successfully");
+        // } else {
+        //     errorDialog("No changes detected!");
+        // }
         
     }
+
+
 
     return (
         <>
@@ -323,6 +326,7 @@ const QoutationForm = (props) => {
                          setNotification={ setNotification }
                          totalAmount={{ totalAmount, setTotalAmount }}
                          setTotalAmountref={setTotalAmountref}
+                         totalAmountref={totalAmountref}
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
                          />
                     </div>
