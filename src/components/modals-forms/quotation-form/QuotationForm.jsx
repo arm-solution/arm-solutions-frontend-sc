@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
-import './QoutationForm.css';
-import QoutationTableEditable from '../../qoutation-table-editable/QoutationTableEditable';
+import './QuotationForm.css';
+import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
 import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints } from '../../../store/features/clientsSlice';
@@ -11,7 +11,7 @@ import { createProposal, updateProposal } from '../../../store/features/proposal
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
 import { postDiscountAndTax } from '../../../store/features/taxDiscountSlice';
-import { deepEqual } from './../../../customs/global/manageObjects';
+import { deepEqual } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
 

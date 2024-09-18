@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Quotations.css';
-import QoutationForm from '../../../components/modals-forms/qoutation-form/QoutationForm';
+import QuotationForm from '../../../components/modals-forms/quotation-form/QuotationForm';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../components/DataTable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
@@ -89,7 +89,7 @@ const Quotations = () => {
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
             
-              <QoutationForm 
+              <QuotationForm 
                 proposalStatus={proposalStatus}
                 loadingProposal={loadingProposal}
                 proposalEdit={proposalEdit}
