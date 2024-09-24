@@ -10,13 +10,16 @@ import { errorDialog, successDialog  } from '../../../customs/global/alertDialog
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { postDiscountAndTax } from '../../../store/features/taxDiscountSlice';
-import { deepEqual } from '../../../customs/global/manageObjects';
+import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/features/taxDiscountSlice';
+import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
+import { useNavigate } from 'react-router-dom'; 
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
+
+    const navigate = useNavigate();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState('');
@@ -229,39 +232,45 @@ const QoutationForm = (props) => {
 
     const handleUpdateQoutation = async () => {
         let status = false 
-
-        console.log('tax and discount ', [...tax, ...discount])
-
-        // let addEditItem = qoutationItem.filter(item2 =>
-        //     !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
-        // );
+        const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
+            const { isEditing, isSaved, rowId, ...rest } = d;
+            return {...rest, proposal_id: qoutation.id};
+        }));
+        
+        let addEditItem = qoutationItem.filter(item2 =>
+            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        );
          
-        // const {firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
-        // const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
+        const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = qoutation;
+        const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
         
-        // // This is for qoutation/proposal form
-        // if(!deepEqual(props.proposalEdit, qoutation)) {
-        //     dispatch(updateProposal({proposalFinal, id: qoutation.id}));
-        //     status = true;
-        // } 
+        // This is for qoutation/proposal form
+        if(!deepEqual(props.proposalEdit, qoutation)) {
+            dispatch(updateProposal({proposalFinal, id: qoutation.id}));
+            status = true;
+        } 
         
-        // // adding proposal id for every items
-        // const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
-        // //  this is for proposalItem editable table update
-        // if(addEditItem.length > 0) {
-        //         // dispatch update the items 
-        //         await dispatch(updateProposalItems(itemsWithProId));
-        //         //  refreshing the table to get the new ID from the database
-        //         await dispatch(getProposalItemsByProposalId(qoutation.id));
-        //         setQoutationItem([]);
-        //         status = true;
-        // }
+        // adding proposal id for every items
+        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: qoutation.id}))
+        //  this is for proposalItem editable table update
+        if(addEditItem.length > 0) {
+                // dispatch update the items 
+                await dispatch(updateProposalItems(itemsWithProId));
+                //  refreshing the table to get the new ID from the database
+                await dispatch(getProposalItemsByProposalId(qoutation.id));
+                setQoutationItem([]);
+                status = true;
+        }
+        if(taxDiscountModified.length > 0) {
+            await dispatch(updateTaxAndDiscount(taxDiscountModified));
+            status = true;
+        }
         
-        // if(status) {
-        //     successDialog("Updated Successfully");
-        // } else {
-        //     errorDialog("No changes detected!");
-        // }
+        if(status) {
+            successDialog("Updated Successfully");
+        } else {
+            errorDialog("No changes detected!");
+        }
         
     }
 
@@ -369,6 +378,22 @@ const QoutationForm = (props) => {
                         :
                         <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Qoutation</button>
                         }
+
+                    </div>
+
+                    <div className="row row-btn-pdf"> 
+                      { props.proposalEdit && 
+                      <button className="btn-pdf mt-3 mr-auto" onClick={() => {
+                        navigate(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, 
+                            { state: 
+                            { 
+                                quotation: props.proposalEdit,
+                                tax: tax,
+                                discount: discount,
+                                quotationItem: qoutationItem
+                            }})
+                      }}>View on PDF</button>
+                      }
                     </div>
                 </div>
             </div>

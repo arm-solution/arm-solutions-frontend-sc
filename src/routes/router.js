@@ -174,7 +174,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
         </Route>
 
         {/* pdf viewer */}
-        <Route path='pdf-viewer/:name' element={
+        <Route path='pdf-viewer/:name/id/:id' element={
             <Suspense fallback={<Loading/> } >
                 <PdfViewPage />
             </Suspense>

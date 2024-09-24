@@ -31,6 +31,15 @@ export const postDiscountAndTax = createAsyncThunk('taxDiscount/addTaxDiscount',
     }
 })
 
+export const updateTaxAndDiscount = createAsyncThunk('taxDiscount/updateTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/update-additional-multiple-proposal-item`, taxDiscount);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 const taxDiscountSlice = createSlice({
     name: 'additional',
     initialState: {
@@ -70,6 +79,16 @@ const taxDiscountSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
         })
+        .addCase(updateTaxAndDiscount.pending, (state, action) => {
+            state.loading = true;
+        }) 
+        .addCase(updateTaxAndDiscount.fulfilled, (state, action) => {
+            state.loading = false;
+        }) 
+        .addCase(updateTaxAndDiscount.rejected, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
+        }) 
     }
 });
 

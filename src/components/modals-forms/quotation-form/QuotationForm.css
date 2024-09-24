@@ -40,6 +40,26 @@ label {
 
 }
 
+.btn-pdf {
+    width: 20rem;
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    height: 36px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #D22B2B;
+
+}
+
+.row-btn-pdf {
+    display: flex;
+    justify-content: end;
+}
+
 .row-btn-qout {
     display: flex;
     justify-content: end;
