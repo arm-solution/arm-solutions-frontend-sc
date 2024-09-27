@@ -1,0 +1,42 @@
+
+
+input {
+    margin-left: 10px;
+    width: 20rem !important;
+}
+
+
+.map-container {
+    width: 100% !important;
+    height: 80vh !important;
+    border: 1px solid gray;
+    padding: 3px;
+    box-shadow: 10px 5px 5px gray;
+}
+
+
+@media screen and (max-width: 768px) {
+    .mobile {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    input {
+        width: 95% !important;
+    }
+    
+    button {
+        margin-top: 10px;
+    }
+
+    /* .map-container {
+        margin: 0 !important;
+        width: 100vw !important;
+        height: 50vh !important;
+    } */
+
+    .container-fluid {
+        margin: 0 !important;
+    }
+ }

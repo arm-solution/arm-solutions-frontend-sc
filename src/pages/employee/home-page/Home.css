@@ -1,0 +1,11 @@
+.time-in-btn {
+    width: 15rem !important;
+    margin-top: 3rem !important ;
+}
+
+@media screen and (max-width: 768px) {
+    .time-in-btn {
+        width: 100% !important;
+        margin-top: 3rem !important ;
+    }
+}

@@ -1,0 +1,25 @@
+.car-services .carousel-control-prev,
+.car-services .carousel-control-next {
+    background-color: #e1e1e1 !important;
+    color: black !important;
+    width: 5vh !important;
+    height: 5vh !important;
+    border-radius: 50% !important;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .car-services .carousel-control-prev {
+    left: 0;
+  }
+  
+  .car-services .carousel-control-next {
+    right: 0;
+  }
+  
+.car-services .carousel-control-prev span,
+.car-services .carousel-control-next span {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
