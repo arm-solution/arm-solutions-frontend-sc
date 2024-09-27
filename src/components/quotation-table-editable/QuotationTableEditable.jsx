@@ -47,8 +47,6 @@ const QoutationTableEditable = (props) => {
     }, [props.proposalItemEdit])
 
 
-
-
     // calculate the total amount
     const calculateAmount = (row) => {
         // Convert all relevant fields to numbers
@@ -81,8 +79,6 @@ const QoutationTableEditable = (props) => {
     };
     
     
-
-
     // adding row template in the table
     const addRow = () => {
         setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);

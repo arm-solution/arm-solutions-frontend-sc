@@ -10,19 +10,14 @@ const PdfViewPage = () => {
   const { name, id } = useParams();
   const location = useLocation();
 
-  const { quotation, tax, discount } = location.state;
+  const { state } = location;
 
-  useEffect(() => {
-    console.log('lance jared', discount);
-  }, [])
-  
-  
   return (
     <div style={{ height: '100vh', display: 'flex' }}>
     <PDFViewer style={{ width: '100%', height: '100%' }}>
 
-      {name === 'payslip' && <PaySlipPdf dtrId={id} />}
-      {name === 'quotation' && <QuotationPdf qoutationId={id} />}
+      {name === 'payslip' && <PaySlipPdf state={state} id={id} />}
+      {name === 'quotation' && <QuotationPdf state={state} id={id} />}
         
     </PDFViewer>
     </div>

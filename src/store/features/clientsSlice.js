@@ -11,6 +11,15 @@ export const getAllCleints = createAsyncThunk('getAllCleints', async (_, {reject
     }
 });
 
+export const getClientById  =createAsyncThunk('getClientById', async(id, {rejectWithValue}) => {
+    try {
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients/get-client-by-id/${id}`);
+        return res.data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 export const updateClient = createAsyncThunk('updateClient', async(clientData, {rejectWithValue}) => {
     try {
         const { id, fullname, ...rest } = clientData;
@@ -56,6 +65,20 @@ const clientSlice = createSlice({
             state.data = action.payload;
         })
         .addCase(getAllCleints.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload;
+        })
+        .addCase(getClientById.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(getClientById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.data = action.payload;
+        })
+        .addCase(getClientById.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload;

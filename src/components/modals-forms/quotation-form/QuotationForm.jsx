@@ -3,7 +3,7 @@ import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
 import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllCleints } from '../../../store/features/clientsSlice';
+import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
@@ -14,7 +14,8 @@ import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/feature
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
+import { getUserById  } from '../../../store/features/userSlice';
 
 const QoutationForm = (props) => {
     const currentDate = new Date();
@@ -22,12 +23,13 @@ const QoutationForm = (props) => {
     const navigate = useNavigate();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
-    const [creator, setCreator] = useState('');
+    const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [totalAmount, setTotalAmount] = useState(0)
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
     const [taxDiscountTotal, setTaxDiscountTotal] = useState({ additional: 0, discount: 0 })
+    const [clientDetails, setClientDetails] = useState([])
     const [notification, setNotification] = useState({
         message: '',
         type: ''
@@ -68,21 +70,52 @@ const QoutationForm = (props) => {
             errorDialog("The Grand Total must be not negative!");
         }
     }, [props.proposalItemData, totalAmount])
-    
 
+    const getClient = async (id) => {
+        const { payload } = await dispatch(getClientById(id));
+
+        return payload;
+    }
+
+    const getCreatorDetails = async(id) => {
+        let position = ''
+        const { payload } = await dispatch(getUserById(id));
+
+        if(payload[0].user_type === 'admin') {
+            position = 'System Administrator'
+        } else if(payload[0].user_type === 'marketing') {
+            position = 'Marketing Specialist '
+        }
+
+        return {
+            fullname: `${payload[0].firstname} ${payload[0].lastname}`,
+            position
+        };
+    }
+     
     useEffect(() => {
         if (props.proposalEdit) {
-            setQoutation(props.proposalEdit);
-            setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-            setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-            setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-            setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
-            setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
+            const fetchQuotationDetails = async () => {
+                const client = await getClient(props.proposalEdit.client_id);
+                const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
+                setCreator(creatorDet)
+                console.log('proposal creator', creator);
+                setClientDetails(client);
+                setQoutation(props.proposalEdit);
+                setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
+                setTotalAmount(parseInt(props.proposalEdit?.grand_total))
+                setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
+                setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
+                setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
+            }
+
+            fetchQuotationDetails();
         }
     }, [props.proposalEdit, props.taxDiscountData]);
 
     const handleQoutationInput = (event) => {
         const { name, value } = event.target;
+
         setQoutation(prevState => ({
             ...prevState,
             [name]: value
@@ -164,7 +197,6 @@ const QoutationForm = (props) => {
       }, [tax, discount])
       
       
-
     const handleAddNewQoutation = async () => {
        
         if (qoutation.client_id === 0 || qoutation.created_by === 0) {
@@ -274,8 +306,6 @@ const QoutationForm = (props) => {
         
     }
 
-
-
     return (
         <>
             <div className="qoutation">
@@ -310,7 +340,7 @@ const QoutationForm = (props) => {
                         <div className="col col-md-6 ">
                             <div className="form-group justify-content-center">
                                 <label htmlFor="date">Prepared By </label>
-                                <p>{ creator ? creator : getLoggedInFullname() }</p>
+                                <p>{ creator.fullname ? creator.fullname : getLoggedInFullname() }</p>
                             </div>
                         </div>
                     </div>
@@ -383,14 +413,16 @@ const QoutationForm = (props) => {
 
                     <div className="row row-btn-pdf"> 
                       { props.proposalEdit && 
-                      <button className="btn-pdf mt-3 mr-auto" onClick={() => {
+                      <button className="btn-pdf mt-3 mr-auto" onClick={(event) => {
                         navigate(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, 
                             { state: 
                             { 
                                 quotation: props.proposalEdit,
                                 tax: tax,
                                 discount: discount,
-                                quotationItem: qoutationItem
+                                quotationItem: props.proposalItemData,
+                                clientDetails: clientDetails,
+                                creator
                             }})
                       }}>View on PDF</button>
                       }
