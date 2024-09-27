@@ -13,7 +13,7 @@ function App() {
       <Carousel />
       <ServiceCardSlides />
       <Clients />
-      {/* <MessengerChat /> */}
+      <MessengerChat />
       <LandingFooter />
   </>
   );
