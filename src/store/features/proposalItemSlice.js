@@ -15,7 +15,7 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
         const result = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/get-item/${proposal_id}`);
 
         const newSet = result.data.map(d => ({
-                base_price: parseInt(d.product_base_price),
+                base_price: parseInt(d.proposal_price),
                 sku: d.product_base_sku,
                 stock: d.product_base_stock_quantity,
                 product_name: d.product_name,

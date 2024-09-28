@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Page, Text, View, Document, StyleSheet, Image, Font } from '@react-pdf/renderer';
 import RobotoBold from './../../assets/fonts/Roboto-Black.ttf'; 
 import RobotoItalic from './../../assets/fonts/Roboto-Italic.ttf'; 
 import Logo from './../../assets/images/logo.png';
 import backgroundImage from './../../assets/images/arm_circle_logo-nbg.png'
+import { dateFormatted } from '../../customs/global/manageDates';
 
 // Register fonts
 Font.register({
@@ -130,16 +131,17 @@ const styles = StyleSheet.create({
   
 });
 
-// Sample data
-const data = [
-  { name: 'lance', lastname: 'cabiscuelas' },
-  { name: 'jared', lastname: 'ladrera' },
-  { name: 'jeck', lastname: 'castillo' },
-  { name: 'jeremy', lastname: 'castillo' },
-];
-
 // PDF Document component
-const PDFDocument = () => (
+const PDFDocument = ({ id, state}) => {
+
+  const { discount, quotation, quotationItem, tax, clientDetails } = state;
+
+  useEffect(() => {
+    console.log('pdf', state)
+  }, [])
+  
+  
+ return (
   <Document>
     <Page size="A4" style={styles.page}>
     <Image source={backgroundImage} style={styles.backgroundImage}></Image>
@@ -190,8 +192,8 @@ const PDFDocument = () => (
         
           <Text style={styles.textSize}>TO:</Text>
           <View style={[styles.textSize, { left: 45 }]}>
-            <Text>GOTO PHILLIPPINES CORP</Text>
-            <Text>Sample address text only for testing</Text>
+            <Text>{ clientDetails[0].name }</Text>
+            <Text>{ clientDetails[0].address }</Text>
           </View>
         
       </View>
@@ -219,14 +221,14 @@ const PDFDocument = () => (
       <View style={{ display: 'flex', flexDirection: 'row', left: 40, top: 45 }}>
         
         <Text style={styles.textSize}>SUBJECT:</Text>
-        <Text style={[styles.textSize, { left: 13}]}>SAMPLE PROJECT REF 083473HD63U776G</Text>
+        <Text style={[styles.textSize, { left: 13}]}>{ quotation?.description }</Text>
       
       </View>
 
       <View style={{ display: 'flex', flexDirection: 'row', left: 40, top: 60}}>
         
         <Text style={styles.textSize}>DATE:</Text>
-        <Text style={[styles.textSize, { left: 35}]}>July 14, 2024</Text>
+        <Text style={[styles.textSize, { left: 35}]}>{ dateFormatted(quotation?.date_created) }</Text>
       
       </View>
 
@@ -332,6 +334,7 @@ const PDFDocument = () => (
 
 
   </Document>
-);
+ )
+}
 
 export default PDFDocument;

@@ -40,27 +40,32 @@ label {
 
 }
 
+.btn-pdf {
+    width: 20rem;
+    outline: none;
+    cursor: pointer;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    height: 36px;
+    line-height: 34px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #D22B2B;
+
+}
+
+.row-btn-pdf {
+    display: flex;
+    justify-content: end;
+}
+
 .row-btn-qout {
     display: flex;
     justify-content: end;
 }
 
 
-.total-amout-text {
-    text-align: end;
-    font-size: x-large;
-    font-weight: bold;
-}
-
-.label-text {
-    text-align: end;
-    font-size: large;
-    font-weight: bold;
-}
-
-.total-amout-text span {
-    color: rgb(233, 26, 26);
-}
 
 @media (max-width: 900px) {
 

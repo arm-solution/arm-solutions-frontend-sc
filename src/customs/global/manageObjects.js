@@ -54,3 +54,27 @@ export function compareIfExist(array1, array2) {
       )
     );
   }
+
+  export const getModifiedAndNewItems = (baseCollection, data) => {
+    return data.filter(item2 => {
+      // Check if item has no id (new item)
+      if (!item2.id) return true;
+  
+      // Find corresponding item in data1 based on id
+      const item1 = baseCollection.find(item => item.id === item2.id);
+  
+      // Check if the item is modified
+      if (item1) {
+        return (
+          item1.title !== item2.title ||
+          item1.amount_type !== item2.amount_type ||
+          item1.percentage !== item2.percentage ||
+          item1.item_total !== item2.item_total ||
+          item1.option_type !== item2.option_type
+        );
+      }
+  
+      // If item1 not found (shouldn't happen here), treat it as new
+      return false;
+    });
+  };

@@ -34,7 +34,16 @@ const QoutationTableEditable = (props) => {
 
     // useeffect for edit items
     useEffect(() => {
-      setProductItemDetails(props.proposalItemEdit)
+        if(props.proposalItemEdit.length > 0) {
+            const setAmount = props.proposalItemEdit.map(d => ({
+                ...d,
+                amount: parseInt(d.qty) * parseInt(d.base_price)
+            }))
+           
+            setProductItemDetails(setAmount)
+            const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
+            props.setTotalAmountref(parseInt(totalItemAmount))
+        }
     }, [props.proposalItemEdit])
 
 
@@ -70,8 +79,6 @@ const QoutationTableEditable = (props) => {
     };
     
     
-
-
     // adding row template in the table
     const addRow = () => {
         setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);

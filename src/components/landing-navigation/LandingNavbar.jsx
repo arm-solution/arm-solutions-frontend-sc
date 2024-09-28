@@ -63,7 +63,7 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
       
           {checkedIfLoggedIn().status ?  (
             
-            <Link to={`/${checkedIfLoggedIn().path}`} className='btn btn-success btn-sm login-btn'>Dashboard</Link>
+            <Link to={`/${checkedIfLoggedIn().path}`} className='btn btn-outline-danger btn-sm login-btn'>Dashboard</Link>
           ) : (
             
             <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
