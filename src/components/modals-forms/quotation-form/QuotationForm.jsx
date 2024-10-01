@@ -99,7 +99,7 @@ const QoutationForm = (props) => {
                 const client = await getClient(props.proposalEdit.client_id);
                 const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
                 setCreator(creatorDet)
-                console.log('proposal creator', creator);
+                // console.log('proposal creator', creator);
                 setClientDetails(client);
                 setQoutation(props.proposalEdit);
                 setTotalAmountref(parseInt(props.proposalEdit?.sub_total))

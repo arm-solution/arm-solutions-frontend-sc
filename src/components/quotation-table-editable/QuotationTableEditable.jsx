@@ -44,7 +44,7 @@ const QoutationTableEditable = (props) => {
             const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
         }
-    }, [props.proposalItemEdit])
+    }, [props.proposalItemEdit, productItemDetails, props.proposalItemEdit.length, props])
 
 
     // calculate the total amount
@@ -162,33 +162,43 @@ const QoutationTableEditable = (props) => {
 
     };
 
-    // handle product onchange select dropdown
-    const handleProduct = (e, rowId) => {
-        const selectedProductId = parseInt(e.target.value);
-        const selectedProduct = products.find(product => product.id === selectedProductId);
+// handle product onchange select dropdown
+const handleProduct = (e, rowId) => {
+    const selectedProductId = parseInt(e.target.value);
+    const selectedProduct = products.find(product => product.id === selectedProductId);
 
-        const productExist = productItemDetails.find(p => p.id === selectedProductId);
+    const productExist = productItemDetails.find(p => p.id === selectedProductId);
+    
+    if (productExist) {
+        props.setNotification({
+            message: 'Product Already Exists on the Table',
+            type: 'error'
+        });
+        return;
+    }
 
-        if(selectedProduct.name === 'Man Power') {
-            setInputAccessNumDays(false)
-        } else {
-            setInputAccessNumDays(true)
-        }
+    // Handle access num days logic
+    if (selectedProduct.name === 'Man Power') {
+        setInputAccessNumDays(false);
+    } else {
+        setInputAccessNumDays(true);
+    }
 
-        if (productExist) {
-            props.setNotification({
-                    message: 'Product Already Exist on the Table',
-                    type: 'error'
-            })
-            return;
-        }
+    // Update product item details and calculate the amount
+    setProductItemDetails(prevDetails =>
+        prevDetails.map(row =>
+            row.id === rowId
+                ? {
+                      ...row,
+                      ...selectedProduct,
+                      isEditing: true,
+                      amount: parseInt(row.qty) * parseInt(selectedProduct.base_price)
+                  }
+                : row
+        )
+    );
+};
 
-        setProductItemDetails(prevDetails => prevDetails.map(row => 
-            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true } : row
-        
-        ));
-
-    };
 
     const anyRowEditing = productItemDetails.some(row => row.isEditing);
 
