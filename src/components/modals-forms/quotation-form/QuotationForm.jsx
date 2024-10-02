@@ -99,7 +99,7 @@ const QoutationForm = (props) => {
                 const client = await getClient(props.proposalEdit.client_id);
                 const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
                 setCreator(creatorDet)
-                console.log('proposal creator', creator);
+                // console.log('proposal creator', creator);
                 setClientDetails(client);
                 setQoutation(props.proposalEdit);
                 setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
@@ -306,6 +306,20 @@ const QoutationForm = (props) => {
         
     }
 
+    const openPdfFile = () => {
+        sessionStorage.setItem("pdfViewerState", JSON.stringify({
+            quotation: props.proposalEdit,
+            tax: tax,
+            discount: discount,
+            quotationItem: props.proposalItemData,
+            clientDetails: clientDetails,
+            creator
+        }));
+
+        // Open the new tab and navigate to the desired path
+        window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
+    } 
+
     return (
         <>
             <div className="qoutation">
@@ -413,18 +427,7 @@ const QoutationForm = (props) => {
 
                     <div className="row row-btn-pdf"> 
                       { props.proposalEdit && 
-                      <button className="btn-pdf mt-3 mr-auto" onClick={(event) => {
-                        navigate(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, 
-                            { state: 
-                            { 
-                                quotation: props.proposalEdit,
-                                tax: tax,
-                                discount: discount,
-                                quotationItem: props.proposalItemData,
-                                clientDetails: clientDetails,
-                                creator
-                            }})
-                      }}>View on PDF</button>
+                      <button className="btn-pdf mt-3 mr-auto" onClick={openPdfFile}>View on PDF</button>
                       }
                     </div>
                 </div>

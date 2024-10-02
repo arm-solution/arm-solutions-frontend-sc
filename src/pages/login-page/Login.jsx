@@ -7,7 +7,6 @@ import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage'
 import { unwrapResult } from '@reduxjs/toolkit';
 
 
-
 const Login = () => {
 
   const employeeAuth = useSelector((state) => state.auth)
@@ -109,8 +108,6 @@ const Login = () => {
                   </p>
 
                 </div>
-
-
                 
                 <div className="text-endx">
                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-grip-horizontal" viewBox="0 0 16 16">
