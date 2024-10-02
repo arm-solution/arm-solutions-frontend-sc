@@ -308,7 +308,7 @@ const QoutationTableEditable = (props) => {
                                      <input
                                          type="number"
                                          className="form-control"
-                                         value={row.number_of_days}
+                                         value={row.number_of_days || ''}
                                          name='number_of_days'
                                          onChange={(e) => handleInputChange(e, row.id)}
                                          disabled={inputAccessNumDays}

@@ -44,7 +44,7 @@ const Quotations = () => {
     // handle view details and edit on table proposal
     const handleView = async(row) => {
       try {
-        setSelectedTab('tab-one')
+        setSelectedTab('tab-two')
         setProposalEdit(row);
         await dispatch(getDiscountAndTaxByproposalId(row.id));
         await dispatch(getProposalItemsByProposalId(row.id));
@@ -84,24 +84,10 @@ const Quotations = () => {
    
 
         <div className="tabs flex-tabs">
-          <label htmlFor="tab-one" id="tab-one-label" className="tab">Create Qoutations</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Qoutation Lists</label>
+          <label htmlFor="tab-one" id="tab-one-label" className="tab">Qoutation Lists</label>
+          <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Qoutations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-            
-              <QuotationForm 
-                proposalStatus={proposalStatus}
-                loadingProposal={loadingProposal}
-                proposalEdit={proposalEdit}
-                proposalItemData={proposalItemData}
-                proposalItemLoading={proposalItemLoading}
-                proposalItemSuccess={proposalItemSuccess}
-                taxDiscountData={taxDiscountData}
-              /> 
-
-          </div>
-
-          <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
 
                 <DataTable 
                   data={clientDataWithFormattedDate}
@@ -113,6 +99,22 @@ const Quotations = () => {
                 />
 
           </div>
+
+          <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
+            
+            <QuotationForm 
+              proposalStatus={proposalStatus}
+              loadingProposal={loadingProposal}
+              proposalEdit={proposalEdit}
+              proposalItemData={proposalItemData}
+              proposalItemLoading={proposalItemLoading}
+              proposalItemSuccess={proposalItemSuccess}
+              taxDiscountData={taxDiscountData}
+            /> 
+
+        </div>
+
+
         </div>
       </div>
 

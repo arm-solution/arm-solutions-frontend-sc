@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderTopWidth: 0
   }
-
   
 });
 
