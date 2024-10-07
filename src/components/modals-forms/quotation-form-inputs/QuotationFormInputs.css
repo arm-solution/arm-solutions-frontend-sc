@@ -1,0 +1,10 @@
+.row-header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.row-header button {
+    font-weight: bolder;
+}

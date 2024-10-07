@@ -51,3 +51,36 @@ export const formatDateTime = (dateTimeStr) => {
 
     return;
 }
+
+export const formatDateToString = (dateString) => {
+    const date = new Date(dateString);
+  
+    // Get the month, day, and year from the Date object
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  
+    // Format the date to 'September 12, 2024'
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+}
+
+export const formatDateToStringv2 = (dateString) => {
+    if (!dateString || typeof dateString !== 'string') {
+        console.error("Invalid date string");
+        return null; // Or handle the error as you see fit
+      }
+    
+      // Ensure proper format: replacing space with 'T' for ISO string compatibility
+      const formattedDateString = dateString.replace(" ", "T");
+    
+      const date = new Date(formattedDateString);
+    
+      if (isNaN(date)) {
+        console.error("Invalid date format");
+        return null;
+      }
+    
+      // Define options for formatting the date to 'September 14, 2024'
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    
+      // Use Intl.DateTimeFormat to format the date
+      return new Intl.DateTimeFormat('en-US', options).format(date);
+  }

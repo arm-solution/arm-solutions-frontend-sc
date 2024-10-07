@@ -144,7 +144,6 @@ export const router = createBrowserRouter(createRoutesFromElements(
                     </Suspense>
                 }/>
 
-
                 {CommonRoutes()}
 
             </Route>
@@ -163,11 +162,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
                         </Suspense>
                     }/>
 
-
-
-
                     {CommonRoutes()}
-
 
                 </Route>
         
@@ -193,7 +188,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
             </Suspense>
         } /> */}
 
-
+        <Route path="not-found" element={<NotFound />} />
 
         {/* This is for not found route */}
         <Route path='*' element={ <NotFound /> } />
