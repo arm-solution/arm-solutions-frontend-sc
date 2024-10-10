@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './QuotationFormInputs.css';
 import { formatDateReadable } from '../../../customs/global/manageDates';
 import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
@@ -16,10 +16,10 @@ const QuotationFormsInputs = (props) => {
         [name]: value
     }));
   };
+  
 
   return (
     <>
-
         <div className="row-header">
             <h2>Create Qoutation</h2>
             {quotation.client_id > 0 && (

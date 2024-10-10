@@ -14,12 +14,10 @@ import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/feature
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
-import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 
 const QoutationForm = (props) => {
-    const navigate = useNavigate();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
@@ -33,6 +31,7 @@ const QoutationForm = (props) => {
         message: '',
         type: ''
     });
+    const [qoutationItem, setQoutationItem] = useState([]);
  
     const [quotation, setQuotation] = useState({
         client_id: 0,
@@ -47,9 +46,6 @@ const QoutationForm = (props) => {
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
     });
-
-    const [qoutationItem, setQoutationItem] = useState([]);
-    
 
     const dispatch = useDispatch();
 
@@ -100,17 +96,49 @@ const QoutationForm = (props) => {
                 setCreator(creatorDet)
                 // console.log('proposal creator', creator);
                 setClientDetails(client);
-                setQuotation(props.proposalEdit);
+                
                 setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
                 setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-                setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-                setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
                 setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
             }
 
             fetchQuotationDetails();
         }
-    }, [props.proposalEdit, props.taxDiscountData]);
+    }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
+
+
+    useEffect(() => {
+        const fetchFromSession = () => {
+          const proposalDetails = sessionStorage.getItem('proposalDetails');
+      
+          if (proposalDetails) {
+            const { quotation: quotationData, quotationItem: quotationItemData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
+            
+            if (quotationData) setQuotation(quotationData);
+            if (quotationItemData) setQoutationItem(quotationItemData);
+            if (taxDiscountData) {
+              setTax(taxDiscountData.filter(d => d.option_type === 'additional'));
+              setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
+            }
+          }
+        };
+      
+        // Fetch the session storage data on component mount
+        fetchFromSession();
+      
+        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
+        const handleSessionUpdate = () => {
+          fetchFromSession();
+        };
+        window.addEventListener('sessionUpdated', handleSessionUpdate);
+      
+        // Clean up event listener when the component unmounts
+        return () => {
+          window.removeEventListener('sessionUpdated', handleSessionUpdate);
+        };
+    }, []);  // Empty dependency array ensures it runs once on mount
+      
+      
 
 
 
@@ -186,7 +214,7 @@ const QoutationForm = (props) => {
   
             setTaxDiscountTotal(totalTaxDiscount);
           }
-      }, [tax, discount])
+      }, [tax, discount, totalAmountref])
       
       
     const handleAddNewQoutation = async () => {
@@ -298,6 +326,7 @@ const QoutationForm = (props) => {
         
     }
 
+    // redirecting to pdf page
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
             quotation: props.proposalEdit,
@@ -312,6 +341,8 @@ const QoutationForm = (props) => {
         window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
     } 
 
+
+
     return (
         <>
             <div className="qoutation">
@@ -323,7 +354,6 @@ const QoutationForm = (props) => {
                      creator={ creator }
                     />
            
-
                     {notification.message && ( 
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
@@ -331,7 +361,7 @@ const QoutationForm = (props) => {
                     <div className="row table-editable">
                         <QoutationTableEditable
                          setQoutationItem={setQoutationItem}
-                         proposalItemEdit={props.proposalItemData}
+                         proposalItemEdit={qoutationItem}
                          proposalItemSuccess={props.proposalItemSuccess}
                          setNotification={ setNotification }
                          totalAmount={{ totalAmount, setTotalAmount }}
