@@ -31,6 +31,7 @@ const QoutationTableEditable = (props) => {
         fetchData();
     }, []);
 
+
     // useeffect for edit items
     useEffect(() => {
         if(props.proposalItemEdit.length > 0) {

@@ -11,7 +11,6 @@ import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscou
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
-    const [proposalEdit, setProposalEdit] = useState()
     
     const dispatch = useDispatch();
     
@@ -19,6 +18,7 @@ const Quotations = () => {
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
     // propsal data for editing
+    const [proposalEdit, setProposalEdit] = useState()
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
@@ -41,35 +41,23 @@ const Quotations = () => {
     }, [dispatch]);
     
 
-    const handleView = async (row) => {
+    // handle view details and edit on table proposal
+    const handleView = async(row) => {
       try {
-        setSelectedTab('tab-two');
+        setSelectedTab('tab-two')
         setProposalEdit(row);
-    
-        const [discountTaxResult, proposalItemsResult] = await Promise.all([
-          dispatch(getDiscountAndTaxByproposalId(row.id)),
-          dispatch(getProposalItemsByProposalId(row.id)),
-        ]);
-    
-        // Store the data in sessionStorage after dispatches complete
-        sessionStorage.setItem('proposalDetails', JSON.stringify({
-          quotation: row,  // Use the row since it's already the proposalEdit data
-          quotationItem: proposalItemsResult.payload,
-          taxDiscount: discountTaxResult.payload
-        }));
-    
-        // Dispatch a custom event to signal that sessionStorage is updated
-        window.dispatchEvent(new Event('sessionUpdated'));
-    
+        await dispatch(getDiscountAndTaxByproposalId(row.id));
+        await dispatch(getProposalItemsByProposalId(row.id));
+        
       } catch (error) {
-        console.log("Error: ", error);
+        console.log("Error: ", error)
       }
-    };
-    
+    }
   
     const handleDelete = (id) => {
       alert('deleted'+ id);
     }
+    
     
   return (
     <>
