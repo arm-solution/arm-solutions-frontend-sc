@@ -300,15 +300,14 @@ const QoutationForm = (props) => {
         const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
         const proposalFinal = {
             ...dataReshapeItems,
+            proposal_date: dateFormatted(dataReshapeItems.proposal_date),
             date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
             sub_total: totalAmountref,
             additional_payments: taxDiscountTotal.additional,
             deductions: taxDiscountTotal.discount
         };
         
-        console.log("proposal Final", proposalFinal);
-        console.log("quotation id", quotation.id)
-        // This is for qoutation/proposal form
+        //This is for qoutation/proposal form
         if(!deepEqual(props.proposalEdit, quotation)) {
 
             dispatch(updateProposal({ proposalFinal, id: quotation.id }));

@@ -19,7 +19,6 @@ const QuotationFormsInputs = (props) => {
 
   return (
     <>
-
         <div className="row-header">
             <h2>Create Qoutation</h2>
             {quotation.client_id > 0 && (
