@@ -30,12 +30,16 @@ const QoutationTableEditable = (props) => {
 
         fetchData();
     }, []);
+    
 
-
-    // useeffect for edit items
+    // activating getting sessionStorage and set to product details state
     useEffect(() => {
-        if(props.proposalItemEdit.length > 0) {
-            const setAmount = props.proposalItemEdit.map(d => ({
+        const fetchFromSession = () => {
+          const proposalDetails = sessionStorage.getItem('proposalDetails');
+      
+          if (proposalDetails) {
+            const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
+            const setAmount = quotationItemData.map(d => ({
                 ...d,
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
@@ -43,8 +47,24 @@ const QoutationTableEditable = (props) => {
             setProductItemDetails(setAmount)
             const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
-        }
-    }, [props.proposalItemEdit])
+          }
+        };
+      
+        // Fetch the session storage data on component mount
+        fetchFromSession();
+      
+        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
+        const handleSessionUpdate = () => {
+          fetchFromSession();
+        };
+        window.addEventListener('sessionUpdated', handleSessionUpdate);
+      
+        // Clean up event listener when the component unmounts
+        return () => {
+          window.removeEventListener('sessionUpdated', handleSessionUpdate);
+        };
+    }, []);  // Empty dependency array ensures it runs once on mount
+
 
 
     // calculate the total amount
