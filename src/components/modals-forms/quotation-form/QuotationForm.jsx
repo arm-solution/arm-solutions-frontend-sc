@@ -14,10 +14,12 @@ import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/feature
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
+import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 
 const QoutationForm = (props) => {
+    const navigate = useNavigate();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
@@ -31,7 +33,6 @@ const QoutationForm = (props) => {
         message: '',
         type: ''
     });
-    const [qoutationItem, setQoutationItem] = useState([]);
  
     const [quotation, setQuotation] = useState({
         client_id: 0,
@@ -46,6 +47,9 @@ const QoutationForm = (props) => {
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
     });
+
+    const [qoutationItem, setQoutationItem] = useState([]);
+    
 
     const dispatch = useDispatch();
 
@@ -88,23 +92,25 @@ const QoutationForm = (props) => {
         };
     }
      
-    useEffect(() => {
-        if (props.proposalEdit) {
-            const fetchQuotationDetails = async () => {
-                const client = await getClient(props.proposalEdit.client_id);
-                const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
-                setCreator(creatorDet)
-                // console.log('proposal creator', creator);
-                setClientDetails(client);
-                
-                setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-                setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-                setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
-            }
+    // useEffect(() => {
+    //     if (props.proposalEdit) {
+    //         const fetchQuotationDetails = async () => {
+    //             const client = await getClient(props.proposalEdit.client_id);
+    //             const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
+    //             setCreator(creatorDet)
+    //             // console.log('proposal creator', creator);
+    //             setClientDetails(client);
+    //             setQuotation(props.proposalEdit);
+    //             setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
+    //             setTotalAmount(parseInt(props.proposalEdit?.grand_total))
+    //             setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
+    //             setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
+    //             setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
+    //         }
 
-            fetchQuotationDetails();
-        }
-    }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
+    //         fetchQuotationDetails();
+    //     }
+    // }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
 
 
     useEffect(() => {
@@ -112,14 +118,13 @@ const QoutationForm = (props) => {
           const proposalDetails = sessionStorage.getItem('proposalDetails');
       
           if (proposalDetails) {
-            const { quotation: quotationData, quotationItem: quotationItemData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
-            
-            if (quotationData) setQuotation(quotationData);
-            if (quotationItemData) setQoutationItem(quotationItemData);
-            if (taxDiscountData) {
+            const { quotation: quotationData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
+              setQuotation(quotationData);
               setTax(taxDiscountData.filter(d => d.option_type === 'additional'));
               setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
-            }
+
+              console.log('dsfjsdf', taxDiscountData)
+            
           }
         };
       
@@ -137,8 +142,6 @@ const QoutationForm = (props) => {
           window.removeEventListener('sessionUpdated', handleSessionUpdate);
         };
     }, []);  // Empty dependency array ensures it runs once on mount
-      
-      
 
 
 
@@ -214,7 +217,7 @@ const QoutationForm = (props) => {
   
             setTaxDiscountTotal(totalTaxDiscount);
           }
-      }, [tax, discount, totalAmountref])
+      }, [tax, discount])
       
       
     const handleAddNewQoutation = async () => {
@@ -283,6 +286,7 @@ const QoutationForm = (props) => {
     
 
     const handleUpdateQoutation = async () => {
+
         let status = false 
         const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
             const { isEditing, isSaved, rowId, ...rest } = d;
@@ -294,11 +298,20 @@ const QoutationForm = (props) => {
         );
          
         const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
-        const proposalFinal = {...dataReshapeItems, date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '' };
+        const proposalFinal = {
+            ...dataReshapeItems,
+            date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
+            sub_total: totalAmountref,
+            additional_payments: taxDiscountTotal.additional,
+            deductions: taxDiscountTotal.discount
+        };
         
+        console.log("proposal Final", proposalFinal);
+        console.log("quotation id", quotation.id)
         // This is for qoutation/proposal form
         if(!deepEqual(props.proposalEdit, quotation)) {
-            dispatch(updateProposal({proposalFinal, id: quotation.id}));
+
+            dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
         } 
         
@@ -326,7 +339,6 @@ const QoutationForm = (props) => {
         
     }
 
-    // redirecting to pdf page
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
             quotation: props.proposalEdit,
@@ -341,8 +353,6 @@ const QoutationForm = (props) => {
         window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
     } 
 
-
-
     return (
         <>
             <div className="qoutation">
@@ -354,6 +364,7 @@ const QoutationForm = (props) => {
                      creator={ creator }
                     />
            
+
                     {notification.message && ( 
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
@@ -361,7 +372,6 @@ const QoutationForm = (props) => {
                     <div className="row table-editable">
                         <QoutationTableEditable
                          setQoutationItem={setQoutationItem}
-                         proposalItemEdit={qoutationItem}
                          proposalItemSuccess={props.proposalItemSuccess}
                          setNotification={ setNotification }
                          totalAmount={{ totalAmount, setTotalAmount }}
@@ -404,7 +414,7 @@ const QoutationForm = (props) => {
 
                     <div className="row row-btn-qout mt-3 mr-auto">
 
-                        {props.proposalEdit ? 
+                        {quotation.id > 0 ? 
                         <button className='btn-qoutation' onClick={handleUpdateQoutation}>Save</button>
                         :
                         <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Qoutation</button>

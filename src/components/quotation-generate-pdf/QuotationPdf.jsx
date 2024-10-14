@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
 });
 
 // PDF Document component
-const PDFDocument = ({ id, state }) => {
+const PDFDocument = ({ id, state}) => {
 
   const [pdfData, setPdfData] = useState(null);
 

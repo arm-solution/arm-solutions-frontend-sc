@@ -11,7 +11,6 @@ import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscou
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
-    const [proposalEdit, setProposalEdit] = useState()
     
     const dispatch = useDispatch();
     
@@ -19,6 +18,7 @@ const Quotations = () => {
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
     // propsal data for editing
+    const [proposalEdit, setProposalEdit] = useState()
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
@@ -65,11 +65,11 @@ const Quotations = () => {
         console.log("Error: ", error);
       }
     };
-    
   
     const handleDelete = (id) => {
       alert('deleted'+ id);
     }
+    
     
   return (
     <>
