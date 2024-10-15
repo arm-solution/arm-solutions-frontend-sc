@@ -81,7 +81,7 @@ const QoutationTableEditable = (props) => {
     
     const handleInputChange = (e, id) => {
         const { value, name } = e.target;
-    
+        
         // Update the field first
         setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
@@ -147,6 +147,7 @@ const QoutationTableEditable = (props) => {
     const toggleSaveAndEdit = (id) => {
 
        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+       const checkProductIfNegative = productItemDetails.find(p => parseInt(p.qty) <= 0);
        const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
        props.totalAmount.setTotalAmount(totalItemAmount)
        props.setTotalAmountref(totalItemAmount)
@@ -158,6 +159,11 @@ const QoutationTableEditable = (props) => {
        
        if(checkProduct) {
            errorDialog("All Fields Are Required")
+           return;
+        }
+        
+       if(checkProductIfNegative) {
+           errorDialog("Quantity must be not 0 and negative number");
            return;
         }
         
