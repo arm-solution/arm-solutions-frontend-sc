@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import './QuotationFormInputs.css';
 import { formatDateReadable } from '../../../customs/global/manageDates';
 import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
@@ -16,7 +16,6 @@ const QuotationFormsInputs = (props) => {
         [name]: value
     }));
   };
-  
 
   return (
     <>
