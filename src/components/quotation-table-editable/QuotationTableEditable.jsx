@@ -14,6 +14,7 @@ const QoutationTableEditable = (props) => {
     const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
+    const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -81,7 +82,12 @@ const QoutationTableEditable = (props) => {
     
     const handleInputChange = (e, id) => {
         const { value, name } = e.target;
-        
+
+        if((value <= 0 || value === '' || value == null) && name === 'qty') {
+            setValidateNegativeQty(true);
+        } else {
+            setValidateNegativeQty(false);
+        }
         // Update the field first
         setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
@@ -147,11 +153,12 @@ const QoutationTableEditable = (props) => {
     const toggleSaveAndEdit = (id) => {
 
        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-       const checkProductIfNegative = productItemDetails.find(p => parseInt(p.qty) <= 0);
        const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
        props.totalAmount.setTotalAmount(totalItemAmount)
        props.setTotalAmountref(totalItemAmount)
        const getproductItemDetails = productItemDetails.find(d => d.id === id);
+
+       console.log("productItemDetails", productItemDetails)
 
        if(getproductItemDetails.name !== 'Man Power') {
         setInputAccessNumDays(true);
@@ -162,11 +169,6 @@ const QoutationTableEditable = (props) => {
            return;
         }
         
-       if(checkProductIfNegative) {
-           errorDialog("Quantity must be not 0 and negative number");
-           return;
-        }
-        
         // reshaping data
         const updatedQoutationItems = productItemDetails.map(data => ({
             proposal_id: 0,
@@ -174,9 +176,8 @@ const QoutationTableEditable = (props) => {
             quantity: parseInt(data.qty),
             price: parseInt(data.base_price),
             proposal_item_id: data.proposal_item_id | 0,
-            sku: data.sku
+            sku: data.sku,
         }));
-
     // this is the state  that going to save to database 
     // on QoutationForm jsx
      props.setQoutationItem(updatedQoutationItems);
@@ -357,7 +358,7 @@ const QoutationTableEditable = (props) => {
                             <td>{row.amount | 0}</td>
                             <td>
                                 {row.isEditing ? (
-                                    <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Save</button>
+                                    <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)} disabled={validateNegativeQty}>Save</button>
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}
