@@ -135,6 +135,28 @@ export const checkAuthAndNavigate = (navigate) => {
       return { message: 'Failed to parse data', status: false };
     }
   }
+
+  export const getLoggedInData = () => {
+    const loginUser = localStorage.getItem('authEmployee');
+  
+    if (!loginUser) {
+      return null;
+    }
+  
+    try {
+      const parsedUser = JSON.parse(loginUser);
+  
+      // Checking for valid data structure with data array
+      if (parsedUser?.data && Array.isArray(parsedUser.data) && parsedUser.data.length > 0) {
+        return parsedUser.data[0];
+      } else {
+        return null
+      }
+    } catch (error) {
+      return null
+    }
+  };
+  
   
   
   
