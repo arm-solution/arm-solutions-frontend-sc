@@ -231,49 +231,55 @@ const Home = () => {
    
   return (
     <>
+
     { dtrLoading && ( <Loading /> ) }
 
-    <div className="row">
 
-      <div className="col-md-6">
-      <h1>Real-Time Clock</h1>
-      <h2>{currentTime.toLocaleTimeString()}</h2>
+    <div className="container">
+      
+          <div className="row">
 
-      </div>
-      <div className="col-md-6 text-end">
-      <h1>Welcome <span style={{ textTransform: 'uppercase', color: 'green' }}>{ getLoggedInFullname() }</span></h1>
-      </div>
+            <div className="col-md-6">
+            <h1>Real-Time Clock</h1>
+            <h2>{currentTime.toLocaleTimeString()}</h2>
+
+            </div>
+            <div className="col-md-6 text-end">
+            <h1>Welcome <span style={{ textTransform: 'uppercase', color: 'green' }}>{ getLoggedInFullname() }</span></h1>
+            </div>
+
+          </div>
+          <div className="row">
+          { shift && Object.keys(shift).length > 0 ? (
+              <>
+                {shift.break_start === '' ? (
+                  <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakIn(e)}>Break In</button>
+                ) : (
+                  shift.break_end === '' ? (
+                    <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakOut(e)}>Break Out</button>
+                  ) : (
+                    <button className="btn btn-danger time-in-btn" onClick={(e) => timeOut(e)}>Time Out</button>
+                  )
+                )}
+                <button className='btn btn-success time-in-btn' onClick={(e) => handleEarlyTimeOut(e)}>Early Time Out</button>
+              </>
+            ) : (
+              <button className="btn btn-primary time-in-btn" onClick={getTimeIn} disabled={loadingSessionStorage}>
+                {loadingSessionStorage ? 'Loading...' : 'Time In'}
+              </button>
+            )
+          }
+
+          </div>
+
+        <div className="row mt-4">
+          <CurrentShift 
+          shiftState={{ shift, setShift }}
+          />
+        </div>
 
     </div>
 
-    <div className="row">
-    { shift && Object.keys(shift).length > 0 ? (
-    <>
-      {shift.break_start === '' ? (
-        <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakIn(e)}>Break In</button>
-      ) : (
-        shift.break_end === '' ? (
-          <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakOut(e)}>Break Out</button>
-        ) : (
-          <button className="btn btn-danger time-in-btn" onClick={(e) => timeOut(e)}>Time Out</button>
-        )
-      )}
-      <button className='btn btn-success time-in-btn' onClick={(e) => handleEarlyTimeOut(e)}>Early Time Out</button>
-    </>
-  ) : (
-    <button className="btn btn-primary time-in-btn" onClick={getTimeIn} disabled={loadingSessionStorage}>
-      {loadingSessionStorage ? 'Loading...' : 'Time In'}
-    </button>
-  )
-}
-
-    </div>
-
-    <div className="row mt-4">
-      <CurrentShift 
-      shiftState={{ shift, setShift }}
-      />
-    </div>
 
     <div className="mt-5">
       <DataTable
