@@ -10,8 +10,8 @@ const AdminDashboard = lazy(() => import('../pages/admin/admin-dashboard-page/Ad
 const Analytics = lazy(() => import('../pages/admin/analytics-page/Analytics'));
 const Login = lazy(() => import('../pages/login-page/Login'));
 const EmplyeesList = lazy(() => import('../pages/admin/employeeList-page/EmplyeesList'));
-const OutletPage = lazy(() => import('../pages/employee/outlet-page/OutletPage'));
-const EmployeeHomePage = lazy(() => import('../pages/employee/dtr-page/DtrPage'));
+const EmployeeHomePage = lazy(() => import('../pages/employee/employee-home-page/EmployeesHomePage'))
+const DtrPage = lazy(() => import('../pages/employee/dtr-page/DtrPage'));
 const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
 const PaySlipPage = lazy(() => import("../pages/employee/pay-slip-page/PaySlipPage"));
 const AttendancePage = lazy(() => import('../pages/employee/attendance-page/AttendancePage'));
@@ -58,8 +58,12 @@ const CommonRoutes = () => (
                 <AttendancePage /> 
             </Suspense>
         }/>
- 
 
+        <Route path='dtr' element={ 
+            <Suspense fallback={ <Loading /> }>
+                <DtrPage /> 
+            </Suspense>
+        }/>
 
         <Route path='my-payslip' element={ 
             <Suspense fallback={ <Loading /> }>
@@ -135,12 +139,12 @@ export const router = createBrowserRouter(createRoutesFromElements(
 
         {/* Employees routing */}
         <Route element={<RequireAuth />}>
-            <Route path='employees' element={<OutletPage />}>
+            <Route path='employees' element={<EmployeeHomePage />}>
             
 
                 <Route path='' element={ 
                     <Suspense fallback={ <Loading /> }>
-                        <EmployeeHomePage /> 
+                        <DtrPage /> 
                     </Suspense>
                 }/>
 

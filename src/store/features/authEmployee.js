@@ -3,7 +3,7 @@ import axios from 'axios'
 
 export const loginEmployee = createAsyncThunk('employee/login', async ({ employee_id, user_password }, { rejectWithValue }) => {
     try {
-        const res = await axios.post('http://localhost:5000/employees/login', { employee_id, user_password });
+        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/login`, { employee_id, user_password });
         return res.data;
     } catch (error) {
         rejectWithValue(error.response.data);
