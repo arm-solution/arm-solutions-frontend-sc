@@ -11,7 +11,7 @@ const Analytics = lazy(() => import('../pages/admin/analytics-page/Analytics'));
 const Login = lazy(() => import('../pages/login-page/Login'));
 const EmplyeesList = lazy(() => import('../pages/admin/employeeList-page/EmplyeesList'));
 const OutletPage = lazy(() => import('../pages/employee/outlet-page/OutletPage'));
-const EmployeeHomePage = lazy(() => import('../pages/employee/home-page/Home'));
+const EmployeeHomePage = lazy(() => import('../pages/employee/dtr-page/DtrPage'));
 const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
 const PaySlipPage = lazy(() => import("../pages/employee/pay-slip-page/PaySlipPage"));
 const AttendancePage = lazy(() => import('../pages/employee/attendance-page/AttendancePage'));
@@ -25,6 +25,7 @@ const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'))
 const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
 const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
 const CompanyClient = lazy(() => import('../pages/client-page/Client'));
+const ForgotPassword = lazy(() => import('../pages/forgot-password-page/ForgotPassword'))
 
 const CommonRoutes = () => (
     <>
@@ -179,6 +180,12 @@ export const router = createBrowserRouter(createRoutesFromElements(
         <Route path='under-maintenace' element={
             <Suspense fallback={<Loading/> } >
                 <UnderMaintenace />
+            </Suspense>
+        } />
+
+        <Route path='forgot-password' element={
+            <Suspense fallback={<Loading/> } >
+                <ForgotPassword />
             </Suspense>
         } />
 

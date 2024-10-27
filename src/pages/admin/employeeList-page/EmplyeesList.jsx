@@ -82,6 +82,7 @@ const EmployeesList = () => {
           actions={{ handleView, handleDelete }}
           perPage={10}
           showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
+          deleteAccess={true}
           tableLabel='Employees list'
           addData={resetModalFormAdd}
         />
