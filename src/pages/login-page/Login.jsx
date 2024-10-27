@@ -162,7 +162,7 @@ const Login = () => {
                 <div className="row">
                   <div className="col-12">
                     <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end mt-4">
-                      <a href="#!">Forgot password</a>
+                      {/* <Link to="/forgot-password">Forgot password</Link> */}
                     </div>
                   </div>
                 </div>

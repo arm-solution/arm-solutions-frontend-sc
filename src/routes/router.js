@@ -11,7 +11,7 @@ const Analytics = lazy(() => import('../pages/admin/analytics-page/Analytics'));
 const Login = lazy(() => import('../pages/login-page/Login'));
 const EmplyeesList = lazy(() => import('../pages/admin/employeeList-page/EmplyeesList'));
 const OutletPage = lazy(() => import('../pages/employee/outlet-page/OutletPage'));
-const EmployeeHomePage = lazy(() => import('../pages/employee/home-page/Home'));
+const EmployeeHomePage = lazy(() => import('../pages/employee/dtr-page/DtrPage'));
 const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
 const PaySlipPage = lazy(() => import("../pages/employee/pay-slip-page/PaySlipPage"));
 const AttendancePage = lazy(() => import('../pages/employee/attendance-page/AttendancePage'));
@@ -181,6 +181,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
                 <UnderMaintenace />
             </Suspense>
         } />
+
 
         {/* <Route path='company-profile' element={
             <Suspense fallback={<Loading/> } >
