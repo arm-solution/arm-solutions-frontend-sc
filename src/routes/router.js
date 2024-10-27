@@ -25,7 +25,6 @@ const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'))
 const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
 const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
 const CompanyClient = lazy(() => import('../pages/client-page/Client'));
-const ForgotPassword = lazy(() => import('../pages/forgot-password-page/ForgotPassword'))
 
 const CommonRoutes = () => (
     <>
@@ -183,11 +182,6 @@ export const router = createBrowserRouter(createRoutesFromElements(
             </Suspense>
         } />
 
-        <Route path='forgot-password' element={
-            <Suspense fallback={<Loading/> } >
-                <ForgotPassword />
-            </Suspense>
-        } />
 
         {/* <Route path='company-profile' element={
             <Suspense fallback={<Loading/> } >
