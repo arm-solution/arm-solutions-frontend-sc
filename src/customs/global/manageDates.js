@@ -95,3 +95,43 @@ export const formatDateToStringv2 = (dateString) => {
       // Use Intl.DateTimeFormat to format the date
       return new Intl.DateTimeFormat('en-US', options).format(date);
   }
+
+ export const getCurrentDateForCalculation = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+ export const calculateHours = (date, timeIn, timeOut) => {
+    // Parse the date and times into Date objects
+    const inDate = new Date(`${date} ${timeIn}`);
+    const outDate = new Date(`${date} ${timeOut}`);
+    
+    // Calculate the difference in milliseconds
+    const diffMs = outDate - inDate;
+    
+    // Convert milliseconds to hours and minutes
+    const totalMinutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    return `${hours} hours and ${minutes} minutes`;
+}
+
+export const calculateDecimalHours = (date, timeIn, timeOut) => {
+    // Parse the date and times into Date objects
+    const inDate = new Date(`${date} ${timeIn}`);
+    const outDate = new Date(`${date} ${timeOut}`);
+    
+    // Calculate the difference in milliseconds
+    const diffMs = outDate - inDate;
+    
+    // Convert milliseconds to hours with minutes as a decimal
+    const totalMinutes = diffMs / (1000 * 60);
+    const totalHours = totalMinutes / 60;
+
+    // Return result as a float with two decimal places
+    return parseFloat(totalHours.toFixed(2));
+}

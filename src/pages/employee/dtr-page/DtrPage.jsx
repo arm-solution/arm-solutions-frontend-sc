@@ -12,6 +12,7 @@ import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
+import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../customs/global/manageDates';
 
 const Home = () => {
 
@@ -66,7 +67,7 @@ const Home = () => {
   
     const currentDate = new Date();
     const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'hh:mm:ss');
+    const formattedTime = format(currentDate, 'HH:mm:ss');
   
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -108,13 +109,18 @@ const Home = () => {
 
     const currentDate = new Date();
     // const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'hh:mm:ss');
+    const formattedTime = format(currentDate, 'HH:mm:ss');
 
     const storeCoords = sessionStorage.getItem('currentShift');
     if(storeCoords) {
       const coords = JSON.parse(storeCoords)
       coords.time_out = formattedTime;
 
+      const total_hours = calculateDecimalHours(getCurrentDateForCalculation(), coords.time_in, formattedTime);
+      const break_hour = coords.break_start ? calculateDecimalHours(getCurrentDateForCalculation(), coords.break_start, formattedTime) : 0;
+
+      coords.total_hours = total_hours - break_hour;
+      
       const { payload }  = await dispatch(updateDtrById(coords));
 
       if(payload.success) {
