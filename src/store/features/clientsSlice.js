@@ -32,6 +32,16 @@ export const updateClient = createAsyncThunk('updateClient', async(clientData, {
     }
 })
 
+export const deleteClient = createAsyncThunk('deleteClient', async(id, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/clients/delete-client/${id}`);
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+})
+
 export const addNewClient = createAsyncThunk('addNewClient', async(clientData, {rejectWithValue}) => {
     try {
         const { fullname, ...rest } = clientData;

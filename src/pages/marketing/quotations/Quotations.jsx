@@ -7,6 +7,7 @@ import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
 import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
+import { deleteConfirmation } from '../../../customs/global/alertDialog'; 
 
 const Quotations = () => {
 
@@ -67,7 +68,23 @@ const Quotations = () => {
     };
   
     const handleDelete = (id) => {
-      alert('deleted'+ id);
+      // alert('deleted'+ id);
+
+      deleteConfirmation({
+        title: "",
+        text: "",
+        icon: "",
+        confirmButtonText: "",
+        cancelButtonText: "",
+        deleteTitle: "",
+        deleteText: "",
+        successTitle: "", 
+        successText: ""
+      }, async () => {
+      
+        alert("Need to delete child rows of: "+id);
+  
+      });
     }
     
     
