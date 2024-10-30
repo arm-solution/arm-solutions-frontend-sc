@@ -4,8 +4,8 @@ import axios from 'axios';
 export const getAllCleints = createAsyncThunk('getAllCleints', async (_, {rejectWithValue}) => {
 
     try {
-        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients`);
-        return res.data;
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients`);
+        return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
@@ -13,8 +13,8 @@ export const getAllCleints = createAsyncThunk('getAllCleints', async (_, {reject
 
 export const getClientById  =createAsyncThunk('getClientById', async(id, {rejectWithValue}) => {
     try {
-        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients/get-client-by-id/${id}`);
-        return res.data;
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/clients/get-client-by-id/${id}`);
+        return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }

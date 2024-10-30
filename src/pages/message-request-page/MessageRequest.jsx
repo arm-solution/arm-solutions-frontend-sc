@@ -44,6 +44,7 @@ const MessageRequest = () => {
           perPage={10}
           showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
           tableLabel='Message request list'
+          deleteAccess={true}
           addData={inquireModal}
           headerColor='table-primary'
         />

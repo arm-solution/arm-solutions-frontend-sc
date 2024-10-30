@@ -1,6 +1,7 @@
 .time-in-btn {
     width: 15rem !important;
     margin-top: 3rem !important ;
+    margin-right: 1rem;
 }
 
 @media screen and (max-width: 768px) {

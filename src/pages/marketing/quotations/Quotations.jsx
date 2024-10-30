@@ -123,6 +123,7 @@ const Quotations = () => {
                   columns={columns}
                   actions={{ handleView, handleDelete }}
                   perPage={10}
+                  deleteAccess={true}
                   showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
                   tableLabel = 'Proposal Lists'
                 />

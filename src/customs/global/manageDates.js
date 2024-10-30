@@ -11,7 +11,7 @@ export const getCurrentDate = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export const formatDateReadable = (isoDate) => {
+export const formatDateAndTimeReadable = (isoDate) => {
     const date = new Date(isoDate);
     return date.toLocaleString('en-US', {
         year: 'numeric',
@@ -21,6 +21,17 @@ export const formatDateReadable = (isoDate) => {
         minute: '2-digit',
         second: '2-digit',
         hour12: true
+    });
+}
+
+
+export const formatDateReadable = (isoDate) => {
+    // Create a Date object from the date string, ignoring the time part
+    const date = new Date(isoDate.split('T')[0]);  // Split to remove the time part
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
     });
 }
 

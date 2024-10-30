@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginEmployee } from '../../store/features/authEmployee';
 import './LoginPage.css'
 import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
-import { unwrapResult } from '@reduxjs/toolkit';
+// import { unwrapResult } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
 
 const Login = () => {
@@ -162,7 +162,7 @@ const Login = () => {
                 <div className="row">
                   <div className="col-12">
                     <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end mt-4">
-                      <Link to="/forgot-password">Forgot password</Link>
+                      <a href="#!">Forgot password</a>
                     </div>
                   </div>
                 </div>

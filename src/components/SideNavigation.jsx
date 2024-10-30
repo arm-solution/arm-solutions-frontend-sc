@@ -39,6 +39,13 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </Link>
                     </li>
                     <li className="sidebar-item">
+                        <Link to='common/dtr' className="sidebar-link">
+                            {/* <i className="lni lni-bar-chart"></i> */}
+                            <i className="lni lni-checkmark"></i>
+                            <span>Dtr</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-item">
                         <Link to='common/qoutations' className="sidebar-link">
                             <i className="lni lni-handshake"></i>
                             <span>Proposal</span>

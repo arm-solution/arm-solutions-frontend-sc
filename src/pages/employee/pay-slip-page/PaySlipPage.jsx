@@ -40,6 +40,7 @@ const PaySlipPage = () => {
           columns={columns}
           actions={{ handleView, handleDelete }}
           perPage={10}
+          deleteAccess={true}
           showAddButtonAndSearchInput={{ searchInput: false, addButton: false }}
           tableLabel=''
           // addData={resetModalFormAdd}
