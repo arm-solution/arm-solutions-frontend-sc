@@ -2,16 +2,20 @@
 import React, { useState } from 'react';
 import { getLoggedInUser, logout } from '../customs/global/manageLocalStorage';
 import { Link, useNavigate } from 'react-router-dom';
+import { resetCurrentDtr } from '../store/features/dtrSlice';
+import { useDispatch } from 'react-redux';
 import "./../customs/css/SideNavigation.css";
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [expandedDropdown, setExpandedDropdown] = useState(null); // State to track expanded dropdown
 
     const style = { display: !showSideNav && 'flex' }
 
     const handleLogout = () => {
+        dispatch(resetCurrentDtr());
         logout(navigate);
     };
 
@@ -38,13 +42,28 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             <span>Analytics</span>
                         </Link>
                     </li>
+
                     <li className="sidebar-item">
-                        <Link to='common/dtr' className="sidebar-link">
-                            {/* <i className="lni lni-bar-chart"></i> */}
+                        <a
+                            href="#"
+                            className={`sidebar-link has-dropdown ${expandedDropdown === 'dtr' ? '' : 'collapsed'}`}
+                            data-bs-toggle="collapse"
+                            aria-expanded={expandedDropdown === 'dtr'}
+                            onClick={() => toggleDropdown('dtr')}
+                        >
                             <i className="lni lni-checkmark"></i>
                             <span>Dtr</span>
-                        </Link>
+                        </a>
+                        <ul id="dtr" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'dtr' ? 'show' : ''}`}>
+                            <li className="sidebar-item">
+                                <Link to='common/dtr' className="sidebar-link">My Dtr</Link>
+                            </li>
+                            <li className="sidebar-item">
+                                <Link to='common/dtr-request' className="sidebar-link">Dtr Requests</Link>
+                            </li>
+                        </ul>
                     </li>
+
                     <li className="sidebar-item">
                         <Link to='common/qoutations' className="sidebar-link">
                             <i className="lni lni-handshake"></i>

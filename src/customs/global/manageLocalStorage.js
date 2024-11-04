@@ -72,6 +72,8 @@ export const checkAuthAndNavigate = (navigate) => {
       
       if (typeof navigate === 'function') {
         navigate('/login');
+        sessionStorage.clear();
+        window.dispatchEvent(new Event('currentShift'));
       } else {
         console.error('Navigate function is not defined');
       }
