@@ -25,6 +25,7 @@ const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'))
 const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
 const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
 const CompanyClient = lazy(() => import('../pages/client-page/Client'));
+const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
 
 const CommonRoutes = () => (
     <>
@@ -80,6 +81,12 @@ const CommonRoutes = () => (
         <Route path='clients' element={ 
             <Suspense fallback={ <Loading /> }>
                  <CompanyClient /> 
+            </Suspense>
+        }/>
+
+        <Route path='dtr-request' element={ 
+            <Suspense fallback={ <Loading /> }>
+                 <DtrRequest /> 
             </Suspense>
         }/>
 

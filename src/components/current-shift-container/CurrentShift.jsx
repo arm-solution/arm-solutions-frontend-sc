@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './CurrentShift.css';
+import { dateFormatted } from '../../customs/global/manageDates';
 
 const CurrentShift = (props) => {
 
@@ -32,7 +33,7 @@ const CurrentShift = (props) => {
            <div className='currentShift'>
               <div className="dateShift">
                 <p style={{ fontWeight: "bolder"}}>Date</p>
-                <p>{ shift?.shift_date }</p>
+                <p>{ shift?.shift_date ? dateFormatted(shift?.shift_date) : '---' }</p>
               </div>
               <div className="timeinout">
                 <p style={{ fontWeight: "bolder"}}>Time in</p>

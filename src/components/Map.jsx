@@ -13,33 +13,6 @@ const Map = (props) => {
 
   const myLocation = useLocation();
 
-  // const positions = [
-  //   {
-  //     geocode: [14.0433, 121.1587],
-  //     username: 'lance'
-  //   },
-  //   {
-  //     geocode: [14.0371, 121.1109],
-  //     username: 'jeck'
-  //   },
-  //   {
-  //     geocode: [14.0355, 121.1223],
-  //     username: 'mel'
-  //   },
-  //   {
-  //     geocode: [14.0401, 121.1140],
-  //     username: 'joseph'
-  //   },
-  //   {
-  //     geocode: [14.0400, 121.1145],
-  //     username: 'insideUser'
-  //   },
-  //   {
-  //     geocode: [25.0964232, 55.17071],
-  //     username: 'Lance Dubai'
-  //   }
-  // ];
-
   // armsol area
   const geofenceCoords = useMemo(() =>[
     [14.0385, 121.1130],

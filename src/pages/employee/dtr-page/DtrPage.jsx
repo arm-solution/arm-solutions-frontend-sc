@@ -4,14 +4,17 @@ import './DtrPage.css';
 import { getLoggedInFullname, getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { dateFormatted } from '../../../customs/global/manageDates'; 
 import { useDispatch, useSelector } from 'react-redux';
-import { postDtr, getDtrById, updateDtrById } from '../../../store/features/dtrSlice';
+import { postDtr, getDtrById, updateDtrById, getWeeklyDtr, getCurrentDtr  } from '../../../store/features/dtrSlice';
 import Loading from '../../../components/loading-spinner/Loading';
-import DataTable from '../../../components/DataTable';
 import CurrentShift from '../../../components/current-shift-container/CurrentShift';
 import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
+import { postDtrRequest } from '../../../store/features/dtrRequestSlice';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
+import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../customs/global/manageDates';
+import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
+import { resetCurrentDtr } from '../../../store/features/dtrSlice'; 
 
 const Home = () => {
 
@@ -26,19 +29,38 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const { dtr, loading: dtrLoading } = useSelector(state => state.dtr);
+  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading } = useSelector(state => state.dtr);
 
-  const columns = [
-    { header: 'Shift Date', accessor: 'shift_date' },
-    { header: 'Time In', accessor: 'time_in' },
-    { header: 'Time Out', accessor: 'time_out' },
-    { header: 'Status', accessor: 'status' },
-  ];
+
+  
+  
+  useEffect(() => {
+    dispatch(getDtrById(getLoggedInID()));
+    dispatch(getWeeklyDtr(getLoggedInID()));
+    dispatch(getCurrentDtr(getLoggedInID()));
+  }, [dispatch]); 
+  
+  useEffect(() => {
+    if(currentDtr.length > 0) {
+      sessionStorage.setItem('currentShift', JSON.stringify(currentDtr[0]));
+
+      window.dispatchEvent(new Event('currentShift'));
+    } else {
+      sessionStorage.removeItem('currentShift');
+    }
+  }, [currentDtr])
 
 
   useEffect(() => {
-      dispatch(getDtrById(getLoggedInID()));
-  }, [dispatch]);  
+    // Set up an interval to update the current time every second
+    const timer = setInterval(() => {
+        setCurrentTime(new Date());
+    }, 1000);
+
+      // Clean up the interval when the component unmounts
+      return () => clearInterval(timer);
+  }, []);
+  
 
   const showError = (error) => {
     switch (error.code) {
@@ -66,7 +88,7 @@ const Home = () => {
   
     const currentDate = new Date();
     const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'hh:mm:ss');
+    const formattedTime = format(currentDate, 'HH:mm:ss');
   
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
@@ -86,6 +108,7 @@ const Home = () => {
         if (payload.success) {
           sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
           setShift(coords);
+          dispatch(getWeeklyDtr(getLoggedInID()));
           window.dispatchEvent(new Event('currentShift'));
         } else {
           errorDialog("Cannot save your data, please report this to the technical team");
@@ -105,46 +128,91 @@ const Home = () => {
 
   const timeOut = async (e) => {
     e.preventDefault();
-
+  
     const currentDate = new Date();
-    // const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'hh:mm:ss');
-
+    const formattedDate = dateFormatted(currentDate);
+    const formattedTime = format(currentDate, 'HH:mm:ss');
+  
     const storeCoords = sessionStorage.getItem('currentShift');
-    if(storeCoords) {
-      const coords = JSON.parse(storeCoords)
+  
+    if (!storeCoords) return;
+  
+    try {
+      const coords = JSON.parse(storeCoords);
       coords.time_out = formattedTime;
+  
+      // Calculate total hours worked and break hours
+      const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), coords.time_in, formattedTime);
+      const breakHours = coords.break_start 
+        ? calculateDecimalHours(getCurrentDateForCalculation(), coords.break_start, formattedTime) 
+        : 0;
+  
+      coords.total_hours = totalHours - breakHours;
 
-      const { payload }  = await dispatch(updateDtrById(coords));
-
-      if(payload.success) {
-        // sessionStorage.setItem('currentShift', JSON.stringify(coords));
-        setShift([]);
-        sessionStorage.removeItem('currentShift'); // Remove from sessionStorage
-        window.dispatchEvent(new Event('currentShift')); // Trigger the custom event
+      const d = {
+        user_id: getLoggedInID(),
+        date_from: formattedDate,
+        date_to: formattedDate,
+        status: 'pending',
       }
 
+
+      // Update DTR and handle response
+      const { payload: updateDtr } = await dispatch(updateDtrById(coords));
+      
+      if (updateDtr.success) {
+        const { payload: postDtrRequestPayload } = await dispatch(
+          postDtrRequest({
+            user_id: getLoggedInID(),
+            date_from: formattedDate,
+            date_to: formattedDate,
+            status: 'pending',
+          })
+        );
+        
+        if(postDtrRequestPayload.success) {
+          sessionStorage.removeItem('currentShift');
+          setShift([]);
+          dispatch(getWeeklyDtr(getLoggedInID()));
+          window.dispatchEvent(new Event('currentShift'));
+        } else {
+          console.error("Error posting Dtr Request", postDtrRequestPayload)
+        }
+        // Clear session and update state
+      } else {
+        console.error("Error updating DTR:", updateDtr);
+      }
+    } catch (error) {
+      console.error("Error processing timeout:", error);
     }
-  }
+  };
+  
 
 
-  const handleBreakIn = (e) => {
+  const handleBreakIn = async (e) => {
     e.preventDefault();
     setLoadingSessionStorage(true);
 
     const currentDate = new Date(); 
-    const formattedTime = format(currentDate, 'hh:mm:ss');
+    const formattedTime = format(currentDate, 'HH:mm:ss');
 
     const storeCoords = sessionStorage.getItem('currentShift');
 
     if(storeCoords) {
       const coords = JSON.parse(storeCoords);
       coords.break_start = formattedTime;
+      const { payload } = await dispatch(updateDtrById(coords));
+      
+      if(payload.success) {
+        sessionStorage.setItem('currentShift', JSON.stringify(coords));
+        setShift(coords);
 
-      sessionStorage.setItem('currentShift', JSON.stringify(coords));
-      setShift(coords);
 
-      window.dispatchEvent(new Event('currentShift'));
+        window.dispatchEvent(new Event('currentShift'));
+      } else {
+        console.log("payload", payload);
+      }
+
 
       setLoadingSessionStorage(false);
     }
@@ -152,13 +220,13 @@ const Home = () => {
     setLoadingSessionStorage(false);
   }
 
-  const handleBreakOut = (e) => {
+  const handleBreakOut = async (e) => {
     e.preventDefault();
 
     setLoadingSessionStorage(true);
 
     const currentDate = new Date(); 
-    const formattedTime = format(currentDate, 'hh:mm:ss');
+    const formattedTime = format(currentDate, 'HH:mm:ss');
 
     const storeCoords = sessionStorage.getItem('currentShift');
 
@@ -166,10 +234,17 @@ const Home = () => {
       const coords = JSON.parse(storeCoords);
       coords.break_end = formattedTime;
 
-      sessionStorage.setItem('currentShift', JSON.stringify(coords));
-      setShift(coords);
-      
-      window.dispatchEvent(new Event('currentShift'));
+      const { payload } = await dispatch(updateDtrById(coords));
+
+      if(payload.success) {
+        sessionStorage.setItem('currentShift', JSON.stringify(coords));
+        setShift(coords);
+        
+        window.dispatchEvent(new Event('currentShift'));
+       } else {
+        console.log("Error", payload);
+       }
+
 
       setLoadingSessionStorage(false);
     }
@@ -252,10 +327,10 @@ const Home = () => {
           <div className="row">
           { shift && Object.keys(shift).length > 0 ? (
               <>
-                {shift.break_start === '' ? (
+                {shift.break_start === '' || shift.break_start === '00:00:00' ? (
                   <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakIn(e)}>Break In</button>
                 ) : (
-                  shift.break_end === '' ? (
+                  shift.break_end === '' || shift.break_end === '00:00:00' ? (
                     <button className="btn btn-warning time-in-btn" onClick={(e) => handleBreakOut(e)}>Break Out</button>
                   ) : (
                     <button className="btn btn-danger time-in-btn" onClick={(e) => timeOut(e)}>Time Out</button>
@@ -282,15 +357,9 @@ const Home = () => {
 
 
     <div className="mt-5">
-      <DataTable
-        data={dtr}
-        columns={columns}
-        actions={{ handleView, handleDelete }}
-        perPage={10}
-        showAddButtonAndSearchInput={{ searchInput: false, addButton: false }}
-        tableLabel='Records'
-        deleteAccess={false}
-        headerColor='table-success'
+      <WeekDtr
+        dtr={weeklyDtr}
+        handleViewDetails={handleView}
       />
     </div>
 

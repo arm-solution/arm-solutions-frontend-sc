@@ -9,6 +9,7 @@ import departmentSlice from "./features/departmentSlice";
 import provinceSlice from "./features/getProvince";
 import dtrSlice from "./features/dtrSlice";
 import taxDiscountSlice from "./features/taxDiscountSlice";
+import dtrRequestSlice from "./features/dtrRequestSlice";
 
 export const store = configureStore({
     reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
         departments: departmentSlice.reducer,
         provinces: provinceSlice.reducer,
         dtr: dtrSlice.reducer,
-        taxDiscounts: taxDiscountSlice.reducer
+        taxDiscounts: taxDiscountSlice.reducer,
+        dtrRequests: dtrRequestSlice.reducer
     }
 })
