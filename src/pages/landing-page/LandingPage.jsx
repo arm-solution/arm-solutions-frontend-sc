@@ -7,7 +7,7 @@ import LandingNavbar from './../../components/landing-navigation/LandingNavbar';
 import ServiceCardSlides from '../../components/services/ServiceCardSlides';
 import OnTopButton from '../../components/ontop-button/OnTopButton';
 import WhyArms from '../../components/why-arms/WhyArms';
-import Profile from '../company-profile/Profile';
+import Profile from '../company-profile-page/Profile';
 import CompanyHistory from '../../components/company-history/CompanyHistory';
 // import MessengerChat from '../../components/MessengerChat';
 

@@ -5,6 +5,10 @@
     overflow: hidden;
     width: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure the card takes up available height */
 }
 
 .card-dashboard .card:hover {
@@ -33,14 +37,22 @@
 
 .card-dashboard .card-body {
     padding: 20px;
+    flex-grow: 1; /* Allows card-body to grow and push footer to the bottom */
 }
 
 .card-dashboard .card-body .amount {
-    font-size: 28px;
     font-weight: bold;
-    color: #4e73df;
+    /* color: #4e73df; */
+    color: #494a4e;
     margin-bottom: 10px;
-}
+    word-break: break-word;
+    font-size: 1.5rem;
+  }
+  
+  .card-dashboard .card-body .amount-small {
+    font-size: 1.2rem;
+    /* font-size: 21px; */
+  }
 
 .card-dashboard .card-body .description {
     color: #6c757d;
@@ -51,7 +63,9 @@
     background-color: #e9ecef;
     padding: 10px 20px;
     text-align: right;
+    margin-top: auto; /* Pushes footer to the bottom */
 }
+
 
 .card-dashboard .card-footer a {
     text-decoration: none;

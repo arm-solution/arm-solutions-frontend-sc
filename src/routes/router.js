@@ -26,6 +26,7 @@ const MessageRequest = lazy(() => import('./../pages/message-request-page/Messag
 const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
 const CompanyClient = lazy(() => import('../pages/client-page/Client'));
 const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPassword'));
+const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
 
 const CommonRoutes = () => (
     <>
@@ -81,6 +82,12 @@ const CommonRoutes = () => (
         <Route path='clients' element={ 
             <Suspense fallback={ <Loading /> }>
                  <CompanyClient /> 
+            </Suspense>
+        }/>
+
+        <Route path='dtr-request' element={ 
+            <Suspense fallback={ <Loading /> }>
+                 <DtrRequest /> 
             </Suspense>
         }/>
 
