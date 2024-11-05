@@ -2,76 +2,79 @@ import React, { useState, useEffect  } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginEmployee } from '../../store/features/authEmployee';
-import './LoginPage.css'
+import './ForgotPasswordPage.css'
 import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
-// import { unwrapResult } from '@reduxjs/toolkit';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const ForgotPassword = () => {
 
-  const employeeAuth = useSelector((state) => state.auth)
-  const { isSuccess, message } = employeeAuth;
-
-
-  const [errmessage, setErrMessage] = useState({
-    status: false,
-    message: message
-  })
-  const [loginData, setLoginData] = useState({
-      employee_id: '',
-      user_password: ''
-  })
+    const employeeAuth = useSelector((state) => state.auth)
+    const { isSuccess, message } = employeeAuth;
 
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if(isSuccess) {
-      checkAuthAndNavigate(navigate)
-    }
-  }, [isSuccess, navigate]);
-  
-
-  const handleChange = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-
-    setLoginData({
-      ...loginData,
-      [name]: value
+    const [errmessage, setErrMessage] = useState({
+        status: false,
+        message: message
+    })
+    const [loginData, setLoginData] = useState({
+        employee_id: '',
+        email: ''
     })
 
-  }
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if(loginData.employee_id === '' || loginData.user_password === '') {
-      setErrMessage({
-        status: true,
-        message: "All fields are required!"
-      })
-      return;
-    }
-    try {
-      const { payload } = await dispatch(loginEmployee(loginData));
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-      if(payload.message) {
-        setErrMessage({
-          status: true,
-          message: payload.message
+    useEffect(() => {
+        if(isSuccess) {
+        checkAuthAndNavigate(navigate)
+        }
+    }, [isSuccess, navigate]);
+
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        const { name, value } = e.target;
+
+        setLoginData({
+        ...loginData,
+        [name]: value
         })
 
-        return;
-      }
-      
-    } catch (error) {
-      setErrMessage({
-        status: false,
-        message: 'An unexpected error occurred'
-      })
     }
-  }
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        if(loginData.employee_id === '' || loginData.email === '') {
+        setErrMessage({
+            status: true,
+            message: "All fields are required!"
+        })
+        return;
+        }
+        try {
+        const { payload } = await dispatch(loginEmployee(loginData));
+
+        if(payload.message) {
+            setErrMessage({
+            status: true,
+            message: payload.message
+            })
+
+            return;
+        }
+        
+        } catch (error) {
+        setErrMessage({
+            status: false,
+            message: 'An unexpected error occurred'
+        })
+        }
+    }
+
+
+
 
   return (
     <section className=" py-3 py-md-5 py-xl-8 login-section" >
@@ -123,7 +126,7 @@ const Login = () => {
                 <div className="row">
                   <div className="col-12">
                     <div className="mb-4">
-                      <h3>Sign in</h3>
+                      <h3>Forgot Password</h3>
                     </div>
                   </div>
                 </div>
@@ -137,8 +140,8 @@ const Login = () => {
                     </div>
                     <div className="col-12">
                       <div className="form-floating mb-3">
-                        <input type="password" className="form-control" name="user_password" id="user_password" onChange={handleChange}  required />
-                        <label htmlFor="user_password" className="form-label">Password</label>
+                        <input type="text" className="form-control" name="email" id="email" onChange={handleChange}  required />
+                        <label htmlFor="email" className="form-label">Email Address</label>
                       </div>
                     </div>
                     <div className="col-12">
@@ -146,7 +149,7 @@ const Login = () => {
                     </div>
                     <div className="col-12">
                       <div className="d-grid">
-                        <button className="btn btn-danger btn-lg" onClick={handleLogin}>Log in now</button>
+                        <button className="btn btn-danger btn-lg" onClick={handleLogin}>Reset Password</button>
                       </div>
                     </div>
                     <div className="col-12">
@@ -162,8 +165,7 @@ const Login = () => {
                 <div className="row">
                   <div className="col-12">
                     <div className="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-end mt-4">
-                      {/* <a href="#!">Forgot password</a> */}
-                      <Link to="/forgot-password">Forgot Password?</Link>
+                      <Link to="/login">Login</Link>
                     </div>
                   </div>
                 </div>
@@ -176,4 +178,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default ForgotPassword

@@ -25,6 +25,7 @@ const EmployeesForm = (props) => {
 
   // Initial State
   const getInitialEmployeeData = () => ({
+    employee_id: '',
     firstname: '',
     middlename: '',
     lastname: '',
@@ -138,7 +139,7 @@ const EmployeesForm = (props) => {
   const saveNewEmployee = async (e) => {
     e.preventDefault();
 
-    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
       errorDialog('Please fill in all required fields.');
       return;
     }
@@ -152,7 +153,7 @@ const EmployeesForm = (props) => {
           return;
      } else {
           if(payload.success) {
-            successDialog('New Employee are added');
+            successDialog('New Employee is added');
           } else {
             errorDialog('Failed to add new employee');
           }
@@ -170,7 +171,7 @@ const EmployeesForm = (props) => {
 
     const oldEmailRef = props.selectedUser ? props.selectedUser.email : '';
 
-    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -217,6 +218,20 @@ const EmployeesForm = (props) => {
           
           <div className="modal-body">
             <div className="modal-container">
+             
+                <div className="row">
+                  <div className="col col-md-4">
+                    <div className="form-group">
+                      <label htmlFor="employee_id">Employee Number:</label>
+                      <input type="text" className="form-control" name="employee_id" value={employeeData.employee_id || ''} onChange={handleEmployeeFormInput} />
+                    </div>
+                  </div>
+                  <div className="col col-md-4">
+                  </div>
+
+                  <div className="col col-md-4">
+                  </div>
+                </div>
              
                 <div className="row">
                   <div className="col col-md-4">
