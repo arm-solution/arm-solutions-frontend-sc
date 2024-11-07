@@ -42,7 +42,7 @@ const dtrRequestSlice = createSlice({
             state.loading = false;
             state.isSuccess = true;
 
-            state.allDtrRequest = action.payload;
+            state.getAllDtrRequestResponse = action.payload;
         })
         .addCase(getAllDtrRequest.rejected, (state, action) => {
             state.isSuccess = false;
