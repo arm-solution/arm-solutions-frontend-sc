@@ -27,6 +27,7 @@ const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/Unde
 const CompanyClient = lazy(() => import('../pages/client-page/Client'));
 const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPassword'));
 const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
+const DtrListByUser = lazy(() => import('../pages/dtr-list-by-user-page/DtrListByUser'));
 
 const CommonRoutes = () => (
     <>
@@ -138,6 +139,12 @@ export const router = createBrowserRouter(createRoutesFromElements(
                 } >
 
                 </Route>
+
+                <Route path='dtr-record/:userId' element={
+                    <Suspense fallback={<Loading/> } >
+                        <DtrListByUser />
+                    </Suspense>
+                } />
 
                 {CommonRoutes()}
 

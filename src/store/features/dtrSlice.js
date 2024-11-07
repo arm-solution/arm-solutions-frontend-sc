@@ -70,12 +70,22 @@ export const getCurrentDtr = createAsyncThunk('dtr/getCurrentDtr', async(user_id
     }
 })
 
+export const getPendingDtrUsers = createAsyncThunk('dtr/getPendingUserDtr', async(_, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/pending-dtr/pending-by-user`);
+        return data; 
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 const dtrSlice = createSlice({
     name: 'dtr',
     initialState:{
-        dtr: [],
+        allDtr: [],
         weeklyDtr: [],
         currentDtr: [],
+        getPendingUserDtr: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -143,6 +153,32 @@ const dtrSlice = createSlice({
             state.currentDtr = action.payload
         })
         .addCase(getCurrentDtr.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = "Un able to fetch the current dtr";
+        })
+        .addCase(getPendingDtrUsers.pending, (state, _) => {
+            state.loading = true
+        })
+        .addCase(getPendingDtrUsers.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state.getPendingUserDtr = action.payload
+        })
+        .addCase(getPendingDtrUsers.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = "Un able to fetch the current dtr";
+        })
+        .addCase(getWeeklyDtr.pending, (state, _) => {
+            state.loading = true
+        })
+        .addCase(getWeeklyDtr.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state.weeklyDtr = action.payload
+        })
+        .addCase(getWeeklyDtr.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = "Un able to fetch the current dtr";
