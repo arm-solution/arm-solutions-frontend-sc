@@ -1,8 +1,8 @@
 import React from 'react'
 import './Carousel.css';
-import image1 from './../../assets/images/image1.jpg'
-import image2 from './../../assets/images/image2.jpg'
-import image3 from './../../assets/images/image3.jpg'
+import image1 from './../../assets/images/bg5.jpg'
+import image2 from './../../assets/images/bg1.jpg'
+import image3 from './../../assets/images/bg6.jpg'
 
 const Carousel = () => {
   return (
@@ -19,25 +19,25 @@ const Carousel = () => {
             <div className="carousel-item active">
               <img src={image1} className="d-block w-100" alt="..." />
               <div className="carousel-caption d-flex flex-column justify-content-center align-items-start text-start">
-                <h5 className='mt-5 fs-3 text-uppercase'>First slide label</h5>
-                <h1 className='display-1 fw-bolder text-capitalize'>Sample text</h1>
-                <button>Book a Tour</button>
+                <h5 className='mt-5 fs-3 text-uppercase'>Protect What Matters Most</h5>
+                <h1 className='display-1 fw-bolder text-capitalize'>Built for Safety.</h1>
+                <button>Request Quote</button>
               </div>
             </div>
             <div className="carousel-item">
               <img src={image2} className="d-block w-100" alt="..." />
               <div className="carousel-caption d-flex flex-column justify-content-center align-items-start text-start">
-                <h5 className='mt-5 fs-3 text-uppercase'>First slide label</h5>
-                <h1 className='display-1 fw-bolder text-capitalize'>Sample text</h1>
-                <button>Book a Tour</button>
+                <h5 className='mt-5 fs-3 text-uppercase'>Guarding Lives, Securing Property</h5>
+                <h1 className='display-1 fw-bolder text-capitalize'>Prepared. Protected. Safe</h1>
+                <button>Request Quote</button>
               </div>
             </div>
             <div className="carousel-item">
               <img src={image3} className="d-block w-100" alt="..." />
               <div className="carousel-caption d-flex flex-column justify-content-center align-items-start text-start">
-                <h5 className='mt-5 fs-3 text-uppercase'>First slide label</h5>
-                <h1 className='display-1 fw-bolder text-capitalize'>Sample text</h1>
-                <button>Book a Tour</button>
+                <h5 className='mt-5 fs-3 text-uppercase'>Safety You Can Count On</h5>
+                <h1 className='display-1 fw-bolder text-capitalize'>Swift. Strong. Secure.</h1>
+                <button>Request Quote</button>
               </div>
             </div>
           </div>
