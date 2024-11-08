@@ -202,8 +202,8 @@ const PDFDocument = ({ id, state}) => {
           
             <Text style={styles.textSize}>TO:</Text>
             <View style={[styles.textSize, { left: 45 }]}>
-              <Text>{ pdfData?.clientDetails[0].name }</Text>
-              <Text>{ pdfData?.clientDetails[0].address }</Text>
+              <Text>{ pdfData?.clientDetails[0]?.name }</Text>
+              <Text>{ pdfData?.clientDetails[0]?.address }</Text>
             </View>
           
         </View>
@@ -222,7 +222,7 @@ const PDFDocument = ({ id, state}) => {
           
           <Text style={styles.textSize}>FROM:</Text>
           <View style={[styles.textSize, { left: 29}]}>
-            <Text>MR ADRED DEL MUNDO</Text>
+            <Text>MR ALDRED DEL MUNDO</Text>
             <Text>Marketing Specialist</Text>
           </View>
         
