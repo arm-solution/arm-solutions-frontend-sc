@@ -74,8 +74,6 @@ const Home = () => {
   }, []);
 
   
-  
-
   const showError = (error) => {
     switch (error.code) {
         case error.PERMISSION_DENIED:
@@ -104,8 +102,14 @@ const Home = () => {
     const formattedDate = dateFormatted(currentDate);
     const formattedTime = format(currentDate, 'HH:mm:ss');
   
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by this browser.");
+      setLoadingSessionStorage(false);
+      return;
+    }
+  
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
         const coords = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -118,29 +122,32 @@ const Home = () => {
           remarks: '',
           user_id: getLoggedInID(),
           status: 'pending'
-        }; 
+        };
   
-        const { payload } = await dispatch(postDtr(coords));
+        try {
+          const { payload } = await dispatch(postDtr(coords));
   
-        if (payload.success) {
-          sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
-          setShift(coords);
-          // dispatch(getWeeklyDtr(getLoggedInID()));
-          window.dispatchEvent(new Event('currentShift'));
-        } else {
-          errorDialog(payload.message ? payload.message : 'Cannot log in');
+          if (payload.success) {
+            sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
+            setShift(coords);
+            window.dispatchEvent(new Event('currentShift'));
+          } else {
+            errorDialog(payload.message || 'Cannot log in');
+          }
+        } catch (error) {
+          errorDialog('An error occurred while logging in');
+        } finally {
+          setLoadingSessionStorage(false); // End loading
         }
-  
-        setLoadingSessionStorage(false); // End loading
-      }, (error) => {
+      },
+      (error) => {
         showError(error);
         setLoadingSessionStorage(false); // End loading if geolocation fails
-      });
-    } else {
-      setError("Geolocation is not supported by this browser.");
-      setLoadingSessionStorage(false); // End loading if geolocation is not supported
-    }
+      },
+      { enableHighAccuracy: true } // Request high accuracy
+    );
   };
+  
 
 
   const timeOut = async (e) => {
