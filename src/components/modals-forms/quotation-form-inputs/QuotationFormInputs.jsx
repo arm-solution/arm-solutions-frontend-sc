@@ -20,7 +20,7 @@ const QuotationFormsInputs = (props) => {
   return (
     <>
         <div className="row-header">
-            <h2>Create Qoutation</h2>
+            <h2>Create Quotation</h2>
             {quotation.client_id > 0 && (
                 <button className="btn btn-outline-success">
                 <i className="lni lni-plus"></i> New</button>

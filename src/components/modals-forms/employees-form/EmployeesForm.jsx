@@ -209,8 +209,8 @@ const EmployeesForm = (props) => {
     <div className="modal fade modal-lg" id="employeeForm" ref={props.modalRef} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
       <div className="modal-dialog modal-xl">
         <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
+          <div className="modal-header" style={{ backgroundColor: "#B22222" }}>
+            <h5 className="modal-title" id="exampleModalLabel" style={{ color: "white" }}>
               Employee Form
             </h5>
             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
