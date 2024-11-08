@@ -40,10 +40,8 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
     <ul className="links">
         <li><a href="#home" onClick={handleBackToLandingPage}>Home</a></li>
         <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li>
-        <li 
+        {/* <li 
             className="dropdown"
-            // onMouseEnter={() => setDropdownOpen(true)}
-            // onMouseLeave={() => setDropdownOpen(false)}
             ref={dropdownRef}
             onClick={toggleDropdown}
         >
@@ -55,8 +53,9 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
                     <li><a href="#marketing" onClick={handleBackToLandingPage}>Marketing</a></li>
                 </ul>
             )}
-        </li>
-        <li><a href="#projects" onClick={handleBackToLandingPage}>Projects</a></li>
+        </li> */}
+        <li><a href="#services" onClick={handleBackToLandingPage}>Services</a></li>
+        {/* <li><a href="#projects" onClick={handleBackToLandingPage}>Projects</a></li> */}
         <li><a href="#clients" onClick={handleBackToLandingPage}>Clients</a></li>
         <li><a href="#footer" onClick={handleBackToLandingPage}>Contact</a></li>
         <li>
@@ -66,6 +65,7 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
             <Link to={`/${checkedIfLoggedIn().path}`} className='btn btn-outline-danger btn-sm login-btn'>Dashboard</Link>
           ) : (
             
+            // <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
             <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
           )}
         </li>

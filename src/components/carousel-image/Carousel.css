@@ -48,7 +48,8 @@
     color: #fff;
     /* border: 1px solid red; */
     border: none;
-    background-color: red;
+    /* background-color: red; */
+    background-color: #841a21;
     border-radius: 10px;
     font-weight: bolder;
   }
