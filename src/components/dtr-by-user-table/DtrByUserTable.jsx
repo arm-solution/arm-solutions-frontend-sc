@@ -1,182 +1,175 @@
-import React, { useEffect, useState } from 'react'
-import { formatDateReadable } from '../../customs/global/manageDates'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState, useRef } from 'react';
+import { formatDateReadable } from '../../customs/global/manageDates';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { getDtrById, updateMultipleDtrStatus, getAllDtrWithDateRange } from '../../store/features/dtrSlice';
+import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import { successDialog, errorDialog } from '../../customs/global/alertDialog';
 import './DtrByUser.css';
+import axios from 'axios';
 
-const DtrByUserTable = (props) => {
+const DtrByUserTable = () => {
+  const dispatch = useDispatch();
+  const { userId } = useParams();
+  const modalRef = useRef(null);
 
   const [ids, setIds] = useState([]);
+  const [selectedDtr, setSelectedDtr] = useState(null);
+  const [dateRangeStatus, setDateRangeStatus] = useState({
+    date_start: '',
+    date_end: '',
+    status: ''
+  });
 
-  const sampleData = [
-    {
-      id: 151,
-      user_id: 14,
-      shift_id: null,
-      time_in: "11:05:41",
-      time_out: "15:11:20",
-      overtime: null,
-      undertime: null,
-      status: "pending",
-      shift_date: "2024-11-04T00:00:00.000Z",
-      break_start: "14:49:13",
-      break_end: "15:05:11",
-      ot_start: null,
-      ot_end: null,
-      modified_by: null,
-      date_modified: null,
-      remarks: null,
-      longitude: "121.1100241",
-      latitude: "14.0354858",
-      inside_geofence: null,
-      total_hours: 3.72
-    },
-    {
-      id: 152,
-      user_id: 14,
-      shift_id: null,
-      time_in: "11:05:41",
-      time_out: "15:11:20",
-      overtime: null,
-      undertime: null,
-      status: "pending",
-      shift_date: "2024-11-04T00:00:00.000Z",
-      break_start: "14:49:13",
-      break_end: "15:05:11",
-      ot_start: null,
-      ot_end: null,
-      modified_by: null,
-      date_modified: null,
-      remarks: null,
-      longitude: "121.1100241",
-      latitude: "14.0354858",
-      inside_geofence: null,
-      total_hours: 3.72
-    },
-    {
-      id: 153,
-      user_id: 14,
-      shift_id: null,
-      time_in: "00:47:14",
-      time_out: "00:58:41",
-      overtime: null,
-      undertime: null,
-      status: "pending",
-      shift_date: "2024-11-05T00:00:00.000Z",
-      break_start: "00:54:17",
-      break_end: "00:57:26",
-      ot_start: null,
-      ot_end: null,
-      modified_by: null,
-      date_modified: null,
-      remarks: null,
-      longitude: "121.1587269",
-      latitude: "14.0432759",
-      inside_geofence: null,
-      total_hours: 0.12
-    },
-    {
-      id: 154,
-      user_id: 1,
-      shift_id: null,
-      time_in: "00:59:00",
-      time_out: "01:31:42",
-      overtime: null,
-      undertime: null,
-      status: "pending",
-      shift_date: "2024-11-05T00:00:00.000Z",
-      break_start: "01:09:27",
-      break_end: "01:15:58",
-      ot_start: null,
-      ot_end: null,
-      modified_by: null,
-      date_modified: null,
-      remarks: null,
-      longitude: "121.1587269",
-      latitude: "14.0432759",
-      inside_geofence: null,
-      total_hours: 0.18
+  let { dtrWithDateRange } = useSelector(state => state.dtr);
+
+  // Load DTR data on initial load and whenever dateRangeStatus changes
+  useEffect(() => {
+    dispatch(getAllDtrWithDateRange(dateRangeStatus));
+  }, [dispatch]);
+
+  const handleCheckbox = (id, isChecked) => {
+    setIds(prevIds =>
+      isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
+    );
+  };
+
+  const handleView = (dtr) => {
+    setSelectedDtr(dtr);
+    new Modal(modalRef.current).show();
+  };
+
+  const handleAppproveReject = async (dtrStatus) => {
+    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids }));
+    
+    if (payload.success) {
+      successDialog(`The records are now ${dtrStatus}`);
+      dispatch(getDtrById(userId));
+      setIds([]); // Reset selected IDs
+    } else {
+      errorDialog("Unsuccessful Operation", "Please report to the technical team");
     }
-  ];
+  };
 
-  const handleCheckbox = (id, e) => {
-    e.preventDefault();
+  const updateDateRangeStatus = ({ target: { name, value } }) => {
+    setDateRangeStatus(prev => ({ ...prev, [name]: value }));
+  };
 
-  }
-      
+  const searchDtr = async () => {
+    await dispatch(getAllDtrWithDateRange(dateRangeStatus))
+  };
+  
+
   return (
     <>
-        <div className="card mt-5">
-            <div className="card-body">
+      <DtrDetailsModal selectedDtr={selectedDtr} modalRef={modalRef} />
 
-            <div className="row">
-                <div className="col col-md-3">
-
-                    <div className="form-group">
-                        <label>From</label>
-                        <input type="date" className="form-control" />
-                    </div>
-                </div>
-
-                <div className="col col-md-3">
-
-                    <div className="form-group">
-                        <label>To</label>
-                        <input type="date" className="form-control" />
-                    </div>
-                </div>
-
-                <div className="col col-md-3">
-                    <label >Select</label>
-                    <select className="form-select mb-3"  style={{ width: '10rem'}} defaultValue="">
-                        <option value='' disabled>Open this select menu</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
+      <div className="card mt-5">
+        <div className="card-body">
+          <div className="row">
+            <div className="col-md-3">
+              <label>From</label>
+              <input
+                type="date"
+                className="form-control"
+                name="date_start"
+                onChange={updateDateRangeStatus}
+                value={dateRangeStatus.date_start}
+              />
             </div>
-
-
-                <table className="table table-bordered">
-                    <thead className='table-success'>
-                        <tr>
-                            <th scope="col"></th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Time In</th>
-                            <th scope="col">Time Out</th>
-                            <th scope="col">Status</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {sampleData.length === 0 ? (
-                        <tr>
-                            <td colSpan="5" style={{ textAlign: "center", verticalAlign: "middle", height: "100px" }}>No Data Found</td>
-                        </tr>
-                    ) : (
-                        sampleData.map(d => (
-                            <tr key={d.id}>
-                                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                                <input className="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate" onChange={(e) => handleCheckbox(d.id, e)} style={{ border: '1px solid black'}} />
-                                </td>
-                                <td>{ d?.shift_date }</td>
-                                <td>{d?.time_in}</td>
-                                <td>{d?.time_out}</td>
-                                <td>{d?.status}</td>
-                                <td>
-                                    <button className="btn btn-info text-white btn-sm">View</button>
-                                </td>
-                            </tr>
-                        ))
-                    )}
-                    </tbody>
-                </table>
-
+            <div className="col-md-3">
+              <label>To</label>
+              <input
+                type="date"
+                className="form-control"
+                name="date_end"
+                onChange={updateDateRangeStatus}
+                value={dateRangeStatus.date_end}
+              />
             </div>
+            <div className="col-md-2">
+              <label>Select</label>
+              <select
+                className="form-select mb-3"
+                name="status"
+                onChange={updateDateRangeStatus}
+                value={dateRangeStatus.status}
+              >
+                <option value="" disabled>Status</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div className="col-md-4 mt-4">
+              <button className="btn btn-secondary btn-sm" onClick={searchDtr}>
+                Search
+              </button>
+              {ids.length > 0 && (
+                <>
+                  <button className="btn btn-success btn-sm mx-2" onClick={() => handleAppproveReject('approved')}>
+                    Approve
+                  </button>
+                  <button className="btn btn-danger btn-sm" onClick={() => handleAppproveReject('rejected')}>
+                    Reject
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          <table className="table table-bordered mt-3">
+            <thead className="table-success">
+              <tr>
+                <th></th>
+                <th>Date</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            {dtrWithDateRange.length === 0 ? (
+                <tbody>
+                  <tr>
+                    <td colSpan="6" style={{ height: '100px', textAlign: 'center' }}>
+                      <div className="d-flex justify-content-center align-items-center" style={{ height: '100%' }}>
+                        No Data Found
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              ) : (
+                <tbody>
+                  {dtrWithDateRange.map(d => (
+                    <tr key={d.id}>
+                      <td className="text-center align-middle">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={ids.includes(d.id)}
+                          onChange={(e) => handleCheckbox(d.id, e.target.checked)}
+                        />
+                      </td>
+                      <td>{d?.shift_date ? formatDateReadable(d?.shift_date) : 'No data available'}</td>
+                      <td>{d?.time_in}</td>
+                      <td>{d?.time_out}</td>
+                      <td>{d?.status}</td>
+                      <td>
+                        <button className="btn btn-info text-white btn-sm" onClick={() => handleView(d)}>
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
+
+          </table>
         </div>
-
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default DtrByUserTable
+export default DtrByUserTable;

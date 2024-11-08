@@ -63,6 +63,9 @@ const DtrDetailsModal = (props) => {
                         <p>Break Out: {props.selectedDtr?.break_end ? props.selectedDtr.break_end : '---'}</p>
                         <p>Time In: {props.selectedDtr?.time_in ? props.selectedDtr.time_in : '---'}</p>
                         <p>Time Out: {props.selectedDtr?.time_out ? props.selectedDtr.time_out : '---'}</p>
+                        <p>Over Time Start: {props.selectedDtr?.ot_start ? props.selectedDtr.ot_start : 'No Overtime'}</p>
+                        <p>Over Time end: {props.selectedDtr?.ot_end ? props.selectedDtr.ot_end : 'No Overtime'}</p>
+                        <p>Remarks: {props.selectedDtr?.remarks ? props.selectedDtr.remarks : 'No Remarks'}</p>
                     </div>
                     <div className="modal-footer">
                         <button onClick={handleViewMap} className='btn btn-primary'>View Map</button>

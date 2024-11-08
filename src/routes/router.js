@@ -147,7 +147,7 @@ export const router = createBrowserRouter(createRoutesFromElements(
                 } />
 
                 {CommonRoutes()}
-
+                
             </Route>
         
         </Route>

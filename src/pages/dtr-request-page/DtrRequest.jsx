@@ -3,10 +3,13 @@ import './DtrRequest.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getPendingDtrUsers } from '../../store/features/dtrSlice';
 import DataTable from '../../components/DataTable';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/loading-spinner/Loading';
 
 const DtrRequest = () => {
 
  const dispatch = useDispatch();
+ const navigate = useNavigate();
 
  const columns = [
     { header: 'Fullname', accessor: 'fullname' },
@@ -20,15 +23,15 @@ const DtrRequest = () => {
 
  const { getPendingUserDtr, loading: pendingDtrLoading } = useSelector(state => state.dtr);
  
-const handleView = (id) => {
-    console.log("id", id)
+const handleView = (row) => {
+    navigate(`/admin/dtr-record/${row.id}`);
 }
 
   return (
     <>
         <div className="mt-5">
 
-            { pendingDtrLoading ? 'Loading...' : (
+            { pendingDtrLoading ? <Loading /> : (
                 <DataTable
                 data={Array.isArray(getPendingUserDtr) ? getPendingUserDtr : []} // Ensure data is an array
                 columns={columns}
