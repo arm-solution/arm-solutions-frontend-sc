@@ -88,9 +88,9 @@ export const updateMultipleDtrStatus = createAsyncThunk('dtr/updateMultipleDtrSt
     }
 })
 
-export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRange', async(dtrParams, { rejectWithValue }) => {
+export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRange', async({userId, dtrParams}, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`http://localhost:5000/dtr/get-dtr-range`, {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/get-dtr-range/${userId}`, {
             params: dtrParams
         });
         return data;
