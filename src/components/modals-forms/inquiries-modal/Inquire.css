@@ -1,0 +1,8 @@
+.body-container {
+    padding: 2rem;
+}
+
+.message-date {
+    display: flex;
+    justify-content: end;
+}

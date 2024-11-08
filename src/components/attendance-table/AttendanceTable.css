@@ -1,0 +1,23 @@
+.attendance-table-container .table {
+    border-collapse: collapse; /* Ensure borders collapse for a clean look */
+    width: 100%;
+}
+
+.table th,
+.table td {
+    border: none; /* Remove all borders */
+    border-bottom: 1px solid #dee2e6; /* Retain only the bottom border */
+}
+
+.search-date-container {
+    width: 80%;
+    margin: auto;
+}
+
+.search-date-container input {
+    width: 20rem;
+}
+
+.search-date-container .form-group {
+    margin: auto;
+}

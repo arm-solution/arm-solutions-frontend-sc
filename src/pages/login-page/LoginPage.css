@@ -1,0 +1,38 @@
+
+.login-section {
+    height: 100vh !important;
+    background-color: #7D1600;
+}
+
+
+.back-text {
+    background-color: #7D1600;
+    color: white;
+}
+
+.mission-visson {
+    max-height: 400px;
+    overflow: auto;
+}
+
+
+@media (max-width: 768px) {
+
+    .mission-visson {
+        display: none;
+    }
+
+    .text-endx {
+        display: none;
+    }
+
+ }
+
+
+ @media (max-height: 600px) {
+    .mission-visson {
+        max-height: 250px;
+    }
+ }
+
+

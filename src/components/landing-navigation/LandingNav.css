@@ -1,0 +1,233 @@
+
+nav {
+	position: fixed;
+	z-index: 10;
+	left: 0;
+	right: 0;
+	top: 0;
+	font-family: 'Montserrat', sans-serif;
+	padding: 0 5%;
+	height: 100px;
+	transition: background-color 0.3s ease;
+	z-index: 1000;
+	background-color: transparent;
+    /* opacity: 0.5; */
+
+}
+
+nav.scrolled {
+	background-color: #841a21;
+}
+
+
+
+nav .logo {
+	float: left;
+	display: flex;
+	align-items: center;
+	font-size: 24px;
+	color: #fff;
+}
+
+.logo-image {
+    width: 100px;
+	height: 60px;
+	/* background-color: #fff; */
+	border-radius: 5%;
+    margin-top: 15px;
+}
+nav .links {
+	float: right;
+	padding: 0;
+	margin: 0;
+	width: 60%;
+	height: 100%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+nav .links li {
+	list-style: none;
+	transition: border-bottom 0.3s ease-in-out;
+}
+
+
+nav .links li a {
+    position: relative; /* Ensure the anchor tag is relative for pseudo-element positioning */
+    color: #fff;
+    text-decoration: none; /* Remove underline */
+    transition: color 0.3s; /* Smooth transition for text color */
+
+	display: block;
+	padding: 1em;
+	font-size: 16px;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+nav .links li:not(:last-child) a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 4px; /* Thickness of the underline */
+    background-color: #841a21; /* Color of the underline */
+    transition: width 0.3s ease-in-out; /* Smooth transition for the width */
+}
+
+/* Hover effect for the pseudo-element */
+nav .links li:not(:last-child):hover a::after {
+    width: 100%; /* Full width on hover */
+}
+
+
+#nav-toggle {
+	position: absolute;
+	top: -100px;
+}
+nav .icon-burger {
+	display: none;
+	position: absolute;
+	right: 5%;
+	top: 50%;
+	transform: translateY(-50%);
+}
+nav .icon-burger .line {
+	width: 30px;
+	height: 5px;
+	background-color: #fff;
+	margin: 5px;
+	border-radius: 3px;
+	transition: all .3s ease-in-out;
+}
+
+nav .dropdown {
+    position: relative;
+}
+
+nav .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #841a21; /* Background color for dropdown */
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+nav .dropdown:hover .dropdown-menu,
+nav .dropdown-menu:hover {
+    display: flex; /* Show the dropdown on hover */
+}
+
+nav .dropdown-menu li {
+    list-style: none;
+    width: 100%;
+}
+
+nav .dropdown-menu li a {
+    padding: 10px;
+    width: 100%;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s ease-in-out;
+}
+
+
+.login-btn {
+	padding: .5rem 1rem !important;
+	display: none;
+}
+
+
+
+
+/* this is for mobile */
+@media screen and (max-width: 1000px) {
+	nav .logo {
+		float: none;
+		width: auto;
+		justify-content: center;
+	}
+	nav .links {
+		float: none;
+		position: fixed;
+		z-index: 9;
+		left: 0;
+		right: 0;
+		top: 100px;
+		bottom: 100%;
+		width: auto;
+		height: auto;
+		flex-direction: column;
+		justify-content: space-evenly;
+		background-color: rgba(0,0,0,.8);
+		overflow: hidden;
+		box-sizing: border-box;
+		transition: all .5s ease-in-out;
+	}
+	nav .links a {
+		font-size: 20px;
+	}
+	nav :checked ~ .links {
+		bottom: 0;
+	}
+	nav .icon-burger {
+		display: block;
+	}
+	nav :checked ~ .icon-burger .line:nth-child(1) {
+		transform: translateY(10px) rotate(225deg);
+	}
+	nav :checked ~ .icon-burger .line:nth-child(3) {
+		transform: translateY(-10px) rotate(-225deg);
+	}
+	nav :checked ~ .icon-burger .line:nth-child(2) {
+		opacity: 0;
+	}
+	
+	nav {
+		background-color: #841a21;
+	}
+
+    nav .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 10rem;
+        background-color: #841a21; /* Background color for dropdown */
+        display: none; /* Initially hidden */
+        flex-direction: column;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    nav .dropdown:hover .dropdown-menu,
+    nav .dropdown.open .dropdown-menu {
+        display: flex; /* Show the dropdown on hover or when open */
+    }
+    
+    nav .dropdown.open .dropdown-menu {
+        display: flex;
+		box-shadow: none;
+        background-color: transparent;
+		display: none;    
+	}
+    nav .dropdown-menu li a {
+        transition: none; /* Remove hover animation */
+    }
+
+	nav .dropdown-menu {
+		background-color: black;
+	}
+
+    nav .links li:not(:last-child) a::after {
+        content: '';
+        transition: none
+    }
+    
+    /* Hover effect for the pseudo-element */
+    nav .links li:not(:last-child):hover a::after {
+        width: 0; /* Full width on hover */
+    }
+}

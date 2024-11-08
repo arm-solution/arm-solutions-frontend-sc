@@ -1,0 +1,111 @@
+
+.card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.card-container .card-dashboard {
+  margin: 0 0 0 15px;
+}
+
+
+.graph-container {
+  width: 100%;
+  overflow-x: auto; 
+  /* margin-top: 5rem; */
+}
+
+.graph {
+  height: 50% !important;
+}
+
+@media (max-width: 768px) { 
+  .graph-container {
+    overflow-x: scroll; 
+    -webkit-overflow-scrolling: touch; 
+  }
+
+  .graph {
+    width: 100vw;
+    height: 50%;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card-container .card-dashboard {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+.graph-container::-webkit-scrollbar {
+  height: 8px; 
+}
+
+.graph-container::-webkit-scrollbar-thumb {
+  background-color: gray; 
+  border-radius: 10px; 
+}
+
+
+.graph-container {
+  scrollbar-color: gray transparent;
+  scrollbar-width: thin; 
+}
+
+
+.p-5 {
+  position: relative; /* Needed for absolute positioning */
+  background-color: #C62E2E;
+}
+
+.filter-dropdowns {
+  display: flex;
+  align-items: center; /* Vertically centers the dropdowns */
+}
+
+.form-group-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between label and select */
+  margin-left: 15px; /* Space between dropdowns */
+}
+
+label {
+  font-weight: bold;
+}
+
+.form-control {
+  padding: 8px 12px;
+  background-color: #f3f4f6;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  color: #333;
+  font-weight: bold;
+  width: 150px; /* Set minimum width */
+  padding-right: 30px; /* Space for dropdown icon */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%236c757d' d='M2 0L0 2h4L2 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) center; /* Positioning for better spacing */
+  background-size: 12px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-control:hover {
+  background-color: #e9ecef; /* Subtle hover effect */
+  border-color: #adb5bd;
+}
+
+.form-control:focus {
+  outline: none;
+  background-color: #e2e6ea;
+  border-color: #495057;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25); /* Light shadow on focus */
+}

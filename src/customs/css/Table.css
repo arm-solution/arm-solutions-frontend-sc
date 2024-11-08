@@ -1,0 +1,113 @@
+.add-employee-btn{
+    color: #fff;
+    border-radius: 10px;
+    padding: .3rem .5rem;
+    border: 1px solid #A52A2A;
+    background-color: #B22222;
+    width: 10rem;
+}
+
+.add-employee-btn:hover {
+    background-color: #8B0000;
+    border-radius: 5px;
+    border: 1px solid #fff;
+}
+
+.searc-container {
+    margin: auto;
+    /* border: 2px solid red; */
+    width: 80%;
+}
+
+.table-container {
+    border: 2px solid black;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.search-date {
+    width: 400px;
+}
+
+.card {
+    /* Ensure the card does not exceed its parent container */
+    margin: auto;
+    max-width: 80%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.card-body {
+    /* Add padding or other styles if needed */
+}
+
+
+.card-header {
+    /* Header styles, adjust as needed */
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    /* Ensure the card body takes the full width of the card */
+    width: 100%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.table {
+    width: 100%; /* Ensure the table takes full width of the card */
+    table-layout: auto; /* Let the browser decide the table layout */
+    border-collapse: collapse; /* Collapse borders for a cleaner look */
+}
+
+.table th,
+.table td {
+    padding: 8px; /* Adjust padding as needed */
+    border: 1px solid #ddd; /* Example border styling */
+    text-align: left;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis;
+}
+
+
+
+
+/* WebKit-based browsers */
+.card-body::-webkit-scrollbar {
+    width: 6px; /* Set the width of the scrollbar */
+    height: 6px; /* Set the height of the scrollbar for vertical scrollbar (optional) */
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3); /* Color of the scrollbar thumb */
+    border-radius: 3px; /* Radius of the scrollbar thumb */
+}
+
+.card-body::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0); /* Color of the scrollbar track */
+}
+
+
+/* For mobile size */
+
+@media screen and (max-width: 768px) {
+
+    .add-employee-btn {
+        width: 100%;
+    }
+    
+    .search-date {
+        width: 20rem;
+        margin-top: 3rem;
+    }
+    .card {
+        max-width: 100% !important;
+    }
+ }

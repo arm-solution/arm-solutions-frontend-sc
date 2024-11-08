@@ -1,0 +1,40 @@
+.card {
+    width: 80%;
+    margin: auto;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row; 
+    justify-content: space-between; 
+    gap: 1rem; 
+  }
+  
+  .form-group {
+    flex: 1; 
+    min-width: 150px;
+  }
+
+  .save-changes-btn-con {
+    /* border: 1px solid green; */
+    width: 100%;
+  }
+  
+  .save-changes-btn {
+    width: 20%;
+    margin: auto;
+  }
+
+  .btn-change-password {
+    width: 20%;
+    margin-left: auto;
+    margin-right: 7%;
+  }
+
+  @media (max-width: 780px) { 
+    .card {
+        width: 100%;
+        margin: auto;
+    }
+
+  }

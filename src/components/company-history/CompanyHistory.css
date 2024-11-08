@@ -1,0 +1,46 @@
+
+.title-container {
+    margin: 3rem 3rem 3rem 3rem
+}
+
+.history-text-container {
+    display: flex;
+    margin: 0 3rem 0 3rem
+}
+
+.history-text-container img {
+    width: 75%;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center !important;
+
+}
+
+.history-text-container p {
+    font-size: 1.3rem;
+}
+
+.owner-qoute {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    margin-right: 3rem;
+}
+
+.founder-details {
+    display: flex;
+    align-items: start;
+    /* border: 2px solid green; */
+    width: 50%;
+    margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+
+    .history-text-container {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+ }
