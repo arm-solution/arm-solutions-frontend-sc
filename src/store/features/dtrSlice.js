@@ -79,13 +79,36 @@ export const getPendingDtrUsers = createAsyncThunk('dtr/getPendingUserDtr', asyn
     }
 })
 
+export const updateMultipleDtrStatus = createAsyncThunk('dtr/updateMultipleDtrStatus', async(status, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/dtr/update-multiple-dtr`, status);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
+export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRange', async(dtrParams, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get(`http://localhost:5000/dtr/get-dtr-range`, {
+            params: dtrParams
+        });
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
+
 const dtrSlice = createSlice({
     name: 'dtr',
     initialState:{
         allDtr: [],
         weeklyDtr: [],
         currentDtr: [],
+        dtrById: [],
         getPendingUserDtr: [],
+        updateDtrStatus: [],
+        dtrWithDateRange: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -119,7 +142,7 @@ const dtrSlice = createSlice({
         .addCase(getDtrById.fulfilled, (state, action) => {
             state.loading = false;
             state.isSuccess = true;
-            state.dtr = action.payload;
+            state.dtrById = action.payload;
         })
         .addCase(getDtrById.rejected, (state, action) => {
             state.isSuccess = false;
@@ -179,6 +202,19 @@ const dtrSlice = createSlice({
             state.weeklyDtr = action.payload
         })
         .addCase(getWeeklyDtr.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = "Un able to fetch the current dtr";
+        })
+        .addCase(getAllDtrWithDateRange.pending, (state, _) => {
+            state.loading = true
+        })
+        .addCase(getAllDtrWithDateRange.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state.dtrWithDateRange = action.payload
+        })
+        .addCase(getAllDtrWithDateRange.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = "Un able to fetch the current dtr";
