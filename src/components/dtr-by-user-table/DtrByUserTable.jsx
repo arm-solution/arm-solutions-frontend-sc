@@ -22,12 +22,12 @@ const DtrByUserTable = () => {
     status: ''
   });
 
-  let { dtrWithDateRange } = useSelector(state => state.dtr);
+  const { dtrWithDateRange } = useSelector(state => state.dtr);
 
   // Load DTR data on initial load and whenever dateRangeStatus changes
   useEffect(() => {
-    dispatch(getAllDtrWithDateRange(dateRangeStatus));
-  }, [dispatch]);
+    dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
+  }, [dispatch, userId]);
 
   const handleCheckbox = (id, isChecked) => {
     setIds(prevIds =>
@@ -45,7 +45,7 @@ const DtrByUserTable = () => {
     
     if (payload.success) {
       successDialog(`The records are now ${dtrStatus}`);
-      dispatch(getDtrById(userId));
+      // dispatch(getDtrById(userId));
       setIds([]); // Reset selected IDs
     } else {
       errorDialog("Unsuccessful Operation", "Please report to the technical team");
@@ -57,9 +57,8 @@ const DtrByUserTable = () => {
   };
 
   const searchDtr = async () => {
-    await dispatch(getAllDtrWithDateRange(dateRangeStatus))
+    await dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
   };
-  
 
   return (
     <>
