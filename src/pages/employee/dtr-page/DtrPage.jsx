@@ -108,45 +108,64 @@ const Home = () => {
       return;
     }
   
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          shift_date: formattedDate,
-          time_in: formattedTime,
-          break_start: '',
-          break_end: '',
-          ot_start: '',
-          ot_end: '',
-          remarks: '',
-          user_id: getLoggedInID(),
-          status: 'pending'
-        };
+    // Array to store multiple position samples
+    const positions = [];
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        positions.push(position);
+        // Check if we have enough samples (e.g., 3 samples)
+        if (positions.length >= 3) {
+          navigator.geolocation.clearWatch(watchId);
   
-        try {
-          const { payload } = await dispatch(postDtr(coords));
+          // Calculate average latitude and longitude for improved accuracy
+          const avgCoords = {
+            latitude: positions.reduce((sum, pos) => sum + pos.coords.latitude, 0) / positions.length,
+            longitude: positions.reduce((sum, pos) => sum + pos.coords.longitude, 0) / positions.length
+          };
   
-          if (payload.success) {
-            sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
-            setShift(coords);
-            window.dispatchEvent(new Event('currentShift'));
-          } else {
-            errorDialog(payload.message || 'Cannot log in');
-          }
-        } catch (error) {
-          errorDialog('An error occurred while logging in');
-        } finally {
-          setLoadingSessionStorage(false); // End loading
+          // Construct coordinates object
+          const coords = {
+            ...avgCoords,
+            shift_date: formattedDate,
+            time_in: formattedTime,
+            break_start: '',
+            break_end: '',
+            ot_start: '',
+            ot_end: '',
+            remarks: '',
+            user_id: getLoggedInID(),
+            status: 'pending'
+          };
+  
+          submitPosition(coords);
         }
       },
       (error) => {
         showError(error);
-        setLoadingSessionStorage(false); // End loading if geolocation fails
+        setLoadingSessionStorage(false);
       },
-      { enableHighAccuracy: true } // Request high accuracy
+      { enableHighAccuracy: true }
     );
   };
+  
+  const submitPosition = async (coords) => {
+    try {
+      const { payload } = await dispatch(postDtr(coords));
+  
+      if (payload.success) {
+        sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
+        setShift(coords);
+        window.dispatchEvent(new Event('currentShift'));
+      } else {
+        errorDialog(payload.message || 'Cannot log in');
+      }
+    } catch (error) {
+      errorDialog('An error occurred while logging in');
+    } finally {
+      setLoadingSessionStorage(false);
+    }
+  };
+  
   
 
 

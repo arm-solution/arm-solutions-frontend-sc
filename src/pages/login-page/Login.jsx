@@ -46,32 +46,47 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if(loginData.employee_id === '' || loginData.user_password === '') {
+  
+    if (loginData.employee_id === '' || loginData.user_password === '') {
       setErrMessage({
         status: true,
-        message: "All fields are required!"
-      })
+        message: 'All fields are required!',
+      });
       return;
     }
+  
     try {
-      const { payload } = await dispatch(loginEmployee(loginData));
-
-      if(payload.message) {
+      const { payload, error } = await dispatch(loginEmployee(loginData));
+  
+      if (error) {
+        // Log any error details for mobile debugging
+        console.error("Dispatch Error:", error);
         setErrMessage({
           status: true,
-          message: payload.message
-        })
-
+          message: error.message || 'An unexpected error occurred during login',
+        });
         return;
       }
-      
+  
+      if (payload?.message) {
+        // Set the error message if API response includes an error message
+        setErrMessage({
+          status: true,
+          message: payload.message,
+        });
+        return;
+      }
+  
     } catch (error) {
+      // Log unexpected errors for better insight
+      alert("Login Error:", error);
       setErrMessage({
         status: false,
-        message: 'An unexpected error occurred'
-      })
+        message: 'An unexpected error occurred',
+      });
     }
-  }
+  };
+  
 
   return (
     <section className=" py-3 py-md-5 py-xl-8 login-section" >
