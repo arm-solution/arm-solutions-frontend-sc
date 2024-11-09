@@ -98,6 +98,7 @@ const DtrByUserTable = () => {
                 <option value="" disabled>Status</option>
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
+                <option value="for approval">For Approval</option>
               </select>
             </div>
             <div className="col-md-4 mt-4">
