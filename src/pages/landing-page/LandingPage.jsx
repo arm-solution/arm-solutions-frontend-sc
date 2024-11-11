@@ -9,7 +9,7 @@ import OnTopButton from '../../components/ontop-button/OnTopButton';
 import WhyArms from '../../components/why-arms/WhyArms';
 import Profile from '../company-profile-page/Profile';
 import CompanyHistory from '../../components/company-history/CompanyHistory';
-// import MessengerChat from '../../components/MessengerChat';
+import MessengerChat from '../../components/MessengerChat';
 
 const LandingPage = () => {
   const [showAboutUs, setShowAboutUs] = useState(false);
@@ -36,7 +36,7 @@ const LandingPage = () => {
         <ServiceCardSlides />
         <Clients />
         <WhyArms />
-        {/* <MessengerChat /> */}
+        <MessengerChat />
         <OnTopButton  />
         </>
       )}
