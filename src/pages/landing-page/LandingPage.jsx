@@ -37,7 +37,7 @@ const LandingPage = () => {
         <Clients />
         <WhyArms />
         <MessengerChat />
-        <OnTopButton  />
+        {/* <OnTopButton  /> */}
         </>
       )}
 
