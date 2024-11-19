@@ -283,6 +283,7 @@ const QoutationTableEditable = (props) => {
                        { !screenMobile() && <th>Unit</th> }
                         <th>No. Days</th>
                         <th>Price</th>
+                        <th>Markup price</th>
                         <th>Amount</th>
                         <th></th>
                     </tr>
@@ -346,7 +347,7 @@ const QoutationTableEditable = (props) => {
 
                                 </td>
 
-                            {/* <td>{row.base_price | 0}</td> */}
+                            <td>{row.base_price | 0}</td>
                             <td>
                                 <input type="text"
                                 value={ row.base_price | 0 }

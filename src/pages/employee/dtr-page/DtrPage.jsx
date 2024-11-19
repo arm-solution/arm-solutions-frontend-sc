@@ -16,16 +16,18 @@ import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../cu
 import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
 import FloatNotification from '../../../components/float-notification/FloatNotification';
 import DtrRemarksModal from '../../../components/modals-forms/dtr-remarks-modal/DtrRemarksModal';
+import AccessCamera from '../../../components/modals-forms/access-camera-modal/AccessCamera';
 
 const Home = () => {
 
   const modalRef = useRef(null);
   const modalDtrRemarks = useRef(null);
+  const modalCamera = useRef(null);
+  const videoRef = useRef(null);
   
 
   const [currentTime, setCurrentTime] = useState(new Date());
   // const [myDtr, setMyDtr] = useState([])
-  const [error, setError] = useState(null);
   const [shift, setShift] = useState([])
   const [selectedDtr, setSelectedDtr] = useState(null);
   const [loadingSessionStorage, setLoadingSessionStorage] = useState(false)
@@ -73,80 +75,8 @@ const Home = () => {
       return () => clearInterval(timer);
   }, []);
 
-  
-  const showError = (error) => {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            setError("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            setError("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            setError("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            setError("An unknown error occurred.");
-            break;
-        default:
-            setError("An unknown error occurred.");
-            break;
-    }
-  };
 
-  const getTimeIn = async (e) => {
-    e.preventDefault();
-    setLoadingSessionStorage(true);
-  
-    const currentDate = new Date();
-    const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'HH:mm:ss');
-  
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by this browser.");
-      setLoadingSessionStorage(false);
-      return;
-    }
-  
-    // Array to store multiple position samples
-    const positions = [];
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        positions.push(position);
-        // Check if we have enough samples (e.g., 3 samples)
-        if (positions.length >= 3) {
-          navigator.geolocation.clearWatch(watchId);
-  
-          // Calculate average latitude and longitude for improved accuracy
-          const avgCoords = {
-            latitude: positions.reduce((sum, pos) => sum + pos.coords.latitude, 0) / positions.length,
-            longitude: positions.reduce((sum, pos) => sum + pos.coords.longitude, 0) / positions.length
-          };
-  
-          // Construct coordinates object
-          const coords = {
-            ...avgCoords,
-            shift_date: formattedDate,
-            time_in: formattedTime,
-            break_start: '',
-            break_end: '',
-            ot_start: '',
-            ot_end: '',
-            remarks: '',
-            user_id: getLoggedInID(),
-            status: 'pending'
-          };
-  
-          submitPosition(coords);
-        }
-      },
-      (error) => {
-        showError(error);
-        setLoadingSessionStorage(false);
-      },
-      { enableHighAccuracy: true }
-    );
-  };
+
   
   const submitPosition = async (coords) => {
     try {
@@ -425,6 +355,29 @@ const Home = () => {
         }
       })
   }
+
+  const handleTimeIn = async(e) => {
+    e.preventDefault();
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" }, // Change to "environment" for the rear camera
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+
+      }
+      const modalElement = modalCamera.current;
+      const modal = new Modal(modalElement);
+  
+      modal.show();
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      alert("Unable to access the camera. Please check your permissions.");
+    }
+
+  }
    
   return (
     <>
@@ -463,11 +416,15 @@ const Home = () => {
                 <button className="btn btn-success time-in-btn" onClick={(e) => handleEarlyTimeOut(e)} disabled={accessOut}>Early Time Out</button>
               </>
             ) : (
-              <button className="btn btn-primary time-in-btn" onClick={getTimeIn} disabled={loadingSessionStorage}>
-                {loadingSessionStorage ? 'Loading...' : 'Time In'}
-              </button>
+              <button className="btn btn-success btn-sm time-in-btn" onClick={(e) => handleTimeIn(e)}>Time In</button>
             )}
 
+
+            <AccessCamera
+             cameraModalRef={modalCamera}
+             submitPosition={submitPosition}
+             videoRef={videoRef}
+            />
 
           </div>
 

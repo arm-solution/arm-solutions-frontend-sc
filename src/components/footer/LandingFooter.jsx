@@ -1,6 +1,7 @@
 import React from 'react';
 import './Footer.css';
 import { bps, pifpo, sopi, pcab2 } from './../../customs/global/certifications';
+import Inquiry from '../modals-forms/inquiry-form/Inquiry';
 
 const LandingFooter = () => {
   return (
@@ -8,14 +9,7 @@ const LandingFooter = () => {
       <div className="container footer-container mb-5">
         <div className="row row-container">
           <div className="col-12 col-sm-6 text-center text-sm-start mb-4 mb-sm-0">
-            <div className="form-group">
-              <label htmlFor="email" className="text-light m-3">Email</label>
-              <input type="text" className="form-control" id="email" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message" className="text-light m-3">Message</label>
-              <textarea className="form-control" id="message" rows="8"></textarea>
-            </div>
+            <Inquiry />
           </div>
 
 
