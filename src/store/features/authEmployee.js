@@ -29,7 +29,7 @@ const employeeAuthSlice = createSlice({
         data: [],
         token: '',
         isSuccess: false,
-        loading: true,
+        loading: false,
         message: ''
     },
     reducers: {},

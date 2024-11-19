@@ -1,25 +1,25 @@
 import React, { useState, useEffect  } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginEmployee } from '../../store/features/authEmployee';
+import { clearMessage, forgotPasswordRequest } from '../../store/features/userSlice';
 import './ForgotPasswordPage.css'
 import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
-import { unwrapResult } from '@reduxjs/toolkit';
+import { successDialog } from '../../customs/global/alertDialog';
+// import { unwrapResult } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
+import FloatNotification from '../../components/float-notification/FloatNotification';
 
 const ForgotPassword = () => {
 
-    const employeeAuth = useSelector((state) => state.auth)
-    const { isSuccess, message } = employeeAuth;
-
+    const { isSuccess, message, loading  } = useSelector((state) => state.users)
 
     const [errmessage, setErrMessage] = useState({
-        status: false,
+        status: isSuccess,
         message: message
     })
-    const [loginData, setLoginData] = useState({
-        employee_id: '',
-        email: ''
+    const [userCred, setUserCred] = useState({
+        email: '',
+        employee_id: ''
     })
 
 
@@ -37,43 +37,35 @@ const ForgotPassword = () => {
         e.preventDefault();
         const { name, value } = e.target;
 
-        setLoginData({
-        ...loginData,
+        setUserCred({
+        ...userCred,
         [name]: value
         })
 
     }
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        if(loginData.employee_id === '' || loginData.email === '') {
+    const requestPassword = async (e) => {
+      e.preventDefault();
+
+      
+      if(userCred.email === '' || userCred.employee_id === '') {
         setErrMessage({
-            status: true,
-            message: "All fields are required!"
+          status: true,
+          message: "All Fields Are Required"
         })
         return;
-        }
-        try {
-        const { payload } = await dispatch(loginEmployee(loginData));
+      }
 
-        if(payload.message) {
-            setErrMessage({
-            status: true,
-            message: payload.message
-            })
+     await dispatch(forgotPasswordRequest(userCred));
 
-            return;
-        }
-        
-        } catch (error) {
-        setErrMessage({
-            status: false,
-            message: 'An unexpected error occurred'
+     if(isSuccess) {
+        setUserCred({
+          email: '',
+          employee_id: ''
         })
-        }
+     }
+
     }
-
-
 
 
   return (
@@ -149,7 +141,23 @@ const ForgotPassword = () => {
                     </div>
                     <div className="col-12">
                       <div className="d-grid">
-                        <button className="btn btn-danger btn-lg" onClick={handleLogin}>Reset Password</button>
+
+                        <button 
+                          className="btn btn-danger btn-lg" 
+                          onClick={(e) => requestPassword(e)} 
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <div className="spinner-border spinner-border-sm" role="status">
+                              <span className="visually-hidden">Loading...</span>
+                            </div>
+                          ) : (
+                            'Reset Password'
+                          )}
+                        </button>
+
+                        <FloatNotification message={message} onClose={() =>dispatch(clearMessage()) }/>
+
                       </div>
                     </div>
                     <div className="col-12">

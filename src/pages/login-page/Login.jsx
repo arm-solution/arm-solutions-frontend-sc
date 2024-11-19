@@ -6,11 +6,12 @@ import './LoginPage.css'
 import { checkAuthAndNavigate } from './../../customs/global/manageLocalStorage';
 // import { unwrapResult } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
+import Loading from '../../components/loading-spinner/Loading';
 
 const Login = () => {
 
   const employeeAuth = useSelector((state) => state.auth)
-  const { isSuccess, message } = employeeAuth;
+  const { isSuccess, message, loading: loginLoading } = employeeAuth;
 
 
   const [errmessage, setErrMessage] = useState({
@@ -95,6 +96,8 @@ const Login = () => {
           <div className="col-12 col-md-6 col-xl-7">
             <div className="d-flex justify-content-center back-text">
               <div className="col-12 col-xl-9">
+
+                { loginLoading && ( <Loading /> )}
 
                 <h2 className="h2 mb-4 mt-0">Arm Solution Enterprises Portal</h2>
                 {/* <img className="img-fluid rounded mb-4" loading="lazy" src="./assets/img/bsb-logo-light.svg" width="245" height="80" alt="BootstrapBrain Logo"/> */}
