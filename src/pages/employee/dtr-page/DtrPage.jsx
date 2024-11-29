@@ -10,7 +10,6 @@ import CurrentShift from '../../../components/current-shift-container/CurrentShi
 import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
-import { postDtrRequest } from '../../../store/features/dtrRequestSlice';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
 import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../customs/global/manageDates';
 import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
@@ -22,11 +21,12 @@ const Home = () => {
 
   const modalRef = useRef(null);
   const modalDtrRemarks = useRef(null);
-  const modalCamera = useRef(null);
+  const modalCameraRef = useRef(null);
   const videoRef = useRef(null);
   
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [capture, setCapture] = useState(null);
   // const [myDtr, setMyDtr] = useState([])
   const [shift, setShift] = useState([])
   const [selectedDtr, setSelectedDtr] = useState(null);
@@ -39,7 +39,7 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading } = useSelector(state => state.dtr);
+  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
 
   useEffect(() => {
     dispatch(getDtrById(getLoggedInID()));
@@ -49,7 +49,8 @@ const Home = () => {
   
   useEffect(() => {
     if(currentDtr.length > 0) {
-      sessionStorage.setItem('currentShift', JSON.stringify(currentDtr[0]));
+      const { image_capture, ...rest} = currentDtr[0] 
+      sessionStorage.setItem('currentShift', JSON.stringify(rest));
 
       window.dispatchEvent(new Event('currentShift'));
     }
@@ -75,30 +76,74 @@ const Home = () => {
       return () => clearInterval(timer);
   }, []);
 
-
-
+  // handle closing camera modal
+  const closeCameraModal = () => {
+    const modalElement = modalCameraRef.current;
   
-  const submitPosition = async (coords) => {
+    if (modalElement) {
+      const modal = Modal.getInstance(modalElement); // Get the Bootstrap modal instance
+  
+      if (modal) {
+        // Stop video tracks if playing
+        if (videoRef.current && videoRef.current.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach((track) => track.stop());
+          videoRef.current.srcObject = null;
+        }
+  
+        // Clear captured data
+        setCapture(null);
+  
+        // Move focus back to a logical element outside the modal
+        const triggerButton = document.querySelector('[data-bs-target="#cameraModal"]');
+        if (triggerButton) {
+          triggerButton.focus();
+        } else {
+          document.body.focus(); // Fallback to moving focus to the body
+        }
+  
+        // Hide the modal
+        modal.hide();
+      }
+    }
+  };
+
+  // getting position 
+  const submitTimeIn = async (coords, imageBlob) => {
     try {
-      const { payload } = await dispatch(postDtr(coords));
+      const formData = new FormData();
   
+      formData.append('coords', JSON.stringify(coords));
+  
+      if (imageBlob) {
+        formData.append('image', imageBlob);
+      }
+  
+      // Debug: Inspect the FormData contents
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value);
+      // }
+  
+      // Dispatch action to post data
+      const { payload } = await dispatch(postDtr(formData));
+  
+      // Handle response
       if (payload.success) {
         sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
         setShift(coords);
         window.dispatchEvent(new Event('currentShift'));
+
+        // close camera modal
+        closeCameraModal();
       } else {
         errorDialog(payload.message || 'Cannot log in');
       }
     } catch (error) {
       errorDialog('An error occurred while logging in');
-    } finally {
-      setLoadingSessionStorage(false);
     }
   };
   
-  
-
-
+  // time out method
   const timeOut = async (e) => {
     e.preventDefault();
 
@@ -182,7 +227,7 @@ const Home = () => {
     const storeShift = sessionStorage.getItem('currentShift');
   
     if (storeShift) {
-      const myShift = JSON.parse(storeShift);
+      const {image_capture, ...myShift} = JSON.parse(storeShift);
       myShift.break_end = formattedTime;
   
       const { payload } = await dispatch(updateDtrById(myShift));
@@ -313,6 +358,7 @@ const Home = () => {
     setLoadingSessionStorage(false);
   };
   
+  // this submit dtr when the record is completed
   const submitMyDtr = async(e) => {
     e.preventDefault();
     setLoadingSessionStorage(true);
@@ -356,7 +402,7 @@ const Home = () => {
       })
   }
 
-  const handleTimeIn = async(e) => {
+  const handleCameraModal = async(e) => {
     e.preventDefault();
 
     try {
@@ -368,7 +414,7 @@ const Home = () => {
         videoRef.current.play();
 
       }
-      const modalElement = modalCamera.current;
+      const modalElement = modalCameraRef.current;
       const modal = new Modal(modalElement);
   
       modal.show();
@@ -378,6 +424,7 @@ const Home = () => {
     }
 
   }
+
    
   return (
     <>
@@ -416,14 +463,17 @@ const Home = () => {
                 <button className="btn btn-success time-in-btn" onClick={(e) => handleEarlyTimeOut(e)} disabled={accessOut}>Early Time Out</button>
               </>
             ) : (
-              <button className="btn btn-success btn-sm time-in-btn" onClick={(e) => handleTimeIn(e)}>Time In</button>
+              <button className="btn btn-success btn-sm time-in-btn" onClick={(e) => handleCameraModal(e)}>Time In</button>
             )}
 
 
             <AccessCamera
-             cameraModalRef={modalCamera}
-             submitPosition={submitPosition}
+             cameraModalRef={modalCameraRef}
+             submitTimeIn={submitTimeIn}
              videoRef={videoRef}
+             dtrPostLoading={dtrPostLoading}
+             capture={capture}
+             closeCameraModal={closeCameraModal}
             />
 
           </div>
