@@ -365,40 +365,40 @@ const QoutationForm = (props) => {
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
 
+                    <TaxDiscountTable
+                        type="additional"
+                        totalAmount={totalAmount}
+                        setTotalAmount={setTotalAmount}
+                        taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
+                        totalAmountref={totalAmountref}
+                        mergeDiscountTax={[...tax, ...discount]}
+                        actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                    />
+
                     <div className="row table-editable">
                         <QoutationTableEditable
-                         setQoutationItem={setQoutationItem}
-                         proposalItemSuccess={props.proposalItemSuccess}
-                         setNotification={ setNotification }
-                         totalAmount={{ totalAmount, setTotalAmount }}
-                         setTotalAmountref={setTotalAmountref}
-                         totalAmountref={totalAmountref}
-                         actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                            setQoutationItem={setQoutationItem}
+                            proposalItemSuccess={props.proposalItemSuccess}
+                            setNotification={ setNotification }
+                            totalAmount={{ totalAmount, setTotalAmount }}
+                            setTotalAmountref={setTotalAmountref}
+                            totalAmountref={totalAmountref}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                          />
                     </div>
 
 
                     {parseInt(totalAmount) > 0 && (
                         <>
-                        <TaxDiscountTable
-                            type="additional"
-                            totalAmount={totalAmount}
-                            setTotalAmount={setTotalAmount}
-                            taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
-                            totalAmountref={totalAmountref}
-                            mergeDiscountTax={[...tax, ...discount]}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                        />
-
-                        <TaxDiscountTable
-                            type="discount"
-                            totalAmount={totalAmount}
-                            setTotalAmount={setTotalAmount}
-                            taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
-                            totalAmountref={totalAmountref}
-                            mergeDiscountTax={[...tax, ...discount]}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                        />
+                            <TaxDiscountTable
+                                type="discount"
+                                totalAmount={totalAmount}
+                                setTotalAmount={setTotalAmount}
+                                taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
+                                totalAmountref={totalAmountref}
+                                mergeDiscountTax={[...tax, ...discount]}
+                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                            />
                         </>
                     )}
 

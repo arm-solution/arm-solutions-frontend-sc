@@ -7,7 +7,6 @@ import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
 import { fetchAllBarangays, fetchAllCities, fetchAllProvince } from '../../../store/features/getProvince';
-import { unwrapResult } from '@reduxjs/toolkit';
 
 const EmployeesForm = (props) => {
   const dispatch = useDispatch();
@@ -63,6 +62,12 @@ const EmployeesForm = (props) => {
     dispatch(getDepartment());
     dispatch(fetchAllProvince());
   }, [dispatch]);
+
+
+    useEffect(() => {
+      console.log("province", provinces)
+    }, [])
+  
   
   
     const handleSelectedProvince = async (e) => {
