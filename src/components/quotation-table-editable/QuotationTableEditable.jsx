@@ -271,8 +271,8 @@ const QoutationTableEditable = (props) => {
 
     return (
         <div className="table-editable-container">
-
           <div className="container mt-4">
+            <h4>Products</h4>
             <table className="table table-bordered">
                 <thead>
                     <tr>
