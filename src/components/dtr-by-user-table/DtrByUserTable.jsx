@@ -7,7 +7,6 @@ import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
 import './DtrByUser.css';
-import axios from 'axios';
 
 const DtrByUserTable = () => {
   const dispatch = useDispatch();
@@ -26,7 +25,9 @@ const DtrByUserTable = () => {
 
   // Load DTR data on initial load and whenever dateRangeStatus changes
   useEffect(() => {
-    dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
+    if(parseInt(userId)) {
+      dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
+    }
   }, [dispatch, userId]);
 
   const handleCheckbox = (id, isChecked) => {
@@ -154,7 +155,15 @@ const DtrByUserTable = () => {
                       <td>{d?.shift_date ? formatDateReadable(d?.shift_date) : 'No data available'}</td>
                       <td>{d?.time_in}</td>
                       <td>{d?.time_out}</td>
-                      <td>{d?.status}</td>
+                      <td>
+                      {d?.status === 'for approval' ? (
+                        <span className="badge bg-secondary">{d?.status}</span>
+                      ) : d?.status === 'approved' ? (
+                        <span className="badge bg-success">{d?.status}</span>
+                      ) : (
+                        <span className="badge bg-danger">{d?.status}</span>
+                      )}
+                       </td>
                       <td>
                         <button className="btn btn-info text-white btn-sm" onClick={() => handleView(d)}>
                           View
