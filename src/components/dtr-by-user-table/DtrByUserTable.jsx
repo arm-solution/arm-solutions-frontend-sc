@@ -156,13 +156,13 @@ const DtrByUserTable = () => {
                       <td>{d?.time_in}</td>
                       <td>{d?.time_out}</td>
                       <td>
-                      {d?.status === 'for approval' ? (
-                        <span className="badge bg-secondary">{d?.status}</span>
-                      ) : d?.status === 'approved' ? (
-                        <span className="badge bg-success">{d?.status}</span>
-                      ) : (
-                        <span className="badge bg-danger">{d?.status}</span>
-                      )}
+                          {d?.status === 'for approval' ? (
+                            <span className="badge bg-secondary">{d?.status}</span>
+                          ) : d?.status === 'approved' ? (
+                            <span className="badge bg-success">{d?.status}</span>
+                          ) : (
+                            <span className="badge bg-danger">{d?.status}</span>
+                          )}
                        </td>
                       <td>
                         <button className="btn btn-info text-white btn-sm" onClick={() => handleView(d)}>
