@@ -155,7 +155,7 @@ const QoutationTableEditable = (props) => {
        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
        const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
        props.totalAmount.setTotalAmount(totalItemAmount)
-       props.setTotalAmountref(totalItemAmount)
+       props.setTotalAmountref((pre) => pre + totalItemAmount);
        const getproductItemDetails = productItemDetails.find(d => d.id === id);
 
     // console.log("productItemDetails", productItemDetails)

@@ -44,7 +44,7 @@ const AdditionalItems = (props) => {
       return;
     }
 
-    props.setTotalAmountref(totalAmountAllRows);
+    props.setTotalAmountref((pre) => pre + totalAmountAllRows);
     setAdditionalQ((prevRows) =>
       prevRows.map((row) =>
         row.rowId === rowId ? { ...row, isEditing: false } : row

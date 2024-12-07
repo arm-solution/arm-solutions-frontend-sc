@@ -74,7 +74,7 @@ const TaxDiscountTable = (props) => {
 
   return (
     <div className="container mt-4">
-      <h5 className="text-muted">{ props.type === 'additional' ? 'Additional Items' : 'Discount' }</h5>
+      <h5 className="text-muted">{ props.type === 'additional' ? 'Tax' : 'Discount' }</h5>
       <table className="table table-bordered">
         <thead>
           <tr>
