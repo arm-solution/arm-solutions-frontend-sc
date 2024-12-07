@@ -158,7 +158,7 @@ const QoutationTableEditable = (props) => {
        props.setTotalAmountref(totalItemAmount)
        const getproductItemDetails = productItemDetails.find(d => d.id === id);
 
-       console.log("productItemDetails", productItemDetails)
+    // console.log("productItemDetails", productItemDetails)
 
        if(getproductItemDetails.name !== 'Man Power') {
         setInputAccessNumDays(true);
@@ -178,6 +178,7 @@ const QoutationTableEditable = (props) => {
             proposal_item_id: data.proposal_item_id | 0,
             sku: data.sku,
         }));
+        
     // this is the state  that going to save to database 
     // on QoutationForm jsx
      props.setQoutationItem(updatedQoutationItems);
@@ -190,7 +191,7 @@ const QoutationTableEditable = (props) => {
     };
 
     // handle product onchange select dropdown
-    const handleProduct = (e, rowId) => {
+    const handleProductSelection = (e, rowId) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
@@ -255,9 +256,9 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-            const response = await dispatch(deleteProposalItems(selectedIds))
+            const { payload } = await dispatch(deleteProposalItems(selectedIds))
             
-            if(response.payload.success) {
+            if(payload.success) {
                 setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
@@ -272,7 +273,7 @@ const QoutationTableEditable = (props) => {
     return (
         <div className="table-editable-container">
           <div className="container mt-4">
-            <h4>Products</h4>
+            <h5 className="text-muted">Products</h5>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -304,7 +305,7 @@ const QoutationTableEditable = (props) => {
                                         aria-label="Default select example"
                                         defaultValue='0'
                                         name="product_id"
-                                        onChange={(e) => handleProduct(e, row.id)}
+                                        onChange={(e) => handleProductSelection(e, row.id)}
                                     >
                                         <option value='0' disabled>Products</option>
                                         {products.map(product => (
@@ -372,7 +373,7 @@ const QoutationTableEditable = (props) => {
                 </tbody>
             </table>
             <button
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 onClick={addRow}
                 disabled={anyRowEditing}
             >
