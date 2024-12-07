@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { errorDialog } from '../../customs/global/alertDialog';
 import './AdditionalItems.css';
 
-const AdditionalItems = () => {
+const AdditionalItems = (props) => {
   const [additionalQ, setAdditionalQ] = useState([]);
   const [nextRowId, setNextRowId] = useState(1);
 
@@ -44,7 +44,7 @@ const AdditionalItems = () => {
       return;
     }
 
-    console.log("total all rows", totalAmountAllRows);
+    props.setTotalAmountref(totalAmountAllRows);
     setAdditionalQ((prevRows) =>
       prevRows.map((row) =>
         row.rowId === rowId ? { ...row, isEditing: false } : row
