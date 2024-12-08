@@ -1,28 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import logo from './../../assets/images/logo.png'
-// import logoCircle from './../../assets/images/arm-cir-adobe.png'
-import './LandingNav.css'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from './../../assets/images/logo.png';
+import './LandingNav.css';
 import { checkedIfLoggedIn } from '../../customs/global/manageLocalStorage';
 
-const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
-
+const LandingNavbar = ({ onNavigate }) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-
     const handleScroll = () => {
-      if (window.scrollY > 50 ) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
-    
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -31,7 +23,7 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-};
+  };
 
   return (
     <nav className={scrolled ? 'scrolled' : ''}>
@@ -70,14 +62,14 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
             <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
           )}
         </li>
-    </ul>
-    <label htmlFor="nav-toggle" className="icon-burger">
+      </ul>
+      <label htmlFor="nav-toggle" className="icon-burger">
         <div className="line"></div>
         <div className="line"></div>
         <div className="line"></div>
-    </label>
-</nav>
-  )
-}
+      </label>
+    </nav>
+  );
+};
 
-export default LandingNavbar
+export default LandingNavbar;

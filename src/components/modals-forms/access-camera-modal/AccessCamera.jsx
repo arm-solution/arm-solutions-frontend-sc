@@ -117,7 +117,7 @@ const AccessCamera = (props) => {
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
-          if (blob) {
+          if (blob) { 
             resolve(blob); // Return the Blob
           } else {
             reject(new Error('Failed to capture image as Blob'));

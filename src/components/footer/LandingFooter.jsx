@@ -5,7 +5,7 @@ import Inquiry from '../modals-forms/inquiry-form/Inquiry';
 
 const LandingFooter = () => {
   return (
-    <footer className="footer" id="footer">
+    <footer className="footer" id="footer" >
       <div className="container footer-container mb-5">
         <div className="row row-container">
           <div className="col-12 col-sm-6 text-center text-sm-start mb-4 mb-sm-0">
