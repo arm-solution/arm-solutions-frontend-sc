@@ -39,25 +39,26 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
     <div className="logo"><img src={logo} alt="Logo" className='logo-image' /></div>
     <ul className="links">
         <li><a href="#home" onClick={handleBackToLandingPage}>Home</a></li>
-        <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li>
-        {/* <li 
-            className="dropdown"
-            ref={dropdownRef}
-            onClick={toggleDropdown}
-        >
-            <a href="#services">Services</a>
-            {dropdownOpen && (
-                <ul className="dropdown-menu">
-                    <li><a href="#design" onClick={handleBackToLandingPage}>Design</a></li>
-                    <li><a href="#development" onClick={handleBackToLandingPage}>Development</a></li>
-                    <li><a href="#marketing" onClick={handleBackToLandingPage}>Marketing</a></li>
-                </ul>
-            )}
-        </li> */}
         <li><a href="#services" onClick={handleBackToLandingPage}>Services</a></li>
         {/* <li><a href="#projects" onClick={handleBackToLandingPage}>Projects</a></li> */}
         <li><a href="#clients" onClick={handleBackToLandingPage}>Clients</a></li>
         <li><a href="#footer" onClick={handleBackToLandingPage}>Contact</a></li>
+        {/* <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li> */}
+        <li 
+            className="dropdown"
+            ref={dropdownRef}
+            onClick={toggleDropdown}
+        >
+            <a href="#who-we-are">Who We Are</a>
+            {dropdownOpen && (
+                <ul className="dropdown-menu">
+                    <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li>
+                    <li><Link to="/announcement">Announcement</Link></li>
+                    <li><a href="#careers" onClick={handleBackToLandingPage}>Careers</a></li>
+                    <li><a href="#workwithus" onClick={handleBackToLandingPage}>Work With Us</a></li>
+                </ul>
+            )}
+        </li>
         <li>
       
           {checkedIfLoggedIn().status ?  (
