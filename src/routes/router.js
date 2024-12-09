@@ -28,6 +28,7 @@ const CompanyClient = lazy(() => import('../pages/client-page/Client'));
 const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPassword'));
 const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
 const DtrListByUser = lazy(() => import('../pages/dtr-list-by-user-page/DtrListByUser'));
+const AnnouncementPage = lazy(() => import('../pages/announcement/AnnouncementPage'));
 
 const CommonRoutes = () => (
     <>
@@ -204,6 +205,12 @@ export const router = createBrowserRouter(createRoutesFromElements(
         <Route path='forgot-password' element={
             <Suspense fallback={<Loading/> } >
                 <ForgotPassword />
+            </Suspense>
+        } />
+
+        <Route path='announcement' element={
+            <Suspense fallback={<Loading/> } >
+                <AnnouncementPage />
             </Suspense>
         } />
 
