@@ -11,7 +11,7 @@ export const getDiscountAndTax = createAsyncThunk('taxDiscount/getAlltaxDiscount
     }
 });
 
-export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAlltaxDiscountByProposalId', async(proposalID, {rejectWithValue}) => {
+export const getDiscountTaxAdditionalByproposalId = createAsyncThunk('taxDiscount/getAlltaxDiscountByProposalId', async(proposalID, {rejectWithValue}) => {
     try {
         const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/get-additional-proposal-items/${proposalID}`);
 
@@ -31,9 +31,27 @@ export const postDiscountAndTax = createAsyncThunk('taxDiscount/addTaxDiscount',
     }
 })
 
-export const updateTaxAndDiscount = createAsyncThunk('taxDiscount/updateTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
+export const updateTaxDiscountAndAdditional = createAsyncThunk('taxDiscount/updateTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/update-additional-multiple-proposal-item`, taxDiscount);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
+export const deleteTaxDiscountAdditionalByProposalId = createAsyncThunk('taxDiscount/deleteTaxDiscountAdditionalByProposalId', async(id, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/delete-additional-proposal-item-by-proposal-id/${id}`);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
+export const deleteTaxDiscountAdditionalById = createAsyncThunk('taxDiscount/deleteTaxDiscountAdditionalById', async(id, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/delete-additional-proposal-item-by-id/${id}`);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -52,16 +70,16 @@ const taxDiscountSlice = createSlice({
     reducers: {},
     extraReducers(builder) {
         builder
-        .addCase(getDiscountAndTaxByproposalId.pending, (state, _) => {
+        .addCase(getDiscountTaxAdditionalByproposalId.pending, (state, _) => {
             state.loading = true;
         })
-        .addCase(getDiscountAndTaxByproposalId.fulfilled, (state, action) => {
+        .addCase(getDiscountTaxAdditionalByproposalId.fulfilled, (state, action) => {
             state.loading = false;
             state.isSuccess = true;
 
             state.data = action.payload;
         })
-        .addCase(getDiscountAndTaxByproposalId.rejected, (state, action) => {
+        .addCase(getDiscountTaxAdditionalByproposalId.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload
@@ -79,13 +97,13 @@ const taxDiscountSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
         })
-        .addCase(updateTaxAndDiscount.pending, (state, action) => {
+        .addCase(updateTaxDiscountAndAdditional.pending, (state, action) => {
             state.loading = true;
         }) 
-        .addCase(updateTaxAndDiscount.fulfilled, (state, action) => {
+        .addCase(updateTaxDiscountAndAdditional.fulfilled, (state, action) => {
             state.loading = false;
         }) 
-        .addCase(updateTaxAndDiscount.rejected, (state, action) => {
+        .addCase(updateTaxDiscountAndAdditional.rejected, (state, action) => {
             state.loading = false;
             state.isSuccess = false;
         }) 

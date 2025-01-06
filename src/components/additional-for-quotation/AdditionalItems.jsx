@@ -1,63 +1,99 @@
 import React, { useState } from 'react';
-import { errorDialog } from '../../customs/global/alertDialog';
+import { useDispatch } from 'react-redux';
 import './AdditionalItems.css';
+import { deleteTaxDiscountAdditionalById } from '../../store/features/taxDiscountSlice';
+import { deleteConfirmation } from '../../customs/global/alertDialog';
 
 const AdditionalItems = (props) => {
-  const [additionalQ, setAdditionalQ] = useState([]);
   const [nextRowId, setNextRowId] = useState(1);
+  const dispatch = useDispatch();
 
+  // adding row on table
   const handleAddRow = () => {
     const newRow = {
       rowId: nextRowId,
       title: '',
-      amount: 0,
-      item_total: 0,
+      item_total: '',
+      amount_type: 'amount',
+      percentage: 0,
+      option_type: props.type,
       isEditing: true,
+      isSaved: false
     };
-    setAdditionalQ([...additionalQ, newRow]);
-    setNextRowId(nextRowId + 1);
+    props.additional.setAdditionalQ([...props.additional.additionalQ, newRow]);
+    setNextRowId(prevId => prevId + 1);
   };
 
   const handleInputChange = (rowId, fieldName, value) => {
-    setAdditionalQ((prevRows) =>
-      prevRows.map((row) =>
-        row.rowId === rowId
-          ? {
-              ...row,
-              [fieldName]: value,
-              item_total: fieldName === 'amount' ? parseFloat(value) || 0 : row.item_total,
-            }
+    props.additional.setAdditionalQ(prevRows =>
+      prevRows.map(row =>
+        row.rowId === rowId ? { ...row, [fieldName]: value } : row
+      )
+    );
+  };
+
+  const handleSave = (saveRow) => {
+
+    props.additional.setAdditionalQ(
+      props.additional.additionalQ.map(row =>
+        row.rowId === saveRow.rowId
+          ? { ...row, isEditing: false, isSaved: true }
           : row
       )
     );
-  };
 
-  const calculateAllRowsTotal = (rows) => {
-    return rows.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
-  };
+    // const totalAdditional = props.actions.getTotalTaxDiscountAdditional(props.additional.additionalQ);
+    props.totalAmount.setTotalAmount((pre) => pre + parseFloat(saveRow.item_total));
+    // props.setTotalAmountref(props.totalAmount.totalAmount + parseFloat(saveRow.item_total))
 
-  const handleSave = (rowId) => {
-    const rowToSave = additionalQ.find((row) => row.rowId === rowId);
-    const totalAmountAllRows = calculateAllRowsTotal(additionalQ);
-    if (!rowToSave.title || parseFloat(rowToSave.amount) === 0) {
-      errorDialog('All Fields Are Required');
-      return;
-    }
-
-    props.setTotalAmountref((pre) => pre + totalAmountAllRows);
-    setAdditionalQ((prevRows) =>
-      prevRows.map((row) =>
-        row.rowId === rowId ? { ...row, isEditing: false } : row
-      )
-    );
+    console.log("save row", saveRow);
   };
 
   const handleEdit = (rowId) => {
-    setAdditionalQ((prevRows) =>
-      prevRows.map((row) =>
+    props.additional.setAdditionalQ(prevRows =>
+      prevRows.map(row =>
         row.rowId === rowId ? { ...row, isEditing: true } : row
       )
     );
+  };
+
+  const handleDelete = async (deletedRow) => {
+
+    console.log("Data", deletedRow);
+
+    deleteConfirmation({
+      title: "",
+      text: "",
+      icon: "",
+      confirmButtonText: "",
+      cancelButtonText: "",
+      deleteTitle: "",
+      deleteText: "",
+      successTitle: "", 
+      successText: ""
+  }, async () => {
+
+    let filteredRows;
+
+    if(deletedRow.id) {
+      const { payload } = await dispatch(deleteTaxDiscountAdditionalById(deletedRow.id));
+      const result = payload.affectedRows > 0 ? true : false;
+      if(result) {
+        filteredRows = props.additional.additionalQ.filter(row => row.rowId !== deletedRow.rowId);
+      }
+    } else {
+        filteredRows = props.additional.additionalQ.filter(row => row.rowId !== deletedRow.rowId);
+    }
+
+    if(filteredRows) {
+      props.additional.setAdditionalQ(filteredRows);
+      props.setTotalAmountref((pre) => pre - parseFloat(deletedRow.item_total));
+      props.totalAmount.setTotalAmount((pre) => pre - parseFloat(deletedRow.item_total));
+      return true;
+    }
+
+  });
+
   };
 
   return (
@@ -68,21 +104,17 @@ const AdditionalItems = (props) => {
           <tr>
             <th>Title</th>
             <th>Amount</th>
-            <th>Total</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {additionalQ.map((row) => (
-            <tr key={row.rowId}>
+          {props.additional.additionalQ.map(row => (
+            <tr key={row}>
               <td>
                 <input
                   type="text"
-                  name="title"
                   value={row.title}
-                  onChange={(e) =>
-                    handleInputChange(row.rowId, 'title', e.target.value)
-                  }
+                  onChange={e => handleInputChange(row.rowId, 'title', e.target.value)}
                   className="form-control form-control-sm"
                   disabled={!row.isEditing}
                 />
@@ -90,42 +122,31 @@ const AdditionalItems = (props) => {
               <td>
                 <input
                   type="number"
-                  name="amount"
-                  value={row.amount}
-                  onChange={(e) =>
-                    handleInputChange(row.rowId, 'amount', e.target.value)
-                  }
+                  value={row.item_total}
+                  onChange={e => handleInputChange(row.rowId, 'item_total', e.target.value)}
                   className="form-control form-control-sm"
                   disabled={!row.isEditing}
                 />
               </td>
-              <td>{row.item_total}</td>
               <td>
                 {row.isEditing ? (
-                  <button
-                    className="btn btn-success btn-sm m-2 mb-0 mt-0"
-                    onClick={() => handleSave(row.rowId)}
-                  >
+                  <button className="btn btn-success btn-sm m-2" onClick={() => handleSave(row)}>
                     Save
                   </button>
                 ) : (
-                  <button
-                    className="btn btn-primary btn-sm m-2 mb-0 mt-0"
-                    onClick={() => handleEdit(row.rowId)}
-                  >
+                  <button className="btn btn-primary btn-sm m-2" onClick={() => handleEdit(row.rowId)}>
                     Edit
                   </button>
                 )}
-                <button className="btn btn-danger btn-sm">Delete</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <button className="btn btn-primary btn-sm" onClick={handleAddRow}>
-        Add Row
-      </button>
+      <button className="btn btn-primary btn-sm" onClick={handleAddRow}>Add Row</button>
     </div>
   );
 };

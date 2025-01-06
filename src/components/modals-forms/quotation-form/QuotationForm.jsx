@@ -10,7 +10,7 @@ import { errorDialog, successDialog  } from '../../../customs/global/alertDialog
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/features/taxDiscountSlice';
+import { postDiscountAndTax, updateTaxDiscountAndAdditional } from '../../../store/features/taxDiscountSlice';
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
@@ -20,7 +20,7 @@ import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItems from '../../additional-for-quotation/AdditionalItems';
 
 const QoutationForm = (props) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
@@ -28,8 +28,9 @@ const QoutationForm = (props) => {
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
-    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ additional: 0, discount: 0 })
+    const [taxDiscountTotalAdditional, setTaxDiscountTotalAdditional] = useState({ tax: 0, discount: 0, additional: 0 })
     const [clientDetails, setClientDetails] = useState([])
+    const [additionalQ, setAdditionalQ] = useState([]);
     const [notification, setNotification] = useState({
         message: '',
         type: ''
@@ -43,7 +44,8 @@ const QoutationForm = (props) => {
         description: '',
         sub_total: 0,
         deductions: 0,
-        additional_payments: 0,
+        tax: 0,
+        additional_items: 0,
         grand_total: 0,
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
@@ -63,7 +65,6 @@ const QoutationForm = (props) => {
     useEffect(() => {
         setProposalIsSuccess(props.proposalStatus);
     }, [props.proposalStatus, proposalIsSuccess])
-
 
     useEffect(() => {
         if(totalAmount < 0) {
@@ -93,6 +94,7 @@ const QoutationForm = (props) => {
         };
     }
      
+    // load client data and proposal creator data when click update button on table
     useEffect(() => {
         if (props.proposalEdit) {
             const fetchQuotationDetails = async () => {
@@ -101,12 +103,6 @@ const QoutationForm = (props) => {
 
                 setCreator(creatorDet)
                 setClientDetails(client);
-                // setQuotation(props.proposalEdit);
-                // setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-                // setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-                // setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-                // setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
-                // setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
             }
 
             fetchQuotationDetails();
@@ -114,15 +110,17 @@ const QoutationForm = (props) => {
     }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
 
 
+    // load all data tax, additional, discount and quotation table data if session staorage is have value
     useEffect(() => {
         const fetchFromSession = () => {
           const proposalDetails = sessionStorage.getItem('proposalDetails');
       
           if (proposalDetails) {
-            const { quotation: quotationData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
+            const { quotation: quotationData, taxDiscountAdditional: taxDiscountAdditionalData } = JSON.parse(proposalDetails);
               setQuotation(quotationData);
-              setTax(taxDiscountData.filter(d => d.option_type === 'additional'));
-              setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
+              setTax(taxDiscountAdditionalData.filter(d => d.option_type === 'tax'));
+              setDiscount(taxDiscountAdditionalData.filter(d => d.option_type === 'discount'));
+              setAdditionalQ(taxDiscountAdditionalData.filter(d => d.option_type === 'additional'));
           }
         };
       
@@ -139,22 +137,38 @@ const QoutationForm = (props) => {
         return () => {
           window.removeEventListener('sessionUpdated', handleSessionUpdate);
         };
-    }, []);  // Empty dependency array ensures it runs once on mount
+    }, []); 
 
 
-
-      // calculating tax and discount percentage
-  const calculateTaxDiscount = (row) => {
-    if (totalAmountref > 0) {
-      return row.amount_type === 'percentage'
-        ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
-        : parseFloat(row.percentage);
-    } else {
-      return 0
+    // calculating tax and discount percentage
+    const calculateTaxDiscount = (row) => {
+        if (totalAmountref > 0) {
+        return row.amount_type === 'percentage'
+            ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
+            : parseFloat(row.percentage);
+        } else {
+        return 0
+        }
     }
-  }
 
-    const getTotalTax = (tax) => {
+    const calculateInArray = (items, property) => {
+        if (!Array.isArray(items)) {
+          console.error("The first parameter must be an array.");
+          return 0;
+        }
+
+        if (items.length === 0) {
+            return 0;
+        }
+      
+        return items.reduce((total, item) => {
+            const value = parseFloat(item?.[property]);
+            return !isNaN(value) ? total + value : total;
+        }, 0);
+      };
+
+    //calculate amount or total inside of array 
+    const getTotalTaxDiscountAdditional = (tax) => {
         if (tax.length > 0) {
           return tax.reduce((totals, item) => {
             const type = item.option_type || 'other'; // Default to 'other' if no type is provided
@@ -167,13 +181,13 @@ const QoutationForm = (props) => {
             // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
             totals[type] += parseFloat(item.item_total) || 0;
             return totals;
-          }, { additional: 0, discount: 0 }); // Start with 0 for both additional and discount
+          }, { tax: 0, discount: 0, additional: 0 }); // Start with 0 for both additional and discount
         } else {
-          return { additional: 0, discount: 0 }; // Default structure if no tax items are provided
+          return { tax: 0, discount: 0, additional: 0 }; // Default structure if no tax items are provided
         }
       };
     
-        // Calculate total amount for each row and return updated rows
+    // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
           return rows.map((row) => ({
             ...row,
@@ -184,38 +198,42 @@ const QoutationForm = (props) => {
           }));
     };
 
+    // calculate total amount when total amount ref is changing and when calculateAllTaxDiscount
     useEffect(() => {
-        if(totalAmountref > 0) {
-          const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-          const totalTaxDiscount = getTotalTax(updatedRows);
+          const updatedRows = calculateAllTaxDiscount([...tax, ...discount, ...additionalQ]);
+          const totalTaxDiscount = getTotalTaxDiscountAdditional(updatedRows);
           
-          setTotalAmount(parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
-        }
+          setTotalAmount((pre) => (pre + parseFloat(totalTaxDiscount.additional) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
 
       }, [calculateAllTaxDiscount, totalAmountref]);
 
+    // set tax, discount and additional if amout ref is morethan 0  
       useEffect(() => {
         if(totalAmountref > 0) {
-        const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+        const updatedRows = calculateAllTaxDiscount([...tax, ...discount, ...additionalQ]);
 
-        const taxUpdate = updatedRows.filter(d => d.option_type === 'additional');
+        const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
         const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
-        // const totalTaxDiscount = getTotalTax(updatedRows);
+        const additionalUpdate = updatedRows.filter(d => d.option_type === 'additional');
+        // const totalTaxDiscount = getTotalTaxDiscountAdditional(updatedRows);
         
         setTax(taxUpdate);
         setDiscount(discountUpdate);
+        setAdditionalQ(additionalUpdate);
         
         }
       }, [totalAmountref])
 
+    //  calculate total per row additional, tax and discount when tax additional and discount change
       useEffect(() => {
         if(totalAmountref > 0) {
-            const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-            const totalTaxDiscount = getTotalTax(updatedRows);
-  
-            setTaxDiscountTotal(totalTaxDiscount);
-          }
-      }, [tax, discount])
+            const updatedRows = calculateAllTaxDiscount([...tax, ...discount, ...additionalQ]);
+            const totalTaxDiscount = getTotalTaxDiscountAdditional(updatedRows);
+            console.log("Call");
+            setTaxDiscountTotalAdditional(totalTaxDiscount);
+
+        }
+      }, [tax, discount, additionalQ])
       
       
     const handleAddNewQoutation = async () => {
@@ -239,19 +257,19 @@ const QoutationForm = (props) => {
         } 
        
         try {
-            const quotationResponse = await dispatch(createProposal({
-                ...quotation,
-                additional_payments: taxDiscountTotal.additional,
-                deductions: taxDiscountTotal.discount,
-                sub_total: totalAmountref,
-                grand_total: totalAmount
-            }));
+            const { additional_items, deductions, ...quotationData } = quotation;
+                const quotationResponse = await dispatch(createProposal({
+                    ...quotationData,
+                    tax: taxDiscountTotalAdditional.tax,
+                    sub_total: totalAmountref,
+                    grand_total: totalAmount
+                }));
 
-            const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+                const { lastid, success: qoutationSuccess } = quotationResponse.payload;
 
             if(lastid > 0 && qoutationItem.length > 0) {
                 const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+                const taxAndDiscountMerge = [...tax, ...discount, ...additionalQ].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
                 setQoutationItem(updatedQoutationItems);
 
                 const [saveItemsResponse, saveTaxDiscountResponse] = await Promise.all([
@@ -286,7 +304,9 @@ const QoutationForm = (props) => {
     const handleUpdateQoutation = async () => {
 
         let status = false 
-        const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
+
+        // checking for additional tax discount or additional item
+        const taxDiscountModified = getModifiedAndNewItems([props.taxDiscountAdditionalData], [...tax, ...discount, ...additionalQ].map(d => { 
             const { isEditing, isSaved, rowId, ...rest } = d;
             return {...rest, proposal_id: quotation.id};
         }));
@@ -301,8 +321,8 @@ const QoutationForm = (props) => {
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
             date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
             sub_total: totalAmountref,
-            additional_payments: taxDiscountTotal.additional,
-            deductions: taxDiscountTotal.discount
+            tax: taxDiscountTotalAdditional.tax,
+            deductions: taxDiscountTotalAdditional.discount
         };
         
         //This is for qoutation/proposal form
@@ -324,7 +344,7 @@ const QoutationForm = (props) => {
                 status = true;
         }
         if(taxDiscountModified.length > 0) {
-            await dispatch(updateTaxAndDiscount(taxDiscountModified));
+            await dispatch(updateTaxDiscountAndAdditional(taxDiscountModified));
             status = true;
         }
         
@@ -367,12 +387,15 @@ const QoutationForm = (props) => {
                     )}
 
                         <AdditionalItems
+                            type="additional"
                             proposalItemSuccess={props.proposalItemSuccess}
                             setNotification={ setNotification }
                             totalAmount={{ totalAmount, setTotalAmount }}
                             setTotalAmountref={setTotalAmountref}
                             totalAmountref={totalAmountref}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                            additional={{ additionalQ, setAdditionalQ }}
+                            calculateInArray={calculateInArray}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTaxDiscountAdditional }}
                         />
 
 
@@ -385,7 +408,7 @@ const QoutationForm = (props) => {
                             totalAmount={{ totalAmount, setTotalAmount }}
                             setTotalAmountref={setTotalAmountref}
                             totalAmountref={totalAmountref}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTaxDiscountAdditional }}
                          />
                     </div>
 
@@ -393,13 +416,13 @@ const QoutationForm = (props) => {
                     {parseInt(totalAmount) > 0 && (
                         <>
                             <TaxDiscountTable
-                                type="additional"
+                                type="tax"
                                 totalAmount={totalAmount}
                                 setTotalAmount={setTotalAmount}
                                 taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
                                 totalAmountref={totalAmountref}
                                 mergeDiscountTax={[...tax, ...discount]}
-                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTaxDiscountAdditional }}
                             />
 
                             <TaxDiscountTable
@@ -409,7 +432,7 @@ const QoutationForm = (props) => {
                                 taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
                                 totalAmountref={totalAmountref}
                                 mergeDiscountTax={[...tax, ...discount]}
-                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTaxDiscountAdditional }}
                             />
                         </>
                     )}
@@ -417,7 +440,7 @@ const QoutationForm = (props) => {
                     <TotalAmount 
                         totalAmountref={totalAmountref}
                         totalAmount={totalAmount}
-                        taxDiscountTotal={taxDiscountTotal}
+                        taxDiscountTotalAdditional={taxDiscountTotalAdditional}
                     />
 
                     <div className="row row-btn-qout mt-3 mr-auto">

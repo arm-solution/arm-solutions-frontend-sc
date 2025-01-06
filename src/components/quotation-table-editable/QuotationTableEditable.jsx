@@ -161,7 +161,7 @@ const QoutationTableEditable = (props) => {
     // console.log("productItemDetails", productItemDetails)
 
        if(getproductItemDetails.name !== 'Man Power') {
-        setInputAccessNumDays(true);
+           setInputAccessNumDays(true);
        }
        
        if(checkProduct) {

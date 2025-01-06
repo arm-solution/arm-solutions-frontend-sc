@@ -6,7 +6,7 @@ import DataTable from '../../../components/DataTable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
 import { formatDateTime } from '../../../customs/global/manageDates';
-import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
+import { getDiscountTaxAdditionalByproposalId } from '../../../store/features/taxDiscountSlice';
 import { deleteConfirmation } from '../../../customs/global/alertDialog'; 
 
 const Quotations = () => {
@@ -17,7 +17,7 @@ const Quotations = () => {
     
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
-    const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
+    const { data: taxDiscountAdditionalData } = useSelector(state => state.taxDiscounts);
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
     
@@ -47,8 +47,8 @@ const Quotations = () => {
         setSelectedTab('tab-two');
         setProposalEdit(row);
     
-        const [discountTaxResult, proposalItemsResult] = await Promise.all([
-          dispatch(getDiscountAndTaxByproposalId(row.id)),
+        const [discountTaxAdditionalResult, proposalItemsResult] = await Promise.all([
+          dispatch(getDiscountTaxAdditionalByproposalId(row.id)),
           dispatch(getProposalItemsByProposalId(row.id)),
         ]);
     
@@ -56,7 +56,7 @@ const Quotations = () => {
         sessionStorage.setItem('proposalDetails', JSON.stringify({
           quotation: row,  // Use the row since it's already the proposalEdit data
           quotationItem: proposalItemsResult.payload,
-          taxDiscount: discountTaxResult.payload
+          taxDiscountAdditional: discountTaxAdditionalResult.payload
         }));
     
         // Dispatch a custom event to signal that sessionStorage is updated
@@ -110,8 +110,6 @@ const Quotations = () => {
           checked={selectedTab === 'tab-two'}
           onChange={handleTabChange}
         />
-   
-
         <div className="tabs flex-tabs">
           <label htmlFor="tab-one" id="tab-one-label" className="tab">Qoutation Lists</label>
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Qoutations</label>
@@ -139,7 +137,7 @@ const Quotations = () => {
               proposalItemData={proposalItemData}
               proposalItemLoading={proposalItemLoading}
               proposalItemSuccess={proposalItemSuccess}
-              taxDiscountData={taxDiscountData}
+              taxDiscountAdditionalData={taxDiscountAdditionalData}
             /> 
 
         </div>

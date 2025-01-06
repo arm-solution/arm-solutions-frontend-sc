@@ -37,8 +37,6 @@ export const updateProposal = createAsyncThunk('proposals/updateProposal', async
 })
 
 
-
-
 const proposalSlice = createSlice({
     name: 'proposal',
     initialState: {
