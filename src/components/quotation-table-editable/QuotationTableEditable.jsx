@@ -40,13 +40,14 @@ const QoutationTableEditable = (props) => {
       
           if (proposalDetails) {
             const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const setAmount = quotationItemData.map(d => ({
+            const itemsWithComputationAmount = quotationItemData.map(d => ({
                 ...d,
+                markup_price: d.base_price,
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
            
-            setProductItemDetails(setAmount)
-            const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
+            setProductItemDetails(itemsWithComputationAmount)
+            const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
           }
         };
