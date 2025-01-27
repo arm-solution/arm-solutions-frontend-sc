@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
@@ -40,16 +41,15 @@ const QoutationTableEditable = (props) => {
       
           if (proposalDetails) {
             const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const setAmount = quotationItemData.map(d => ({
+            const itemsWithComputationAmount = quotationItemData.map(d => ({
                 ...d,
+                markup_price: d.base_price,
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
            
-            setProductItemDetails(setAmount)
-            const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
+            setProductItemDetails(itemsWithComputationAmount)
+            const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
-        }
-    }, [props.proposalItemEdit, productItemDetails, props.proposalItemEdit.length, props])
           }
         };
       
@@ -191,43 +191,32 @@ const QoutationTableEditable = (props) => {
 
     };
 
-// handle product onchange select dropdown
-const handleProduct = (e, rowId) => {
-    const selectedProductId = parseInt(e.target.value);
-    const selectedProduct = products.find(product => product.id === selectedProductId);
+    // handle product onchange select dropdown
+    const handleProduct = (e, rowId) => {
+        const selectedProductId = parseInt(e.target.value);
+        const selectedProduct = products.find(product => product.id === selectedProductId);
 
-    const productExist = productItemDetails.find(p => p.id === selectedProductId);
-    
-    if (productExist) {
-        props.setNotification({
-            message: 'Product Already Exists on the Table',
-            type: 'error'
-        });
-        return;
-    }
+        const productExist = productItemDetails.find(p => p.id === selectedProductId);
 
-    // Handle access num days logic
-    if (selectedProduct.name === 'Man Power') {
-        setInputAccessNumDays(false);
-    } else {
-        setInputAccessNumDays(true);
-    }
+        // if(selectedProduct.name === 'Man Power') {
+        //     setInputAccessNumDays(false)
+        // } else {
+        //     setInputAccessNumDays(true)
+        // }
 
-    // Update product item details and calculate the amount
-    setProductItemDetails(prevDetails =>
-        prevDetails.map(row =>
-            row.id === rowId
-                ? {
-                      ...row,
-                      ...selectedProduct,
-                      isEditing: true,
-                      amount: parseInt(row.qty) * parseInt(selectedProduct.base_price)
-                  }
-                : row
-        )
-    );
-};
+        if (productExist) {
+            props.setNotification({
+                    message: 'Product Already Exist on the Table',
+                    type: 'error'
+            })
+            return;
+        }
+        setProductItemDetails(prevDetails => prevDetails.map(row => 
+            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true, markup_price: selectedProduct.base_price} : row
+        
+        ));
 
+    };
 
     const anyRowEditing = productItemDetails.some(row => row.isEditing);
 
@@ -283,8 +272,8 @@ const handleProduct = (e, rowId) => {
 
     return (
         <div className="table-editable-container">
+
           <div className="container mt-4">
-            <h4>Products</h4>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -293,9 +282,8 @@ const handleProduct = (e, rowId) => {
                         <th>Category</th>
                         <th>Qty</th>
                        { !screenMobile() && <th>Unit</th> }
-                        <th>No. Days</th>
-                        <th>Price</th>
                         <th>Markup price</th>
+                        <th>Price</th>
                         <th>Amount</th>
                         <th></th>
                     </tr>
@@ -344,22 +332,10 @@ const handleProduct = (e, rowId) => {
                             { !screenMobile() && <td>{row.unit}</td> }
 
                                 <td>
-                                 {row.isEditing ? (
-                                     <input
-                                         type="number"
-                                         className="form-control"
-                                         value={row.number_of_days || ''}
-                                         name='number_of_days'
-                                         onChange={(e) => handleInputChange(e, row.id)}
-                                         disabled={inputAccessNumDays}
-                                     />
-                                 ) : (
-                                     row.number_of_days
-                                 )}
-
+                                    {row.markup_price | 0}
                                 </td>
 
-                            <td>{row.base_price | 0}</td>
+                            {/* <td>{row.base_price | 0}</td> */}
                             <td>
                                 <input type="text"
                                 value={ row.base_price | 0 }
