@@ -1,28 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import logo from './../../assets/images/logo.png'
-// import logoCircle from './../../assets/images/arm-cir-adobe.png'
-import './LandingNav.css'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from './../../assets/images/logo.png';
+import './LandingNav.css';
 import { checkedIfLoggedIn } from '../../customs/global/manageLocalStorage';
 
-const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
-
+const LandingNavbar = ({ onNavigate }) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-
     const handleScroll = () => {
-      if (window.scrollY > 50 ) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
-    
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -31,52 +23,67 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-};
+  };
 
   return (
     <nav className={scrolled ? 'scrolled' : ''}>
-    <input id="nav-toggle" type="checkbox" />
-    <div className="logo"><img src={logo} alt="Logo" className='logo-image' /></div>
-    <ul className="links">
-        <li><a href="#home" onClick={handleBackToLandingPage}>Home</a></li>
-        <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li>
-        <li 
-            className="dropdown"
-            // onMouseEnter={() => setDropdownOpen(true)}
-            // onMouseLeave={() => setDropdownOpen(false)}
-            ref={dropdownRef}
-            onClick={toggleDropdown}
-        >
-            <a href="#services">Services</a>
-            {dropdownOpen && (
-                <ul className="dropdown-menu">
-                    <li><a href="#design" onClick={handleBackToLandingPage}>Design</a></li>
-                    <li><a href="#development" onClick={handleBackToLandingPage}>Development</a></li>
-                    <li><a href="#marketing" onClick={handleBackToLandingPage}>Marketing</a></li>
-                </ul>
-            )}
+      <input id="nav-toggle" type="checkbox" />
+      <div className="logo">
+        <img src={logo} alt="Logo" className="logo-image" />
+      </div>
+      <ul className="links">
+        <li className='text-white'> 
+          <a onClick={() => onNavigate('home')}>Home</a>
         </li>
-        <li><a href="#projects" onClick={handleBackToLandingPage}>Projects</a></li>
-        <li><a href="#clients" onClick={handleBackToLandingPage}>Clients</a></li>
-        <li><a href="#footer" onClick={handleBackToLandingPage}>Contact</a></li>
-        <li>
-      
-          {checkedIfLoggedIn().status ?  (
-            
-            <Link to={`/${checkedIfLoggedIn().path}`} className='btn btn-outline-danger btn-sm login-btn'>Dashboard</Link>
-          ) : (
-            
-            <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('services')}>Services</a>
+        </li>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('clients')}>Clients</a>
+        </li>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('footer')}>Contact</a>
+        </li>
+        <li
+          className="dropdown text-white"
+          ref={dropdownRef}
+          onClick={toggleDropdown}
+          aria-haspopup="true"
+          aria-expanded={dropdownOpen ? 'true' : 'false'}
+        >
+          <a onClick={(e) => e.preventDefault()} aria-label="Who We Are">
+            Who We Are
+          </a>
+          {dropdownOpen && (
+            <ul className="dropdown-menu" role="menu">
+              <li>
+                <a href="/company-profile">About Us</a>
+              </li>
+              <li>
+                <a href="/announcement">Announcement</a>
+              </li>
+            </ul>
           )}
         </li>
-    </ul>
-    <label htmlFor="nav-toggle" className="icon-burger">
+        <li>
+          {checkedIfLoggedIn().status ? (
+            <a href={`/${checkedIfLoggedIn().path}`} className="btn btn-outline-danger btn-sm login-btn">
+              Dashboard
+            </a>
+          ) : (
+            <a href="/login" className="btn btn-secondary btn-sm login-btn">
+              Login
+            </a>
+          )}
+        </li>
+      </ul>
+      <label htmlFor="nav-toggle" className="icon-burger">
         <div className="line"></div>
         <div className="line"></div>
         <div className="line"></div>
-    </label>
-</nav>
-  )
-}
+      </label>
+    </nav>
+  );
+};
 
-export default LandingNavbar
+export default LandingNavbar;

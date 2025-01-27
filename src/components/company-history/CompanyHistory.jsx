@@ -11,7 +11,7 @@ const CompanyHistory = () => {
 
         <div className="history-text-container">
             <div className="col col-md-8">
-                <p>
+                <p style={{ textAlign: "justify" }}>
                 Our company was founded on February 2012 by Mr. John Carlo Macalintal Arago who worked
                 for three years in a fire protection company. With his exprrience in and exposure to the
                 industry, he observed a mounting demand for fire safety and protection throughout the country.
@@ -19,12 +19,12 @@ const CompanyHistory = () => {
                 skilled young people, he setup a small and typical business that provides quality fire safety 
                 supplies and  competent
                 </p>
-                <p>
+                <p style={{ textAlign: "justify" }}>
                 In just three years of its existence, ARM Solution Enterprises is able to establish
                 itself as one of the top choices in its field, with its strings of partnership with
                 reputable supplier and manufacturers that meet the industry standards.
                 </p>
-                <p>
+                <p style={{ textAlign: "justify" }}>
                 Now, ARM SOLUTION ENTERPRISES is headed by Ms. Justina Macalintal Arago, mothe of the
                 late founder of the company. She continued the legacy and business operations for intention
                 of delivering a complete range of quality services to residential homes, business offices and
@@ -33,7 +33,7 @@ const CompanyHistory = () => {
                 manufacturer and other enterprises, to ensure that our clients wil have nothing but
                 quality yet affordable products.
                 </p>
-                <p>
+                <p style={{ textAlign: "justify" }}>
                 Today, we are not only considered as one of the best companies for fire safety and protection
                 needs, but we are also a top choice when it comes to supplies and services in the field of
                 construction, industrial, and mechanical as well as in the painting industry.
@@ -50,7 +50,7 @@ const CompanyHistory = () => {
         <div className="owner-qoute">
             <h1 style={{ fontWeight: 'bolder'}}>"My Capital and my Assets are my People"</h1>
             <div className="founder-details">
-                <p><i>-- Mr. JOHN CARLO M. ARAGO, Founder of ARM SOLUTION ENTERPRISES</i></p>
+                <p style={{ textAlign: "justify" }}><i>-- Mr. JOHN CARLO M. ARAGO, Founder of ARM SOLUTION ENTERPRISES</i></p>
             </div>
         </div>
 

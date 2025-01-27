@@ -94,25 +94,25 @@ const QoutationForm = (props) => {
         };
     }
      
-    // useEffect(() => {
-    //     if (props.proposalEdit) {
-    //         const fetchQuotationDetails = async () => {
-    //             const client = await getClient(props.proposalEdit.client_id);
-    //             const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
-    //             setCreator(creatorDet)
-    //             // console.log('proposal creator', creator);
-    //             setClientDetails(client);
-    //             setQuotation(props.proposalEdit);
-    //             setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-    //             setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-    //             setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-    //             setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
-    //             setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
-    //         }
+    useEffect(() => {
+        if (props.proposalEdit) {
+            const fetchQuotationDetails = async () => {
+                const client = await getClient(props.proposalEdit.client_id);
+                const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
 
-    //         fetchQuotationDetails();
-    //     }
-    // }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
+                setCreator(creatorDet)
+                setClientDetails(client);
+                // setQuotation(props.proposalEdit);
+                // setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
+                // setTotalAmount(parseInt(props.proposalEdit?.grand_total))
+                // setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
+                // setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
+                // setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
+            }
+
+            fetchQuotationDetails();
+        }
+    }, [props.proposalEdit, props.taxDiscountData, props.proposalItemData]);
 
 
     useEffect(() => {
@@ -395,13 +395,13 @@ const QoutationForm = (props) => {
 
                     <div className="row table-editable">
                         <QoutationTableEditable
-                         setQoutationItem={setQoutationItem}
-                         proposalItemSuccess={props.proposalItemSuccess}
-                         setNotification={ setNotification }
-                         totalAmount={{ totalAmount, setTotalAmount }}
-                         setTotalAmountref={setTotalAmountref}
-                         totalAmountref={totalAmountref}
-                         actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                            setQoutationItem={setQoutationItem}
+                            proposalItemSuccess={props.proposalItemSuccess}
+                            setNotification={ setNotification }
+                            totalAmount={{ totalAmount, setTotalAmount }}
+                            setTotalAmountref={setTotalAmountref}
+                            totalAmountref={totalAmountref}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                          />
                     </div>
 

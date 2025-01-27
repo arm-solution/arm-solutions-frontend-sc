@@ -3,21 +3,17 @@
     border-radius: 50%;
   }
 
-/* Save Product button styles */
 .save-product {
   width: 10rem;
   margin-right: 1rem;
   position: relative;
 }
 
-/* Hide the original text when loading */
 .loading .btn-text {
   visibility: hidden;
 }
 
-/* Add the loading text */
 .loading::after {
-  /* content: "Loading..."; */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -26,7 +22,6 @@
   color: white;
 }
 
-/* Loading indicator styles */
 .btn-loading {
   display: none;
   position: absolute;

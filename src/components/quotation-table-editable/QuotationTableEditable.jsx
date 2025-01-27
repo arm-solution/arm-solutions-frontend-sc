@@ -271,8 +271,8 @@ const QoutationTableEditable = (props) => {
 
     return (
         <div className="table-editable-container">
-
           <div className="container mt-4">
+            <h4>Products</h4>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -283,6 +283,7 @@ const QoutationTableEditable = (props) => {
                        { !screenMobile() && <th>Unit</th> }
                         <th>Markup price</th>
                         <th>Price</th>
+                        <th>Markup price</th>
                         <th>Amount</th>
                         <th></th>
                     </tr>
@@ -334,7 +335,7 @@ const QoutationTableEditable = (props) => {
                                     {row.markup_price | 0}
                                 </td>
 
-                            {/* <td>{row.base_price | 0}</td> */}
+                            <td>{row.base_price | 0}</td>
                             <td>
                                 <input type="text"
                                 value={ row.base_price | 0 }

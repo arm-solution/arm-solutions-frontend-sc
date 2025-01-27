@@ -16,7 +16,6 @@ const AdminDashboard = () => {
       navigate('/'); // Redirect to home page if not admin
     }
   }, [navigate])
-  
 
   return (
     <>

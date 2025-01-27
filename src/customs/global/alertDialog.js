@@ -61,7 +61,7 @@ export const deleteConfirmation = async ({ title, text, icon, confirmButtonText,
 
 
 export const handleConfirmation = async (
-  { title, text, icon, confirmButtonText, cancelButtonText, confirmationTitle, confirmationText },
+  { title, text, icon, confirmButtonText, cancelButtonText, confirmationTitle, confirmationText, failedMessageTitle, failedMessageText },
    callback) => {
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -94,8 +94,8 @@ export const handleConfirmation = async (
         });
       } else {
         await swalWithBootstrapButtons.fire({
-          title: "Unsuccessful Operation",
-          text: "Please report this issue to file a ticket.",
+          title: failedMessageTitle || "Unsuccessful Operation",
+          text: failedMessageText || "Please report this issue to file a ticket.",
           icon: "error"
         });
       }

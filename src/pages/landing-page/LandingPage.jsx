@@ -1,50 +1,64 @@
-import React, { useState } from 'react'
+import React, { useRef, useEffect } from 'react';
 import './LandingPage.css';
-import Carousel from './../../components/carousel-image/Carousel'
-import Clients from '../../components/clients/Clients';
 import LandingFooter from './../../components/footer/LandingFooter';
 import LandingNavbar from './../../components/landing-navigation/LandingNavbar';
-import ServiceCardSlides from '../../components/services/ServiceCardSlides';
-import OnTopButton from '../../components/ontop-button/OnTopButton';
-import WhyArms from '../../components/why-arms/WhyArms';
-import Profile from '../company-profile/Profile';
-import CompanyHistory from '../../components/company-history/CompanyHistory';
-// import MessengerChat from '../../components/MessengerChat';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 const LandingPage = () => {
-  const [showAboutUs, setShowAboutUs] = useState(false);
+  // Add a reference for the footer
+  const sectionRefs = {
+    home: useRef(null),
+    services: useRef(null),
+    clients: useRef(null),
+    whyArms: useRef(null),
+    footer: useRef(null),  // Reference for the footer section
+  };
 
-  const handleAboutUsPage = () => {
-    setShowAboutUs(true);
-  }
+  const navigate = useNavigate();
+  const location = useLocation(); // Access location to detect hash changes
 
-  const handleBackToLandingPage = () => {
-    setShowAboutUs(false);
-  }
+  // Function to handle smooth scrolling to a section
+  const handleScrollToSection = (section) => {
+    navigate('/');  // Navigate back to the landing page before scrolling
+    setTimeout(() => {
+      const target = sectionRefs[section]?.current;
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);  // Delay to ensure navigation happens before scrolling
+  };
 
- return (
+  // Effect to handle the URL hash on load or hash change
+  useEffect(() => {
+    const hash = location.hash.slice(1);  // Remove '#' from the hash
+    if (sectionRefs[hash]) {
+      setTimeout(() => {
+        sectionRefs[hash]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [location.hash]);
+
+  // Ensure scroll to section on initial page load or refresh
+  useEffect(() => {
+    const hash = window.location.hash.slice(1);  // Handle hash on initial load
+    if (sectionRefs[hash]) {
+      setTimeout(() => {
+        sectionRefs[hash]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);  // Delay for smooth scrolling
+    }
+  }, []);  
+
+  return (
     <>
-      <LandingNavbar handleAboutUsPage={handleAboutUsPage} handleBackToLandingPage={handleBackToLandingPage}/>
-      {showAboutUs ? (
-        <>        
-        <Profile />
-        <CompanyHistory />
-        </>
-      ) : (
-        <>
-        <Carousel />
-        <ServiceCardSlides />
-        <Clients />
-        <WhyArms />
-        {/* <MessengerChat /> */}
-        <OnTopButton  />
-        </>
-      )}
-
-
-      <LandingFooter />
+      <LandingNavbar onNavigate={handleScrollToSection} />
+      <main>
+        <Outlet context={sectionRefs} />
+      </main>
+      <div ref={sectionRefs.footer}>
+        <LandingFooter   />  
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;
