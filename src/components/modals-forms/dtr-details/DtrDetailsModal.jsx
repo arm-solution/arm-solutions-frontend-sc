@@ -16,38 +16,42 @@ const DtrDetailsModal = (props) => {
 
 
     useEffect(() => {
-        const imageData = props.selectedDtr?.image_capture;
 
-        if (imageData) {
-            // Handle case when the image is a Buffer
-            if (imageData.type === 'Buffer' && Array.isArray(imageData.data)) {
-                // Create a Blob from the Buffer data
-                const blob = new Blob([new Uint8Array(imageData.data)], { type: 'image/png' });
-                const url = URL.createObjectURL(blob);
-                setImageUrl(url);
-            }
-            // Handle base64 string
-            else if (typeof imageData === 'string' && imageData.startsWith('data:image')) {
-                setImageUrl(imageData);
-            }
-            // Handle Blob data
-            else if (imageData instanceof Blob) {
-                const url = URL.createObjectURL(imageData);
-                setImageUrl(url);
-            } 
-            // Handle object data
-            else if (typeof imageData === 'object') {
-                // Examine if the object contains a property like 'data' or 'url'
-                if (imageData.data) {
-                    const url = URL.createObjectURL(new Blob([imageData.data], { type: imageData.type || 'image/png' }));
-                    setImageUrl(url);
-                } else if (imageData.image_url) {
-                    setImageUrl(imageData.image_url);  // If it's a URL or base64 string
-                }
-            } else {
-                console.error("Unexpected image data format:", typeof imageData);
-            }
+        const image_link = props.selectedDtr?.image_link;
+
+        if(image_link) {
+            setImageUrl(image_link);
         }
+        // if (imageData) {
+        //     // Handle case when the image is a Buffer
+        //     if (imageData.type === 'Buffer' && Array.isArray(imageData.data)) {
+        //         // Create a Blob from the Buffer data
+        //         const blob = new Blob([new Uint8Array(imageData.data)], { type: 'image/png' });
+        //         const url = URL.createObjectURL(blob);
+        //         setImageUrl(url);
+        //     }
+        //     // Handle base64 string
+        //     else if (typeof imageData === 'string' && imageData.startsWith('data:image')) {
+        //         setImageUrl(imageData);
+        //     }
+        //     // Handle Blob data
+        //     else if (imageData instanceof Blob) {
+        //         const url = URL.createObjectURL(imageData);
+        //         setImageUrl(url);
+        //     } 
+        //     // Handle object data
+        //     else if (typeof imageData === 'object') {
+        //         // Examine if the object contains a property like 'data' or 'url'
+        //         if (imageData.data) {
+        //             const url = URL.createObjectURL(new Blob([imageData.data], { type: imageData.type || 'image/png' }));
+        //             setImageUrl(url);
+        //         } else if (imageData.image_url) {
+        //             setImageUrl(imageData.image_url);  // If it's a URL or base64 string
+        //         }
+        //     } else {
+        //         console.error("Unexpected image data format:", typeof imageData);
+        //     }
+        // }
     }, [props.selectedDtr]);
 
     useEffect(() => {
