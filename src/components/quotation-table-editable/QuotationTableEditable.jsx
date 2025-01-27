@@ -14,6 +14,7 @@ const QoutationTableEditable = (props) => {
     const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
+    const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -30,12 +31,16 @@ const QoutationTableEditable = (props) => {
 
         fetchData();
     }, []);
+    
 
-
-    // useeffect for edit items
+    // activating getting sessionStorage and set to product details state
     useEffect(() => {
-        if(props.proposalItemEdit.length > 0) {
-            const setAmount = props.proposalItemEdit.map(d => ({
+        const fetchFromSession = () => {
+          const proposalDetails = sessionStorage.getItem('proposalDetails');
+      
+          if (proposalDetails) {
+            const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
+            const setAmount = quotationItemData.map(d => ({
                 ...d,
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
@@ -45,6 +50,24 @@ const QoutationTableEditable = (props) => {
             props.setTotalAmountref(parseInt(totalItemAmount))
         }
     }, [props.proposalItemEdit, productItemDetails, props.proposalItemEdit.length, props])
+          }
+        };
+      
+        // Fetch the session storage data on component mount
+        fetchFromSession();
+      
+        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
+        const handleSessionUpdate = () => {
+          fetchFromSession();
+        };
+        window.addEventListener('sessionUpdated', handleSessionUpdate);
+      
+        // Clean up event listener when the component unmounts
+        return () => {
+          window.removeEventListener('sessionUpdated', handleSessionUpdate);
+        };
+    }, []);  // Empty dependency array ensures it runs once on mount
+
 
 
     // calculate the total amount
@@ -61,7 +84,12 @@ const QoutationTableEditable = (props) => {
     
     const handleInputChange = (e, id) => {
         const { value, name } = e.target;
-    
+
+        if((value <= 0 || value === '' || value == null) && name === 'qty') {
+            setValidateNegativeQty(true);
+        } else {
+            setValidateNegativeQty(false);
+        }
         // Update the field first
         setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
@@ -132,6 +160,8 @@ const QoutationTableEditable = (props) => {
        props.setTotalAmountref(totalItemAmount)
        const getproductItemDetails = productItemDetails.find(d => d.id === id);
 
+       console.log("productItemDetails", productItemDetails)
+
        if(getproductItemDetails.name !== 'Man Power') {
         setInputAccessNumDays(true);
        }
@@ -148,9 +178,8 @@ const QoutationTableEditable = (props) => {
             quantity: parseInt(data.qty),
             price: parseInt(data.base_price),
             proposal_item_id: data.proposal_item_id | 0,
-            sku: data.sku
+            sku: data.sku,
         }));
-
     // this is the state  that going to save to database 
     // on QoutationForm jsx
      props.setQoutationItem(updatedQoutationItems);
@@ -254,8 +283,8 @@ const handleProduct = (e, rowId) => {
 
     return (
         <div className="table-editable-container">
-
           <div className="container mt-4">
+            <h4>Products</h4>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -266,6 +295,7 @@ const handleProduct = (e, rowId) => {
                        { !screenMobile() && <th>Unit</th> }
                         <th>No. Days</th>
                         <th>Price</th>
+                        <th>Markup price</th>
                         <th>Amount</th>
                         <th></th>
                     </tr>
@@ -318,7 +348,7 @@ const handleProduct = (e, rowId) => {
                                      <input
                                          type="number"
                                          className="form-control"
-                                         value={row.number_of_days}
+                                         value={row.number_of_days || ''}
                                          name='number_of_days'
                                          onChange={(e) => handleInputChange(e, row.id)}
                                          disabled={inputAccessNumDays}
@@ -329,7 +359,7 @@ const handleProduct = (e, rowId) => {
 
                                 </td>
 
-                            {/* <td>{row.base_price | 0}</td> */}
+                            <td>{row.base_price | 0}</td>
                             <td>
                                 <input type="text"
                                 value={ row.base_price | 0 }
@@ -341,7 +371,7 @@ const handleProduct = (e, rowId) => {
                             <td>{row.amount | 0}</td>
                             <td>
                                 {row.isEditing ? (
-                                    <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Save</button>
+                                    <button className="btn btn-success btn-sm" onClick={() => toggleSaveAndEdit(row.id)} disabled={validateNegativeQty}>Save</button>
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}

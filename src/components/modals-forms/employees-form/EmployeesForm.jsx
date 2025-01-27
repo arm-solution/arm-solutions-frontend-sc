@@ -7,7 +7,6 @@ import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
 import { fetchAllBarangays, fetchAllCities, fetchAllProvince } from '../../../store/features/getProvince';
-import { unwrapResult } from '@reduxjs/toolkit';
 
 const EmployeesForm = (props) => {
   const dispatch = useDispatch();
@@ -25,6 +24,7 @@ const EmployeesForm = (props) => {
 
   // Initial State
   const getInitialEmployeeData = () => ({
+    employee_id: '',
     firstname: '',
     middlename: '',
     lastname: '',
@@ -62,6 +62,12 @@ const EmployeesForm = (props) => {
     dispatch(getDepartment());
     dispatch(fetchAllProvince());
   }, [dispatch]);
+
+
+    useEffect(() => {
+      console.log("province", provinces)
+    }, [])
+  
   
   
     const handleSelectedProvince = async (e) => {
@@ -138,7 +144,7 @@ const EmployeesForm = (props) => {
   const saveNewEmployee = async (e) => {
     e.preventDefault();
 
-    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
       errorDialog('Please fill in all required fields.');
       return;
     }
@@ -152,7 +158,7 @@ const EmployeesForm = (props) => {
           return;
      } else {
           if(payload.success) {
-            successDialog('New Employee are added');
+            successDialog('New Employee is added');
           } else {
             errorDialog('Failed to add new employee');
           }
@@ -170,7 +176,7 @@ const EmployeesForm = (props) => {
 
     const oldEmailRef = props.selectedUser ? props.selectedUser.email : '';
 
-    if (!employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.user_type || !employeeData.contact_number) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -208,8 +214,8 @@ const EmployeesForm = (props) => {
     <div className="modal fade modal-lg" id="employeeForm" ref={props.modalRef} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
       <div className="modal-dialog modal-xl">
         <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLabel">
+          <div className="modal-header" style={{ backgroundColor: "#B22222" }}>
+            <h5 className="modal-title" id="exampleModalLabel" style={{ color: "white" }}>
               Employee Form
             </h5>
             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
@@ -217,6 +223,20 @@ const EmployeesForm = (props) => {
           
           <div className="modal-body">
             <div className="modal-container">
+             
+                <div className="row">
+                  <div className="col col-md-4">
+                    <div className="form-group">
+                      <label htmlFor="employee_id">Employee Number:</label>
+                      <input type="text" className="form-control" name="employee_id" value={employeeData.employee_id || ''} onChange={handleEmployeeFormInput} />
+                    </div>
+                  </div>
+                  <div className="col col-md-4">
+                  </div>
+
+                  <div className="col col-md-4">
+                  </div>
+                </div>
              
                 <div className="row">
                   <div className="col col-md-4">

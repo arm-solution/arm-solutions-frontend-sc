@@ -59,6 +59,58 @@ export const deleteConfirmation = async ({ title, text, icon, confirmButtonText,
   }
 };
 
+
+export const handleConfirmation = async (
+  { title, text, icon, confirmButtonText, cancelButtonText, confirmationTitle, confirmationText, failedMessageTitle, failedMessageText },
+   callback) => {
+
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-outline-success m-2",
+      cancelButton: "btn btn-outline-danger"
+    },
+    buttonsStyling: false
+  });
+
+  const result = await swalWithBootstrapButtons.fire({
+    title: title || "Are you sure?",
+    text: text || "You won't be able to revert this!",
+    icon: icon || "warning",
+    showCancelButton: true,
+    confirmButtonText: confirmButtonText || "Yes",
+    cancelButtonText: cancelButtonText || "No, cancel!",
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const callbackResult = await callback();
+
+      if (callbackResult) {
+        await swalWithBootstrapButtons.fire({
+          title: confirmationTitle || "Successfull",
+          text: confirmationText || "",
+          icon: "success"
+        });
+      } else {
+        await swalWithBootstrapButtons.fire({
+          title: failedMessageTitle || "Unsuccessful Operation",
+          text: failedMessageText || "Please report this issue to file a ticket.",
+          icon: "error"
+        });
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the callback execution
+      await swalWithBootstrapButtons.fire({
+        title: "Error",
+        text: "An error occurred while processing your request.",
+        icon: "error"
+      });
+    }
+  }
+};
+
+
 export const errorDialog = (title, text) => {
   Swal.fire({
     icon: "error",

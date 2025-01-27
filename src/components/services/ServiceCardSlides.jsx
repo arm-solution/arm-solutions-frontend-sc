@@ -1,51 +1,74 @@
 import React from 'react'
 import './Services.css';
 import cardImage from './../../assets/images/cardImage.png';
+import fireex from './../../assets/images/fireex.jpg';
+import waterbased from './../../assets/images/waterbased.jpg';
+import fdas from './../../assets/images/fdas.jpg';
+import kitchenhood from './../../assets/images/kitchenhood.jpg';
+import ppe from './../../assets/images/ppe.jpg';
+import inertgas from './../../assets/images/inertgas.jpg';
+import pm from './../../assets/images/pm.jpg';
+import installation from './../../assets/images/installation.jpg';
+import drill from './../../assets/images/drill.jpg';
 
 const ServiceCardSlides = () => {
  // Example card data
  const cards = [
     {
-      title: 'Card 1',
-      description: 'Description for card 1.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Fire Extinguisher',
+      // description: 'Dry Chemical, AFFF Foam Type, Carbon Dioxide, HFC-236fa, Wet Chemical',
+      description: 'We supply top-quality fire extinguishers, including Dry Chemical, AFFF Foam, CO2, HFC-236fa, and Wet Chemical types, for all fire classes',
+      buttonLabel: 'See More',
+      // image: cardImage
+      image: fireex
     },
     {
-      title: 'Card 2',
-      description: 'Description for card 2.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Water Based Fire Protection System and Accessories',
+      description: 'Comprehensive water-based fire protection, including sprinklers and hydrants. Engineered to swiftly suppress fire risks.',
+      buttonLabel: 'See More',
+      image: waterbased
     },
     {
-      title: 'Card 3',
-      description: 'Description for card 3.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Fire Detection and Alarm',
+      description: 'Early fire detection with advanced alarm systems to keep your property and people safe. Swift alerts when it matters most',
+      buttonLabel: 'See More',
+      image: fdas
     },
     {
-      title: 'Card 4',
-      description: 'Description for card 4.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Kitchenhood Fire Suppression',
+      description: 'Specialized suppression systems for kitchen hoods. Designed to contain and extinguish grease fires instantly.',
+      buttonLabel: 'See More',
+      image: kitchenhood
     },
     {
-      title: 'Card 5',
-      description: 'Description for card 5.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'PPE and Construction Supply',
+      description: 'High-quality personal protective equipment and construction supplies. Ensuring safety from head to toe for all job sites.',
+      buttonLabel: 'See More',
+      image: ppe
     },
     {
-      title: 'Card 6',
-      description: 'Description for card 6.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Inert Gas & FM 200',
+      description: 'Clean agent fire suppression systems using inert gas and FM 200, ideal for protecting sensitive equipment and spaces.',
+      buttonLabel: 'See More',
+      image: inertgas
     },
     {
-      title: 'Card 6',
-      description: 'Description for card 6.',
-      buttonLabel: 'Go somewhere',
-      image: cardImage
+      title: 'Preventive Maintenance',
+      description: 'Routine inspections and maintenance services to keep your fire safety systems fully operational and compliant.',
+      buttonLabel: 'See More',
+      image: pm
+    },
+    {
+      title: 'Supply and Installation',
+      description: 'Full supply and installation of fire protection systems, ensuring optimal safety and functionality.',
+      buttonLabel: 'See More',
+      image: installation
+    },
+    {
+      title: 'Fire Drill Assistance',
+      description: 'We provide fire drill support to prepare your team for emergencies. Ensure a quick and safe evacuation every time.',
+      buttonLabel: 'See More',
+      image: drill
     }
     // Add more cards as needed
   ];

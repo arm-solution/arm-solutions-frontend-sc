@@ -7,6 +7,7 @@ import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
 import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
+import { deleteConfirmation } from '../../../customs/global/alertDialog'; 
 
 const Quotations = () => {
 
@@ -41,21 +42,49 @@ const Quotations = () => {
     }, [dispatch]);
     
 
-    // handle view details and edit on table proposal
-    const handleView = async(row) => {
+    const handleView = async (row) => {
       try {
-        setSelectedTab('tab-one')
+        setSelectedTab('tab-two');
         setProposalEdit(row);
-        await dispatch(getDiscountAndTaxByproposalId(row.id));
-        await dispatch(getProposalItemsByProposalId(row.id));
-        
+    
+        const [discountTaxResult, proposalItemsResult] = await Promise.all([
+          dispatch(getDiscountAndTaxByproposalId(row.id)),
+          dispatch(getProposalItemsByProposalId(row.id)),
+        ]);
+    
+        // Store the data in sessionStorage after dispatches complete
+        sessionStorage.setItem('proposalDetails', JSON.stringify({
+          quotation: row,  // Use the row since it's already the proposalEdit data
+          quotationItem: proposalItemsResult.payload,
+          taxDiscount: discountTaxResult.payload
+        }));
+    
+        // Dispatch a custom event to signal that sessionStorage is updated
+        window.dispatchEvent(new Event('sessionUpdated'));
+    
       } catch (error) {
-        console.log("Error: ", error)
+        console.log("Error: ", error);
       }
-    }
+    };
   
     const handleDelete = (id) => {
-      alert('deleted'+ id);
+      // alert('deleted'+ id);
+
+      deleteConfirmation({
+        title: "",
+        text: "",
+        icon: "",
+        confirmButtonText: "",
+        cancelButtonText: "",
+        deleteTitle: "",
+        deleteText: "",
+        successTitle: "", 
+        successText: ""
+      }, async () => {
+      
+        alert("Need to delete child rows of: "+id);
+  
+      });
     }
     
     
@@ -84,35 +113,38 @@ const Quotations = () => {
    
 
         <div className="tabs flex-tabs">
-          <label htmlFor="tab-one" id="tab-one-label" className="tab">Create Qoutations</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Qoutation Lists</label>
+          <label htmlFor="tab-one" id="tab-one-label" className="tab">Qoutation Lists</label>
+          <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Qoutations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-            
-              <QuotationForm 
-                proposalStatus={proposalStatus}
-                loadingProposal={loadingProposal}
-                proposalEdit={proposalEdit}
-                proposalItemData={proposalItemData}
-                proposalItemLoading={proposalItemLoading}
-                proposalItemSuccess={proposalItemSuccess}
-                taxDiscountData={taxDiscountData}
-              /> 
-
-          </div>
-
-          <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
 
                 <DataTable 
                   data={clientDataWithFormattedDate}
                   columns={columns}
                   actions={{ handleView, handleDelete }}
                   perPage={10}
+                  deleteAccess={true}
                   showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
                   tableLabel = 'Proposal Lists'
                 />
 
           </div>
+
+          <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
+            
+            <QuotationForm 
+              proposalStatus={proposalStatus}
+              loadingProposal={loadingProposal}
+              proposalEdit={proposalEdit}
+              proposalItemData={proposalItemData}
+              proposalItemLoading={proposalItemLoading}
+              proposalItemSuccess={proposalItemSuccess}
+              taxDiscountData={taxDiscountData}
+            /> 
+
+        </div>
+
+
         </div>
       </div>
 

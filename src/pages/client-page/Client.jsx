@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './Client.css'
 import { useSelector, useDispatch } from 'react-redux' 
-import { getAllCleints } from '../../store/features/clientsSlice'
+import { getAllCleints, deleteClient } from '../../store/features/clientsSlice'
 import DataTable from '../../components/DataTable'
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import ClientDetails from '../../components/modals-forms/clients-details-modal/ClientDetails'
+import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 
 const Client = () => {
   const modalRef = useRef(null);
@@ -38,7 +39,28 @@ const Client = () => {
   }
 
   const handleDelete = (id) => {
-    console.log(id);
+    // console.log(id);
+    
+
+    deleteConfirmation({
+      title: "",
+      text: "",
+      icon: "",
+      confirmButtonText: "",
+      cancelButtonText: "",
+      deleteTitle: "",
+      deleteText: "",
+      successTitle: "", 
+      successText: ""
+    }, async () => {
+    
+      const { payload } =  await dispatch(deleteClient(id)) 
+      const result = payload.affectedRows > 0 ? true : false;
+
+      return result;
+
+    })
+
   }
 
   const addClientModal = () => {
@@ -62,6 +84,7 @@ const Client = () => {
           actions={{ handleView, handleDelete }}
           perPage={10}
           showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
+          deleteAccess={true}
           tableLabel='Clients list'
           addData={ addClientModal }
         />
