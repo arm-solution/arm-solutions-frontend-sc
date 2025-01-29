@@ -40,13 +40,14 @@ const QoutationTableEditable = (props) => {
       
           if (proposalDetails) {
             const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const setAmount = quotationItemData.map(d => ({
+            const itemsWithComputationAmount = quotationItemData.map(d => ({
                 ...d,
+                markup_price: d.base_price,
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
            
-            setProductItemDetails(setAmount)
-            const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
+            setProductItemDetails(itemsWithComputationAmount)
+            const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
           }
         };
@@ -197,11 +198,11 @@ const QoutationTableEditable = (props) => {
 
         const productExist = productItemDetails.find(p => p.id === selectedProductId);
 
-        if(selectedProduct.name === 'Man Power') {
-            setInputAccessNumDays(false)
-        } else {
-            setInputAccessNumDays(true)
-        }
+        // if(selectedProduct.name === 'Man Power') {
+        //     setInputAccessNumDays(false)
+        // } else {
+        //     setInputAccessNumDays(true)
+        // }
 
         if (productExist) {
             props.setNotification({
@@ -210,9 +211,8 @@ const QoutationTableEditable = (props) => {
             })
             return;
         }
-
         setProductItemDetails(prevDetails => prevDetails.map(row => 
-            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true } : row
+            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true, markup_price: selectedProduct.base_price} : row
         
         ));
 
@@ -282,7 +282,7 @@ const QoutationTableEditable = (props) => {
                         <th>Category</th>
                         <th>Qty</th>
                        { !screenMobile() && <th>Unit</th> }
-                        <th>No. Days</th>
+                        <th>Markup price</th>
                         <th>Price</th>
                         <th>Markup price</th>
                         <th>Amount</th>
@@ -333,19 +333,7 @@ const QoutationTableEditable = (props) => {
                             { !screenMobile() && <td>{row.unit}</td> }
 
                                 <td>
-                                 {row.isEditing ? (
-                                     <input
-                                         type="number"
-                                         className="form-control"
-                                         value={row.number_of_days || ''}
-                                         name='number_of_days'
-                                         onChange={(e) => handleInputChange(e, row.id)}
-                                         disabled={inputAccessNumDays}
-                                     />
-                                 ) : (
-                                     row.number_of_days
-                                 )}
-
+                                    {row.markup_price | 0}
                                 </td>
 
                             <td>{row.base_price | 0}</td>

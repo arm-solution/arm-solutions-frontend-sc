@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './AdditionalItems.css'
 
 const AdditionalItemtable = (props) => {
@@ -37,8 +37,8 @@ const AdditionalItemtable = (props) => {
   };
 
   const handleDelete = (rowId, type) => {
-    const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
-    props.taxDiscount.setTaxDiscount(filteredRows);
+    const filteredRows = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
+    props.additionalState.setAddtionalItems(filteredRows);
 
     // const updatedMergedDiscountTax = [...props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type))];
     // const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
@@ -46,14 +46,16 @@ const AdditionalItemtable = (props) => {
     // props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount));
   };
 
+  useEffect(() => {
+    const totalItemAmount = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0)
+    console.log("total", totalItemAmount)
+
+  }, [props.additionalState.addtionalItems])
+  
+
   const handleSave = (rowId) => {
     // Find the row corresponding to the rowId
     const row = props.additionalState.addtionalItems.find(row => row.rowId === rowId);
-  
-    // Debug: Log the row data
-    console.log("Row Data:", row);
-  
-    // If the row is not found, log an error and exit
     if (!row) {
       console.error("Row not found");
       return;
@@ -71,9 +73,6 @@ const AdditionalItemtable = (props) => {
     // Compute totalItem, but skip computation if unit is 'person'
     const totalItem = row.unit === "person" ? 0 : quantity * price;
   
-    // Debug: Log the computed totalItem
-    console.log("Computed Total Item:", totalItem);
-  
     // Update the additional items
     props.additionalState.setAddtionalItems(
       props.additionalState.addtionalItems.map(item =>
@@ -81,10 +80,8 @@ const AdditionalItemtable = (props) => {
           ? { ...item, item_total: totalItem, isEditing: false, isSaved: true }
           : item
       )
-    );
+    ); 
   
-    // Debug: Confirm the update
-    console.log("Updated Additional Items:", props.additionalState.addtionalItems);
   };
   
   
