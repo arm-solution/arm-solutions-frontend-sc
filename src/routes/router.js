@@ -33,6 +33,9 @@ const MyAnnouncement = lazy(() => import('../pages/common-pages/announcement-pag
 // const AnnouncementPage = lazy(() => import('../pages/annoucement/Announcement'));
 const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'));
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
+// Common Routes
+const AnnouncementPage = lazy(() => import('../pages/announcement/AnnouncementPage'));
+const WorkWithUsPage = lazy(() => import('../pages/workwithus/WorkWithUs'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -41,9 +44,6 @@ const LazyComponent = (Component, Fallback = <Loading />) => (
   </Suspense>
 );
 
-// Common Routes
-const AnnouncementPage = lazy(() => import('../pages/announcement/AnnouncementPage'));
-const WorkWithUsPage = lazy(() => import('../pages/workwithus/WorkWithUs'));
 
 const CommonRoutes = () => (
   <Route path="common">
@@ -120,7 +120,7 @@ export const router = createBrowserRouter(
                 <WorkWithUsPage />
             </Suspense>
         } />
-        
+
       <Route path="not-found" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
     </Route>

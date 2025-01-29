@@ -49,11 +49,11 @@ const AnnouncementPage = () => {
     <>
       <LandingNavbar />
       {/* Header Section */}
-        <div className="overlay-container" style={{ backgroundImage: `url(${headerImage})` }}>
-            <div className="text-overlay">
-            COMPANY ANNOUNCEMENTS
-            </div>
-        </div>
+      <div className="overlay-container" style={{ backgroundImage: `url(${headerImage})` }}>
+          <div className="text-overlay">
+          COMPANY ANNOUNCEMENTS
+          </div>
+      </div>
 
       {/* Featured Announcement */}
       <div className="container my-5">
