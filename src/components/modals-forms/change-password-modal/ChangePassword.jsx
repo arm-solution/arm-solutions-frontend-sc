@@ -63,11 +63,11 @@ const ChangePassword = (props) => {
 
   return (
     <>
-    <div className="modal fade" ref={props.modalRef} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div className="modal fade" ref={props.changePasswordModal} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal modal-dialog-centered">
             <div className="modal-content">
             <div className="modal-header">
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={props.closePasswordModal}></button>
             </div>
             <div className="modal-body">
 
@@ -100,13 +100,11 @@ const ChangePassword = (props) => {
             </div>
 
             <div className="form-group" style={{ display: 'flex', justifyContent: 'end' }}>
-                <button className='btn btn-primary' onClick={saveNewPassword}>Save</button>
+                <button className='btn btn-outline btn-primary ' onClick={saveNewPassword}>Save</button>
             </div>
 
             </div>
 
-            </div>
-            <div className="modal-footer">
             </div>
             </div>
         </div>

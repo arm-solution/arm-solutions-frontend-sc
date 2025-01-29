@@ -17,7 +17,7 @@ const TaxDiscountTable = (props) => {
       setNextRowId(nextRowId + updatedRows.length); // Update the nextRowId
       setInitialized(true); // Set initialized to true to avoid further updates
     }
-  }, [initialized, props.taxDiscount.taxDiscount]); // Dependencies: initialized and the taxDiscount data from props
+  }, [initialized, props.taxDiscount.taxDiscount]); 
 
   const handleAddRow = () => {
     const newRow = {

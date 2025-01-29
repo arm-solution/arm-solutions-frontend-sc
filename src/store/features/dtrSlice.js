@@ -16,8 +16,12 @@ export const getDtr = createAsyncThunk('dtr/getDtr', async(_, { rejectWithValue 
 
 export const postDtr = createAsyncThunk('dtr/postDtr', async(dtr, { rejectWithValue }) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/dtr/add-dtr`, dtr);
-
+        
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/dtr/add-dtr`, dtr, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+          });
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -111,6 +115,7 @@ const dtrSlice = createSlice({
         dtrWithDateRange: [],
         isSuccess: false,
         loading: false,
+        dtrPostLoading: false,
         message: ''
     },
     reducers: {
@@ -150,20 +155,23 @@ const dtrSlice = createSlice({
             state.message = action.payload
         })
         .addCase(postDtr.pending, (state, _) => {
-            state.loading = true
+            state.dtrPostLoading = true
+            console.log("pending")
         })
         .addCase(postDtr.fulfilled, (state, action) => {
 
             const { success } = action.payload; 
 
-            state.loading = false;
+            state.dtrPostLoading = false;
+            console.log("fullfiled")
             state.isSuccess = success;
         })
         .addCase(postDtr.rejected, (state, action) => {
             const { message } = action.payload; 
             state.isSuccess = false;
-            state.loading = false;
+            state.dtrPostLoading = false;
             state.message = message;
+            console.log("rejected")
             // state.message = action.payload
         })
 

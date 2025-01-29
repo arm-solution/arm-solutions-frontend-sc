@@ -15,13 +15,11 @@ const UserProfilePage = () => {
   const [myAccountData, setMyAccountData] = useState();
   const dispatch = useDispatch();
 
-  const modalRef = useRef(null);
+  const changePasswordModal = useRef(null);
 
-  const { provinces, cities, barangays,
-     isSuccess: provincesStatus,
-     loading: loadingProvinces } = useSelector(state => state.provinces);
+  const { provinces, cities, barangays, loading: loadingProvinces } = useSelector(state => state.provinces);
 
-  const { data: userData, loading: userLoading, message: userMessage, isSuccess: userStatus } = useSelector(state => state.users); 
+  const { data: userData, loading: userLoading } = useSelector(state => state.users); 
   const { data: deptData } = useSelector(state => state.departments);
 
 
@@ -66,14 +64,23 @@ const UserProfilePage = () => {
     })
   }
 
-  const passwordModal = (e, message) => {
-    e.preventDefault();
-
-    const modalElement = modalRef.current;
+  const openPasswordModal = () => {
+    const modalElement = changePasswordModal.current;
     const modal = new Modal(modalElement);
 
     modal.show();
-}
+  }
+
+  const closePasswordModal = () => {
+    const modalElement = changePasswordModal.current;  
+
+    if (modalElement) {
+      const modal = Modal.getInstance(modalElement); 
+      if (modal) {
+        modal.hide();
+      }
+    }
+  };
   
 
   const handleSelectedProvince = async(e) => {
@@ -275,11 +282,13 @@ const UserProfilePage = () => {
         </div>
 
         <div className="row">
-          <button className="btn btn-outline-danger btn-change-password" onClick={passwordModal}>Change my password</button>
+          <button className="btn btn-outline-danger btn-change-password" onClick={openPasswordModal}>Change my password</button>
         </div>
 
-        <ChangePassword modalRef={modalRef} 
-        currentPassword={myAccountData?.user_password } 
+        <ChangePassword 
+          changePasswordModal={changePasswordModal} 
+          currentPassword={myAccountData?.user_password } 
+          closePasswordModal={closePasswordModal}
         />
 
         <hr />

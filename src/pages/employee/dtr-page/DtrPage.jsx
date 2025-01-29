@@ -10,22 +10,24 @@ import CurrentShift from '../../../components/current-shift-container/CurrentShi
 import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
-import { postDtrRequest } from '../../../store/features/dtrRequestSlice';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
 import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../customs/global/manageDates';
 import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
 import FloatNotification from '../../../components/float-notification/FloatNotification';
 import DtrRemarksModal from '../../../components/modals-forms/dtr-remarks-modal/DtrRemarksModal';
+import AccessCamera from '../../../components/modals-forms/access-camera-modal/AccessCamera';
 
 const Home = () => {
 
   const modalRef = useRef(null);
   const modalDtrRemarks = useRef(null);
+  const modalCameraRef = useRef(null);
+  const videoRef = useRef(null);
   
 
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [capture, setCapture] = useState(null);
   // const [myDtr, setMyDtr] = useState([])
-  const [error, setError] = useState(null);
   const [shift, setShift] = useState([])
   const [selectedDtr, setSelectedDtr] = useState(null);
   const [loadingSessionStorage, setLoadingSessionStorage] = useState(false)
@@ -37,7 +39,7 @@ const Home = () => {
 
   const dispatch = useDispatch();
 
-  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading } = useSelector(state => state.dtr);
+  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
 
   useEffect(() => {
     dispatch(getDtrById(getLoggedInID()));
@@ -47,7 +49,8 @@ const Home = () => {
   
   useEffect(() => {
     if(currentDtr.length > 0) {
-      sessionStorage.setItem('currentShift', JSON.stringify(currentDtr[0]));
+      const { image_capture, ...rest} = currentDtr[0] 
+      sessionStorage.setItem('currentShift', JSON.stringify(rest));
 
       window.dispatchEvent(new Event('currentShift'));
     }
@@ -73,76 +76,74 @@ const Home = () => {
       return () => clearInterval(timer);
   }, []);
 
+  // handle closing camera modal
+  const closeCameraModal = () => {
+    const modalElement = modalCameraRef.current;
   
+    if (modalElement) {
+      const modal = Modal.getInstance(modalElement); // Get the Bootstrap modal instance
   
-
-  const showError = (error) => {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            setError("User denied the request for Geolocation.");
-            break;
-        case error.POSITION_UNAVAILABLE:
-            setError("Location information is unavailable.");
-            break;
-        case error.TIMEOUT:
-            setError("The request to get user location timed out.");
-            break;
-        case error.UNKNOWN_ERROR:
-            setError("An unknown error occurred.");
-            break;
-        default:
-            setError("An unknown error occurred.");
-            break;
-    }
-  };
-
-  const getTimeIn = async (e) => {
-    e.preventDefault();
-    setLoadingSessionStorage(true);
-  
-    const currentDate = new Date();
-    const formattedDate = dateFormatted(currentDate);
-    const formattedTime = format(currentDate, 'HH:mm:ss');
-  
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const coords = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          shift_date: formattedDate,
-          time_in: formattedTime,
-          break_start: '',
-          break_end: '',
-          ot_start: '',
-          ot_end: '',
-          remarks: '',
-          user_id: getLoggedInID(),
-          status: 'pending'
-        }; 
-  
-        const { payload } = await dispatch(postDtr(coords));
-  
-        if (payload.success) {
-          sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
-          setShift(coords);
-          // dispatch(getWeeklyDtr(getLoggedInID()));
-          window.dispatchEvent(new Event('currentShift'));
-        } else {
-          errorDialog(payload.message ? payload.message : 'Cannot log in');
+      if (modal) {
+        // Stop video tracks if playing
+        if (videoRef.current && videoRef.current.srcObject) {
+          const tracks = videoRef.current.srcObject.getTracks();
+          tracks.forEach((track) => track.stop());
+          videoRef.current.srcObject = null;
         }
   
-        setLoadingSessionStorage(false); // End loading
-      }, (error) => {
-        showError(error);
-        setLoadingSessionStorage(false); // End loading if geolocation fails
-      });
-    } else {
-      setError("Geolocation is not supported by this browser.");
-      setLoadingSessionStorage(false); // End loading if geolocation is not supported
+        // Clear captured data
+        setCapture(null);
+  
+        // Move focus back to a logical element outside the modal
+        const triggerButton = document.querySelector('[data-bs-target="#cameraModal"]');
+        if (triggerButton) {
+          triggerButton.focus();
+        } else {
+          document.body.focus(); // Fallback to moving focus to the body
+        }
+  
+        // Hide the modal
+        modal.hide();
+      }
     }
   };
 
+  // getting position 
+  const submitTimeIn = async (coords, imageBlob) => {
+    try {
+      const formData = new FormData();
+  
+      formData.append('coords', JSON.stringify(coords));
+  
+      if (imageBlob) {
+        formData.append('image', imageBlob);
+      }
+  
+      // Debug: Inspect the FormData contents
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(`${key}:`, value);
+      // }
+  
+      // Dispatch action to post data
+      const { payload } = await dispatch(postDtr(formData));
+  
+      // Handle response
+      if (payload.success) {
+        sessionStorage.setItem('currentShift', JSON.stringify({ ...coords, id: payload.lastid }));
+        setShift(coords);
+        window.dispatchEvent(new Event('currentShift'));
 
+        // close camera modal
+        closeCameraModal();
+      } else {
+        errorDialog(payload.message || 'Cannot log in');
+      }
+    } catch (error) {
+      errorDialog('An error occurred while logging in');
+    }
+  };
+  
+  // time out method
   const timeOut = async (e) => {
     e.preventDefault();
 
@@ -226,7 +227,7 @@ const Home = () => {
     const storeShift = sessionStorage.getItem('currentShift');
   
     if (storeShift) {
-      const myShift = JSON.parse(storeShift);
+      const {image_capture, ...myShift} = JSON.parse(storeShift);
       myShift.break_end = formattedTime;
   
       const { payload } = await dispatch(updateDtrById(myShift));
@@ -357,6 +358,7 @@ const Home = () => {
     setLoadingSessionStorage(false);
   };
   
+  // this submit dtr when the record is completed
   const submitMyDtr = async(e) => {
     e.preventDefault();
     setLoadingSessionStorage(true);
@@ -399,6 +401,30 @@ const Home = () => {
         }
       })
   }
+
+  const handleCameraModal = async(e) => {
+    e.preventDefault();
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" }, // Change to "environment" for the rear camera
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+
+      }
+      const modalElement = modalCameraRef.current;
+      const modal = new Modal(modalElement);
+  
+      modal.show();
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      alert("Unable to access the camera. Please check your permissions.");
+    }
+
+  }
+
    
   return (
     <>
@@ -437,11 +463,18 @@ const Home = () => {
                 <button className="btn btn-success time-in-btn" onClick={(e) => handleEarlyTimeOut(e)} disabled={accessOut}>Early Time Out</button>
               </>
             ) : (
-              <button className="btn btn-primary time-in-btn" onClick={getTimeIn} disabled={loadingSessionStorage}>
-                {loadingSessionStorage ? 'Loading...' : 'Time In'}
-              </button>
+              <button className="btn btn-success btn-sm time-in-btn" onClick={(e) => handleCameraModal(e)}>Time In</button>
             )}
 
+
+            <AccessCamera
+             cameraModalRef={modalCameraRef}
+             submitTimeIn={submitTimeIn}
+             videoRef={videoRef}
+             dtrPostLoading={dtrPostLoading}
+             capture={capture}
+             closeCameraModal={closeCameraModal}
+            />
 
           </div>
 

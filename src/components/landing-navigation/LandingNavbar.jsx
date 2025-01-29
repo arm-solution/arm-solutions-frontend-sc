@@ -1,28 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import logo from './../../assets/images/logo.png'
-// import logoCircle from './../../assets/images/arm-cir-adobe.png'
-import './LandingNav.css'
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from './../../assets/images/logo.png';
+import './LandingNav.css';
 import { checkedIfLoggedIn } from '../../customs/global/manageLocalStorage';
 
-const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
-
+const LandingNavbar = ({ onNavigate }) => {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-
     const handleScroll = () => {
-      if (window.scrollY > 50 ) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
-    
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -31,23 +23,33 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
-};
+  };
 
   return (
     <nav className={scrolled ? 'scrolled' : ''}>
-    <input id="nav-toggle" type="checkbox" />
-    <div className="logo"><img src={logo} alt="Logo" className='logo-image' /></div>
-    <ul className="links">
-        <li><a href="#home" onClick={handleBackToLandingPage}>Home</a></li>
-        <li><a href="#about-us" onClick={handleAboutUsPage}>About Us</a></li>
-        <li><a href="#services" onClick={handleBackToLandingPage}>Services</a></li>
-        {/* <li><a href="#projects" onClick={handleBackToLandingPage}>Projects</a></li> */}
-        <li><a href="#clients" onClick={handleBackToLandingPage}>Clients</a></li>
-        <li><a href="#footer" onClick={handleBackToLandingPage}>Contact</a></li>
-        <li 
-            className="dropdown"
-            ref={dropdownRef}
-            onClick={toggleDropdown}
+      <input id="nav-toggle" type="checkbox" />
+      <div className="logo">
+        <img src={logo} alt="Logo" className="logo-image" />
+      </div>
+      <ul className="links">
+        <li className='text-white'> 
+          <a onClick={() => onNavigate('home')}>Home</a>
+        </li>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('services')}>Services</a>
+        </li>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('clients')}>Clients</a>
+        </li>
+        <li className='text-white'>
+          <a onClick={() => onNavigate('footer')}>Contact</a>
+        </li>
+        <li
+          className="dropdown text-white"
+          ref={dropdownRef}
+          onClick={toggleDropdown}
+          aria-haspopup="true"
+          aria-expanded={dropdownOpen ? 'true' : 'false'}
         >
             <a href="#services">Who We Are</a>
             {dropdownOpen && (
@@ -69,14 +71,14 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
             <Link to='/login' className='btn btn-secondary btn-sm login-btn'> Login</Link>
           )}
         </li>
-    </ul>
-    <label htmlFor="nav-toggle" className="icon-burger">
+      </ul>
+      <label htmlFor="nav-toggle" className="icon-burger">
         <div className="line"></div>
         <div className="line"></div>
         <div className="line"></div>
-    </label>
-</nav>
-  )
-}
+      </label>
+    </nav>
+  );
+};
 
-export default LandingNavbar
+export default LandingNavbar;

@@ -1,14 +1,20 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios'
 
-export const loginEmployee = createAsyncThunk('employee/login', async ({ employee_id, user_password }, { rejectWithValue }) => {
-    try {
+export const loginEmployee = createAsyncThunk( 
+    'employee/login',
+    async ({ employee_id, user_password }, { rejectWithValue }) => {
+      try {
         const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/login`, { employee_id, user_password });
         return res.data;
-    } catch (error) {
-        rejectWithValue(error.response.data);
+      } catch (error) {
+        // Log error details for better debugging
+        console.error("API Error:", error);
+        // Return error response or a fallback message if no response data is available
+        return rejectWithValue(error.response?.data || 'An unexpected error occurred');
+      }
     }
-});
+  );
 
 
 const employeeAuthSlice = createSlice({
@@ -17,7 +23,7 @@ const employeeAuthSlice = createSlice({
         data: [],
         token: '',
         isSuccess: false,
-        loading: true,
+        loading: false,
         message: ''
     },
     reducers: {},
@@ -48,7 +54,7 @@ const employeeAuthSlice = createSlice({
             state.loading = false;
             state.isSuccess = false;
 
-            state.message = message || 'Login failed';
+            state.message = 'Login failed';
         })
     }
 

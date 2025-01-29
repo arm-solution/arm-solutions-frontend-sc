@@ -3,14 +3,16 @@ import './AttendanceTable.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaMapMarker, FaCheckCircle, FaInfo } from "react-icons/fa";
 import { VscError } from "react-icons/vsc";
-import { getDtr } from '../../store/features/dtrSlice';
+import { getDtrById } from '../../store/features/dtrSlice';
 import { dateFormatted } from '../../customs/global/manageDates';
+import { getLoggedInID } from '../../customs/global/manageLocalStorage';
+import { formatDateReadable } from '../../customs/global/manageDates';
 
 const AttendanceTable = (props) => {
 
     const dispatch = useDispatch();
 
-    const { data: dtr } = useSelector(state => state.dtr);
+    const { dtrById } = useSelector(state => state.dtr);
 
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -21,12 +23,12 @@ const AttendanceTable = (props) => {
       return { start: startIndex, end: endIndex };
       
     }
-
-    const totalPages = Math.ceil(dtr.length / 10);
-
     useEffect(() => {
-      dispatch(getDtr);
+      dispatch(getDtrById(getLoggedInID()));
     }, [dispatch])
+    
+    const totalPages = Math.ceil(dtrById.length / 10);
+
 
     const handlePrevPage = () => {
         setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
@@ -72,9 +74,9 @@ const AttendanceTable = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    { dtr.map((row, index) => (
+                    { dtrById.map((row, index) => (
                         <tr key={index}>
-                        <th>{row.shift_date ? dateFormatted(row.shift_date) : 'no-date' }</th>
+                        <th>{row.shift_date ? formatDateReadable(row.shift_date) : 'no-date' }</th>
                         <td> { row.status ? <span className="badge bg-success"> Approved <FaCheckCircle/></span> : <span className="badge bg-danger"> Rejected <VscError /></span>} </td>
                         <td>
                             <button className="btn btn-sm btn-danger me-3"><FaMapMarker /></button>

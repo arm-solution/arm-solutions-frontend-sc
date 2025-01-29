@@ -1,0 +1,9 @@
+.announcement-img {
+    width: 25%;
+    border: 1px solid gray;
+    /* border-radius: 50%; */
+  }
+
+.publish-btn {
+    width: 10rem;
+}
