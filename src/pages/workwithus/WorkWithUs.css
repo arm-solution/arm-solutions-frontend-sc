@@ -1,0 +1,23 @@
+.overlay-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.card-title {
+  font-size: 1.25rem;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+.badge-small {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}

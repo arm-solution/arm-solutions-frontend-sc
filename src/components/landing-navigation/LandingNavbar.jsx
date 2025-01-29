@@ -54,7 +54,6 @@ const LandingNavbar = ({ handleAboutUsPage, handleBackToLandingPage }) => {
                 <ul className="dropdown-menu">
                     <li><a href="#about-us" onClick={handleBackToLandingPage}>About Us</a></li>
                     <li><a href="announcement" onClick={handleBackToLandingPage}>Announcement</a></li>
-                    <li><a href="careers" onClick={handleBackToLandingPage}>Careers</a></li>
                     <li><a href="workwithus" onClick={handleBackToLandingPage}>Work With Us</a></li>
                 </ul>
             )}
