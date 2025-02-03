@@ -30,6 +30,7 @@ export const formatDateReadable = (isoDate) => {
     // Create a Date object from the date string, ignoring the time part
     const date = new Date(isoDate.split('T')[0]);  // Split to remove the time part
     return date.toLocaleString('en-US', {
+        timeZone: 'UTC',
         year: 'numeric',
         month: 'long',
         day: 'numeric',

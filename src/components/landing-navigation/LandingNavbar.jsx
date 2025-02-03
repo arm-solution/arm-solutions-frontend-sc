@@ -62,6 +62,9 @@ const LandingNavbar = ({ onNavigate }) => {
               <li>
                 <a href="/announcement">Announcement</a>
               </li>
+              <li>
+                <a href="/workwithus">Work With Us</a>
+              </li>
             </ul>
           )}
         </li>

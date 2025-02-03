@@ -30,9 +30,10 @@ const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPasswor
 const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
 const DtrListByUser = lazy(() => import('../pages/dtr-list-by-user-page/DtrListByUser'));
 const MyAnnouncement = lazy(() => import('../pages/common-pages/announcement-page/MyAnnouncement'));
-const AnnouncementPage = lazy(() => import('../pages/annoucement/Announcement'));
+const AnnouncementPage = lazy(() => import('../pages/announcement/AnnouncementPage'));
 const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'));
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
+const WorkWithUsPage = lazy(() => import('../pages/workwithus/WorkWithUs'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -67,6 +68,7 @@ export const router = createBrowserRouter(
         <Route path="" element={LazyComponent(MainContent, <LoadingLandingPage />)} />
         <Route path="company-profile" element={LazyComponent(CompanyProfile, <LoadingLandingPage />)} />
         <Route path="announcement" element={LazyComponent(AnnouncementPage, <LoadingLandingPage />)} />
+        <Route path="workwithus" element={LazyComponent(WorkWithUsPage, <LoadingLandingPage />)} />
       </Route>
 
       {/* Protected Login */}
