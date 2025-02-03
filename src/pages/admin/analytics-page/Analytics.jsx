@@ -1,10 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Charts from '../../../components/Charts'
 import './Analytics.css'
 import DashboardCard from '../../../components/dashboard-card/DashboardCard'
 import FilterAnalytics from '../../../components/filter-analytics/FilterAnalytics'
+import { useDispatch, useSelector } from 'react-redux'
+import { getManPower } from '../../../store/features/dashboardDataSlice'
 
 const Analytics = () => {
+
+  const dispatch = useDispatch();
+
+  const { manpower, loading, message, isSuccess } = useSelector(state => state.dasboardData);
+
+  useEffect(() => {
+
+    dispatch(getManPower());
+
+  }, [dispatch])
+  
+
   return (
     <>
 
@@ -16,7 +30,12 @@ const Analytics = () => {
         <DashboardCard headerColor='#77CDFF' cardTitle="Total Projects" cardValue="520" />
         <DashboardCard headerColor='#F95454' cardTitle="Ongoing Projects" cardValue="205" />
         <DashboardCard headerColor='#C62E2E' cardTitle="Due Projects" cardValue="12" />
-        <DashboardCard headerColor='#179BAE' cardTitle="Active Manpower" cardValue="120" />
+        <DashboardCard
+         headerColor='#179BAE'
+         cardTitle="Active Manpower"
+         cardValue="120" 
+         data={ manpower[0].TotalManpower }
+        />
         <DashboardCard headerColor='#FF8343' cardTitle="Total Inventory" cardValue="358" />
       </div>
 

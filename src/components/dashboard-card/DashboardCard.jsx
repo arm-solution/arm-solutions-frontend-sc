@@ -2,7 +2,7 @@ import React from 'react';
 import './DashboardCard.css';
 
 const DashboardCard = (props) => {
-  const { headerColor, cardIcon, cardTitle, cardValue, cardDescription } = props;
+  const { headerColor, cardIcon, cardTitle, cardValue, cardDescription, data } = props;
 
   // Define classes conditionally based on length
   const amountClass = cardValue && cardValue.toString().length > 12 ? "amount amount-small" : "amount";
@@ -18,7 +18,7 @@ const DashboardCard = (props) => {
       </div>
       <div className="card-body">
         <div className={amountClass}>
-          {cardValue ? cardValue : ''}
+          {data ? data : ''}
         </div>
         <p className="description">{cardDescription ? cardDescription : ''}</p>
       </div>
