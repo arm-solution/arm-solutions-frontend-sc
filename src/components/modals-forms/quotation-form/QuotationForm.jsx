@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
-import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
+// import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
@@ -20,7 +20,7 @@ import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
 
 const QoutationForm = (props) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [addtionalItems, setAddtionalItems] = useState([]);
     const [totalAdditional, setTotalAdditional] = useState(0);
@@ -52,7 +52,6 @@ const QoutationForm = (props) => {
 
     const [qoutationItem, setQoutationItem] = useState([]);
     
-
     const dispatch = useDispatch();
 
     const { data: clientData } = useSelector(state => state.clients);
@@ -177,7 +176,7 @@ const QoutationForm = (props) => {
         }
       };
     
-        // Calculate total amount for each row and return updated rows
+    // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
           return rows.map((row) => ({
             ...row,
@@ -221,6 +220,7 @@ const QoutationForm = (props) => {
           }
       }, [tax, discount])
       
+
       
     const handleAddNewQoutation = async () => {
        
@@ -243,13 +243,6 @@ const QoutationForm = (props) => {
         } 
        
         try {
-            // console.log("Lance", {
-            //     ...quotation,
-            //     tax: taxDiscountTotal.tax,
-            //     discount: taxDiscountTotal.discount,
-            //     sub_total: totalAmountref,
-            //     grand_total: totalAmount
-            // })
 
             const quotationResponse = await dispatch(createProposal({
                 ...quotation,
@@ -321,7 +314,7 @@ const QoutationForm = (props) => {
             deductions: taxDiscountTotal.discount
         };
 
-        console.log("final data", proposalFinal);
+        // console.log("final data", proposalFinal);
         
         //This is for qoutation/proposal form
         if(!deepEqual(props.proposalEdit, quotation)) {
@@ -389,7 +382,7 @@ const QoutationForm = (props) => {
                          totalAmount={totalAmount}
                          setTotalAmount={setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
-                         totalAmountref={totalAmountref}
+                         totalAmountref={{ totalAmountref, setTotalAmountref }}
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
                     />
 

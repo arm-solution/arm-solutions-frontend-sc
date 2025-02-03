@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './AdditionalItems.css'
 
 const AdditionalItemtable = (props) => {
@@ -7,82 +7,116 @@ const AdditionalItemtable = (props) => {
   const [getTotalTax, setGetTotalTax] = useState(0);
   const [totalEditable, setTotalEditable] = useState(true);
 
+  const prevItemsRef = useRef(props.additionalState.addtionalItems);
+
   const handleAddRow = () => {
     const newRow = {
       rowId: nextRowId,
-      title: '',
+      title: "",
       quantity: 0,
       item_total: 0,
-      option_type: 'additional',
+      option_type: "additional",
       unit: 0,
       price: 0,
+      proposal_id: 0,
       isEditing: true,
     };
 
-    props.additionalState.setAddtionalItems([...props.additionalState.addtionalItems, newRow]);
+    props.additionalState.setAddtionalItems([
+      ...props.additionalState.addtionalItems,
+      newRow,
+    ]);
     setNextRowId(nextRowId + 1);
   };
 
   const handleChange = (rowId, e) => {
     const { name, value } = e.target;
-    props.additionalState.setAddtionalItems(props.additionalState.addtionalItems.map(row =>
-      row.rowId === rowId ? { ...row, [name]: value, item_total: props.actions.calculateTaxDiscount({...row, [name]: value}) } : row
-    ));
-  };
 
-  const handleEdit = (rowId, row) => {
     props.additionalState.setAddtionalItems(
-        props.additionalState.addtionalItems.map(row => row.rowId === rowId ? { ...row, isEditing: true } : row)
+      props.additionalState.addtionalItems.map((row) =>
+        row.rowId === rowId
+          ? {
+              ...row,
+              [name]: value,
+              item_total: props.actions.calculateTaxDiscount({
+                ...row,
+                [name]: value,
+              }),
+            }
+          : row
+      )
     );
   };
 
-  const handleDelete = (rowId, type) => {
-    const filteredRows = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
-    props.additionalState.setAddtionalItems(filteredRows);
-
-    // const updatedMergedDiscountTax = [...props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type))];
-    // const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
-
-    // props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount));
+  const handleEdit = (rowId) => {
+    props.additionalState.setAddtionalItems(
+      props.additionalState.addtionalItems.map((row) =>
+        row.rowId === rowId ? { ...row, isEditing: true } : row
+      )
+    );
   };
 
   useEffect(() => {
-    const totalItemAmount = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0)
-    console.log("total", totalItemAmount)
-
-  }, [props.additionalState.addtionalItems])
-  
-
-  const handleSave = (rowId) => {
-    // Find the row corresponding to the rowId
-    const row = props.additionalState.addtionalItems.find(row => row.rowId === rowId);
-    if (!row) {
-      console.error("Row not found");
+    if (JSON.stringify(prevItemsRef.current) === JSON.stringify(props.additionalState.addtionalItems)) {
       return;
     }
-  
-    // Validate quantity and price for the specific row
+
+    prevItemsRef.current = props.additionalState.addtionalItems;
+
+    const totalItemAmount = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0);
+
+    props.totalAmountref.setTotalAmountref(totalItemAmount);
+  }, [props.additionalState.addtionalItems]);
+
+  const handleSave = (rowId) => {
+    const row = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
+
+    if (!row) return;
+
     const quantity = parseFloat(row.quantity);
     const price = parseFloat(row.price);
-  
+
     if (quantity <= 0 || price <= 0) {
       console.error("Required: Quantity and Price must be valid");
       return;
     }
-  
-    // Compute totalItem, but skip computation if unit is 'person'
+
     const totalItem = row.unit === "person" ? 0 : quantity * price;
-  
-    // Update the additional items
+
+    if (row.item_total === totalItem && row.isEditing === false) {
+      return;
+    }
+
     props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map(item =>
+      props.additionalState.addtionalItems.map((item) =>
         item.rowId === rowId
           ? { ...item, item_total: totalItem, isEditing: false, isSaved: true }
           : item
       )
-    ); 
-  
+    );
   };
+
+
+  const handleDelete = (rowId, row) => {
+    
+    let updateData;
+    
+    // if row id exist it means the data is from the mysql database
+    if(row.id) {
+
+    } else {
+      updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
+    }
+
+    if(updateData) {
+      props.additionalState.setAddtionalItems(updateData);
+      // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
+      props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
+      props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
+    }
+
+  };
+
   
   
   const checkUnit = (e) => {
@@ -168,13 +202,13 @@ const AdditionalItemtable = (props) => {
                   <button onClick={() => handleEdit(row.rowId, row)} className="btn btn-primary btn-sm me-2">Edit</button>
                 </>
               )}
-              <button onClick={() => handleDelete(row.rowId, props.type)} className="btn btn-danger btn-sm">Delete</button>
+              <button onClick={() => handleDelete(row.rowId, row)} className="btn btn-danger btn-sm">Delete</button>
             </td>
           </tr>
         ))}
       </tbody>
     </table>
-    <button onClick={handleAddRow} className="btn btn-primary mb-3">Add Row</button>
+    <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
     <button onClick={checkData}>CheckData</button>
   </div>
   )
