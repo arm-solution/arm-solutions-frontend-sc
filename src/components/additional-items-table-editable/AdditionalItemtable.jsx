@@ -65,7 +65,7 @@ const AdditionalItemtable = (props) => {
 
     const totalItemAmount = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0);
 
-    props.totalAmountref.setTotalAmountref(totalItemAmount);
+    props.totalAmountref.setTotalAmountref((pre) => pre + totalItemAmount);
   }, [props.additionalState.addtionalItems]);
 
   const handleSave = (rowId) => {
