@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { formatDateReadable } from '../../customs/global/manageDates';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { getDtrById, updateMultipleDtrStatus, getAllDtrWithDateRange } from '../../store/features/dtrSlice';
+import { updateMultipleDtrStatus, getAllDtrWithDateRange, getDtr } from '../../store/features/dtrSlice';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
@@ -46,11 +46,12 @@ const DtrByUserTable = () => {
     
     if (payload.success) {
       successDialog(`The records are now ${dtrStatus}`);
-      // dispatch(getDtrById(userId));
+      dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
       setIds([]); // Reset selected IDs
     } else {
       errorDialog("Unsuccessful Operation", "Please report to the technical team");
     }
+    
   };
 
   const updateDateRangeStatus = ({ target: { name, value } }) => {
