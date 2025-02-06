@@ -9,7 +9,6 @@ import './QoutationTableEditable.css';
 
 const QoutationTableEditable = (props) => {
 
-    const [inputAccessNumDays, setInputAccessNumDays] = useState(false);
     const [products, setProducts] = useState([]);
     const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -76,11 +75,8 @@ const QoutationTableEditable = (props) => {
         // Convert all relevant fields to numbers
         const basePrice = parseFloat(row.base_price) || 0;
         const quantity = parseInt(row.qty, 10) || 0; // Changed to `qty`
-        const numberOfDays = parseInt(row.number_of_days, 10) || 0;
     
-        return row.name === 'Man Power'
-            ? basePrice * quantity * numberOfDays
-            : basePrice * quantity;
+        return basePrice * quantity;
     };
     
     const handleInputChange = (e, id) => {
@@ -172,11 +168,6 @@ const QoutationTableEditable = (props) => {
             prevItemsRef.current = productItemDetails;
         }
     
-        const getProductItemDetails = productItemDetails.find(d => d.id === id);
-        if (getProductItemDetails?.name !== "Man Power") {
-            setInputAccessNumDays(true);
-        }
-    
         // Reshape data
         const updatedQuotationItems = productItemDetails.map(data => ({
             proposal_id: 0,
@@ -188,6 +179,7 @@ const QoutationTableEditable = (props) => {
         }));
     
         // Only update if there are actual changes
+        // this is the only status when the qoutation item setting a value
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
             props.setQoutationItem(updatedQuotationItems);
         }
