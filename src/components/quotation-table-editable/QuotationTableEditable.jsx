@@ -158,17 +158,20 @@ const QoutationTableEditable = (props) => {
             return;
         }
     
-        // Compare previous and current data before computing total
-        if (JSON.stringify(prevItemsRef.current) !== JSON.stringify(productItemDetails)) {
-            const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0);
-            props.totalAmount.setTotalAmount(totalItemAmount);
-            props.setTotalAmountref(totalItemAmount); // Set instead of accumulating
+        let previousTotal = prevItemsRef.current.reduce((sum, item) => sum + item.amount, 0) || 0;
+        let newTotal = productItemDetails.reduce((sum, item) => sum + item.amount, 0);
     
-            // ✅ Update prevItemsRef to store the latest state after setting total amount
-            prevItemsRef.current = productItemDetails;
-        }
+        // Calculate the difference
+        const difference = newTotal - previousTotal;
     
-        // Reshape data
+        // ✅ Incrementally update the total instead of replacing it
+        props.totalAmount.setTotalAmount(prev => prev + difference);
+        props.setTotalAmountref(prev => prev + difference);
+    
+        // ✅ Store the latest state after updating the total
+        prevItemsRef.current = [...productItemDetails];
+    
+        // Reshape data for quotation items
         const updatedQuotationItems = productItemDetails.map(data => ({
             proposal_id: 0,
             product_id: data.id,
@@ -178,8 +181,7 @@ const QoutationTableEditable = (props) => {
             sku: data.sku,
         }));
     
-        // Only update if there are actual changes
-        // this is the only status when the qoutation item setting a value
+        // Only update quotation items if there are actual changes
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
             props.setQoutationItem(updatedQuotationItems);
         }
@@ -191,6 +193,7 @@ const QoutationTableEditable = (props) => {
             )
         );
     };
+    
 
     // handle product onchange select dropdown
     const handleProductSelection = (e, rowId) => {
@@ -198,12 +201,6 @@ const QoutationTableEditable = (props) => {
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
         const productExist = productItemDetails.find(p => p.id === selectedProductId);
-
-        // if(selectedProduct.name === 'Man Power') {
-        //     setInputAccessNumDays(false)
-        // } else {
-        //     setInputAccessNumDays(true)
-        // }
 
         if (productExist) {
             props.setNotification({

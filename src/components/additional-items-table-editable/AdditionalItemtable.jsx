@@ -3,11 +3,7 @@ import './AdditionalItems.css'
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
-  const [initialized, setInitialized] = useState(false); // To prevent reinitializing rows on each render
-  const [getTotalTax, setGetTotalTax] = useState(0);
-  const [totalEditable, setTotalEditable] = useState(true);
 
-  const prevItemsRef = useRef(props.additionalState.addtionalItems);
 
   const handleAddRow = () => {
     const newRow = {
@@ -16,7 +12,7 @@ const AdditionalItemtable = (props) => {
       quantity: 0,
       item_total: 0,
       option_type: "additional",
-      unit: 0,
+      unit: "",
       price: 0,
       proposal_id: 0,
       isEditing: true,
@@ -31,23 +27,32 @@ const AdditionalItemtable = (props) => {
 
   const handleChange = (rowId, e) => {
     const { name, value } = e.target;
-
+  
     props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((row) =>
-        row.rowId === rowId
-          ? {
-              ...row,
-              [name]: value,
-              item_total: props.actions.calculateTaxDiscount({
-                ...row,
-                [name]: value,
-              }),
-            }
-          : row
-      )
+      props.additionalState.addtionalItems.map((row) => {
+        if (row.rowId !== rowId) return row;
+  
+        const updatedRow = { ...row, [name]: value };
+  
+        // ✅ If the field being changed is "unit" and it's "person", retain the current item_total
+        if (name === "unit" && value === "person") {
+          return updatedRow; // Keep existing item_total
+        }
+  
+        // ✅ If unit is "person", do not overwrite item_total (allow manual input)
+        if (updatedRow.unit === "person") {
+          return updatedRow;
+        }
+  
+        // ✅ Otherwise, compute item_total automatically
+        return {
+          ...updatedRow,
+          item_total: props.actions.calculateTaxDiscount(updatedRow),
+        };
+      })
     );
   };
-
+  
   const handleEdit = (rowId) => {
     props.additionalState.setAddtionalItems(
       props.additionalState.addtionalItems.map((row) =>
@@ -56,48 +61,43 @@ const AdditionalItemtable = (props) => {
     );
   };
 
-  useEffect(() => {
-    if (JSON.stringify(prevItemsRef.current) === JSON.stringify(props.additionalState.addtionalItems)) {
-      return;
-    }
-
-    prevItemsRef.current = props.additionalState.addtionalItems;
-
-    const totalItemAmount = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0);
-
-    props.totalAmountref.setTotalAmountref((pre) => pre + totalItemAmount);
-  }, [props.additionalState.addtionalItems]);
 
   const handleSave = (rowId) => {
     const row = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
-
     if (!row) return;
-
-    const quantity = parseFloat(row.quantity);
-    const price = parseFloat(row.price);
-
-    if (quantity <= 0 || price <= 0) {
-      console.error("Required: Quantity and Price must be valid");
-      return;
-    }
-
-    const totalItem = row.unit === "person" ? 0 : quantity * price;
-
-    if (row.item_total === totalItem && row.isEditing === false) {
-      return;
-    }
-
-    props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((item) =>
-        item.rowId === rowId
-          ? { ...item, item_total: totalItem, isEditing: false, isSaved: true }
-          : item
-      )
+  
+    // Compute the new total
+    const newTotalItem = row.unit === "person" ? row.item_total || 0 : parseFloat(row.quantity) * parseFloat(row.price);
+  
+    // Detect if the total has changed
+    const previousTotalItem = parseFloat(row.item_total) || 0;
+    const isTotalChanged = previousTotalItem !== newTotalItem;
+  
+    // Always update the row with new values
+    const updatedItems = props.additionalState.addtionalItems.map((item) =>
+      item.rowId === rowId
+        ? { 
+            ...item, 
+            item_total: newTotalItem, // Preserve manually entered values for "person"
+            isEditing: false, 
+            isSaved: true 
+          }
+        : item
     );
+  
+    // Update the additional items state
+    props.additionalState.setAddtionalItems(updatedItems);
+  
+    // Update the total amount only if the item total has changed
+    if (isTotalChanged) {
+      props.setTotalAmount((prev) => prev - previousTotalItem + newTotalItem);
+      props.totalAmountref.setTotalAmountref((prev) => prev - previousTotalItem + newTotalItem);
+    }
   };
-
-
-  const handleDelete = (rowId, row) => {
+  
+  
+   
+const handleDelete = (rowId, row) => {
     
     let updateData;
     
@@ -117,11 +117,6 @@ const AdditionalItemtable = (props) => {
 
   };
 
-  
-  
-  const checkUnit = (e) => {
-    e.target.value === 'person' ? setTotalEditable(false) : setTotalEditable(true);
-  }
 
   const checkData = () => {
     console.log("additional items", props.additionalState.addtionalItems)
@@ -165,12 +160,18 @@ const AdditionalItemtable = (props) => {
               />
             </td>
             <td>
-               <select className="form-select form-select-sm" name='unit' aria-label=".form-select-sm example" onChange={(e) => checkUnit(e)}>
-                  <option value='0' disabled>units</option>
-                   <option value="kg">Kg</option>         
-                   <option value="lb">lb</option>         
-                   <option value="person">Person</option>         
-                </select>
+              <select
+                className="form-select form-select-sm"
+                name="unit"
+                value={row.unit}
+                onChange={(e) => handleChange(row.rowId, e)}
+                disabled={!row.isEditing}
+              >
+                <option value="" disabled>Units</option>
+                <option value="kg">Kg</option>
+                <option value="lb">lb</option>
+                <option value="person">Person</option>
+              </select>
             </td>
             <td>
               <input
@@ -184,13 +185,13 @@ const AdditionalItemtable = (props) => {
             </td>
             <td>
             <input
-                type="number"
-                name="item_total"
-                value={row.item_total}
-                onChange={(e) => handleChange(row.rowId, e)}
-                disabled={totalEditable}
-                className="form-control"
-              />
+              type="number"
+              name="item_total"
+              value={row.item_total}
+              onChange={(e) => handleChange(row.rowId, e)}
+              disabled={row.unit !== "person" || !row.isEditing} // ✅ Only disable if NOT "person"
+              className="form-control"
+            />
             </td>
             <td>
               {row.isEditing ? (
