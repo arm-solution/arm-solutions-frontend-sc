@@ -90,8 +90,8 @@ const AdditionalItemtable = (props) => {
   
     // Update the total amount only if the item total has changed
     if (isTotalChanged) {
-      props.setTotalAmount((prev) => prev - previousTotalItem + newTotalItem);
-      props.totalAmountref.setTotalAmountref((prev) => prev - previousTotalItem + newTotalItem);
+      props.setTotalAmount((prev) => parseFloat(prev) + parseFloat(row.item_total));
+      props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + parseFloat(row.item_total));
     }
   };
   
