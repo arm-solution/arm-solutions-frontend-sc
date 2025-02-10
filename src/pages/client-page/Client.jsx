@@ -56,8 +56,11 @@ const Client = () => {
     
       const { payload } =  await dispatch(deleteClient(id)) 
       const result = payload.affectedRows > 0 ? true : false;
-
-      return result;
+      if (result) {
+        dispatch(getAllCleints());
+        return true;
+      }
+      return false;
 
     })
 

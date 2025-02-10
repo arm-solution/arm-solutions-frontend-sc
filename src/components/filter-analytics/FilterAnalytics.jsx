@@ -9,16 +9,17 @@ const FilterAnalytics = () => {
           <h1>Arm Solution Enterprises Dashboard</h1>
           <div className="filter-dropdowns">
             <div className="form-group-inline">
-              <label htmlFor="year-select">Year:</label>
-              <select id="year-select" className="form-control">
+              <label htmlFor="year-select">Date From:</label>
+              {/* <select id="year-select" className="form-control">
                 <option value="All">All</option>
                 <option value="2023">2023</option>
                 <option value="2024">2024</option>
-              </select>
+              </select> */}
+              <input type="date" className="form-control" name="filterFrom" id="filterFrom" style={{ fontSize: '14px'}} />
             </div>
             <div className="form-group-inline">
-              <label htmlFor="month-select">Month:</label>
-              <select id="month-select" className="form-control">
+              <label htmlFor="month-select">To:</label>
+              {/* <select id="month-select" className="form-control">
                 <option value="All">All</option>
                 <option value="January">January</option>
                 <option value="February">February</option>
@@ -32,7 +33,8 @@ const FilterAnalytics = () => {
                 <option value="October">October</option>
                 <option value="November">November</option>
                 <option value="December">December</option>
-              </select>
+              </select> */}
+              <input type="date" className="form-control" name="filterTo" id="filterTo" style={{ fontSize: '14px'}} />
             </div>
             <div className="form-group-inline">
               <button className="btn btn-search btn-primary">
