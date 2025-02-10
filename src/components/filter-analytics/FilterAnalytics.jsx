@@ -1,6 +1,16 @@
-import React from 'react'
 
-const FilterAnalytics = () => {
+import React, { useState } from 'react';
+
+const FilterAnalytics = ({ onFilter }) => {
+  const [dateRange, setDateRange] = useState({ startDate: '', endDate: '' });
+
+  const handleFilterChange = (e) => {
+    setDateRange({ ...dateRange, [e.target.name]: e.target.value });
+  };
+
+  const handleApplyFilter = () => {
+    onFilter(dateRange);
+  };
   return (
     <>
 
@@ -10,34 +20,14 @@ const FilterAnalytics = () => {
           <div className="filter-dropdowns">
             <div className="form-group-inline">
               <label htmlFor="year-select">Date From:</label>
-              {/* <select id="year-select" className="form-control">
-                <option value="All">All</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-              </select> */}
-              <input type="date" className="form-control" name="filterFrom" id="filterFrom" style={{ fontSize: '14px'}} />
+              <input type="date" className='form-control' name="startDate" value={dateRange.startDate} onChange={handleFilterChange} style={{ fontSize: '14px'}} />
             </div>
             <div className="form-group-inline">
               <label htmlFor="month-select">To:</label>
-              {/* <select id="month-select" className="form-control">
-                <option value="All">All</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-              </select> */}
-              <input type="date" className="form-control" name="filterTo" id="filterTo" style={{ fontSize: '14px'}} />
+              <input type="date" className='form-control' name="endDate" value={dateRange.endDate} onChange={handleFilterChange} style={{ fontSize: '14px'}} />
             </div>
             <div className="form-group-inline">
-              <button className="btn btn-search btn-primary">
+              <button className="btn btn-search btn-primary" onClick={handleApplyFilter}>
                 <i className="fas fa-search"></i> {/* Font Awesome search icon */}
                 Search
               </button>

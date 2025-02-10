@@ -11,15 +11,25 @@ export const getManPower = createAsyncThunk('dashboard/getManPower', async (_, {
     }
 })
 
-export const getTotalSales = createAsyncThunk('dashboard/getTotalSales', async (_, {rejectWithValue}) => {
-    try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dashboard/total-sales`);
-        console.log(data);
+export const getTotalSales = createAsyncThunk(
+    'dashboard/getTotalSales',
+    async (dateRange, { rejectWithValue }) => {
+      try {
+        let url = `${process.env.REACT_APP_API_BASE_URL}/dashboard/total-sales`;
+  
+        if (dateRange?.startDate && dateRange?.endDate) {
+          url += `?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+        }
+  
+        const { data } = await axios.get(url);
         return data;
-    } catch (error) {
+      } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
+      }
     }
-})
+  );
+  
+
 
 export const getTotalProjects = createAsyncThunk('dashboard/getTotalProjects', async (_, {rejectWithValue}) => {
     try {
@@ -30,6 +40,7 @@ export const getTotalProjects = createAsyncThunk('dashboard/getTotalProjects', a
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 })
+
 
 
 export const getOngoingProjects = createAsyncThunk('dashboard/getOngoingProjects', async (_, {rejectWithValue}) => {

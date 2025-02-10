@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Charts from '../../../components/Charts'
 import './Analytics.css'
 import DashboardCard from '../../../components/dashboard-card/DashboardCard'
@@ -13,23 +13,35 @@ const Analytics = () => {
 
   const { manpower, totalsales, totalprojects, ongoingprojects, totalinventory, topsales, dueprojects, loading, message, isSuccess } = useSelector(state => state.dasboardData);
 
+  const [dateRange, setDateRange] = useState(null); // Null for first load
+
   useEffect(() => {
-
-    dispatch(getManPower());
-    dispatch(getTotalSales());
-    dispatch(getTotalProjects());
-    dispatch(getOngoingProjects());
-    dispatch(getTotalInventory());
-    dispatch(getTopSales());
-    dispatch(getDueProjects());
-
-  }, [dispatch])
+    if (dateRange) {
+      // If dateRange is selected, fetch filtered data
+      dispatch(getManPower());
+      dispatch(getTotalSales(dateRange));
+      dispatch(getTotalProjects());
+      dispatch(getOngoingProjects());
+      dispatch(getTotalInventory());
+      dispatch(getTopSales());
+      dispatch(getDueProjects());
+    } else {
+      // First load - fetch all data
+      dispatch(getManPower());
+      dispatch(getTotalSales());
+      dispatch(getTotalProjects());
+      dispatch(getOngoingProjects());
+      dispatch(getTotalInventory());
+      dispatch(getTopSales());
+      dispatch(getDueProjects());
+    }
+  }, [dispatch, dateRange]);
   
 
   return (
     <>
 
-      <FilterAnalytics />
+      <FilterAnalytics onFilter={setDateRange} />
       
       <div className="card-container">
         {/* <DashboardCard /> */}
@@ -37,8 +49,8 @@ const Analytics = () => {
          headerColor='#0D92F4'
          cardTitle="Total Sales"
          cardValue="₱183,430,087.52" 
-         data={ loading ? "Loading..." : totalsales[0]?.TotalSales ? currencyFormat(totalsales[0]?.TotalSales) : 0 }
-        />
+         data={ loading ? "Loading..." : (totalsales.length > 0 && totalsales[0]?.TotalSales ? currencyFormat(totalsales[0].TotalSales) : "₱0.00") }
+         />
         <DashboardCard 
          headerColor='#77CDFF' 
          cardTitle="Total Projects" 
