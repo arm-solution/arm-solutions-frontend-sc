@@ -18,13 +18,13 @@ const Analytics = () => {
   useEffect(() => {
     if (dateRange) {
       // If dateRange is selected, fetch filtered data
-      dispatch(getManPower());
+      dispatch(getManPower(dateRange));
       dispatch(getTotalSales(dateRange));
-      dispatch(getTotalProjects());
-      dispatch(getOngoingProjects());
-      dispatch(getTotalInventory());
-      dispatch(getTopSales());
-      dispatch(getDueProjects());
+      dispatch(getTotalProjects(dateRange));
+      dispatch(getOngoingProjects(dateRange));
+      dispatch(getTotalInventory(dateRange));
+      dispatch(getTopSales(dateRange));
+      dispatch(getDueProjects(dateRange));
     } else {
       // First load - fetch all data
       dispatch(getManPower());
@@ -55,31 +55,31 @@ const Analytics = () => {
          headerColor='#77CDFF' 
          cardTitle="Total Projects" 
          cardValue="520" 
-         data={ loading ? "Loading..." : totalprojects[0]?.TotalProjects ? totalprojects[0]?.TotalProjects : 0 }
+         data={ loading ? "Loading..." : (totalprojects.length > 0 && totalprojects[0]?.TotalProjects ? totalprojects[0]?.TotalProjects : "0") }
         />
         <DashboardCard
          headerColor='#F95454' 
          cardTitle="Ongoing Projects" 
          cardValue="205" 
-         data={ loading ? "Loading..." : ongoingprojects[0]?.TotalProjects ? ongoingprojects[0]?.TotalProjects : 0 }
+         data={ loading ? "Loading..." : (ongoingprojects.length > 0 && ongoingprojects[0]?.TotalProjects ? ongoingprojects[0]?.TotalProjects : "0") }
         />
         <DashboardCard
          headerColor='#C62E2E' 
          cardTitle="Due Projects" 
          cardValue="12" 
-         data={ loading ? "Loading..." : dueprojects[0]?.DueProjects ? dueprojects[0]?.DueProjects : 0 }
+         data={ loading ? "Loading..." : (dueprojects.length > 0 && dueprojects[0]?.DueProjects ? dueprojects[0]?.DueProjects : "0") }
         />
         <DashboardCard
          headerColor='#179BAE'
          cardTitle="Active Manpower"
          cardValue="120" 
-         data={ loading ? "Loading..." : manpower[0]?.TotalManpower ? manpower[0]?.TotalManpower : 0 }
+         data={ loading ? "Loading..." : (manpower.length > 0 && manpower[0]?.TotalManpower ? manpower[0]?.TotalManpower : "0") }
         />
         <DashboardCard
          headerColor='#FF8343' 
          cardTitle="Total Inventory" 
          cardValue="358" 
-         data={ loading ? "Loading..." : totalinventory[0]?.totalInventory ? totalinventory[0]?.totalInventory : 0 }
+         data={ loading ? "Loading..." : (totalinventory.length > 0 && totalinventory[0]?.totalInventory ? totalinventory[0]?.totalInventory : "0") }
         />
       </div>
 
