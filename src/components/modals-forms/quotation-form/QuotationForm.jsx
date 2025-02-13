@@ -18,12 +18,12 @@ import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
+import { postAdditionalItems } from '../../../store/features/additional.Slice';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
 
     const [addtionalItems, setAddtionalItems] = useState([]);
-    const [totalAdditional, setTotalAdditional] = useState(0);
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [totalAmount, setTotalAmount] = useState(0)
@@ -241,7 +241,7 @@ const QoutationForm = (props) => {
             });
             return;
         } 
-       
+   
         try {
 
             const quotationResponse = await dispatch(createProposal({
@@ -258,22 +258,35 @@ const QoutationForm = (props) => {
             if(lastid > 0 && qoutationItem.length > 0) {
                 const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
                 const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+                
+                const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+                    ...rest,
+                    total: item_total,
+                    proposal_id: parseInt(lastid), 
+                }));
+
                 setQoutationItem(updatedQoutationItems);
 
-                // console.log("items qoutation", updatedQoutationItems);
-                // console.log("tax discount ", taxAndDiscountMerge)
+                // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+                const promises = [
+                    dispatch(postAdditionalItems(additionalItemsData)),
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest)))
+                ];
+                
+                if (taxAndDiscountMerge.length > 0) {
+                    promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+                } else {
+                    promises.push(Promise.resolve({ payload: { success: true } }));
+                }
+                
+                const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+                
 
-                const [saveItemsResponse, saveTaxDiscountResponse] = await Promise.all([
-                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest))),
-                    taxAndDiscountMerge.length > 0
-                    ? dispatch(postDiscountAndTax(taxAndDiscountMerge))
-                    : Promise.resolve({ payload: { success: true } })
-                ]);
-
-                const { success: itemsSuccess } = saveItemsResponse.payload;
-                const { success: taxDiscountSuccess } = saveTaxDiscountResponse.payload;
+                const { success: itemsStatus } = saveItemsResponse.payload;
+                const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+                const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-                if (itemsSuccess && taxDiscountSuccess) {
+                if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
                     successDialog('Quotation is now available');
                 } else {
                     errorDialog('Failed to create a Quotation');

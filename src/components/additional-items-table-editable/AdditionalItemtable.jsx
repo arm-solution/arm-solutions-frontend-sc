@@ -4,6 +4,9 @@ import './AdditionalItems.css'
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
 
+  const [checkPreValue, setCheckPreValue] = useState([]);
+
+  const additionalItemRef = useRef(props.additionalState.addtionalItems);
 
   const handleAddRow = () => {
     const newRow = {
@@ -54,6 +57,12 @@ const AdditionalItemtable = (props) => {
   };
   
   const handleEdit = (rowId) => {
+    setCheckPreValue(
+      props.additionalState.addtionalItems.map((row) =>
+        row.rowId === rowId ? { ...row, isEditing: true } : row
+      )
+    )
+
     props.additionalState.setAddtionalItems(
       props.additionalState.addtionalItems.map((row) =>
         row.rowId === rowId ? { ...row, isEditing: true } : row
@@ -65,45 +74,51 @@ const AdditionalItemtable = (props) => {
   const handleSave = (rowId) => {
     const row = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
     if (!row) return;
+
+    if(row.title === "" || row.quantity <= 0 || row.unit === "" || row.quantity <= 0) {
+      alert("All fields are required");
+      return;
+    }
+
+  
+    // Ensure values are valid numbers
+    const quantity = parseFloat(row.quantity) || 0;
+    const price = parseFloat(row.price) || 0;
   
     // Compute the new total
-    const newTotalItem = row.unit === "person" ? row.item_total || 0 : parseFloat(row.quantity) * parseFloat(row.price);
+    const newTotalItem = row.unit === "person" ? row.item_total : quantity * price;
   
-    // Detect if the total has changed
-    const previousTotalItem = parseFloat(row.item_total) || 0;
-    const isTotalChanged = previousTotalItem !== newTotalItem;
-  
-    // Always update the row with new values
+    // Update the row
     const updatedItems = props.additionalState.addtionalItems.map((item) =>
       item.rowId === rowId
         ? { 
             ...item, 
-            item_total: newTotalItem, // Preserve manually entered values for "person"
+            item_total: newTotalItem, // Ensure item_total is updated
             isEditing: false, 
             isSaved: true 
           }
         : item
     );
   
-    // Update the additional items state
+    // Update the state
     props.additionalState.setAddtionalItems(updatedItems);
   
-    // Update the total amount only if the item total has changed
-    if (isTotalChanged) {
-      props.setTotalAmount((prev) => parseFloat(prev) + parseFloat(row.item_total));
-      props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + parseFloat(row.item_total));
-    }
+    if(JSON.stringify(checkPreValue) !== JSON.stringify(props.additionalState.addtionalItems)) {  
+      // Use the computed value instead of row.item_total
+      props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
+      props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
+    } 
+
   };
   
-  
-   
+
 const handleDelete = (rowId, row) => {
     
     let updateData;
     
     // if row id exist it means the data is from the mysql database
     if(row.id) {
-
+      // execute delete dispatch
     } else {
       updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
     }
@@ -119,7 +134,13 @@ const handleDelete = (rowId, row) => {
 
 
   const checkData = () => {
-    console.log("additional items", props.additionalState.addtionalItems)
+    const additionalFinel = props.additionalState.addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+      ...rest,
+      total: item_total,
+      proposal_id: parseInt(0), 
+    }));
+
+    console.log("data", additionalFinel)
   }
 
   return (

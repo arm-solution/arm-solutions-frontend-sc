@@ -138,7 +138,7 @@ const TaxDiscountTable = (props) => {
           ))}
         </tbody>
       </table>
-      <button onClick={handleAddRow} className="btn btn-primary mb-3">Add Row</button>
+      <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
     </div>
   );
 };
