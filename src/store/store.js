@@ -11,6 +11,8 @@ import dtrSlice from "./features/dtrSlice";
 import taxDiscountSlice from "./features/taxDiscountSlice";
 import dtrRequestSlice from "./features/dtrRequestSlice";
 import dashboardSlice from "./features/dashboardDataSlice";
+import announcementSlice from "./features/announcementSlice";
+import messageRequestSlice from "./features/messageRequestSlice";
 
 export const store = configureStore({
     reducer: {
@@ -25,6 +27,8 @@ export const store = configureStore({
         dtr: dtrSlice.reducer,
         taxDiscounts: taxDiscountSlice.reducer,
         dtrRequests: dtrRequestSlice.reducer,
-        dasboardData: dashboardSlice.reducer
+        dasboardData: dashboardSlice.reducer,
+        announcement: announcementSlice.reducer,
+        messageRequest: messageRequestSlice.reducer
     }
 })

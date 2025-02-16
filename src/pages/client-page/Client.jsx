@@ -41,7 +41,6 @@ const Client = () => {
   const handleDelete = (id) => {
     // console.log(id);
     
-
     deleteConfirmation({
       title: "",
       text: "",
@@ -81,6 +80,11 @@ const Client = () => {
 
   return (
     <>
+    {/* Navbar-style header */}
+      <div className="px-4 py-3 text-black fw-bold fs-4 rounded" style={{ backgroundColor: "#ededed", marginBottom: "15px" }}>
+      Client Management
+    </div>
+
         <DataTable
           data={Array.isArray(allClient) ? allClient : []} // Ensure data is an array
           columns={columns}
