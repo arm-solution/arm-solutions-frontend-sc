@@ -14,7 +14,6 @@ import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/feature
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
-import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
@@ -230,7 +229,7 @@ const QoutationForm = (props) => {
                     type: 'error'
                 });
             return;
-        }
+        } 
 
         const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
 
@@ -241,6 +240,7 @@ const QoutationForm = (props) => {
             });
             return;
         } 
+
    
         try {
 

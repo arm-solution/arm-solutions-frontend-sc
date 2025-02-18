@@ -6,15 +6,12 @@ const AdditionalItemtable = (props) => {
 
   const [checkPreValue, setCheckPreValue] = useState([]);
 
-  const additionalItemRef = useRef(props.additionalState.addtionalItems);
-
   const handleAddRow = () => {
     const newRow = {
       rowId: nextRowId,
       title: "",
       quantity: 0,
       item_total: 0,
-      option_type: "additional",
       unit: "",
       price: 0,
       proposal_id: 0,

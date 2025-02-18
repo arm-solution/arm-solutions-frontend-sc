@@ -14,7 +14,7 @@ export const getAdditionalByProposalID = createAsyncThunk('getAdditionalByPropos
 
 export const postAdditionalItems = createAsyncThunk('postAdditionalItem', async(additionalItems, {rejectWithValue}) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/additional-item/add-additional-item`);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/additional-item/add-additional-item`, additionalItems);
        
         return data;
     } catch (error) {
