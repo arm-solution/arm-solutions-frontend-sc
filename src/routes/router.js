@@ -33,6 +33,7 @@ const MyAnnouncement = lazy(() => import('../pages/common-pages/announcement-pag
 const AnnouncementPage = lazy(() => import('../pages/annoucement/Announcement'));
 const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'));
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
+const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -55,6 +56,7 @@ const CommonRoutes = () => (
     <Route path="clients" element={LazyComponent(CompanyClient)} />
     <Route path="dtr-request" element={LazyComponent(DtrRequest)} />
     <Route path="announcement" element={LazyComponent(MyAnnouncement)} />
+    <Route path="qoutations" element={LazyComponent(Qoutations)} />
   </Route>
 );
 
