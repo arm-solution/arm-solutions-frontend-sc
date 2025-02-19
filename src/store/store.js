@@ -14,6 +14,7 @@ import dashboardSlice from "./features/dashboardDataSlice";
 import announcementSlice from "./features/announcementSlice";
 import messageRequestSlice from "./features/messageRequestSlice";
 import careerSlice from "./features/careerSlice";
+import additionalSlice from "./features/additional.Slice";
 
 export const store = configureStore({
     reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
         dasboardData: dashboardSlice.reducer,
         announcement: announcementSlice.reducer,
         messageRequest: messageRequestSlice.reducer,
-        careers: careerSlice.reducer
+        careers: careerSlice.reducer,
+        additionalItems: additionalSlice.reducer
     }
 })

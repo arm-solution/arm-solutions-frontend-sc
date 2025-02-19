@@ -11,7 +11,7 @@ const LandingPage = () => {
     services: useRef(null),
     clients: useRef(null),
     whyArms: useRef(null),
-    footer: useRef(null),  // Reference for the footer section
+    footer: useRef(null)
   };
 
   const navigate = useNavigate();

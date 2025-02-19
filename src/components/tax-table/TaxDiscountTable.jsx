@@ -54,7 +54,7 @@ const TaxDiscountTable = (props) => {
     const updatedMergedDiscountTax = [...props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type))];
     const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
 
-    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
+    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount));
   };
 
   const handleSave = (rowId) => {
@@ -74,7 +74,7 @@ const TaxDiscountTable = (props) => {
 
   return (
     <div className="container mt-4">
-      <h4>{ props.type === 'additional' ? 'Additional Items' : 'Discount' }</h4>
+      <h4>{ props.type === 'tax' ? 'Tax' : 'Discount' }</h4>
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -138,7 +138,7 @@ const TaxDiscountTable = (props) => {
           ))}
         </tbody>
       </table>
-      <button onClick={handleAddRow} className="btn btn-primary mb-3">Add Row</button>
+      <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
     </div>
   );
 };

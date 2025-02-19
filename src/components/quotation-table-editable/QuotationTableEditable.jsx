@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
@@ -10,12 +9,13 @@ import './QoutationTableEditable.css';
 
 const QoutationTableEditable = (props) => {
 
-    const [inputAccessNumDays, setInputAccessNumDays] = useState(false);
     const [products, setProducts] = useState([]);
     const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
+
+    const prevItemsRef = useRef(productItemDetails);
 
     const dispatch = useDispatch();
 
@@ -75,11 +75,8 @@ const QoutationTableEditable = (props) => {
         // Convert all relevant fields to numbers
         const basePrice = parseFloat(row.base_price) || 0;
         const quantity = parseInt(row.qty, 10) || 0; // Changed to `qty`
-        const numberOfDays = parseInt(row.number_of_days, 10) || 0;
     
-        return row.name === 'Man Power'
-            ? basePrice * quantity * numberOfDays
-            : basePrice * quantity;
+        return basePrice * quantity;
     };
     
     const handleInputChange = (e, id) => {
@@ -113,7 +110,7 @@ const QoutationTableEditable = (props) => {
     };
 
     // delete row in the table 
-    const deleteRow = (id, item_id) => {
+    const  deleteRow = (rowId, mysqlId, row) => {
         deleteConfirmation({
             title: "",
             text: "",
@@ -129,80 +126,81 @@ const QoutationTableEditable = (props) => {
             let updatedDetails;
     
             // checking if id from the database is exist
-            if(item_id) {
-                const { payload } = await dispatch(deleteProposalItem(item_id));
+            if(mysqlId) {
+                const { payload } = await dispatch(deleteProposalItem(mysqlId));
                 const result = payload.affectedRows > 0 ? true : false;
                 if (result) {
-                    updatedDetails = productItemDetails.filter(row => row.id !== id);
+                    updatedDetails = productItemDetails.filter(row => row.id !== rowId);
                 }
 
             } else {
-                updatedDetails = productItemDetails.filter(row => row.id !== id);
+                updatedDetails = productItemDetails.filter(row => row.id !== rowId);
             }
     
             // Updating state and then calculating total amount
             if (updatedDetails) {
                 setProductItemDetails(updatedDetails);
-                const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                props.totalAmount.setTotalAmount(totalItemAmount);
-                props.setTotalAmountref(totalItemAmount)
+                // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+                props.totalAmount.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+                props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
                 return true;
             }
         });
     };
+    
 
     // save and edit row
     const toggleSaveAndEdit = (id) => {
-
-       const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-       const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
-       props.totalAmount.setTotalAmount(totalItemAmount)
-       props.setTotalAmountref(totalItemAmount)
-       const getproductItemDetails = productItemDetails.find(d => d.id === id);
-
-       console.log("productItemDetails", productItemDetails)
-
-       if(getproductItemDetails.name !== 'Man Power') {
-        setInputAccessNumDays(true);
-       }
-       
-       if(checkProduct) {
-           errorDialog("All Fields Are Required")
-           return;
+        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+    
+        if (checkProduct) {
+            errorDialog("All Fields Are Required");
+            return;
         }
-        
-        // reshaping data
-        const updatedQoutationItems = productItemDetails.map(data => ({
+    
+        let previousTotal = prevItemsRef.current.reduce((sum, item) => sum + item.amount, 0) || 0;
+        let newTotal = productItemDetails.reduce((sum, item) => sum + item.amount, 0);
+    
+        // Calculate the difference
+        const difference = newTotal - previousTotal;
+    
+        // ✅ Incrementally update the total instead of replacing it
+        props.totalAmount.setTotalAmount(prev => prev + difference);
+        props.setTotalAmountref(prev => prev + difference);
+    
+        // ✅ Store the latest state after updating the total
+        prevItemsRef.current = [...productItemDetails];
+    
+        // Reshape data for quotation items
+        const updatedQuotationItems = productItemDetails.map(data => ({
             proposal_id: 0,
             product_id: data.id,
             quantity: parseInt(data.qty),
             price: parseInt(data.base_price),
-            proposal_item_id: data.proposal_item_id | 0,
+            proposal_item_id: data.proposal_item_id || 0,
             sku: data.sku,
         }));
-    // this is the state  that going to save to database 
-    // on QoutationForm jsx
-     props.setQoutationItem(updatedQoutationItems);
-        
-    // saving another row on the table
-        setProductItemDetails(prevDetails => prevDetails.map(row =>
-            row.id === id ? { ...row, isEditing: !row.isEditing } : row
-        ));
-
+    
+        // Only update quotation items if there are actual changes
+        if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
+            props.setQoutationItem(updatedQuotationItems);
+        }
+    
+        // Toggle edit state for the specific row
+        setProductItemDetails(prevDetails =>
+            prevDetails.map(row =>
+                row.id === id ? { ...row, isEditing: !row.isEditing } : row
+            )
+        );
     };
+    
 
     // handle product onchange select dropdown
-    const handleProduct = (e, rowId) => {
+    const handleProductSelection = (e, rowId) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
         const productExist = productItemDetails.find(p => p.id === selectedProductId);
-
-        // if(selectedProduct.name === 'Man Power') {
-        //     setInputAccessNumDays(false)
-        // } else {
-        //     setInputAccessNumDays(true)
-        // }
 
         if (productExist) {
             props.setNotification({
@@ -256,9 +254,9 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-            const response = await dispatch(deleteProposalItems(selectedIds))
+            const { payload } = await dispatch(deleteProposalItems(selectedIds))
             
-            if(response.payload.success) {
+            if(payload.success) {
                 setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
@@ -274,6 +272,7 @@ const QoutationTableEditable = (props) => {
         <div className="table-editable-container">
 
           <div className="container mt-4">
+            <h5 className="text-muted">Products</h5>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -282,6 +281,8 @@ const QoutationTableEditable = (props) => {
                         <th>Category</th>
                         <th>Qty</th>
                        { !screenMobile() && <th>Unit</th> }
+                        <th>Markup price</th>
+                        <th>Price</th>
                         <th>Markup price</th>
                         <th>Price</th>
                         <th>Amount</th>
@@ -304,7 +305,7 @@ const QoutationTableEditable = (props) => {
                                         aria-label="Default select example"
                                         defaultValue='0'
                                         name="product_id"
-                                        onChange={(e) => handleProduct(e, row.id)}
+                                        onChange={(e) => handleProductSelection(e, row.id)}
                                     >
                                         <option value='0' disabled>Products</option>
                                         {products.map(product => (
@@ -351,7 +352,7 @@ const QoutationTableEditable = (props) => {
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}
-                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id)} disabled={selectedIds.length}>Delete</button>
+                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id, row)} disabled={selectedIds.length}>Delete</button>
                             </td>
                         </tr>
 
@@ -360,7 +361,7 @@ const QoutationTableEditable = (props) => {
                 </tbody>
             </table>
             <button
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 onClick={addRow}
                 disabled={anyRowEditing}
             >

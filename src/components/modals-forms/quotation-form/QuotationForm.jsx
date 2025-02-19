@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
-import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
+// import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
@@ -14,26 +14,29 @@ import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/feature
 import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
-import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
+import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
+import { postAdditionalItems } from '../../../store/features/additional.Slice';
 
 const QoutationForm = (props) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
+    const [addtionalItems, setAddtionalItems] = useState([]);
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [totalAmount, setTotalAmount] = useState(0)
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
-    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ additional: 0, discount: 0 })
+    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ discount: 0, tax: 0 })
     const [clientDetails, setClientDetails] = useState([])
     const [notification, setNotification] = useState({
         message: '',
         type: ''
     });
  
+    //  state for the form
     const [quotation, setQuotation] = useState({
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
@@ -41,8 +44,6 @@ const QoutationForm = (props) => {
         status: 'pending',
         description: '',
         sub_total: 0,
-        deductions: 0,
-        additional_payments: 0,
         grand_total: 0,
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
@@ -50,7 +51,6 @@ const QoutationForm = (props) => {
 
     const [qoutationItem, setQoutationItem] = useState([]);
     
-
     const dispatch = useDispatch();
 
     const { data: clientData } = useSelector(state => state.clients);
@@ -121,8 +121,11 @@ const QoutationForm = (props) => {
           if (proposalDetails) {
             const { quotation: quotationData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
               setQuotation(quotationData);
-              setTax(taxDiscountData.filter(d => d.option_type === 'additional'));
+              setTax(taxDiscountData.filter(d => d.option_type === 'tax'));
               setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
+            //   setAddtionalItems(taxDiscountData.filter(d => d.option_type === 'discount'))
+            //   console.log('dsfjsdf', taxDiscountData)
+            
           }
         };
       
@@ -143,7 +146,7 @@ const QoutationForm = (props) => {
 
 
 
-      // calculating tax and discount percentage
+    // calculating tax and discount percentage
   const calculateTaxDiscount = (row) => {
     if (totalAmountref > 0) {
       return row.amount_type === 'percentage'
@@ -167,13 +170,13 @@ const QoutationForm = (props) => {
             // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
             totals[type] += parseFloat(item.item_total) || 0;
             return totals;
-          }, { additional: 0, discount: 0 }); // Start with 0 for both additional and discount
+          }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
         } else {
-          return { additional: 0, discount: 0 }; // Default structure if no tax items are provided
+          return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
         }
       };
     
-        // Calculate total amount for each row and return updated rows
+    // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
           return rows.map((row) => ({
             ...row,
@@ -189,7 +192,7 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount(parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
+          setTotalAmount((parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
         }
 
       }, [calculateAllTaxDiscount, totalAmountref]);
@@ -198,7 +201,7 @@ const QoutationForm = (props) => {
         if(totalAmountref > 0) {
         const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
 
-        const taxUpdate = updatedRows.filter(d => d.option_type === 'additional');
+        const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
         const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
         // const totalTaxDiscount = getTotalTax(updatedRows);
         
@@ -217,6 +220,7 @@ const QoutationForm = (props) => {
           }
       }, [tax, discount])
       
+
       
     const handleAddNewQoutation = async () => {
        
@@ -226,7 +230,7 @@ const QoutationForm = (props) => {
                     type: 'error'
                 });
             return;
-        }
+        } 
 
         const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
 
@@ -237,34 +241,53 @@ const QoutationForm = (props) => {
             });
             return;
         } 
-       
+
+   
         try {
+
             const quotationResponse = await dispatch(createProposal({
                 ...quotation,
-                additional_payments: taxDiscountTotal.additional,
-                deductions: taxDiscountTotal.discount,
+                tax: taxDiscountTotal.tax,
+                discount: taxDiscountTotal.discount,
                 sub_total: totalAmountref,
                 grand_total: totalAmount
             }));
 
             const { lastid, success: qoutationSuccess } = quotationResponse.payload;
 
+
             if(lastid > 0 && qoutationItem.length > 0) {
                 const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
                 const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+                
+                const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+                    ...rest,
+                    total: item_total,
+                    proposal_id: parseInt(lastid), 
+                }));
+
                 setQoutationItem(updatedQoutationItems);
 
-                const [saveItemsResponse, saveTaxDiscountResponse] = await Promise.all([
-                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest))),
-                    taxAndDiscountMerge.length > 0
-                    ? dispatch(postDiscountAndTax(taxAndDiscountMerge))
-                    : Promise.resolve({ payload: { success: true } })
-                ]);
+                // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+                const promises = [
+                    dispatch(postAdditionalItems(additionalItemsData)),
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest)))
+                ];
+                
+                if (taxAndDiscountMerge.length > 0) {
+                    promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+                } else {
+                    promises.push(Promise.resolve({ payload: { success: true } }));
+                }
+                
+                const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+                
 
-                const { success: itemsSuccess } = saveItemsResponse.payload;
-                const { success: taxDiscountSuccess } = saveTaxDiscountResponse.payload;
+                const { success: itemsStatus } = saveItemsResponse.payload;
+                const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+                const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-                if (itemsSuccess && taxDiscountSuccess) {
+                if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
                     successDialog('Quotation is now available');
                 } else {
                     errorDialog('Failed to create a Quotation');
@@ -301,9 +324,11 @@ const QoutationForm = (props) => {
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
             date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
             sub_total: totalAmountref,
-            additional_payments: taxDiscountTotal.additional,
+            additional_payments: taxDiscountTotal.tax,
             deductions: taxDiscountTotal.discount
         };
+
+        // console.log("final data", proposalFinal);
         
         //This is for qoutation/proposal form
         if(!deepEqual(props.proposalEdit, quotation)) {
@@ -366,14 +391,13 @@ const QoutationForm = (props) => {
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
 
-                    <TaxDiscountTable
-                        type="additional"
-                        totalAmount={totalAmount}
-                        setTotalAmount={setTotalAmount}
-                        taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
-                        totalAmountref={totalAmountref}
-                        mergeDiscountTax={[...tax, ...discount]}
-                        actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                    
+                    <AdditionalItemtable 
+                         totalAmount={totalAmount}
+                         setTotalAmount={setTotalAmount}
+                         additionalState={{ addtionalItems, setAddtionalItems }}
+                         totalAmountref={{ totalAmountref, setTotalAmountref }}
+                         actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
                     />
 
                     <div className="row table-editable">
@@ -391,6 +415,16 @@ const QoutationForm = (props) => {
 
                     {parseInt(totalAmount) > 0 && (
                         <>
+                        <TaxDiscountTable
+                            type="tax"
+                            totalAmount={totalAmount}
+                            setTotalAmount={setTotalAmount}
+                            taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
+                            totalAmountref={totalAmountref}
+                            mergeDiscountTax={[...tax, ...discount]}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                        />
+
                             <TaxDiscountTable
                                 type="discount"
                                 totalAmount={totalAmount}
