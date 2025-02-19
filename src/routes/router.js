@@ -6,6 +6,7 @@ import Loading from '../components/loading-spinner/Loading';
 import LoadingLandingPage from '../components/loading-landing-page/LoadingLandingPage';
 import ProtectedRoute from './ProtectedRoute';
 import RequireAuth from './RequireAuth';
+import Career from '../pages/admin/careers/Career';
 
 // Lazy-loaded Components
 const AdminDashboard = lazy(() => import('../pages/admin/admin-dashboard-page/AdminDashboard'));
@@ -33,6 +34,7 @@ const MyAnnouncement = lazy(() => import('../pages/common-pages/announcement-pag
 const AnnouncementPage = lazy(() => import('../pages/annoucement/Announcement'));
 const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'));
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
+const Careers = lazy(() => import('../pages/admin/careers/Career'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -55,6 +57,7 @@ const CommonRoutes = () => (
     <Route path="clients" element={LazyComponent(CompanyClient)} />
     <Route path="dtr-request" element={LazyComponent(DtrRequest)} />
     <Route path="announcement" element={LazyComponent(MyAnnouncement)} />
+    <Route path="careers" element={LazyComponent(Careers)} />
   </Route>
 );
 

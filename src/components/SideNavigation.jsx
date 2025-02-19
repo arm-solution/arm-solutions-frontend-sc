@@ -164,6 +164,12 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </Link>
                     </li>
                     <li className="sidebar-item">
+                        <Link to='common/careers' className="sidebar-link">
+                            <i className="lni lni-briefcase"></i>
+                            <span>Careers</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-item">
                         <Link to={`common/user-profile`} className="sidebar-link">
                             <i className="lni lni-cog"></i>
                             <span>Account Setting</span>
