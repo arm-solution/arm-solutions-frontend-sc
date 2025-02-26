@@ -36,6 +36,8 @@ const QoutationForm = (props) => {
         type: ''
     });
  
+    const [qoutationItem, setQoutationItem] = useState([]);
+    
     //  state for the form
     const [quotation, setQuotation] = useState({
         client_id: 0,
@@ -49,7 +51,7 @@ const QoutationForm = (props) => {
         contact_person: ''
     });
 
-    const [qoutationItem, setQoutationItem] = useState([]);
+    
     
     const dispatch = useDispatch();
 

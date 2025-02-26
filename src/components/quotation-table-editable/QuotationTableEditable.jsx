@@ -284,8 +284,6 @@ const QoutationTableEditable = (props) => {
                         <th>Markup price</th>
                         <th>Price</th>
                         <th>Markup price</th>
-                        <th>Price</th>
-                        <th>Amount</th>
                         <th></th>
                     </tr>
                 </thead>

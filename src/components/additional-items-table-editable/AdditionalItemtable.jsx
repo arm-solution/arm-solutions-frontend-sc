@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import './AdditionalItems.css'
+import { deleteAdditionalById } from '../../store/features/additional.Slice';
+import { useDispatch } from 'react-redux';
+import { deleteConfirmation } from '../../customs/global/alertDialog';
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
 
   const [checkPreValue, setCheckPreValue] = useState([]);
+
+  const prevAddidionalRef = useRef(props.additionalState.addtionalItems || []);
+
+  const dispatch = useDispatch();
 
   const handleAddRow = () => {
     const newRow = {
@@ -54,11 +61,11 @@ const AdditionalItemtable = (props) => {
   };
   
   const handleEdit = (rowId) => {
-    setCheckPreValue(
-      props.additionalState.addtionalItems.map((row) =>
-        row.rowId === rowId ? { ...row, isEditing: true } : row
-      )
-    )
+    // setCheckPreValue(
+    //   props.additionalState.addtionalItems.map((row) =>
+    //     row.rowId === rowId ? { ...row, isEditing: true } : row
+    //   )
+    // )
 
     props.additionalState.setAddtionalItems(
       props.additionalState.addtionalItems.map((row) =>
@@ -104,6 +111,9 @@ const AdditionalItemtable = (props) => {
       // Use the computed value instead of row.item_total
       props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
       props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
+
+      prevAddidionalRef.current = [...props.additionalState.addtionalItems];
+
     } 
 
   };
@@ -111,34 +121,42 @@ const AdditionalItemtable = (props) => {
 
 const handleDelete = (rowId, row) => {
     
-    let updateData;
+        deleteConfirmation({
+            title: "",
+            text: "",
+            icon: "",
+            confirmButtonText: "",
+            cancelButtonText: "",
+            deleteTitle: "",
+            deleteText: "",
+            successTitle: "", 
+            successText: ""
+        }, async () => {
     
-    // if row id exist it means the data is from the mysql database
-    if(row.id) {
-      // execute delete dispatch
-    } else {
-      updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
-    }
+          let updateData;
+    
+          // if row id exist it means the data is from the mysql database
+          if(row.id) {
+            const { payload } = await dispatch(deleteAdditionalById(row.id));
 
-    if(updateData) {
-      props.additionalState.setAddtionalItems(updateData);
-      // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
-      props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
-      props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
-    }
+            if(payload.success) {
+              updateData = props.additionalState.addtionalItems.filter(row => row.id !== rowId)
+            }
+          } else {
+             updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
+          }
+      
+          if(updateData) {
+            props.additionalState.setAddtionalItems(updateData);
+            // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
+            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
+            props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
+
+            return true; 
+          }
+      });
 
   };
-
-
-  const checkData = () => {
-    const additionalFinel = props.additionalState.addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
-      ...rest,
-      total: item_total,
-      proposal_id: parseInt(0), 
-    }));
-
-    console.log("data", additionalFinel)
-  }
 
   return (
     <div className="container mt-4">
@@ -228,7 +246,6 @@ const handleDelete = (rowId, row) => {
       </tbody>
     </table>
     <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
-    <button onClick={checkData}>CheckData</button>
   </div>
   )
 }
