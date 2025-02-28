@@ -180,6 +180,8 @@ const QoutationTableEditable = (props) => {
             proposal_item_id: data.proposal_item_id || 0,
             sku: data.sku,
         }));
+
+        console.log("updated data", updatedQuotationItems);
     
         // Only update quotation items if there are actual changes
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
@@ -283,7 +285,7 @@ const QoutationTableEditable = (props) => {
                        { !screenMobile() && <th>Unit</th> }
                         <th>Markup price</th>
                         <th>Price</th>
-                        <th>Markup price</th>
+                        <th>Total</th>
                         <th></th>
                     </tr>
                 </thead>

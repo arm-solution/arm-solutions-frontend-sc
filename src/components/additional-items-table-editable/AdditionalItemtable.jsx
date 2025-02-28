@@ -9,7 +9,9 @@ const AdditionalItemtable = (props) => {
 
   const [checkPreValue, setCheckPreValue] = useState([]);
 
-  const prevAddidionalRef = useRef(props.additionalState.addtionalItems || []);
+  const [additionalTest, setAdditionalTest] = useState([])
+
+  const prevAddidionalRef = useRef(additionalTest);
 
   const dispatch = useDispatch();
 
@@ -25,26 +27,30 @@ const AdditionalItemtable = (props) => {
       isEditing: true,
     };
 
-    props.additionalState.setAddtionalItems([
-      ...props.additionalState.addtionalItems,
-      newRow,
-    ]);
+    
+    setAdditionalTest([
+      ...additionalTest,
+      newRow
+    ])
+
+
     setNextRowId(nextRowId + 1);
   };
 
   const handleChange = (rowId, e) => {
     const { name, value } = e.target;
   
-    props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((row) => {
+    // for testing
+    setAdditionalTest(
+      additionalTest.map((row) => {
         if (row.rowId !== rowId) return row;
   
         const updatedRow = { ...row, [name]: value };
   
         // ✅ If the field being changed is "unit" and it's "person", retain the current item_total
-        if (name === "unit" && value === "person") {
-          return updatedRow; // Keep existing item_total
-        }
+        // if (name === "unit" && value === "person") {
+        //   return updatedRow; // Keep existing item_total
+        // }
   
         // ✅ If unit is "person", do not overwrite item_total (allow manual input)
         if (updatedRow.unit === "person") {
@@ -54,10 +60,11 @@ const AdditionalItemtable = (props) => {
         // ✅ Otherwise, compute item_total automatically
         return {
           ...updatedRow,
-          item_total: props.actions.calculateTaxDiscount(updatedRow),
+          item_total: props.actions.calculateTaxDiscount(updatedRow) || 0,
         };
       })
-    );
+    )
+    // end
   };
   
   const handleEdit = (rowId) => {
@@ -67,33 +74,50 @@ const AdditionalItemtable = (props) => {
     //   )
     // )
 
-    props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((row) =>
+
+    // for testing
+    setAdditionalTest(
+      additionalTest.map((row) => 
         row.rowId === rowId ? { ...row, isEditing: true } : row
       )
-    );
+    )
+    // end
   };
 
 
   const handleSave = (rowId) => {
-    const row = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
-    if (!row) return;
 
-    if(row.title === "" || row.quantity <= 0 || row.unit === "" || row.quantity <= 0) {
+    // for testing
+    const rowTest = additionalTest.find((row) => row.rowId === rowId);
+
+    if (!rowTest) return;
+
+    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
       alert("All fields are required");
       return;
     }
 
-  
     // Ensure values are valid numbers
-    const quantity = parseFloat(row.quantity) || 0;
-    const price = parseFloat(row.price) || 0;
+    const quantity = parseFloat(rowTest.quantity) || 0;
+    const price = parseFloat(rowTest.price) || 0;
+
+    let previousTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0);
+    
+    console.log("previous total", previousTotal)
+    console.log("new total", newTotal)
+    console.log("diff", newTotal - previousTotal);
   
     // Compute the new total
-    const newTotalItem = row.unit === "person" ? row.item_total : quantity * price;
+    const newTotalItem = rowTest.unit === "person" ? rowTest.item_total : quantity * price;
   
     // Update the row
-    const updatedItems = props.additionalState.addtionalItems.map((item) =>
+    // for test
+
+    console.log("new item total", newTotalItem);
+    prevAddidionalRef.current = [...additionalTest];
+
+    const updatedItemsTest = additionalTest.map((item) =>
       item.rowId === rowId
         ? { 
             ...item, 
@@ -103,19 +127,23 @@ const AdditionalItemtable = (props) => {
           }
         : item
     );
+
+    // end
+
+
   
-    // Update the state
-    props.additionalState.setAddtionalItems(updatedItems);
+
+
+
+    setAdditionalTest(updatedItemsTest);
   
-    if(JSON.stringify(checkPreValue) !== JSON.stringify(props.additionalState.addtionalItems)) {  
+    if(JSON.stringify(checkPreValue) !== JSON.stringify(additionalTest)) {  
       // Use the computed value instead of row.item_total
       props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
       props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
-
-      prevAddidionalRef.current = [...props.additionalState.addtionalItems];
-
     } 
 
+    console.log("additional test", additionalTest);
   };
   
 
@@ -173,7 +201,7 @@ const handleDelete = (rowId, row) => {
         </tr>
       </thead>
       <tbody>
-        {props.additionalState.addtionalItems.map((row, index) => (
+        {additionalTest.map((row, index) => (
           <tr key={index}>
             <td>
               <input
