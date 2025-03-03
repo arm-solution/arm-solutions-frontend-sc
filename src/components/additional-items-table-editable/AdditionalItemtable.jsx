@@ -104,9 +104,7 @@ const AdditionalItemtable = (props) => {
     let previousTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0);
     
-    console.log("previous total", previousTotal)
-    console.log("new total", newTotal)
-    console.log("diff", newTotal - previousTotal);
+    console.log("row", rowTest);
   
     // Compute the new total
     const newTotalItem = rowTest.unit === "person" ? rowTest.item_total : quantity * price;
@@ -129,10 +127,6 @@ const AdditionalItemtable = (props) => {
     );
 
     // end
-
-
-  
-
 
 
     setAdditionalTest(updatedItemsTest);
