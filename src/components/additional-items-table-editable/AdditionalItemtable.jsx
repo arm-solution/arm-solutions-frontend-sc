@@ -37,35 +37,43 @@ const AdditionalItemtable = (props) => {
     setNextRowId(nextRowId + 1);
   };
 
+      // calculate the item total amount
+    const calculateAmount = (row) => {
+        // Convert all relevant fields to numbers
+        const basePrice = parseFloat(row.price) || 0;
+        const quantity = parseInt(row.quantity, 10) || 0; // Changed to `qty`
+    
+        return basePrice * quantity;
+    };
+
+
   const handleChange = (rowId, e) => {
-    const { name, value } = e.target;
+      const { name, value } = e.target;
   
-    // for testing
-    setAdditionalTest(
-      additionalTest.map((row) => {
-        if (row.rowId !== rowId) return row;
+      // Update the field first
+      setAdditionalTest(prevDetails => {
+          return prevDetails.map(row => {
+              if (row.rowId !== rowId) return row;
   
-        const updatedRow = { ...row, [name]: value };
+              const updatedRow = {
+                  ...row,
+                  [name]: value
+              };
   
-        // ✅ If the field being changed is "unit" and it's "person", retain the current item_total
-        // if (name === "unit" && value === "person") {
-        //   return updatedRow; // Keep existing item_total
-        // }
+              // ✅ If unit is "person", do not overwrite item_total (allow manual input)
+              if (updatedRow.unit === "person") {
+                  return updatedRow;
+              }
   
-        // ✅ If unit is "person", do not overwrite item_total (allow manual input)
-        if (updatedRow.unit === "person") {
-          return updatedRow;
-        }
-  
-        // ✅ Otherwise, compute item_total automatically
-        return {
-          ...updatedRow,
-          item_total: props.actions.calculateTaxDiscount(updatedRow) || 0,
-        };
-      })
-    )
-    // end
+              // ✅ Otherwise, compute item_total automatically
+              return {
+                  ...updatedRow,
+                  item_total: calculateAmount({ ...row, [name]: value })
+              };
+          });
+      });
   };
+  
   
   const handleEdit = (rowId) => {
     // setCheckPreValue(
@@ -94,32 +102,24 @@ const AdditionalItemtable = (props) => {
 
     if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
       alert("All fields are required");
-      return;
+      return; 
     }
 
-    // Ensure values are valid numbers
-    const quantity = parseFloat(rowTest.quantity) || 0;
-    const price = parseFloat(rowTest.price) || 0;
-
-    let previousTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    let prevTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0);
-    
-    console.log("row", rowTest);
-  
-    // Compute the new total
-    const newTotalItem = rowTest.unit === "person" ? rowTest.item_total : quantity * price;
-  
-    // Update the row
-    // for test
 
-    console.log("new item total", newTotalItem);
+    const diff = newTotal - prevTotal;
+
+    props.totalAmountref.setTotalAmountref(pre => pre + diff);
+    props.setTotalAmount(pre => pre + diff);
+
+    // Update the row
     prevAddidionalRef.current = [...additionalTest];
 
     const updatedItemsTest = additionalTest.map((item) =>
       item.rowId === rowId
         ? { 
             ...item, 
-            item_total: newTotalItem, // Ensure item_total is updated
             isEditing: false, 
             isSaved: true 
           }
@@ -133,8 +133,8 @@ const AdditionalItemtable = (props) => {
   
     if(JSON.stringify(checkPreValue) !== JSON.stringify(additionalTest)) {  
       // Use the computed value instead of row.item_total
-      props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
-      props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
+      // props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
+      // props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
     } 
 
     console.log("additional test", additionalTest);
