@@ -7,7 +7,8 @@ import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getProposalItemsByProposalId } from '../../../store/features/proposalItemSlice';
 import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
-import { deleteConfirmation } from '../../../customs/global/alertDialog'; 
+import { deleteConfirmation } from '../../../customs/global/alertDialog';
+import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 
 const Quotations = () => {
 
@@ -18,6 +19,7 @@ const Quotations = () => {
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
+    const { additionalItemsByProposalId } = useSelector(state => state.additionalItems);
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
     
@@ -47,16 +49,18 @@ const Quotations = () => {
         setSelectedTab('tab-two');
         setProposalEdit(row);
     
-        const [discountTaxResult, proposalItemsResult] = await Promise.all([
+        const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
           dispatch(getDiscountAndTaxByproposalId(row.id)),
           dispatch(getProposalItemsByProposalId(row.id)),
+          dispatch(getAdditionalByProposalID(row.id))
         ]);
     
         // Store the data in sessionStorage after dispatches complete
         sessionStorage.setItem('proposalDetails', JSON.stringify({
           quotation: row,  // Use the row since it's already the proposalEdit data
           quotationItem: proposalItemsResult.payload,
-          taxDiscount: discountTaxResult.payload
+          taxDiscount: discountTaxResult.payload,
+          additionalItems: additionalItems.payload
         }));
     
         // Dispatch a custom event to signal that sessionStorage is updated

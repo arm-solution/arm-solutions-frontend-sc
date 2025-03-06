@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './AdditionalItems.css'
 import { deleteAdditionalById } from '../../store/features/additional.Slice';
 import { useDispatch } from 'react-redux';
@@ -6,6 +6,7 @@ import { deleteConfirmation } from '../../customs/global/alertDialog';
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
+    const [initialized, setInitialized] = useState(false); // To prevent reinitializing rows on each render
 
   const [checkPreValue, setCheckPreValue] = useState([]);
 
@@ -15,9 +16,16 @@ const AdditionalItemtable = (props) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if(!initialized) {
+
+    }
+  }, [initialized, additionalTest])
+  
+  
   const handleAddRow = () => {
     const newRow = {
-      rowId: nextRowId,
+      rowId: nextRowId, // Keep auto-incrementing for new rows
       title: "",
       quantity: 0,
       item_total: 0,
@@ -26,25 +34,57 @@ const AdditionalItemtable = (props) => {
       proposal_id: 0,
       isEditing: true,
     };
-
-    
-    setAdditionalTest([
-      ...additionalTest,
-      newRow
-    ])
-
-
+  
+    setAdditionalTest([...additionalTest, newRow]);
     setNextRowId(nextRowId + 1);
   };
-
-      // calculate the item total amount
-    const calculateAmount = (row) => {
-        // Convert all relevant fields to numbers
-        const basePrice = parseFloat(row.price) || 0;
-        const quantity = parseInt(row.quantity, 10) || 0; // Changed to `qty`
-    
-        return basePrice * quantity;
+  
+  useEffect(() => {
+    const fetchFromSession = () => {
+      const proposalDetails = sessionStorage.getItem("proposalDetails");
+  
+      if (proposalDetails && !initialized) {
+        const { additionalItems } = JSON.parse(proposalDetails);
+  
+        // Ensure database items use their ID as rowId
+        const updatedItems = additionalItems.map((item) => ({
+          ...item,
+          rowId: item.id, // Replace rowId with actual database ID
+        }));
+  
+        setAdditionalTest(updatedItems);
+  
+        // Determine the next rowId based on the highest existing rowId
+        const maxId = Math.max(...updatedItems.map((item) => item.rowId), 0);
+        setNextRowId(maxId + 1);
+  
+        setInitialized(true);
+      }
     };
+  
+    fetchFromSession();
+  
+    // Listen for session updates
+    const handleSessionUpdate = () => {
+      fetchFromSession();
+    };
+    window.addEventListener("sessionUpdated", handleSessionUpdate);
+  
+    return () => {
+      window.removeEventListener("sessionUpdated", handleSessionUpdate);
+    };
+  }, []);
+  
+  
+
+  // calculate the item total amount
+  const calculateAmount = (row) => {
+      // Convert all relevant fields to numbers
+      const basePrice = parseFloat(row.price) || 0;
+      const quantity = parseInt(row.quantity, 10) || 0; // Changed to `qty`
+    
+      return basePrice * quantity;
+  };
 
 
   const handleChange = (rowId, e) => {
@@ -82,7 +122,7 @@ const AdditionalItemtable = (props) => {
     //   )
     // )
 
-
+    console.log("rowID", rowId);
     // for testing
     setAdditionalTest(
       additionalTest.map((row) => 

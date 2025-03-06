@@ -36,7 +36,7 @@ const QoutationTableEditable = (props) => {
 
     // activating getting sessionStorage and set to product details state
     useEffect(() => {
-        const fetchFromSession = () => {
+        const fetchFromSession = () => { 
           const proposalDetails = sessionStorage.getItem('proposalDetails');
       
           if (proposalDetails) {
@@ -150,7 +150,7 @@ const QoutationTableEditable = (props) => {
     
 
     // save and edit row
-    const toggleSaveAndEdit = (id) => {
+    const toggleSaveAndEdit = (id) =>  {
         const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
     
         if (checkProduct) {
@@ -180,8 +180,6 @@ const QoutationTableEditable = (props) => {
             proposal_item_id: data.proposal_item_id || 0,
             sku: data.sku,
         }));
-
-        console.log("updated data", updatedQuotationItems);
     
         // Only update quotation items if there are actual changes
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
@@ -285,7 +283,7 @@ const QoutationTableEditable = (props) => {
                        { !screenMobile() && <th>Unit</th> }
                         <th>Markup price</th>
                         <th>Price</th>
-                        <th>Total</th>
+                        <th>Markup price</th>
                         <th></th>
                     </tr>
                 </thead>
