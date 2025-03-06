@@ -19,7 +19,7 @@ const Quotations = () => {
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
-    const { additionalItemsByProposalId } = useSelector(state => state.additionalItems);
+
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
     
