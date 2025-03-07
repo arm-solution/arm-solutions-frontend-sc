@@ -122,7 +122,6 @@ const AdditionalItemtable = (props) => {
     //   )
     // )
 
-    console.log("rowID", rowId);
     // for testing
     setAdditionalTest(
       additionalTest.map((row) => 
@@ -170,6 +169,9 @@ const AdditionalItemtable = (props) => {
 
 
     setAdditionalTest(updatedItemsTest);
+
+    console.log("pre", checkPreValue);
+    console.log("additional", additionalTest);
   
     if(JSON.stringify(checkPreValue) !== JSON.stringify(additionalTest)) {  
       // Use the computed value instead of row.item_total
@@ -177,7 +179,6 @@ const AdditionalItemtable = (props) => {
       // props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
     } 
 
-    console.log("additional test", additionalTest);
   };
   
 
