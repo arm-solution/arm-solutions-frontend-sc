@@ -3,6 +3,7 @@ import './AdditionalItems.css'
 import { deleteAdditionalById } from '../../store/features/additional.Slice';
 import { useDispatch } from 'react-redux';
 import { deleteConfirmation } from '../../customs/global/alertDialog';
+import { isEqual } from "lodash";
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
@@ -15,12 +16,6 @@ const AdditionalItemtable = (props) => {
   const prevAddidionalRef = useRef(additionalTest);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if(!initialized) {
-
-    }
-  }, [initialized, additionalTest])
   
   
   const handleAddRow = () => {
@@ -53,6 +48,7 @@ const AdditionalItemtable = (props) => {
         }));
   
         setAdditionalTest(updatedItems);
+        props.additionalState.setAddtionalItems(updatedItems); 
   
         // Determine the next rowId based on the highest existing rowId
         const maxId = Math.max(...updatedItems.map((item) => item.rowId), 0);
@@ -116,11 +112,11 @@ const AdditionalItemtable = (props) => {
   
   
   const handleEdit = (rowId) => {
-    // setCheckPreValue(
-    //   props.additionalState.addtionalItems.map((row) =>
-    //     row.rowId === rowId ? { ...row, isEditing: true } : row
-    //   )
-    // )
+    setCheckPreValue(
+      props.additionalState.addtionalItems.map((row) =>
+        row.rowId === rowId ? { ...row, isEditing: true } : row
+      )
+    )
 
     // for testing
     setAdditionalTest(
@@ -131,6 +127,10 @@ const AdditionalItemtable = (props) => {
     // end
   };
 
+  const deepEqual = (obj1, obj2) => {
+    return JSON.stringify(obj1, Object.keys(obj1).sort()) === JSON.stringify(obj2, Object.keys(obj2).sort());
+  }
+
 
   const handleSave = (rowId) => {
 
@@ -139,10 +139,10 @@ const AdditionalItemtable = (props) => {
 
     if (!rowTest) return;
 
-    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
-      alert("All fields are required");
-      return; 
-    }
+    // if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
+    //   alert("All fields are required");
+    //   return; 
+    // }
 
     let prevTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0);
@@ -165,18 +165,13 @@ const AdditionalItemtable = (props) => {
         : item
     );
 
-    // end
-
-
     setAdditionalTest(updatedItemsTest);
 
     console.log("pre", checkPreValue);
     console.log("additional", additionalTest);
   
-    if(JSON.stringify(checkPreValue) !== JSON.stringify(additionalTest)) {  
-      // Use the computed value instead of row.item_total
-      // props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
-      // props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
+    if(JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {  
+      props.additionalState.setAddtionalItems(updatedItemsTest);
     } 
 
   };
