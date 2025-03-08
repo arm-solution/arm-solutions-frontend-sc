@@ -103,7 +103,7 @@ label {
   border-color: #adb5bd;
 }
 
-.form-control:focus {
+.form-control:focus {  
   outline: none;
   background-color: #e2e6ea;
   border-color: #495057;
