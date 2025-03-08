@@ -22,6 +22,16 @@ export const postAdditionalItems = createAsyncThunk('postAdditionalItem', async(
     }
 })
 
+export const deleteAdditionalById = createAsyncThunk('deleteAdditionalById', async(id, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-item/delete-additional-item-by-id/${id}`);
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 
 const additionalSlice = createSlice({
     name: 'additionalItems',
@@ -29,6 +39,7 @@ const additionalSlice = createSlice({
         allAdditionalItems: [],
         additionalItemsByProposalId: [],
         postAdditionalItemResponse: [],
+        deleteAdditionalByIdRes: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -65,6 +76,22 @@ const additionalSlice = createSlice({
             state.isSuccess = false;
 
             state.message = 'Error: Posting the additional items please check api response';
+        })
+    
+        .addCase(deleteAdditionalById.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(deleteAdditionalById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.deleteAdditionalByIdRes = action.payload; 
+        })
+        .addCase(deleteAdditionalById.rejected, (state, _) => {
+            state.loading = false;
+            state.isSuccess = false;
+
+            state.message = 'Error: Failed to delete the data';
         })
     
     }

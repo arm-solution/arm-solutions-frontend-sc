@@ -36,6 +36,8 @@ const QoutationForm = (props) => {
         type: ''
     });
  
+    const [qoutationItem, setQoutationItem] = useState([]);
+    
     //  state for the form
     const [quotation, setQuotation] = useState({
         client_id: 0,
@@ -49,7 +51,7 @@ const QoutationForm = (props) => {
         contact_person: ''
     });
 
-    const [qoutationItem, setQoutationItem] = useState([]);
+    
     
     const dispatch = useDispatch();
 
@@ -262,9 +264,10 @@ const QoutationForm = (props) => {
                 
                 const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
                     ...rest,
-                    total: item_total,
+                    item_total: item_total,
                     proposal_id: parseInt(lastid), 
                 }));
+
 
                 setQoutationItem(updatedQoutationItems);
 

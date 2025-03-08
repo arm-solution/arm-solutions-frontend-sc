@@ -1,14 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './AdditionalItems.css'
+import { deleteAdditionalById } from '../../store/features/additional.Slice';
+import { useDispatch } from 'react-redux';
+import { deleteConfirmation } from '../../customs/global/alertDialog';
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
+    const [initialized, setInitialized] = useState(false); // To prevent reinitializing rows on each render
 
   const [checkPreValue, setCheckPreValue] = useState([]);
 
+  const [additionalTest, setAdditionalTest] = useState([])
+  
+  const prevAddidionalRef = useRef(additionalTest);
+
+  const dispatch = useDispatch();
+  
+  
   const handleAddRow = () => {
     const newRow = {
-      rowId: nextRowId,
+      rowId: nextRowId, // Keep auto-incrementing for new rows
       title: "",
       quantity: 0,
       item_total: 0,
@@ -17,41 +28,78 @@ const AdditionalItemtable = (props) => {
       proposal_id: 0,
       isEditing: true,
     };
-
-    props.additionalState.setAddtionalItems([
-      ...props.additionalState.addtionalItems,
-      newRow,
-    ]);
+  
+    setAdditionalTest([...additionalTest, newRow]);
     setNextRowId(nextRowId + 1);
   };
+  
+  useEffect(() => {
+    const fetchFromSession = () => {
+      const proposalDetails = sessionStorage.getItem("proposalDetails");
+  
+      if (proposalDetails && !initialized) {
+        const { additionalItems } = JSON.parse(proposalDetails);
+  
+        // Ensure database items use their ID as rowId
+        const updatedItems = additionalItems.map((item) => ({
+          ...item,
+          rowId: item.id, // Replace rowId with actual database ID
+        }));
+  
+        setAdditionalTest(updatedItems);
+        props.additionalState.setAddtionalItems(updatedItems); 
+  
+        // Determine the next rowId based on the highest existing rowId
+        const maxId = Math.max(...updatedItems.map((item) => item.rowId), 0);
+        setNextRowId(maxId + 1);
+  
+        setInitialized(true);
+      }
+    };
+  
+    fetchFromSession();
+  
+    // Listen for session updates
+    const handleSessionUpdate = () => {
+      fetchFromSession();
+    };
+    window.addEventListener("sessionUpdated", handleSessionUpdate);
+  
+    return () => {
+      window.removeEventListener("sessionUpdated", handleSessionUpdate);
+    };
+  }, []);
+  
+  
+
+  // calculate the item total amount
+  const calculateAmount = (row) => {
+      // Convert all relevant fields to numbers
+      const basePrice = parseFloat(row.price) || 0;
+      const quantity = parseInt(row.quantity, 10) || 0; // Changed to `qty`
+    
+      return basePrice * quantity;
+  };
+
 
   const handleChange = (rowId, e) => {
     const { name, value } = e.target;
+
+    setAdditionalTest(prevDetails => {
+        return prevDetails.map(row => {
+            if (row.rowId !== rowId) return row;
+
+            const updatedRow = { ...row, [name]: value };
+
+            if (updatedRow.unit === "person") {
+                return { ...updatedRow, item_total: parseInt(updatedRow.item_total, 10) || 0 };
+            }
+
+            return { ...updatedRow, item_total: calculateAmount({ ...row, [name]: value }) };
+        });
+    });
+};
   
-    props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((row) => {
-        if (row.rowId !== rowId) return row;
-  
-        const updatedRow = { ...row, [name]: value };
-  
-        // ✅ If the field being changed is "unit" and it's "person", retain the current item_total
-        if (name === "unit" && value === "person") {
-          return updatedRow; // Keep existing item_total
-        }
-  
-        // ✅ If unit is "person", do not overwrite item_total (allow manual input)
-        if (updatedRow.unit === "person") {
-          return updatedRow;
-        }
-  
-        // ✅ Otherwise, compute item_total automatically
-        return {
-          ...updatedRow,
-          item_total: props.actions.calculateTaxDiscount(updatedRow),
-        };
-      })
-    );
-  };
   
   const handleEdit = (rowId) => {
     setCheckPreValue(
@@ -60,50 +108,68 @@ const AdditionalItemtable = (props) => {
       )
     )
 
-    props.additionalState.setAddtionalItems(
-      props.additionalState.addtionalItems.map((row) =>
+    // for testing
+    setAdditionalTest(
+      additionalTest.map((row) => 
         row.rowId === rowId ? { ...row, isEditing: true } : row
       )
-    );
+    )
+    // end
   };
+
+  // const deepEqual = (obj1, obj2) => {
+  //   return JSON.stringify(obj1, Object.keys(obj1).sort()) === JSON.stringify(obj2, Object.keys(obj2).sort());
+  // }
 
 
   const handleSave = (rowId) => {
-    const row = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
-    if (!row) return;
 
-    if(row.title === "" || row.quantity <= 0 || row.unit === "" || row.quantity <= 0) {
+    // for testing
+    const rowTest = additionalTest.find((row) => row.rowId === rowId);
+
+    if (!rowTest) return;
+
+    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
       alert("All fields are required");
-      return;
+      return; 
+    }
+    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
+      alert("All fields are required");
+      return; 
     }
 
-  
-    // Ensure values are valid numbers
-    const quantity = parseFloat(row.quantity) || 0;
-    const price = parseFloat(row.price) || 0;
-  
-    // Compute the new total
-    const newTotalItem = row.unit === "person" ? row.item_total : quantity * price;
-  
+    let prevTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
+
+    const diff = newTotal - prevTotal;
+
+    console.log("pre", prevTotal)
+    console.log("newtotal", newTotal);
+    console.log("diff", diff)
+
+    props.totalAmountref.setTotalAmountref(pre => pre + diff);
+    props.setTotalAmount(pre => pre + diff);
+
     // Update the row
-    const updatedItems = props.additionalState.addtionalItems.map((item) =>
+    prevAddidionalRef.current = [...additionalTest];
+
+    const updatedItemsTest = additionalTest.map((item) =>
       item.rowId === rowId
         ? { 
             ...item, 
-            item_total: newTotalItem, // Ensure item_total is updated
             isEditing: false, 
             isSaved: true 
           }
         : item
     );
+
+    setAdditionalTest(updatedItemsTest);
+
+    console.log("pre", checkPreValue);
+    console.log("additional", additionalTest);
   
-    // Update the state
-    props.additionalState.setAddtionalItems(updatedItems);
-  
-    if(JSON.stringify(checkPreValue) !== JSON.stringify(props.additionalState.addtionalItems)) {  
-      // Use the computed value instead of row.item_total
-      props.setTotalAmount((prev) => parseFloat(prev) + newTotalItem);
-      props.totalAmountref.setTotalAmountref((prev) => parseFloat(prev) + newTotalItem);
+    if(JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {  
+      props.additionalState.setAddtionalItems(updatedItemsTest);
     } 
 
   };
@@ -111,34 +177,42 @@ const AdditionalItemtable = (props) => {
 
 const handleDelete = (rowId, row) => {
     
-    let updateData;
+        deleteConfirmation({
+            title: "",
+            text: "",
+            icon: "",
+            confirmButtonText: "",
+            cancelButtonText: "",
+            deleteTitle: "",
+            deleteText: "",
+            successTitle: "", 
+            successText: ""
+        }, async () => {
     
-    // if row id exist it means the data is from the mysql database
-    if(row.id) {
-      // execute delete dispatch
-    } else {
-      updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
-    }
+          let updateData;
+    
+          // if row id exist it means the data is from the mysql database
+          if(row.id) {
+            const { payload } = await dispatch(deleteAdditionalById(row.id));
 
-    if(updateData) {
-      props.additionalState.setAddtionalItems(updateData);
-      // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
-      props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
-      props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
-    }
+            if(payload.success) {
+              updateData = props.additionalState.addtionalItems.filter(row => row.id !== rowId)
+            }
+          } else {
+             updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
+          }
+      
+          if(updateData) {
+            props.additionalState.setAddtionalItems(updateData);
+            // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
+            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
+            props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
+
+            return true; 
+          }
+      });
 
   };
-
-
-  const checkData = () => {
-    const additionalFinel = props.additionalState.addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
-      ...rest,
-      total: item_total,
-      proposal_id: parseInt(0), 
-    }));
-
-    console.log("data", additionalFinel)
-  }
 
   return (
     <div className="container mt-4">
@@ -155,7 +229,7 @@ const handleDelete = (rowId, row) => {
         </tr>
       </thead>
       <tbody>
-        {props.additionalState.addtionalItems.map((row, index) => (
+        {additionalTest.map((row, index) => (
           <tr key={index}>
             <td>
               <input
@@ -228,7 +302,6 @@ const handleDelete = (rowId, row) => {
       </tbody>
     </table>
     <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
-    <button onClick={checkData}>CheckData</button>
   </div>
   )
 }
