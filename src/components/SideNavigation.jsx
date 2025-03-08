@@ -175,13 +175,19 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             <span>Account Setting</span>
                         </Link>
                     </li>
+                    <li className="sidebar-item">
+                        <Link className="sidebar-link" onClick={handleLogout}>
+                            <i className="lni lni-exit"></i>
+                            <span>Logout</span>
+                        </Link>
+                    </li>
                 </ul>
-                <div className="sidebar-footer">
+                {/* <div className="sidebar-footer">
                     <Link className="sidebar-link" onClick={handleLogout}>
                         <i className="lni lni-exit"></i>
                         <span>Logout</span>
                     </Link>
-                </div>
+                </div> */}
             </aside>
         </>
     );

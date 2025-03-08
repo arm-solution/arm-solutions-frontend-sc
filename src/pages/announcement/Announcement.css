@@ -1,0 +1,88 @@
+body {
+    background: #f8f9fa;
+  }
+  
+  .company-announcement-title {
+    font-size: 2.5rem;
+    color: #841a21;
+    font-weight: bold;
+  }
+  
+  .featured-announcement {
+    border: 2px solid #841a21;
+    transition: transform 0.2s;
+  }
+  
+  .featured-announcement:hover {
+    transform: scale(1.02);
+  }
+  
+  .card {
+    border: 1px solid #ddd;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .card-text {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .btn-danger {
+    background-color: #841a21;
+    border-color: #841a21;
+  }
+  
+  .btn-danger:hover {
+    background-color: #a92c2c;
+    border-color: #a92c2c;
+  }
+  
+  /* TextOverlay.css */
+.overlay-container {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Ensures overlay doesn't spill out */
+}
+
+.overlay-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay with 50% opacity */
+  z-index: 1; /* Ensures the overlay is behind the text */
+}
+
+.text-overlay {
+  position: relative; /* Ensures text is above the overlay */
+  font-size: 3rem;
+  color: white;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  z-index: 2; /* Ensures text is above the overlay */
+}
+.card {
+  /* Ensure the card does not exceed its parent container */
+  margin: auto;
+  max-width: 80%;
+  /* max-width: 100%; */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: wrap; /* Prevent text wrapping */
+}

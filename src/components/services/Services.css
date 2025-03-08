@@ -22,4 +22,13 @@
 .car-services .carousel-control-next span {
     width: 1.5rem;
     height: 1.5rem;
-  }
+}
+
+.card {
+  /* Ensure the card does not exceed its parent container */
+  margin: auto;
+  /* max-width: 80%; */
+  max-width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: wrap; /* Prevent text wrapping */
+}

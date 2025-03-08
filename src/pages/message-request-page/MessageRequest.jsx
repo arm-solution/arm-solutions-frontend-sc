@@ -6,12 +6,20 @@ import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import InquiryDetails from '../../components/modals-forms/inquiries-modal/Inquire';
 import { getAllMessageRequest, deleteMessageRequest } from '../../store/features/messageRequestSlice';
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
+import MessageRequestDetails from '../../components/modals-forms/message-request-modal/MessageRequestDetails';
 
 const MessageRequest = () => {
 
     const modalRef = useRef(null);
     const dispatch = useDispatch();
 
+      
+    const [selectedMessageRequest, setSelectedMessageRequest] = useState({
+      Email: '',
+      Message: '',
+      date_created: ''
+    });
+    
     const { data: allMessageRequest, loading: messageRequestLoading } = useSelector(state => state.messageRequest);
 
     useEffect(() => {
@@ -20,10 +28,16 @@ const MessageRequest = () => {
     
     const columns = [
         { header: 'Email', accessor: 'email' },
+        { header: 'Message', accessor: 'message' },
         { header: 'Date', accessor: 'DATE_FORMAT(date_created, \"%M %d, %Y\")' },
       ];
 
-      const handleView = (id) => {}
+      const handleView = (career) => {
+        const modalElement = modalRef.current;
+        const modal = new Modal(modalElement);
+        setSelectedMessageRequest(career);
+        modal.show();
+      }
 
       const handleDelete = (id) => {
         // console.log(id);
@@ -82,7 +96,11 @@ const MessageRequest = () => {
           headerColor='table-primary'
         />
 
-        <InquiryDetails modalRef={modalRef}/>
+        <MessageRequestDetails
+        modalRef={modalRef}
+        selectedMessageRequest={selectedMessageRequest}
+        setSelectedMessageRequest={setSelectedMessageRequest}
+        />
     </div>
     </>
   )

@@ -87,7 +87,7 @@ const Analytics = () => {
       <div className="row mt-5">
         {/* Column for Top 3 Ongoing Projects */}
         <div className="col-md-4">
-          <div className="card p-3 bg-light">
+          <div className="card p-3 bg-light" style={{"max-width" : "100%"}}>
             <h5>Top 3 Ongoing Projects</h5>
             <ul>
               <li className="mt-4">
@@ -120,7 +120,7 @@ const Analytics = () => {
 
         {/* Column for Project Completion Graph */}
         <div className="col-md-8">
-          <div className="card p-3 bg-light">
+          <div className="card p-3 bg-light" style={{"max-width" : "100%"}}>
             <h5>Project Completion Graph</h5>
             <div className="graph-container mt-4">
               <div className="graph">
