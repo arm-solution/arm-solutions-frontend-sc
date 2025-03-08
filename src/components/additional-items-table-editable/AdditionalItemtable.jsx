@@ -84,31 +84,22 @@ const AdditionalItemtable = (props) => {
 
 
   const handleChange = (rowId, e) => {
-      const { name, value } = e.target;
-  
-      // Update the field first
-      setAdditionalTest(prevDetails => {
-          return prevDetails.map(row => {
-              if (row.rowId !== rowId) return row;
-  
-              const updatedRow = {
-                  ...row,
-                  [name]: value
-              };
-  
-              // ✅ If unit is "person", do not overwrite item_total (allow manual input)
-              if (updatedRow.unit === "person") {
-                  return updatedRow;
-              }
-  
-              // ✅ Otherwise, compute item_total automatically
-              return {
-                  ...updatedRow,
-                  item_total: calculateAmount({ ...row, [name]: value })
-              };
-          });
-      });
-  };
+    const { name, value } = e.target;
+
+    setAdditionalTest(prevDetails => {
+        return prevDetails.map(row => {
+            if (row.rowId !== rowId) return row;
+
+            const updatedRow = { ...row, [name]: value };
+
+            if (updatedRow.unit === "person") {
+                return { ...updatedRow, item_total: parseInt(updatedRow.item_total, 10) || 0 };
+            }
+
+            return { ...updatedRow, item_total: calculateAmount({ ...row, [name]: value }) };
+        });
+    });
+};
   
   
   const handleEdit = (rowId) => {
@@ -139,15 +130,19 @@ const AdditionalItemtable = (props) => {
 
     if (!rowTest) return;
 
-    // if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
-    //   alert("All fields are required");
-    //   return; 
-    // }
+    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
+      alert("All fields are required");
+      return; 
+    }
 
     let prevTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0);
 
     const diff = newTotal - prevTotal;
+
+    console.log("pre", prevTotal)
+    console.log("newtotal", newTotal);
+    console.log("diff", diff)
 
     props.totalAmountref.setTotalAmountref(pre => pre + diff);
     props.setTotalAmount(pre => pre + diff);

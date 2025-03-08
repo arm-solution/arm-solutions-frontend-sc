@@ -264,9 +264,10 @@ const QoutationForm = (props) => {
                 
                 const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
                     ...rest,
-                    total: item_total,
-                    proposal_id: parseInt(lastid), 
+                    item_total: item_total,
+                    proposal_id: parseInt(1), 
                 }));
+
 
                 setQoutationItem(updatedQoutationItems);
 
