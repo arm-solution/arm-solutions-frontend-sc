@@ -431,15 +431,15 @@ const QoutationForm = (props) => {
 
                     { parseInt(totalAmountref) > 0 && (
                         <>
-                        <TaxDiscountTable
-                            type="tax"
-                            totalAmount={totalAmount}
-                            setTotalAmount={setTotalAmount}
-                            taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
-                            totalAmountref={totalAmountref}
-                            mergeDiscountTax={[...tax, ...discount]}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                        />
+                            <TaxDiscountTable
+                                type="tax"
+                                totalAmount={totalAmount}
+                                setTotalAmount={setTotalAmount}
+                                taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
+                                totalAmountref={totalAmountref}
+                                mergeDiscountTax={[...tax, ...discount]}
+                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                            />
 
                             <TaxDiscountTable
                                 type="discount"

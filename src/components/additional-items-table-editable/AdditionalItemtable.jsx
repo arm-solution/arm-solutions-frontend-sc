@@ -160,9 +160,6 @@ const AdditionalItemtable = (props) => {
     );
 
     setAdditionalTest(updatedItemsTest);
-
-    console.log("pre", checkPreValue);
-    console.log("additional", additionalTest);
   
     if(JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {  
       props.additionalState.setAddtionalItems(updatedItemsTest);
@@ -192,14 +189,14 @@ const handleDelete = (rowId, row) => {
             const { payload } = await dispatch(deleteAdditionalById(row.id));
 
             if(payload.success) {
-              updateData = props.additionalState.addtionalItems.filter(row => row.id !== rowId)
+              updateData = additionalTest.filter(row => row.id !== rowId);
             }
           } else {
-             updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
+             updateData = additionalTest.filter(row => row.rowId !== rowId);
           }
       
           if(updateData) {
-            props.additionalState.setAddtionalItems(updateData);
+            setAdditionalTest(updateData);
             // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
             props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
             // props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
