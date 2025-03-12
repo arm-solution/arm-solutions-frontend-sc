@@ -143,11 +143,7 @@ const AdditionalItemtable = (props) => {
 
     const diff = newTotal - prevTotal;
 
-    console.log("pre", prevTotal)
-    console.log("newtotal", newTotal);
-    console.log("diff", diff)
-
-    props.totalAmountref.setTotalAmountref(pre => pre + diff);
+    // props.totalAmountref.setTotalAmountref(pre => pre + diff);
     props.setTotalAmount(pre => pre + diff);
 
     // Update the row
@@ -206,7 +202,7 @@ const handleDelete = (rowId, row) => {
             props.additionalState.setAddtionalItems(updateData);
             // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
             props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
-            props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
+            // props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
 
             return true; 
           }

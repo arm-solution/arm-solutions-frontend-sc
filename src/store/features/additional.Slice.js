@@ -32,6 +32,17 @@ export const deleteAdditionalById = createAsyncThunk('deleteAdditionalById', asy
     }
 })
 
+// this is not initialize on the inital state for direct getting the payload
+export const updateMultipleAdditionalItems = createAsyncThunk('updateMultipleAdditionalItems', async(_, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-item/update-multiple-additiona-items `);
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 
 const additionalSlice = createSlice({
     name: 'additionalItems',

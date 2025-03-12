@@ -5,7 +5,7 @@ import QoutationTableEditable from '../../quotation-table-editable/QuotationTabl
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
+import { getCurrentDate, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
@@ -17,7 +17,7 @@ import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
-import { postAdditionalItems } from '../../../store/features/additional.Slice';
+import { postAdditionalItems, updateMultipleAdditionalItems, getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -320,8 +320,13 @@ const QoutationForm = (props) => {
         let addEditItem = qoutationItem.filter(item2 =>
             !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
         );
+
+        const updatedAdditionalItems = addtionalItems.map(({rowId, isSaved, isEditing, ...rest}) => ({...rest, proposal_id: quotation.id}))
          
+
+        // console.log("additional data", updatedAdditionalItems);
         const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
+
         const proposalFinal = {
             ...dataReshapeItems,
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
@@ -346,8 +351,15 @@ const QoutationForm = (props) => {
         if(addEditItem.length > 0) {
                 // dispatch update the items 
                 await dispatch(updateProposalItems(itemsWithProId));
+
                 //  refreshing the table to get the new ID from the database
                 await dispatch(getProposalItemsByProposalId(quotation.id));
+                
+                // update additional items
+                await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+
+                //  refreshing the table to get the new ID from the database
+                await dispatch(getAdditionalByProposalID(quotation.id));
                 setQoutationItem([]);
                 status = true;
         }
@@ -364,6 +376,7 @@ const QoutationForm = (props) => {
         
     }
 
+    //  open pdf file on new tab
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
             quotation: props.proposalEdit,
@@ -416,7 +429,7 @@ const QoutationForm = (props) => {
                     </div>
 
 
-                    {parseInt(totalAmount) > 0 && (
+                    { parseInt(totalAmountref) > 0 && (
                         <>
                         <TaxDiscountTable
                             type="tax"
