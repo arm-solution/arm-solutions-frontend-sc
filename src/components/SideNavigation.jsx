@@ -146,7 +146,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     </li>
 
                     <li className="sidebar-item">
-                        <Link to='employees' className="sidebar-link">
+                        <Link to='employeeList' className="sidebar-link">
                             <i className="lni lni-list"></i>
                             <span>Employees</span>
                         </Link>
