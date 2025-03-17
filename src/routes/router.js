@@ -37,8 +37,6 @@ const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
 const Careers = lazy(() => import('../pages/admin/careers/Career'));
 const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
-const WorkWithUsPage = lazy(() => import('../pages/workwithus/WorkWithUs') );
-// const Products = lazy(() => import('../pages/products/Products'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -87,7 +85,7 @@ export const router = createBrowserRouter(
       <Route element={<RequireAuth />}>
         <Route path="/admin" element={LazyComponent(AdminDashboard)}>
           <Route path="" element={LazyComponent(Analytics)} />
-          <Route path="employees" element={LazyComponent(EmployeeHomePage)} />
+          <Route path="employeeList" element={LazyComponent(EmployeeList)} />
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
           {CommonRoutes()}
