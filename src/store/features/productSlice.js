@@ -16,14 +16,34 @@ export const addNewProduct = createAsyncThunk('addNewProduct', async (product, {
 })
 
 
-export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
+export const deleteProduct = createAsyncThunk('deleteProduct', async(id, {rejectWithValue}) => {
     try {
-        const response = await axios.get('http://localhost:5000/products/get-products');
-        return [...response.data]
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/products/delete/${id}`);
+
+        return data;
     } catch (error) {
-        return error.message;
+        return rejectWithValue(error.response.data);
     }
 })
+
+
+// export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
+//     try {
+//         const response = await axios.get('http://localhost:5000/products/get-products');
+//         return [...response.data]
+//     } catch (error) {
+//         return error.message;
+//     }
+// })
+export const getAllProducts = createAsyncThunk('getAllProducts', async (_, {rejectWithValue}) => {
+
+    try {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
 
 const productSlice = createSlice({
     name: 'products',
