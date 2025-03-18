@@ -86,7 +86,7 @@ const Login = () => {
         message: 'An unexpected error occurred',
       });
     }
-  };
+  }
   
 
   return (
