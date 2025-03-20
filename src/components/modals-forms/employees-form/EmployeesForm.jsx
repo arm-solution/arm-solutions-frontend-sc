@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './EmployeesForm.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUser, updateUser } from '../../../store/features/userSlice';
+import { addUser, updateUser, getUser } from '../../../store/features/userSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
@@ -159,6 +159,7 @@ const EmployeesForm = (props) => {
      } else {
           if(payload.success) {
             successDialog('New Employee is added');
+            dispatch(getUser());
           } else {
             errorDialog('Failed to add new employee');
           }

@@ -2,18 +2,14 @@ import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 
-export const addNewProduct = createAsyncThunk('addNewProduct', async (product, {rejectWithValue}) => {
-    
+export const addNewProduct = createAsyncThunk('addNewProduct', async (product, { rejectWithValue }) => {
     try {
-
-        const res = axios.post('http://localhost:5000/products/save-product', product);
+        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/add-product`, product);
         return res.data;
-
     } catch (error) {
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response ? error.response.data : error.message);
     }
-    
-})
+});
 
 
 export const deleteProduct = createAsyncThunk('deleteProduct', async(id, {rejectWithValue}) => {
@@ -26,6 +22,14 @@ export const deleteProduct = createAsyncThunk('deleteProduct', async(id, {reject
     }
 })
 
+export const updateProduct = createAsyncThunk('updateProduct', async (product, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/products/update-product`, product);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
 
 // export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
 //     try {

@@ -72,12 +72,13 @@ const EmployeesList = () => {
     setSelectedUser(null);
     modal.show();
   }
-
+  console.log(userData);
   return (
     <>
       <h1 className='text-center'>EMPLOYEES</h1>
         <DataTable
-          data={Array.isArray(userData) ? userData : []} // Ensure data is an array
+          data={userData} // Ensure data is an array
+          // data={Array.isArray(userData) ? userData : []} // Ensure data is an array
           columns={columns}
           actions={{ handleView, handleDelete }}
           perPage={10}

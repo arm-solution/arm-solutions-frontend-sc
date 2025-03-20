@@ -7,16 +7,18 @@ import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import productSlice, { getAllProducts, deleteProduct } from '../../../store/features/productSlice';
 import { currencyFormat } from '../../../customs/global/currency'
+import ProductsFormModal from '../../../components/modals-forms/products-form/ProductFormModal';
 
 const Client = () => {
   const modalRef = useRef(null);
   const dispatch = useDispatch();
  
-  const [selectedClient, setSelectedClient] = useState({
+  const [selectedProduct, setSelectedProduct] = useState({
     name: '',
-    address: '',
-    contact_number: '',
-    email: ''
+    description: '',
+    sku: '',
+    base_price: '',
+    category_id: ''
   })
 
   const { data: allProducts, loading: productLoading } = useSelector(state => state.products);
@@ -35,7 +37,11 @@ const Client = () => {
   ]
 
   const handleView = (product) => {
-    
+    // alert(product.id);
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedProduct(product);
+      modal.show();
   }
 
   const handleDelete = (id) => {
@@ -64,6 +70,20 @@ const Client = () => {
   }
 
 
+    const addProductModal = () => {
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedProduct({
+        name: '',
+        description: '',
+        sku: '',
+        base_price: '',
+        category_id: ''
+      });
+      modal.show();
+    }
+
+
   return (
     <>
     {/* Navbar-style header */}
@@ -79,14 +99,14 @@ const Client = () => {
           showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
           deleteAccess={true}
           tableLabel='Products List'
-          // addData={ addClientModal }
+          addData={ addProductModal }
         />
 
-        {/* <ClientDetails
+        <ProductsFormModal
         modalRef={modalRef}
-        selectedClient={selectedClient}
-        setSelectedClient={setSelectedClient}
-        /> */}
+        selectedProduct={selectedProduct}
+        setSelectedProduct={setSelectedProduct}
+        />
     </>
   )
 }

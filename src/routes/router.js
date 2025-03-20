@@ -18,7 +18,7 @@ const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
 const PaySlipPage = lazy(() => import("../pages/employee/pay-slip-page/PaySlipPage"));
 const AttendancePage = lazy(() => import('../pages/employee/attendance-page/AttendancePage'));
 const UserProfilePage = lazy(() => import('../pages/common-pages/user-profile-page/UserProfilePage'));
-const Services = lazy(() => import('../pages/common-pages/services-page/Services'));
+// const Services = lazy(() => import('../pages/common-pages/services-page/Services'));
 const Products = lazy(() => import('../pages/common-pages/products-page/Products'));
 const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/MarketingDashboard'));
 const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet'));
@@ -37,6 +37,9 @@ const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
 const Careers = lazy(() => import('../pages/admin/careers/Career'));
 const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
+const WorkWithUsPage = lazy(() => import('../pages/workwithus/WorkWithUs'));
+const EmployeeList = lazy(() => import('../pages/admin/employeeList-page/EmplyeesList'));
+const Services = lazy(() => import('../pages/services/Services'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
