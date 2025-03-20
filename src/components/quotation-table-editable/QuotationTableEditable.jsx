@@ -151,33 +151,30 @@ const QoutationTableEditable = (props) => {
 
     const toggleSaveAndEdit = (id) => {
         const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-        
         if (checkProduct) {
             errorDialog("All Fields Are Required");
             return;
         }
     
-        // 🔄 Update both `setProductItemDetails` and `setQoutationItem`
         const updatedDetails = productItemDetails.map(data => ({
             ...data,
-            amount: parseInt(data.qty) * parseInt(data.base_price) // ✅ Ensure amount is correctly calculated
+            amount: parseInt(data.qty) * parseInt(data.base_price)
         }));
     
-        // ✅ First, update the state with the new product details
         setProductItemDetails(updatedDetails);
     
-        // ✅ Use the updated details instead of old productItemDetails
-        const newTotal = updatedDetails.reduce((sum, item) => sum + item.amount, 0);
-        const previousTotal = prevItemsRef.current.reduce((sum, item) => sum + item.amount, 0) || 0;
+        // ✅ Preserve previous total correctly
+        const prevTable2Total = prevItemsRef.current.reduce((sum, item) => sum + item.amount, 0) || 0;
+        const newTable2Total = updatedDetails.reduce((sum, item) => sum + item.amount, 0) || 0;
+        
+        // why table 2 because the table 1 is the additional table which is sharing for total amount
+        const table2Diff = newTable2Total - prevTable2Total;
     
-        // ✅ Calculate the difference
-        const difference = newTotal - previousTotal;
+        // ✅ Accumulate the total across both tables
+        props.totalAmount.setTotalAmount(prev => prev + table2Diff);
+        props.setTotalAmountref(prev => prev + table2Diff);
     
-        // ✅ Incrementally update the total
-        props.totalAmount.setTotalAmount(prev => prev + difference);
-        props.setTotalAmountref(prev => prev + difference);
-    
-        // ✅ Now update prevItemsRef AFTER calculations
+        // ✅ Update prevItemsRef AFTER calculations
         prevItemsRef.current = [...updatedDetails];
     
         const updatedQuotationItems = updatedDetails.map(data => ({
@@ -187,21 +184,20 @@ const QoutationTableEditable = (props) => {
             price: parseInt(data.base_price),
             proposal_item_id: data.proposal_item_id || 0,
             sku: data.sku,
-            amount: data.amount // ✅ Sync amount properly
+            amount: data.amount
         }));
     
-        // ✅ Only update quotation items if there are actual changes
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
             props.setQoutationItem(updatedQuotationItems);
         }
     
-        // ✅ Toggle edit state for the specific row
         setProductItemDetails(prevDetails =>
             prevDetails.map(row =>
                 row.id === id ? { ...row, isEditing: !row.isEditing } : row
             )
         );
     };
+    
     
     
     

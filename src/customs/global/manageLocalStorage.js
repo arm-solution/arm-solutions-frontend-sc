@@ -10,7 +10,7 @@ export const checkAuthAndNavigate = (navigate) => {
       if (role === 'admin') {
         navigate('/admin');
       } else if (role === 'employee') {
-        navigate('/employee');
+        navigate('/employees');
       } else if (role === 'marketing') {
         navigate('/marketing');
       }

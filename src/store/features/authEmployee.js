@@ -54,7 +54,7 @@ const employeeAuthSlice = createSlice({
             state.loading = false;
             state.isSuccess = false;
 
-            state.message = 'Login failed';
+            state.message = `Login failed - ${message}`;
         })
     }
 
