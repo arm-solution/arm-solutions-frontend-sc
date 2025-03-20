@@ -123,49 +123,36 @@ const AdditionalItemtable = (props) => {
 
 
   const handleSave = (rowId) => {
-
-    // for testing
     const rowTest = additionalTest.find((row) => row.rowId === rowId);
-
     if (!rowTest) return;
 
-    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
-      alert("All fields are required");
-      return; 
-    }
-    if(rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "" || rowTest.quantity <= 0) {
-      alert("All fields are required");
-      return; 
+    if (rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "") {
+        alert("All fields are required");
+        return;
     }
 
-    let prevTotal = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
-    let newTotal = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    // ✅ Preserve previous total correctly
+    const prevTable1Total = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    const newTable1Total = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    const table1Diff = newTable1Total - prevTable1Total;
 
-    const diff = newTotal - prevTotal;
+    // ✅ Update the global total properly
+    props.setTotalAmount(prev => prev + table1Diff);
 
-    // props.totalAmountref.setTotalAmountref(pre => pre + diff);
-    props.setTotalAmount(pre => pre + diff);
-
-    // Update the row
+    // ✅ Update the reference AFTER calculations
     prevAddidionalRef.current = [...additionalTest];
 
     const updatedItemsTest = additionalTest.map((item) =>
-      item.rowId === rowId
-        ? { 
-            ...item, 
-            isEditing: false, 
-            isSaved: true 
-          }
-        : item
+        item.rowId === rowId ? { ...item, isEditing: false, isSaved: true } : item
     );
 
     setAdditionalTest(updatedItemsTest);
-  
-    if(JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {  
-      props.additionalState.setAddtionalItems(updatedItemsTest);
-    } 
 
-  };
+    if (JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {
+        props.additionalState.setAddtionalItems(updatedItemsTest);
+    }
+};
+
   
 
 const handleDelete = (rowId, row) => {

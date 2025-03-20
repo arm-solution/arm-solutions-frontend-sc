@@ -21,7 +21,7 @@ const EmployeesHomePage = () => {
   return (
     <div className="wrapper">
 
-    {/* <SideNavigation handleToggle={ () => setShowSideNav(!showSideNav) } isExpanded={showSideNav} showSideNav={showSideNav} /> */}
+    <SideNavigation handleToggle={ () => setShowSideNav(!showSideNav) } isExpanded={showSideNav} showSideNav={showSideNav} />
 
     <div className="main p-3">
     <MobileFirstNavigation handleToggle={ () => setShowSideNav(!showSideNav) } isExpanded={showSideNav} showSideNav={showSideNav}/>
