@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
 // import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
@@ -51,7 +51,9 @@ const QoutationForm = (props) => {
         contact_person: ''
     });
 
-    
+    // reference for both additional table and product table
+    const preAdditionalRef = useRef([]);
+    const preProductItemsRef = useRef([]);
     
     const dispatch = useDispatch();
 
@@ -194,7 +196,7 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount((parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
+          setTotalAmount(pre => (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
         }
 
       }, [calculateAllTaxDiscount, totalAmountref]);
@@ -414,6 +416,7 @@ const QoutationForm = (props) => {
                          additionalState={{ addtionalItems, setAddtionalItems }}
                          totalAmountref={{ totalAmountref, setTotalAmountref }}
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                         reference={{preAdditionalRef, preProductItemsRef}}
                     />
 
                     <div className="row table-editable">
@@ -425,6 +428,7 @@ const QoutationForm = (props) => {
                             setTotalAmountref={setTotalAmountref}
                             totalAmountref={totalAmountref}
                             actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                            reference={{preAdditionalRef, preProductItemsRef}}
                          />
                     </div>
 
