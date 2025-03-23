@@ -10,9 +10,7 @@ const AdditionalItemtable = (props) => {
 
   const [checkPreValue, setCheckPreValue] = useState([]);
 
-  const [additionalTest, setAdditionalTest] = useState([])
-  
-  const prevAddidionalRef = useRef(additionalTest);
+  const [additionalTest, setAdditionalTest] = useState([]);
 
   const dispatch = useDispatch();
   
@@ -121,27 +119,29 @@ const AdditionalItemtable = (props) => {
   //   return JSON.stringify(obj1, Object.keys(obj1).sort()) === JSON.stringify(obj2, Object.keys(obj2).sort());
   // }
 
-
   const handleSave = (rowId) => {
     const rowTest = additionalTest.find((row) => row.rowId === rowId);
     if (!rowTest) return;
 
-    if (rowTest.title === "" || rowTest.quantity <= 0 || rowTest.unit === "") {
+    if (!rowTest.title || rowTest.quantity <= 0 || !rowTest.unit) {
         alert("All fields are required");
         return;
     }
 
     // ✅ Preserve previous total correctly
-    const prevTable1Total = prevAddidionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    const prevTable1Total = props.reference.preAdditionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const newTable1Total = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const table1Diff = newTable1Total - prevTable1Total;
 
-    // ✅ Update the global total properly
-    props.setTotalAmount(prev => prev + table1Diff);
+    // ✅ Ensure it only adds positive values to avoid negatives
+    if (table1Diff > 0) {
+        props.setTotalAmount(prev => prev + table1Diff);
+    }
 
-    // ✅ Update the reference AFTER calculations
-    prevAddidionalRef.current = [...additionalTest];
+    // ✅ Update reference AFTER calculations
+    props.reference.preAdditionalRef.current = [...additionalTest];
 
+    // ✅ Update row state
     const updatedItemsTest = additionalTest.map((item) =>
         item.rowId === rowId ? { ...item, isEditing: false, isSaved: true } : item
     );
@@ -152,6 +152,7 @@ const AdditionalItemtable = (props) => {
         props.additionalState.setAddtionalItems(updatedItemsTest);
     }
 };
+
 
   
 

@@ -15,7 +15,6 @@ const QoutationTableEditable = (props) => {
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
-    const prevItemsRef = useRef(productItemDetails);
 
     const dispatch = useDispatch();
 
@@ -140,6 +139,7 @@ const QoutationTableEditable = (props) => {
             // Updating state and then calculating total amount
             if (updatedDetails) {
                 setProductItemDetails(updatedDetails);
+                props.reference.preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
                 props.totalAmount.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
                 props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
@@ -163,19 +163,22 @@ const QoutationTableEditable = (props) => {
     
         setProductItemDetails(updatedDetails);
     
-        // ✅ Preserve previous total correctly
-        const prevTable2Total = prevItemsRef.current.reduce((sum, item) => sum + item.amount, 0) || 0;
-        const newTable2Total = updatedDetails.reduce((sum, item) => sum + item.amount, 0) || 0;
-        
-        // why table 2 because the table 1 is the additional table which is sharing for total amount
-        const table2Diff = newTable2Total - prevTable2Total;
+        // ✅ Initialize reference if undefined
+        if (!props.reference.preProductItemsRef.current || !Array.isArray(props.reference.preProductItemsRef.current)) {
+            props.reference.preProductItemsRef.current = [];
+        }
     
-        // ✅ Accumulate the total across both tables
+        // ✅ Preserve previous total correctly
+        const prevProductTotal = props.reference.preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
+        const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
+        const table2Diff = newProductTotal - prevProductTotal;
+    
+        // ✅ Accumulate the total correctly
         props.totalAmount.setTotalAmount(prev => prev + table2Diff);
         props.setTotalAmountref(prev => prev + table2Diff);
     
         // ✅ Update prevItemsRef AFTER calculations
-        prevItemsRef.current = [...updatedDetails];
+        props.reference.preProductItemsRef.current = [...updatedDetails];
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
@@ -198,9 +201,7 @@ const QoutationTableEditable = (props) => {
         );
     };
     
-    
-    
-    
+
 
     // handle product onchange select dropdown
     const handleProductSelection = (e, rowId) => {
