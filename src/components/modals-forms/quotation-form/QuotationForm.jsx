@@ -196,7 +196,7 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount(pre => (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
+          setTotalAmount((parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
         }
 
       }, [calculateAllTaxDiscount, totalAmountref]);

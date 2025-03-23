@@ -15,13 +15,13 @@ const TotalAmount = ({totalAmountref, totalAmount, taxDiscountTotal}) => {
     <>
         <div className="row total-amount mt-3 mr-auto">
             <p className='label-text'>Sub Total</p>
-            <p className="total-amout-text mr-auto">Php <span>{formatNumber(totalAmountref)}</span></p>
+            <p className="total-amout-text mr-auto">Php <span>{formatNumber(totalAmountref || 0)}</span></p>
             <p className='label-text'>Tax</p>
-            <p className="total-amout-text mr-auto">Php <span>{formatNumber(taxDiscountTotal?.tax)}</span></p>
+            <p className="total-amout-text mr-auto">Php <span>{formatNumber(taxDiscountTotal?.tax || 0)}</span></p>
             <p className='label-text'>Discount</p>
-            <p className="total-amout-text mr-auto">Php <span>{formatNumber(taxDiscountTotal?.discount)}</span></p>
+            <p className="total-amout-text mr-auto">Php <span>{formatNumber(taxDiscountTotal?.discount || 0)}</span></p>
             <p className='label-text'>Grand Total</p>
-            <p className="total-amout-text mr-auto">Php <span>{formatNumber(totalAmount)}</span></p>
+            <p className="total-amout-text mr-auto">Php <span>{formatNumber(totalAmount || 0)}</span></p>
         </div>
     </>
   )
