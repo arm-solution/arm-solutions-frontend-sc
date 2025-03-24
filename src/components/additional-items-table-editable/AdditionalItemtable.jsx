@@ -133,9 +133,15 @@ const AdditionalItemtable = (props) => {
     const newTable1Total = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const table1Diff = newTable1Total - prevTable1Total;
 
-    // ✅ Ensure it only adds positive values to avoid negatives
-    if (table1Diff > 0) {
-        props.setTotalAmount(prev => prev + table1Diff);
+    console.log("diff", table1Diff)
+
+    // ✅ Ensure it only adds non 0 value
+    if (table1Diff !== 0) {
+        props.setTotalAmount(prev => {
+          console.log("pre", prev)
+          console.log("amount ", prev + table1Diff)
+          return prev + table1Diff 
+        });
     }
 
     // ✅ Update reference AFTER calculations
@@ -186,7 +192,10 @@ const handleDelete = (rowId, row) => {
           if(updateData) {
             setAdditionalTest(updateData);
             // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
-            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
+            props.setTotalAmount(pre => { 
+              console.log('amoutn', parseFloat(pre) - parseFloat(row.item_total))
+              return parseFloat(pre) - parseFloat(row.item_total)
+            });
             // props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
 
             return true; 
