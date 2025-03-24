@@ -54,6 +54,7 @@ const QoutationForm = (props) => {
     // reference for both additional table and product table
     const preAdditionalRef = useRef([]);
     const preProductItemsRef = useRef([]);
+    const preTaxDiscountRef = useRef([]);
     
     const dispatch = useDispatch();
 
@@ -196,10 +197,10 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount((parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
+          setTotalAmount(pre => (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
         }
 
-      }, [calculateAllTaxDiscount, totalAmountref]);
+      }, [totalAmountref]);
 
       useEffect(() => {
         if(totalAmountref > 0) {
@@ -432,29 +433,24 @@ const QoutationForm = (props) => {
                          />
                     </div>
 
-
-                    { parseInt(totalAmountref) > 0 && (
-                        <>
+                    {parseInt(totalAmountref) > 0 && (
+                        ["tax", "discount"].map((type) => (
                             <TaxDiscountTable
-                                type="tax"
+                                key={type}
+                                type={type}
                                 totalAmount={totalAmount}
                                 setTotalAmount={setTotalAmount}
-                                taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
-                                totalAmountref={totalAmountref}
-                                mergeDiscountTax={[...tax, ...discount]}
-                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                            />
-
-                            <TaxDiscountTable
-                                type="discount"
-                                totalAmount={totalAmount}
-                                setTotalAmount={setTotalAmount}
-                                taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
+                                taxDiscount={
+                                    type === "tax"
+                                        ? { taxDiscount: tax, setTaxDiscount: setTax }
+                                        : { taxDiscount: discount, setTaxDiscount: setDiscount }
+                                }
                                 totalAmountref={totalAmountref}
                                 mergeDiscountTax={[...tax, ...discount]}
                                 actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                                preTaxDiscountRef={preTaxDiscountRef}
                             />
-                        </>
+                        ))
                     )}
 
                     <TotalAmount 
