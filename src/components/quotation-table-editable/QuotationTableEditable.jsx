@@ -174,7 +174,11 @@ const QoutationTableEditable = (props) => {
         const table2Diff = newProductTotal - prevProductTotal;
     
         // ✅ Accumulate the total correctly
-        props.totalAmount.setTotalAmount(prev => prev + table2Diff);
+        props.totalAmount.setTotalAmount(prev => {
+            console.log("product amout", prev + table2Diff)
+            console.log("product prev", prev)
+            return  prev + table2Diff
+        });
         props.setTotalAmountref(prev => prev + table2Diff);
     
         // ✅ Update prevItemsRef AFTER calculations
