@@ -69,7 +69,14 @@ const TaxDiscountTable = (props) => {
 
     const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
 
-    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
+    // props.setTotalAmount(pre => parseFloat(pre) + (parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount)));
+    props.setTotalAmount(pre => {
+      console.log("prev tax discount table", pre)
+      console.log("tax discount ", totalTaxDiscount)
+      console.log("calculation", parseFloat(props.totalAmountref) + (parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount)))
+      return parseFloat(props.totalAmountref) + (parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount))
+    });
+   
   };
 
   return (

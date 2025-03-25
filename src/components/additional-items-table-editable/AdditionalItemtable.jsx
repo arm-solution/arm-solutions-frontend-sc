@@ -135,7 +135,11 @@ const AdditionalItemtable = (props) => {
 
     // ✅ Ensure it only adds non 0 value
     if (table1Diff !== 0) {
-        props.setTotalAmount(prev => prev + table1Diff);
+        props.setTotalAmount(prev => {
+          console.log("additional amout", prev + table1Diff)
+          console.log("additional prev", prev)
+          return  prev + table1Diff
+        });
     }
 
     // ✅ Update reference AFTER calculations
