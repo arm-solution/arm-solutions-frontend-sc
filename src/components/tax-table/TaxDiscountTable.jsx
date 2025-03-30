@@ -49,15 +49,46 @@ const TaxDiscountTable = (props) => {
     );
   };
 
-  const handleDelete = (rowId, type) => {
+
+  const handleDelete = (rowId, type, row) => {
+    // 🔄 Remove the row from the taxDiscount state
     const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
     props.taxDiscount.setTaxDiscount(filteredRows);
 
-    const updatedMergedDiscountTax = [...props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type))];
-    const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
+    // 🔄 Remove the row from merged discount/tax state
+    const updatedMergedDiscountTax = props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type));
 
-    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.tax) - parseFloat(totalTaxDiscount.discount));
-  };
+    // ✅ Initialize ref if undefined
+    if (!props.preTaxDiscountRef.current) {
+        props.preTaxDiscountRef.current = { tax: 0, discount: 0 };
+    }
+
+    // ✅ Get previous total tax & discount
+    const prevTax = props.preTaxDiscountRef.current.tax || 0;
+    const prevDiscount = props.preTaxDiscountRef.current.discount || 0;
+
+    // ✅ Get updated total tax & discount after deletion
+    const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
+    const newTax = totalTaxDiscount.tax || 0;
+    const newDiscount = totalTaxDiscount.discount || 0;
+
+    // ✅ Compute the difference
+    const taxDiff = newTax - prevTax;
+    const discountDiff = newDiscount - prevDiscount;
+    const taxDiscountDiff = taxDiff - discountDiff;
+
+    console.log("Prev Tax:", prevTax, "Prev Discount:", prevDiscount);
+    console.log("New Tax:", newTax, "New Discount:", newDiscount);
+    console.log("Tax Difference:", taxDiff, "Discount Difference:", discountDiff);
+    console.log("Final Calculation:", parseFloat(props.totalAmountref) + taxDiscountDiff);
+
+    // ✅ Update totalAmount correctly
+    props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
+
+    // ✅ Update ref AFTER calculations
+    props.preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
+};
+
 
   const handleSave = (rowId) => {
     const row = props.taxDiscount.taxDiscount.find(row => row.rowId === rowId);
@@ -164,7 +195,7 @@ const TaxDiscountTable = (props) => {
                     <button onClick={() => handleEdit(row.rowId, row)} className="btn btn-primary btn-sm me-2">Edit</button>
                   </>
                 )}
-                <button onClick={() => handleDelete(row.rowId, props.type)} className="btn btn-danger btn-sm">Delete</button>
+                <button onClick={() => handleDelete(row.rowId, props.type, row)} className="btn btn-danger btn-sm">Delete</button>
               </td>
             </tr>
           ))}

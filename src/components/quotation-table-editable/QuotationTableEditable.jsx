@@ -175,8 +175,8 @@ const QoutationTableEditable = (props) => {
     
         // ✅ Accumulate the total correctly
         props.totalAmount.setTotalAmount(prev => {
-            console.log("product amout", prev + table2Diff)
-            console.log("product prev", prev)
+            // console.log("product amout", prev + table2Diff)
+            // console.log("product prev", prev)
             return  prev + table2Diff
         });
         props.setTotalAmountref(prev => prev + table2Diff);
