@@ -277,7 +277,7 @@ const QoutationForm = (props) => {
                 // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
                 const promises = [
                     dispatch(postAdditionalItems(additionalItemsData)),
-                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest)))
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
                 ];
                 
                 if (taxAndDiscountMerge.length > 0) {
