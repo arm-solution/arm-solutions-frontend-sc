@@ -262,25 +262,17 @@ const QoutationForm = (props) => {
 
 
             if(lastid > 0 && qoutationItem.length > 0) {
-                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(0) }));
-                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(0) }));
+                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
                 
                 const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
                     ...rest,
                     item_total: item_total,
-                    proposal_id: parseInt(0), 
+                    proposal_id: parseInt(lastid), 
                 }));
 
 
                 setQoutationItem(updatedQoutationItems);
-
-                // okay
-                console.log("updatedQoutationItems", updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount })));
-                
-                console.log("taxAndDiscountMerge", taxAndDiscountMerge);
-                
-                // okay
-                console.log("additionalItemsData", additionalItemsData);
 
                 // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
                 const promises = [
