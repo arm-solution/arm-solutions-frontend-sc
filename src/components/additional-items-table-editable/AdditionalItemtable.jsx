@@ -3,6 +3,7 @@ import './AdditionalItems.css'
 import { deleteAdditionalById } from '../../store/features/additional.Slice';
 import { useDispatch } from 'react-redux';
 import { deleteConfirmation } from '../../customs/global/alertDialog';
+import { useGlobalRefs } from '../../customs/global/useGlobalRef'; 
 
 const AdditionalItemtable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
@@ -13,6 +14,8 @@ const AdditionalItemtable = (props) => {
   const [additionalTest, setAdditionalTest] = useState([]);
 
   const dispatch = useDispatch();
+
+  const { preAdditionalRef } = useGlobalRefs();
   
   
   const handleAddRow = () => {
@@ -129,7 +132,7 @@ const AdditionalItemtable = (props) => {
     }
 
     // ✅ Preserve previous total correctly
-    const prevTable1Total = props.reference.preAdditionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    const prevTable1Total = preAdditionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const newTable1Total = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const table1Diff = newTable1Total - prevTable1Total;
 
@@ -143,7 +146,7 @@ const AdditionalItemtable = (props) => {
     }
 
     // ✅ Update reference AFTER calculations
-    props.reference.preAdditionalRef.current = [...additionalTest];
+       preAdditionalRef.current = [...additionalTest];
 
     // ✅ Update row state
     const updatedItemsTest = additionalTest.map((item) =>
@@ -156,8 +159,6 @@ const AdditionalItemtable = (props) => {
         props.additionalState.setAddtionalItems(updatedItemsTest);
     }
 };
-
-
   
 
 const handleDelete = (rowId, row) => {
@@ -189,7 +190,7 @@ const handleDelete = (rowId, row) => {
       
           if(updateData) {
             setAdditionalTest(updateData);
-            props.reference.preAdditionalRef.current = [...updateData];
+            preAdditionalRef.current = [...updateData];
             // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
             props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
             // props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
