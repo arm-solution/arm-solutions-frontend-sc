@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { deleteProposalItem, deleteProposalItems } from '../../store/features/proposalItemSlice';
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
+import { useGlobalRefs } from '../../customs/global/useGlobalRef';
 
 
 const QoutationTableEditable = (props) => {
@@ -15,7 +16,7 @@ const QoutationTableEditable = (props) => {
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
-
+    const { preProductItemsRef } = useGlobalRefs();
     const dispatch = useDispatch();
 
     // calling product api for select options
@@ -139,7 +140,7 @@ const QoutationTableEditable = (props) => {
             // Updating state and then calculating total amount
             if (updatedDetails) {
                 setProductItemDetails(updatedDetails);
-                props.reference.preProductItemsRef.current = [...updatedDetails];
+                preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
                 props.totalAmount.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
                 props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
@@ -164,12 +165,12 @@ const QoutationTableEditable = (props) => {
         setProductItemDetails(updatedDetails);
     
         // ✅ Initialize reference if undefined
-        if (!props.reference.preProductItemsRef.current || !Array.isArray(props.reference.preProductItemsRef.current)) {
-            props.reference.preProductItemsRef.current = [];
+        if (!preProductItemsRef.current || !Array.isArray(preProductItemsRef.current)) {
+            preProductItemsRef.current = [];
         }
     
         // ✅ Preserve previous total correctly
-        const prevProductTotal = props.reference.preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
+        const prevProductTotal = preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
         const table2Diff = newProductTotal - prevProductTotal;
     
@@ -182,7 +183,7 @@ const QoutationTableEditable = (props) => {
         props.setTotalAmountref(prev => prev + table2Diff);
     
         // ✅ Update prevItemsRef AFTER calculations
-        props.reference.preProductItemsRef.current = [...updatedDetails];
+        preProductItemsRef.current = [...updatedDetails];
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
