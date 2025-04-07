@@ -142,7 +142,7 @@ const QoutationTableEditable = (props) => {
                 setProductItemDetails(updatedDetails);
                 preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                props.totalAmount.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+                props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
                 props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
                 return true;
             }
@@ -175,7 +175,7 @@ const QoutationTableEditable = (props) => {
         const table2Diff = newProductTotal - prevProductTotal;
     
         // ✅ Accumulate the total correctly
-        props.totalAmount.setTotalAmount(prev => {
+        props.setTotalAmount(prev => {
             // console.log("product amout", prev + table2Diff)
             // console.log("product prev", prev)
             return  prev + table2Diff

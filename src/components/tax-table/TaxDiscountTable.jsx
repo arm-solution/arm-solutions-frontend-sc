@@ -52,6 +52,8 @@ const TaxDiscountTable = (props) => {
 
 
   const handleDelete = (rowId, type, row) => {
+
+    console.log('need to delete', row);
     // 🔄 Remove the row from the taxDiscount state
     const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
     props.taxDiscount.setTaxDiscount(filteredRows);
@@ -77,11 +79,6 @@ const TaxDiscountTable = (props) => {
     const taxDiff = newTax - prevTax;
     const discountDiff = newDiscount - prevDiscount;
     const taxDiscountDiff = taxDiff - discountDiff;
-
-    console.log("Prev Tax:", prevTax, "Prev Discount:", prevDiscount);
-    console.log("New Tax:", newTax, "New Discount:", newDiscount);
-    console.log("Tax Difference:", taxDiff, "Discount Difference:", discountDiff);
-    console.log("Final Calculation:", parseFloat(props.totalAmountref) + taxDiscountDiff);
 
     // ✅ Update totalAmount correctly
     props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);

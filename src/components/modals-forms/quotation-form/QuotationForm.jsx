@@ -25,7 +25,6 @@ const QoutationForm = (props) => {
     const [addtionalItems, setAddtionalItems] = useState([]);
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
-    const [totalAmount, setTotalAmount] = useState(0)
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
@@ -70,10 +69,10 @@ const QoutationForm = (props) => {
 
 
     useEffect(() => {
-        if(totalAmount < 0) {
+        if(props.totalAmountState.totalAmount < 0) {
             errorDialog("The Grand Total must be not negative!");
         }
-    }, [props.proposalItemData, totalAmount])
+    }, [props.proposalItemData, props.totalAmountState.totalAmount])
 
     const getClient = async (id) => {
         const { payload } = await dispatch(getClientById(id));
@@ -197,7 +196,14 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount(pre => (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
+          props.totalAmountState.setTotalAmount(pre => {
+            console.log("prev", pre);
+            console.log("tax and discount", totalTaxDiscount)
+            console.log("total", (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount))
+            return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
+        });
+        //   setTotalAmount(45000);
+
         }
 
       }, [totalAmountref]);
@@ -255,7 +261,7 @@ const QoutationForm = (props) => {
                 tax: taxDiscountTotal.tax,
                 discount: taxDiscountTotal.discount,
                 sub_total: totalAmountref,
-                grand_total: totalAmount
+                grand_total: props.totalAmountState.totalAmount
             }));
 
             const { lastid, success: qoutationSuccess } = quotationResponse.payload;
@@ -412,8 +418,8 @@ const QoutationForm = (props) => {
 
                     
                     <AdditionalItemtable 
-                         totalAmount={totalAmount}
-                         setTotalAmount={setTotalAmount}
+                         totalAmount={props.totalAmountState.totalAmount}
+                         setTotalAmount={props.totalAmountState.setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
                          totalAmountref={{ totalAmountref, setTotalAmountref }}
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
@@ -425,7 +431,8 @@ const QoutationForm = (props) => {
                             setQoutationItem={setQoutationItem}
                             proposalItemSuccess={props.proposalItemSuccess}
                             setNotification={ setNotification }
-                            totalAmount={{ totalAmount, setTotalAmount }}
+                            totalAmount={ props.totalAmountState.totalAmount }
+                            setTotalAmount={ props.totalAmountState.setTotalAmount }
                             setTotalAmountref={setTotalAmountref}
                             totalAmountref={totalAmountref}
                             actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
@@ -438,8 +445,8 @@ const QoutationForm = (props) => {
                             <TaxDiscountTable
                                 key={type}
                                 type={type}
-                                totalAmount={totalAmount}
-                                setTotalAmount={setTotalAmount}
+                                totalAmount={ props.totalAmountState.totalAmount }
+                                setTotalAmount={ props.totalAmountState.setTotalAmount }
                                 taxDiscount={
                                     type === "tax"
                                         ? { taxDiscount: tax, setTaxDiscount: setTax }
@@ -455,7 +462,7 @@ const QoutationForm = (props) => {
 
                     <TotalAmount 
                         totalAmountref={totalAmountref}
-                        totalAmount={totalAmount}
+                        totalAmount={ props.totalAmountState.totalAmount }
                         taxDiscountTotal={taxDiscountTotal}
                     />
 
