@@ -13,8 +13,10 @@ const TaxDiscountTable = (props) => {
       // Initialize rowId for existing data from props only once
       const updatedRows = props.taxDiscount.taxDiscount.map((row, index) => ({
         ...row,
-        rowId: row.id || nextRowId + index, // Use existing 'id' or assign a unique rowId for new rows
+        rowId: nextRowId + index,
       }));
+
+      // console.log("updated row", updatedRows);
 
       props.taxDiscount.setTaxDiscount(updatedRows);
       setNextRowId(nextRowId + updatedRows.length); // Update the nextRowId
@@ -52,6 +54,7 @@ const TaxDiscountTable = (props) => {
 
 
   const handleDelete = (rowId, type, row) => {
+
     // 🔄 Remove the row from the taxDiscount state
     const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
     props.taxDiscount.setTaxDiscount(filteredRows);
@@ -78,11 +81,6 @@ const TaxDiscountTable = (props) => {
     const discountDiff = newDiscount - prevDiscount;
     const taxDiscountDiff = taxDiff - discountDiff;
 
-    console.log("Prev Tax:", prevTax, "Prev Discount:", prevDiscount);
-    console.log("New Tax:", newTax, "New Discount:", newDiscount);
-    console.log("Tax Difference:", taxDiff, "Discount Difference:", discountDiff);
-    console.log("Final Calculation:", parseFloat(props.totalAmountref) + taxDiscountDiff);
-
     // ✅ Update totalAmount correctly
     props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
 
@@ -92,6 +90,7 @@ const TaxDiscountTable = (props) => {
 
 
   const handleSave = (rowId) => {
+    const proposalDetails = sessionStorage.getItem("proposalDetails");
     const row = props.taxDiscount.taxDiscount.find(row => row.rowId === rowId);
     if (!row) return;
 
@@ -117,19 +116,22 @@ const TaxDiscountTable = (props) => {
     const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
     const newTax = totalTaxDiscount.tax || 0;
     const newDiscount = totalTaxDiscount.discount || 0;
-
+    
     // ✅ Compute the difference
     const taxDiff = newTax - prevTax;
     const discountDiff = newDiscount - prevDiscount;
     const taxDiscountDiff = taxDiff - discountDiff;
+    
+    props.setTotalAmount((prev) => {
+      
+      console.log("pre", prev);
+      // kunin ang labis na total na isinama sa total product 
+      const getDiffTotalProduct = taxDiscountDiff > 0 && JSON.parse(proposalDetails) ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
 
-    console.log("Prev Tax:", prevTax, "Prev Discount:", prevDiscount);
-    console.log("New Tax:", newTax, "New Discount:", newDiscount);
-    console.log("Tax Difference:", taxDiff, "Discount Difference:", discountDiff);
-    console.log("Final Calculation:", parseFloat(props.totalAmountref) + taxDiscountDiff);
+      console.log("getDiffTotalProduct", getDiffTotalProduct);
 
-    // ✅ Update totalAmount using previous values
-    props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
+      return (parseFloat(prev) + taxDiscountDiff) - getDiffTotalProduct
+    });
 
     // ✅ Update ref AFTER calculations
     preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
