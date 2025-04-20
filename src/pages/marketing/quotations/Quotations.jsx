@@ -9,10 +9,13 @@ import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
+import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
 
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
+
+    const [totalAmount, setTotalAmount] = useState(0)
     
     const dispatch = useDispatch();
     
@@ -22,6 +25,9 @@ const Quotations = () => {
 
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
+
+    // global red
+    const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
@@ -62,6 +68,10 @@ const Quotations = () => {
           taxDiscount: discountTaxResult.payload,
           additionalItems: additionalItems.payload
         }));
+
+        if(row) {
+          setTotalAmount(parseFloat(row.sub_total));
+        }
     
         // Dispatch a custom event to signal that sessionStorage is updated
         window.dispatchEvent(new Event('sessionUpdated'));
@@ -144,6 +154,7 @@ const Quotations = () => {
               proposalItemLoading={proposalItemLoading}
               proposalItemSuccess={proposalItemSuccess}
               taxDiscountData={taxDiscountData}
+              totalAmountState={{ totalAmount, setTotalAmount }}
             /> 
 
         </div>

@@ -25,7 +25,6 @@ const QoutationForm = (props) => {
     const [addtionalItems, setAddtionalItems] = useState([]);
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
-    const [totalAmount, setTotalAmount] = useState(0)
     const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
@@ -70,10 +69,10 @@ const QoutationForm = (props) => {
 
 
     useEffect(() => {
-        if(totalAmount < 0) {
+        if(props.totalAmountState.totalAmount < 0) {
             errorDialog("The Grand Total must be not negative!");
         }
-    }, [props.proposalItemData, totalAmount])
+    }, [props.proposalItemData, props.totalAmountState.totalAmount])
 
     const getClient = async (id) => {
         const { payload } = await dispatch(getClientById(id));
@@ -197,7 +196,11 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount(pre => (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount));
+          props.totalAmountState.setTotalAmount(pre => {
+            return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
+        });
+        //   setTotalAmount(45000);
+
         }
 
       }, [totalAmountref]);
@@ -255,7 +258,7 @@ const QoutationForm = (props) => {
                 tax: taxDiscountTotal.tax,
                 discount: taxDiscountTotal.discount,
                 sub_total: totalAmountref,
-                grand_total: totalAmount
+                grand_total: props.totalAmountState.totalAmount
             }));
 
             const { lastid, success: qoutationSuccess } = quotationResponse.payload;
@@ -313,72 +316,97 @@ const QoutationForm = (props) => {
     
 
     const handleUpdateQoutation = async () => {
-
-        let status = false 
-        const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
-            const { isEditing, isSaved, rowId, ...rest } = d;
-            return {...rest, proposal_id: quotation.id};
-        }));
-        
-        let addEditItem = qoutationItem.filter(item2 =>
-            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        let status = false;
+    
+        // Format tax and discount into consistent structure
+        const taxDiscountModified = getModifiedAndNewItems(
+            props.taxDiscountData,
+            [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({
+                ...rest,
+                proposal_id: quotation.id
+            }))
         );
-
-        const updatedAdditionalItems = addtionalItems.map(({rowId, isSaved, isEditing, ...rest}) => ({...rest, proposal_id: quotation.id}))
-         
-
-        // console.log("additional data", updatedAdditionalItems);
-        const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
-
+    
+        // Determine which items are new or updated
+        const addEditItem = qoutationItem.filter(item2 =>
+            !props.proposalItemData.some(
+                item1 =>
+                    parseInt(item1.qty) === parseInt(item2.quantity) &&
+                    item2.proposal_item_id > 0
+            )
+        );
+    
+        // Prepare additional items for update
+        const updatedAdditionalItems = addtionalItems.map(
+            ({ rowId, isSaved, isEditing, ...rest }) => ({
+                ...rest,
+                proposal_id: quotation.id
+            })
+        );
+    
+        // Destructure and reshape quotation for comparison and dispatch
+        const {
+            firstname,
+            fullname,
+            user_id,
+            id,
+            lastname,
+            ...dataReshapeItems
+        } = quotation;
+    
         const proposalFinal = {
             ...dataReshapeItems,
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
-            date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
+            date_created: dataReshapeItems.date_created
+                ? dateFormatted(dataReshapeItems.date_created)
+                : '',
             sub_total: totalAmountref,
             additional_payments: taxDiscountTotal.tax,
             deductions: taxDiscountTotal.discount
         };
-
-        // console.log("final data", proposalFinal);
-        
-        //This is for qoutation/proposal form
-        if(!deepEqual(props.proposalEdit, quotation)) {
-
-            dispatch(updateProposal({ proposalFinal, id: quotation.id }));
+    
+        // Check if proposal has changed by comparing specific fields
+        const originalProposal = props.proposalEdit;
+        const isProposalModified = Object.entries(proposalFinal).some(
+            ([key, value]) => originalProposal[key] !== value
+        );
+    
+        if (isProposalModified) {
+            await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
-        } 
-        
-        // adding proposal id for every items
-        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: quotation.id}))
-        //  this is for proposalItem editable table update
-        if(addEditItem.length > 0) {
-                // dispatch update the items 
-                await dispatch(updateProposalItems(itemsWithProId));
-
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getProposalItemsByProposalId(quotation.id));
-                
-                // update additional items
-                await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
-
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getAdditionalByProposalID(quotation.id));
-                setQoutationItem([]);
-                status = true;
         }
-        if(taxDiscountModified.length > 0) {
+    
+        // Add proposal_id to items and dispatch updates if necessary
+        if (addEditItem.length > 0) {
+            const itemsWithProId = addEditItem.map(d => ({
+                ...d,
+                proposal_id: quotation.id
+            }));
+    
+            await dispatch(updateProposalItems(itemsWithProId));
+            await dispatch(getProposalItemsByProposalId(quotation.id));
+    
+            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+            await dispatch(getAdditionalByProposalID(quotation.id));
+    
+            setQoutationItem([]);
+            status = true;
+        }
+    
+        // Dispatch tax and discount updates if any
+        if (taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
-        
-        if(status) {
+    
+        // Show success or error message
+        if (status) {
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
         }
-        
-    }
-
+    };
+    
     //  open pdf file on new tab
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
@@ -412,8 +440,8 @@ const QoutationForm = (props) => {
 
                     
                     <AdditionalItemtable 
-                         totalAmount={totalAmount}
-                         setTotalAmount={setTotalAmount}
+                         totalAmount={props.totalAmountState.totalAmount}
+                         setTotalAmount={props.totalAmountState.setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
                          totalAmountref={{ totalAmountref, setTotalAmountref }}
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
@@ -425,7 +453,8 @@ const QoutationForm = (props) => {
                             setQoutationItem={setQoutationItem}
                             proposalItemSuccess={props.proposalItemSuccess}
                             setNotification={ setNotification }
-                            totalAmount={{ totalAmount, setTotalAmount }}
+                            totalAmount={ props.totalAmountState.totalAmount }
+                            setTotalAmount={ props.totalAmountState.setTotalAmount }
                             setTotalAmountref={setTotalAmountref}
                             totalAmountref={totalAmountref}
                             actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
@@ -438,8 +467,8 @@ const QoutationForm = (props) => {
                             <TaxDiscountTable
                                 key={type}
                                 type={type}
-                                totalAmount={totalAmount}
-                                setTotalAmount={setTotalAmount}
+                                totalAmount={ props.totalAmountState.totalAmount }
+                                setTotalAmount={ props.totalAmountState.setTotalAmount }
                                 taxDiscount={
                                     type === "tax"
                                         ? { taxDiscount: tax, setTaxDiscount: setTax }
@@ -455,7 +484,7 @@ const QoutationForm = (props) => {
 
                     <TotalAmount 
                         totalAmountref={totalAmountref}
-                        totalAmount={totalAmount}
+                        totalAmount={ props.totalAmountState.totalAmount }
                         taxDiscountTotal={taxDiscountTotal}
                     />
 

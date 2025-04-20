@@ -124,6 +124,9 @@ const AdditionalItemtable = (props) => {
 
   const handleSave = (rowId) => {
     const rowTest = additionalTest.find((row) => row.rowId === rowId);
+    const proposalDetails = sessionStorage.getItem("proposalDetails");
+    const additionalItemsFromDb = JSON.parse(proposalDetails).additionalItems.reduce((sum, item) => sum + item.item_total, 0) || 0;
+     
     if (!rowTest) return;
 
     if (!rowTest.title || rowTest.quantity <= 0 || !rowTest.unit) {
@@ -140,8 +143,9 @@ const AdditionalItemtable = (props) => {
     if (table1Diff !== 0) {
         props.setTotalAmount(prev => {
           // console.log("additional amout", prev + table1Diff)
+          // console.log("newTable1Total", newTable1Total);
           // console.log("additional prev", prev)
-          return  prev + table1Diff
+          return  (prev + table1Diff) - parseFloat(additionalItemsFromDb);
         });
     }
 
@@ -160,7 +164,7 @@ const AdditionalItemtable = (props) => {
     }
 };
   
-
+// delete function direct to the database
 const handleDelete = (rowId, row) => {
     
         deleteConfirmation({
