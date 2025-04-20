@@ -25,8 +25,12 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
                 name: d.product_name,
                 id: d.product_id,
                 category_name: d.product_category_name,
-                proposal_item_id: d.id // this is the main id
+                proposal_item_id: d.id,
+                item_total: d.item_total
+
         }))
+
+        console.log("new set", newSet);
 
         return newSet
 

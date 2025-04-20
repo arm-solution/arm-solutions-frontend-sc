@@ -15,6 +15,7 @@ export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAl
     try {
         const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items/get-tax-discount-proposal-items/${proposalID}`);
 
+        console.log("data from database", data);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

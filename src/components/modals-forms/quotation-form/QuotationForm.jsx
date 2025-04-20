@@ -197,9 +197,6 @@ const QoutationForm = (props) => {
           const totalTaxDiscount = getTotalTax(updatedRows);
           
           props.totalAmountState.setTotalAmount(pre => {
-            console.log("prev", pre);
-            console.log("tax and discount", totalTaxDiscount)
-            console.log("total", (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount))
             return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
         });
         //   setTotalAmount(45000);
@@ -319,72 +316,97 @@ const QoutationForm = (props) => {
     
 
     const handleUpdateQoutation = async () => {
-
-        let status = false 
-        const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
-            const { isEditing, isSaved, rowId, ...rest } = d;
-            return {...rest, proposal_id: quotation.id};
-        }));
-        
-        let addEditItem = qoutationItem.filter(item2 =>
-            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        let status = false;
+    
+        // Format tax and discount into consistent structure
+        const taxDiscountModified = getModifiedAndNewItems(
+            props.taxDiscountData,
+            [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({
+                ...rest,
+                proposal_id: quotation.id
+            }))
         );
-
-        const updatedAdditionalItems = addtionalItems.map(({rowId, isSaved, isEditing, ...rest}) => ({...rest, proposal_id: quotation.id}))
-         
-
-        // console.log("additional data", updatedAdditionalItems);
-        const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
-
+    
+        // Determine which items are new or updated
+        const addEditItem = qoutationItem.filter(item2 =>
+            !props.proposalItemData.some(
+                item1 =>
+                    parseInt(item1.qty) === parseInt(item2.quantity) &&
+                    item2.proposal_item_id > 0
+            )
+        );
+    
+        // Prepare additional items for update
+        const updatedAdditionalItems = addtionalItems.map(
+            ({ rowId, isSaved, isEditing, ...rest }) => ({
+                ...rest,
+                proposal_id: quotation.id
+            })
+        );
+    
+        // Destructure and reshape quotation for comparison and dispatch
+        const {
+            firstname,
+            fullname,
+            user_id,
+            id,
+            lastname,
+            ...dataReshapeItems
+        } = quotation;
+    
         const proposalFinal = {
             ...dataReshapeItems,
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
-            date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
+            date_created: dataReshapeItems.date_created
+                ? dateFormatted(dataReshapeItems.date_created)
+                : '',
             sub_total: totalAmountref,
             additional_payments: taxDiscountTotal.tax,
             deductions: taxDiscountTotal.discount
         };
-
-        // console.log("final data", proposalFinal);
-        
-        //This is for qoutation/proposal form
-        if(!deepEqual(props.proposalEdit, quotation)) {
-
-            dispatch(updateProposal({ proposalFinal, id: quotation.id }));
+    
+        // Check if proposal has changed by comparing specific fields
+        const originalProposal = props.proposalEdit;
+        const isProposalModified = Object.entries(proposalFinal).some(
+            ([key, value]) => originalProposal[key] !== value
+        );
+    
+        if (isProposalModified) {
+            await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
-        } 
-        
-        // adding proposal id for every items
-        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: quotation.id}))
-        //  this is for proposalItem editable table update
-        if(addEditItem.length > 0) {
-                // dispatch update the items 
-                await dispatch(updateProposalItems(itemsWithProId));
-
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getProposalItemsByProposalId(quotation.id));
-                
-                // update additional items
-                await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
-
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getAdditionalByProposalID(quotation.id));
-                setQoutationItem([]);
-                status = true;
         }
-        if(taxDiscountModified.length > 0) {
+    
+        // Add proposal_id to items and dispatch updates if necessary
+        if (addEditItem.length > 0) {
+            const itemsWithProId = addEditItem.map(d => ({
+                ...d,
+                proposal_id: quotation.id
+            }));
+    
+            await dispatch(updateProposalItems(itemsWithProId));
+            await dispatch(getProposalItemsByProposalId(quotation.id));
+    
+            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+            await dispatch(getAdditionalByProposalID(quotation.id));
+    
+            setQoutationItem([]);
+            status = true;
+        }
+    
+        // Dispatch tax and discount updates if any
+        if (taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
-        
-        if(status) {
+    
+        // Show success or error message
+        if (status) {
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
         }
-        
-    }
-
+    };
+    
     //  open pdf file on new tab
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({

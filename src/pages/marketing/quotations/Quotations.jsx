@@ -51,9 +51,6 @@ const Quotations = () => {
     
 
     const handleView = async (row) => {
-
-      console.log("row", row);
-
       try {
         setSelectedTab('tab-two');
         setProposalEdit(row);
