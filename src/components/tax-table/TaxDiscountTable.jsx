@@ -90,6 +90,7 @@ const TaxDiscountTable = (props) => {
 
 
   const handleSave = (rowId) => {
+    const proposalDetails = sessionStorage.getItem("proposalDetails");
     const row = props.taxDiscount.taxDiscount.find(row => row.rowId === rowId);
     if (!row) return;
 
@@ -122,9 +123,12 @@ const TaxDiscountTable = (props) => {
     const taxDiscountDiff = taxDiff - discountDiff;
     
     props.setTotalAmount((prev) => {
-    
+      
+      console.log("pre", prev);
       // kunin ang labis na total na isinama sa total product 
-      const getDiffTotalProduct = taxDiscountDiff > 0 ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
+      const getDiffTotalProduct = taxDiscountDiff > 0 && JSON.parse(proposalDetails) ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
+
+      console.log("getDiffTotalProduct", getDiffTotalProduct);
 
       return (parseFloat(prev) + taxDiscountDiff) - getDiffTotalProduct
     });
