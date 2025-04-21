@@ -11,7 +11,6 @@ import { useGlobalRefs } from '../../customs/global/useGlobalRef';
 const QoutationTableEditable = (props) => {
 
     const [products, setProducts] = useState([]);
-    const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
@@ -47,7 +46,7 @@ const QoutationTableEditable = (props) => {
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
            
-            setProductItemDetails(itemsWithComputationAmount)
+            props.pid.setProductItemDetails(itemsWithComputationAmount)
             const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
             props.setTotalAmountref(parseInt(totalItemAmount))
           }
@@ -88,7 +87,7 @@ const QoutationTableEditable = (props) => {
             setValidateNegativeQty(false);
         }
         // Update the field first
-        setProductItemDetails(prevDetails => {
+        props.pid.setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
                 row.id === id
                     ? {
@@ -106,7 +105,7 @@ const QoutationTableEditable = (props) => {
     
     // adding row template in the table
     const addRow = () => {
-        setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
+        props.pid.setProductItemDetails([...props.pid.productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
@@ -130,16 +129,16 @@ const QoutationTableEditable = (props) => {
                 const { payload } = await dispatch(deleteProposalItem(mysqlId));
                 const result = payload.affectedRows > 0 ? true : false;
                 if (result) {
-                    updatedDetails = productItemDetails.filter(row => row.id !== rowId);
+                    updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
                 }
 
             } else {
-                updatedDetails = productItemDetails.filter(row => row.id !== rowId);
+                updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
             }
     
             // Updating state and then calculating total amount
             if (updatedDetails) {
-                setProductItemDetails(updatedDetails);
+                props.pid.setProductItemDetails(updatedDetails);
                 preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
                 props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
@@ -151,7 +150,7 @@ const QoutationTableEditable = (props) => {
     
 
     const toggleSaveAndEdit = (id) => {
-        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+        const checkProduct = props.pid.productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
         const proposalDetails = sessionStorage.getItem("proposalDetails");
         const proposalItemsFromDbTotal = JSON.parse(proposalDetails) ? JSON.parse(proposalDetails).quotationItem.reduce((sum, item) => sum + item.item_total, 0) || 0 : 0;
         
@@ -160,12 +159,12 @@ const QoutationTableEditable = (props) => {
             return;
         }
     
-        const updatedDetails = productItemDetails.map(data => ({
+        const updatedDetails = props.pid.productItemDetails.map(data => ({
             ...data,
             amount: parseInt(data.qty) * parseInt(data.base_price)
         }));
     
-        setProductItemDetails(updatedDetails);
+        props.pid.setProductItemDetails(updatedDetails);
     
         // ✅ Initialize reference if undefined
         if (!preProductItemsRef.current || !Array.isArray(preProductItemsRef.current)) {
@@ -204,7 +203,7 @@ const QoutationTableEditable = (props) => {
             props.setQoutationItem(updatedQuotationItems);
         }
     
-        setProductItemDetails(prevDetails =>
+        props.pid.setProductItemDetails(prevDetails =>
             prevDetails.map(row =>
                 row.id === id ? { ...row, isEditing: !row.isEditing } : row
             )
@@ -218,7 +217,7 @@ const QoutationTableEditable = (props) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
-        const productExist = productItemDetails.find(p => p.id === selectedProductId);
+        const productExist = props.pid.productItemDetails.find(p => p.id === selectedProductId);
 
         if (productExist) {
             props.setNotification({
@@ -227,13 +226,13 @@ const QoutationTableEditable = (props) => {
             })
             return;
         }
-        setProductItemDetails(prevDetails => prevDetails.map(row => 
+        props.pid.setProductItemDetails(prevDetails => prevDetails.map(row => 
             row.id === rowId ? { ...row, ...selectedProduct, isEditing: true, markup_price: selectedProduct.base_price } : row
         ));
 
     };
 
-    const anyRowEditing = productItemDetails.some(row => row.isEditing);
+    const anyRowEditing = props.pid.productItemDetails.some(row => row.isEditing);
 
     const screenMobile = () => {
         if(window.innerWidth < 900){
@@ -274,7 +273,7 @@ const QoutationTableEditable = (props) => {
             const { payload } = await dispatch(deleteProposalItems(selectedIds))
             
             if(payload.success) {
-                setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
+                props.pid.setProductItemDetails(props.pid.productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
                 return false;
@@ -305,7 +304,7 @@ const QoutationTableEditable = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {productItemDetails.map((row, index) => (
+                    {props.pid.productItemDetails.map((row, index) => (
                         <tr key={index}>
                             
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
