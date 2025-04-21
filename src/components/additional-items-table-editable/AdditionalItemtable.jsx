@@ -125,7 +125,7 @@ const AdditionalItemtable = (props) => {
   const handleSave = (rowId) => {
     const rowTest = additionalTest.find((row) => row.rowId === rowId);
     const proposalDetails = sessionStorage.getItem("proposalDetails");
-    const additionalItemsFromDb = JSON.parse(proposalDetails).additionalItems.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    const additionalItemsFromDb = JSON.parse(proposalDetails) ? JSON.parse(proposalDetails).additionalItems.reduce((sum, item) => sum + item.item_total, 0) || 0 : 0;
      
     if (!rowTest) return;
 
