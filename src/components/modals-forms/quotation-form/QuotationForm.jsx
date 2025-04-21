@@ -34,6 +34,9 @@ const QoutationForm = (props) => {
         message: '',
         type: ''
     });
+
+    // this is for product details or item
+    const [productItemDetails, setProductItemDetails] = useState([]);
  
     const [qoutationItem, setQoutationItem] = useState([]);
     
@@ -179,7 +182,7 @@ const QoutationForm = (props) => {
           return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
         }
       };
-    
+
     // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
           return rows.map((row) => ({
@@ -228,6 +231,33 @@ const QoutationForm = (props) => {
           }
       }, [tax, discount])
       
+
+    const handleClearForm = () => {
+        const proposalDetails = sessionStorage.getItem('proposalDetails');
+
+        if(JSON.parse(proposalDetails)) {
+            sessionStorage.removeItem('proposalDetails');
+            setAddtionalItems([]);
+            setTax([]);
+            setDiscount([]);
+            setTaxDiscountTotal({discount: 0, tax: 0})
+            setTotalAmountref(0);
+            setQoutationItem([])
+            setProductItemDetails([])
+            props.totalAmountState.setTotalAmount(0)
+            setQuotation({
+                client_id: 0,
+                created_by: parseInt(getLoggedInUser().id),
+                proposal_date: dateFormatted(getCurrentDate()),
+                status: 'pending',
+                description: '',
+                sub_total: 0,
+                grand_total: 0,
+                date_created: dateFormatted(getCurrentDate()),
+                contact_person: ''
+            })
+        }
+    }
 
       
     const handleAddNewQoutation = async () => {
@@ -431,6 +461,7 @@ const QoutationForm = (props) => {
                      clientData={clientData}
                      quotation={{ quotation, setQuotation}}
                      creator={ creator }
+                     handleClearForm={handleClearForm}
                     />
            
 
@@ -459,6 +490,7 @@ const QoutationForm = (props) => {
                             totalAmountref={totalAmountref}
                             actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                             reference={{preAdditionalRef, preProductItemsRef}}
+                            pid={{ productItemDetails, setProductItemDetails }}
                          />
                     </div>
 
@@ -499,9 +531,11 @@ const QoutationForm = (props) => {
                     </div>
 
                     <div className="row row-btn-pdf"> 
-                      { props.proposalEdit && 
-                      <button className="btn-pdf mt-3 mr-auto" onClick={openPdfFile}>View on PDF</button>
-                      }
+                    {props.proposalEdit && sessionStorage.getItem('proposalDetails') && (
+                        <button className="btn-pdf mt-3 mr-auto" onClick={openPdfFile}>
+                            View on PDF
+                        </button>
+                    )}
                     </div>
                 </div>
             </div>
