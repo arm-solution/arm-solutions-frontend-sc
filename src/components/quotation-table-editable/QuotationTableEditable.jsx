@@ -179,11 +179,11 @@ const QoutationTableEditable = (props) => {
     
         // ✅ Accumulate the total correctly
         props.setTotalAmount(prev => {
-            const getDiff = prev - proposalItemsFromDbTotal;
+            const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
             return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
         });
         props.setTotalAmountref(prev => {
-            const getDiff = prev - proposalItemsFromDbTotal;
+            const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
             return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
         });
     
