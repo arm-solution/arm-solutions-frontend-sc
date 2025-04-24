@@ -1,3 +1,4 @@
+// check 2 arrays if equals
 export function shallowEqualArrays(arr1, arr2) {
     if (arr1.length !== arr2.length) {
         return false;
@@ -21,7 +22,7 @@ export function shallowEqualArrays(arr1, arr2) {
     return true;
 }
 
-
+// checking 2 objects if equals
 export function deepEqual(obj1, obj2) {
     if (obj1 === obj2) {
         return true; // same object or primitive
