@@ -6,6 +6,7 @@ import { deleteProposalItem, deleteProposalItems } from '../../store/features/pr
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 import { useGlobalRefs } from '../../customs/global/useGlobalRef';
+// import FloatNotification from '../../float-notification/FloatNotification';
 
 
 const QoutationTableEditable = (props) => {
@@ -46,9 +47,9 @@ const QoutationTableEditable = (props) => {
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
            
-            props.pid.setProductItemDetails(itemsWithComputationAmount)
-            const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
-            props.setTotalAmountref(parseInt(totalItemAmount))
+            props.pid.setProductItemDetails(itemsWithComputationAmount);
+            // const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
+            // props.setTotalAmountref(parseInt(totalItemAmount))
           }
         };
       
