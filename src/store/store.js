@@ -15,6 +15,7 @@ import announcementSlice from "./features/announcementSlice";
 import messageRequestSlice from "./features/messageRequestSlice";
 import careerSlice from "./features/careerSlice";
 import additionalSlice from "./features/additional.Slice";
+import messageRequestSlice from "./features/messageRequestSlice";
 import serviceSlice from "./features/serviceSlice";
 
 export const store = configureStore({
@@ -35,6 +36,7 @@ export const store = configureStore({
         messageRequest: messageRequestSlice.reducer,
         careers: careerSlice.reducer,
         additionalItems: additionalSlice.reducer,
+        messageRequests: messageRequestSlice.reducer,
         services: serviceSlice.reducer
     }
 })

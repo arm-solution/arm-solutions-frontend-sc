@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
+export const postMessage = createAsyncThunk('postMessage', async (message, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/message-request/add-new`, message);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
 
 
 export const getAllMessageRequest = createAsyncThunk('getAllMessageRequest', async (_, {rejectWithValue}) => {
@@ -45,26 +53,13 @@ export const updateMessageRequest = createAsyncThunk('updateMessageRequest', asy
     }
 })
 
-export const postMessageRequest = createAsyncThunk('postMessageRequest', async(messageRequestData, {rejectWithValue}) => {
-    try {
-        const { email, ...rest } = messageRequestData;
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/message-request/add-new`, messageRequestData);
-
-        return data;
-
-    } catch (error) {
-        return rejectWithValue(error.response ? error.response.data : error.message); 
-    }
-})
-
-
-
 const messageRequestSlice = createSlice({
-    name: 'message_request',
+    name: 'messageRequest',
     initialState: {
-        data: [],
+        messages: [],
+        postMessageResponse: [],
         isSuccess: false,
-        loading: true,
+        loading: false,
         message: ''
     },
     reducers: {},
@@ -112,21 +107,23 @@ const messageRequestSlice = createSlice({
             state.loading = false;
             state.message = action.payload;
         })
-        .addCase(postMessageRequest.pending, (state, _) => {
+        .addCase(postMessage.pending, (state, _) => {
             state.loading = true;
         })
-        .addCase(postMessageRequest.fulfilled, (state, action) => {
+        .addCase(postMessage.fulfilled, (state, action) => {
             state.loading = false;
-            state.addedStatus = true;
-            // state.data = [...state.data, action.payload];
+            state.isSuccess = true;
+
+            state.postMessageResponse = action.payload;
         })
-        .addCase(postMessageRequest.rejected, (state, action) => {
-            state.addedStatus = false;
+        .addCase(postMessage.rejected, (state, action) => {
+            state.isSuccess = false;
             state.loading = false;
             state.message = action.payload;
         })
     }
 });
+
 
 
 export default messageRequestSlice;

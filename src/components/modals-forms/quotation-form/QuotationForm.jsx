@@ -11,7 +11,7 @@ import { createProposal, updateProposal } from '../../../store/features/proposal
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
 import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/features/taxDiscountSlice';
-import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
+import { deepEqual, getModifiedAndNewItems, shallowEqualArrays } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
@@ -25,7 +25,6 @@ const QoutationForm = (props) => {
     const [addtionalItems, setAddtionalItems] = useState([]);
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
-    const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
     const [taxDiscountTotal, setTaxDiscountTotal] = useState({ discount: 0, tax: 0 })
@@ -155,9 +154,9 @@ const QoutationForm = (props) => {
 
     // calculating tax and discount percentage
   const calculateTaxDiscount = (row) => {
-    if (totalAmountref > 0) {
+    if (props.taf.totalAmountref > 0) {
       return row.amount_type === 'percentage'
-        ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
+        ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
         : parseFloat(row.percentage);
     } else {
       return 0
@@ -189,13 +188,13 @@ const QoutationForm = (props) => {
             ...row,
             item_total:
               row.amount_type === 'percentage'
-                ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
+                ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
                 : parseFloat(row.percentage),
           }));
     };
 
     useEffect(() => {
-        if(totalAmountref > 0) {
+        if(props.taf.totalAmountref > 0) {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
@@ -206,10 +205,10 @@ const QoutationForm = (props) => {
 
         }
 
-      }, [totalAmountref]);
+      }, [props.taf.totalAmountref]);
 
       useEffect(() => {
-        if(totalAmountref > 0) {
+        if(props.taf.totalAmountref > 0) {
         const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
 
         const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
@@ -220,10 +219,10 @@ const QoutationForm = (props) => {
         setDiscount(discountUpdate);
         
         }
-      }, [totalAmountref])
+      }, [props.taf.totalAmountref])
 
       useEffect(() => {
-        if(totalAmountref > 0) {
+        if(props.taf.totalAmountref > 0) {
             const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
             const totalTaxDiscount = getTotalTax(updatedRows);
   
@@ -241,7 +240,7 @@ const QoutationForm = (props) => {
             setTax([]);
             setDiscount([]);
             setTaxDiscountTotal({discount: 0, tax: 0})
-            setTotalAmountref(0);
+            props.taf.setTotalAmountref(0);
             setQoutationItem([])
             setProductItemDetails([])
             props.totalAmountState.setTotalAmount(0)
@@ -287,8 +286,9 @@ const QoutationForm = (props) => {
                 ...quotation,
                 tax: taxDiscountTotal.tax,
                 discount: taxDiscountTotal.discount,
-                sub_total: totalAmountref,
-                grand_total: props.totalAmountState.totalAmount
+                sub_total: props.taf.totalAmountref,
+                grand_total: props.totalAmountState.totalAmount,
+                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0)
             }));
 
             const { lastid, success: qoutationSuccess } = quotationResponse.payload;
@@ -347,7 +347,10 @@ const QoutationForm = (props) => {
 
     const handleUpdateQoutation = async () => {
         let status = false;
-    
+        // use this for compring additional items
+        const getLocalStorage = sessionStorage.getItem("proposalDetails");
+
+
         // Format tax and discount into consistent structure
         const taxDiscountModified = getModifiedAndNewItems(
             props.taxDiscountData,
@@ -356,7 +359,7 @@ const QoutationForm = (props) => {
                 proposal_id: quotation.id
             }))
         );
-    
+
         // Determine which items are new or updated
         const addEditItem = qoutationItem.filter(item2 =>
             !props.proposalItemData.some(
@@ -364,14 +367,6 @@ const QoutationForm = (props) => {
                     parseInt(item1.qty) === parseInt(item2.quantity) &&
                     item2.proposal_item_id > 0
             )
-        );
-    
-        // Prepare additional items for update
-        const updatedAdditionalItems = addtionalItems.map(
-            ({ rowId, isSaved, isEditing, ...rest }) => ({
-                ...rest,
-                proposal_id: quotation.id
-            })
         );
     
         // Destructure and reshape quotation for comparison and dispatch
@@ -390,9 +385,11 @@ const QoutationForm = (props) => {
             date_created: dataReshapeItems.date_created
                 ? dateFormatted(dataReshapeItems.date_created)
                 : '',
-            sub_total: totalAmountref,
-            additional_payments: taxDiscountTotal.tax,
-            deductions: taxDiscountTotal.discount
+            sub_total: props.taf.totalAmountref,
+            tax: taxDiscountTotal.tax,
+            discount: taxDiscountTotal.discount,
+            additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+            grand_total: props.totalAmountState.totalAmount
         };
     
         // Check if proposal has changed by comparing specific fields
@@ -400,14 +397,16 @@ const QoutationForm = (props) => {
         const isProposalModified = Object.entries(proposalFinal).some(
             ([key, value]) => originalProposal[key] !== value
         );
+
+
     
         if (isProposalModified) {
             await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
         }
-    
+        
         // Add proposal_id to items and dispatch updates if necessary
-        if (addEditItem.length > 0) {
+        if (addEditItem.length > 0 || qoutationItem.length > 0) {
             const itemsWithProId = addEditItem.map(d => ({
                 ...d,
                 proposal_id: quotation.id
@@ -416,13 +415,26 @@ const QoutationForm = (props) => {
             await dispatch(updateProposalItems(itemsWithProId));
             await dispatch(getProposalItemsByProposalId(quotation.id));
     
-            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
-            await dispatch(getAdditionalByProposalID(quotation.id));
-    
+            
             setQoutationItem([]);
             status = true;
         }
+
+        if(!shallowEqualArrays(JSON.parse(getLocalStorage).additionalItems, addtionalItems)) {           
+            // Prepare additional items for update
+            const updatedAdditionalItems = addtionalItems.map(
+                ({ rowId, isSaved, isEditing, ...rest }) => ({
+                    ...rest,
+                    proposal_id: quotation.id
+                })
+            );
     
+            // update the additional items
+            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+            await dispatch(getAdditionalByProposalID(quotation.id));
+        } 
+
+
         // Dispatch tax and discount updates if any
         if (taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
@@ -474,7 +486,8 @@ const QoutationForm = (props) => {
                          totalAmount={props.totalAmountState.totalAmount}
                          setTotalAmount={props.totalAmountState.setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
-                         totalAmountref={{ totalAmountref, setTotalAmountref }}
+                         totalAmountref={props.taf.totalAmountref }
+                         setTotalAmountref={ props.taf.setTotalAmountref }
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
                          reference={{preAdditionalRef, preProductItemsRef}}
                     />
@@ -486,15 +499,15 @@ const QoutationForm = (props) => {
                             setNotification={ setNotification }
                             totalAmount={ props.totalAmountState.totalAmount }
                             setTotalAmount={ props.totalAmountState.setTotalAmount }
-                            setTotalAmountref={setTotalAmountref}
-                            totalAmountref={totalAmountref}
+                            setTotalAmountref={props.taf.setTotalAmountref}
+                            totalAmountref={props.taf.totalAmountref}
                             actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                             reference={{preAdditionalRef, preProductItemsRef}}
                             pid={{ productItemDetails, setProductItemDetails }}
                          />
                     </div>
 
-                    {parseInt(totalAmountref) > 0 && (
+                    {parseInt(props.taf.totalAmountref) > 0 && (
                         ["tax", "discount"].map((type) => (
                             <TaxDiscountTable
                                 key={type}
@@ -506,7 +519,7 @@ const QoutationForm = (props) => {
                                         ? { taxDiscount: tax, setTaxDiscount: setTax }
                                         : { taxDiscount: discount, setTaxDiscount: setDiscount }
                                 }
-                                totalAmountref={totalAmountref}
+                                totalAmountref={props.taf.totalAmountref}
                                 mergeDiscountTax={[...tax, ...discount]}
                                 actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                                 preTaxDiscountRef={preTaxDiscountRef}
@@ -515,7 +528,7 @@ const QoutationForm = (props) => {
                     )}
 
                     <TotalAmount 
-                        totalAmountref={totalAmountref}
+                        totalAmountref={props.taf.totalAmountref}
                         totalAmount={ props.totalAmountState.totalAmount }
                         taxDiscountTotal={taxDiscountTotal}
                     />
