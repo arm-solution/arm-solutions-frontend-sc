@@ -3,7 +3,7 @@ import React from 'react';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { getAllMessageRequest, updateMessageRequest, postMessageRequest } from '../../../store/features/messageRequestSlice';
+import { getAllMessageRequest, updateMessageRequest, postMessage } from '../../../store/features/messageRequestSlice';
 import { dateFormat } from '../../../customs/global/dateFormat';
 
 const MessageRequestDetails = ({ modalRef, selectedMessageRequest, setSelectedMessageRequest }) => {
@@ -34,7 +34,7 @@ const MessageRequestDetails = ({ modalRef, selectedMessageRequest, setSelectedMe
             if (selectedMessageRequest.id) {
                 actionResult = await dispatch(updateMessageRequest(selectedMessageRequest));
             } else {
-                actionResult = await dispatch(postMessageRequest(selectedMessageRequest));
+                actionResult = await dispatch(postMessage(selectedMessageRequest));
             }
     
             // Ensure the dispatched action is resolved and check the result

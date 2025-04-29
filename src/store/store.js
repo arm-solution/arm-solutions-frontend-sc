@@ -15,7 +15,7 @@ import announcementSlice from "./features/announcementSlice";
 import messageRequestSlice from "./features/messageRequestSlice";
 import careerSlice from "./features/careerSlice";
 import additionalSlice from "./features/additional.Slice";
-import messageRequestSlice from "./features/messageRequestSlice";
+// import messageRequestSlice from "./features/messageRequestSlice";
 import serviceSlice from "./features/serviceSlice";
 
 export const store = configureStore({
@@ -33,7 +33,7 @@ export const store = configureStore({
         dtrRequests: dtrRequestSlice.reducer,
         dasboardData: dashboardSlice.reducer,
         announcement: announcementSlice.reducer,
-        messageRequest: messageRequestSlice.reducer,
+        // messageRequest: messageRequestSlice.reducer,
         careers: careerSlice.reducer,
         additionalItems: additionalSlice.reducer,
         messageRequests: messageRequestSlice.reducer,
