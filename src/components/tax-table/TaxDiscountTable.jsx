@@ -68,24 +68,29 @@ const TaxDiscountTable = (props) => {
     }
 
     // ✅ Get previous total tax & discount
-    const prevTax = preTaxDiscountRef.current.tax || 0;
-    const prevDiscount = preTaxDiscountRef.current.discount || 0;
+    // const prevTax = preTaxDiscountRef.current.tax || 0;
+    // const prevDiscount = preTaxDiscountRef.current.discount || 0;
 
     // ✅ Get updated total tax & discount after deletion
-    const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
-    const newTax = totalTaxDiscount.tax || 0;
-    const newDiscount = totalTaxDiscount.discount || 0;
+    // const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
+    // const newTax = totalTaxDiscount.tax || 0;
+    // const newDiscount = totalTaxDiscount.discount || 0;
 
     // ✅ Compute the difference
-    const taxDiff = newTax - prevTax;
-    const discountDiff = newDiscount - prevDiscount;
-    const taxDiscountDiff = taxDiff - discountDiff;
+    // const taxDiff = newTax - prevTax;
+    // const discountDiff = newDiscount - prevDiscount;
+    // const taxDiscountDiff = taxDiff - discountDiff;
+
+    const updateTax = updatedMergedDiscountTax ? updatedMergedDiscountTax.filter(d => d.option_type === 'tax'): [];
+    const updateDiscount = updatedMergedDiscountTax ?  updatedMergedDiscountTax.filter(d => d.option_type === 'discount') : [];
+    
+    props.computeTotalProposal(null, null, updateTax, updateDiscount);
 
     // ✅ Update totalAmount correctly
-    props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
+    // props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
 
     // ✅ Update ref AFTER calculations
-    preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
+    // preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
 };
 
 
@@ -110,31 +115,36 @@ const TaxDiscountTable = (props) => {
     }
 
     // ✅ Calculate previous and new total for tax & discount
-    const prevTax = preTaxDiscountRef.current.tax || 0;
-    const prevDiscount = preTaxDiscountRef.current.discount || 0;
+    // const prevTax = preTaxDiscountRef.current.tax || 0;
+    // const prevDiscount = preTaxDiscountRef.current.discount || 0;
 
-    const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
-    const newTax = totalTaxDiscount.tax || 0;
-    const newDiscount = totalTaxDiscount.discount || 0;
+    // const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
+    // const newTax = totalTaxDiscount.tax || 0;
+    // const newDiscount = totalTaxDiscount.discount || 0;
     
     // ✅ Compute the difference
-    const taxDiff = newTax - prevTax;
-    const discountDiff = newDiscount - prevDiscount;
-    const taxDiscountDiff = taxDiff - discountDiff;
+    // const taxDiff = newTax - prevTax;
+    // const discountDiff = newDiscount - prevDiscount;
+    // const taxDiscountDiff = taxDiff - discountDiff;
+
+    const updateTax = props.mergeDiscountTax ? props.mergeDiscountTax.filter(d => d.option_type === 'tax'): [];
+    const updateDiscount = props.mergeDiscountTax ?  props.mergeDiscountTax.filter(d => d.option_type === 'discount') : [];
     
-    props.setTotalAmount((prev) => {
+    props.computeTotalProposal(null, null, updateTax, updateDiscount);
+
+    // props.setTotalAmount((prev) => {
       
-      console.log("pre", prev);
-      // kunin ang labis na total na isinama sa total product 
-      const getDiffTotalProduct = taxDiscountDiff > 0 && JSON.parse(proposalDetails) ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
+    //   console.log("pre", prev);
+    //   // kunin ang labis na total na isinama sa total product 
+    //   const getDiffTotalProduct = taxDiscountDiff > 0 && JSON.parse(proposalDetails) ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
 
-      console.log("getDiffTotalProduct", getDiffTotalProduct);
+    //   console.log("getDiffTotalProduct", getDiffTotalProduct);
 
-      return (parseFloat(prev) + taxDiscountDiff) - getDiffTotalProduct
-    });
+    //   return (parseFloat(prev) + taxDiscountDiff) - getDiffTotalProduct
+    // });
 
     // ✅ Update ref AFTER calculations
-    preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
+    //preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
 };
 
 
