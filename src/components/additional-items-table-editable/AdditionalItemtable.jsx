@@ -139,15 +139,7 @@ const AdditionalItemtable = (props) => {
     const newTable1Total = additionalTest.reduce((sum, item) => sum + item.item_total, 0) || 0;
     const table1Diff = newTable1Total - prevTable1Total;
 
-    // ✅ Ensure it only adds non 0 value
-    if (table1Diff !== 0) {
-        props.setTotalAmount(prev => {
-          // console.log("additional amout", prev + table1Diff)
-          // console.log("newTable1Total", newTable1Total);
-          // console.log("additional prev", prev)
-          return  (prev + table1Diff) - parseFloat(additionalItemsFromDb);
-        });
-    }
+ 
 
     // ✅ Update reference AFTER calculations
        preAdditionalRef.current = [...additionalTest];
@@ -158,6 +150,14 @@ const AdditionalItemtable = (props) => {
     );
 
     setAdditionalTest(updatedItemsTest);
+
+       // ✅ Ensure it only adds non 0 value
+       if (table1Diff !== 0) {
+        props.computeTotalProposal(updatedItemsTest);
+        // props.setTotalAmount(prev => {
+        //   return  (prev + table1Diff) - parseFloat(additionalItemsFromDb);
+        // });
+       }
 
     if (JSON.stringify(props.additionalState.addtionalItems) !== JSON.stringify(additionalTest)) {
         props.additionalState.setAddtionalItems(updatedItemsTest);
@@ -196,8 +196,9 @@ const handleDelete = (rowId, row) => {
             setAdditionalTest(updateData);
             preAdditionalRef.current = [...updateData];
             // const totalAmount = updateData.reduce((sum, item) => sum + item.item_total, 0)
-            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
+            // props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.item_total));
             // props.totalAmountref.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.item_total));
+            props.computeTotalProposal(updateData);
 
             return true; 
           }

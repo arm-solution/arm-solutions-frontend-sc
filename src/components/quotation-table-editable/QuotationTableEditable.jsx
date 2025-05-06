@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
@@ -16,6 +16,7 @@ const QoutationTableEditable = (props) => {
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
+    // for global reference
     const { preProductItemsRef } = useGlobalRefs();
     const dispatch = useDispatch();
 
@@ -148,6 +149,26 @@ const QoutationTableEditable = (props) => {
             }
         });
     };
+
+    // useEffect(() => {
+
+    //     if(props.pid.productItemDetails && props.pid.productItemDetails.length > 0) {
+    //     // for testing total
+    //     const taxT = props.tax ? props.tax.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const discountT = props.tax ? props.discount.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const additionalT = props.tax ? props.additional.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const productT = props.pid.productItemDetails ? props.pid.productItemDetails.reduce((sum, item) => sum + (item.amount || 0), 0) : 0
+
+
+    //     console.log("taxT", taxT)
+    //     console.log("discountT", discountT)
+    //     console.log("additionalT", additionalT)
+    //     console.log("productT", productT)
+
+    //     }
+
+    // }, [props.pid.productItemDetails])
+    
     
 
     const toggleSaveAndEdit = (id) => {
@@ -159,7 +180,7 @@ const QoutationTableEditable = (props) => {
             errorDialog("All Fields Are Required");
             return;
         }
-    
+
         const updatedDetails = props.pid.productItemDetails.map(data => ({
             ...data,
             amount: parseInt(data.qty) * parseInt(data.base_price)
@@ -176,12 +197,13 @@ const QoutationTableEditable = (props) => {
         const prevProductTotal = preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
         const table2Diff = newProductTotal - prevProductTotal;
+
     
         // ✅ Accumulate the total correctly
-        props.setTotalAmount(prev => {
-            const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
-            return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
-        });
+        // props.setTotalAmount(prev => {
+        //     const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
+        //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
+        // });
         props.setTotalAmountref(prev => {
             const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
             return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
@@ -189,6 +211,8 @@ const QoutationTableEditable = (props) => {
     
         // ✅ Update prevItemsRef AFTER calculations
         preProductItemsRef.current = [...updatedDetails];
+
+        props.computeTotalProposal(null, updatedDetails)
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
@@ -211,7 +235,6 @@ const QoutationTableEditable = (props) => {
         );
     };
     
-
 
     // handle product onchange select dropdown
     const handleProductSelection = (e, rowId) => {
@@ -272,6 +295,9 @@ const QoutationTableEditable = (props) => {
             successText: ""
         }, async () => {
             const { payload } = await dispatch(deleteProposalItems(selectedIds))
+
+            // hindi na kelangan mag lagay ng computeTotalProposal
+            // may useeffect ba nag hahandle if nag bago ang amount ref
             
             if(payload.success) {
                 props.pid.setProductItemDetails(props.pid.productItemDetails.filter(row => !selectedRow.includes(row.id)));
