@@ -72,7 +72,7 @@ const Quotations = () => {
         }));
 
         if(row) {
-          setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
+          // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
           setTotalAmountref(parseFloat(row.sub_total));
         }
     
