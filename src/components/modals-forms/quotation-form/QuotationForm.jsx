@@ -23,6 +23,8 @@ const QoutationForm = (props) => {
     // const navigate = useNavigate();
 
     const [addtionalItems, setAddtionalItems] = useState([]);
+    // const [first, setfirst] = useState(second)
+
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [tax, setTax] = useState([])
