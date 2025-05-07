@@ -36,38 +36,38 @@ const QoutationTableEditable = (props) => {
     
 
     // activating getting sessionStorage and set to product details state
-    useEffect(() => {
-        const fetchFromSession = () => { 
-          const proposalDetails = sessionStorage.getItem('proposalDetails');
+    // useEffect(() => {
+    //     const fetchFromSession = () => { 
+    //       const proposalDetails = sessionStorage.getItem('proposalDetails');
       
-          if (proposalDetails) {
-            const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const itemsWithComputationAmount = quotationItemData.map(d => ({
-                ...d,
-                markup_price: d.base_price,
-                amount: parseInt(d.qty) * parseInt(d.base_price)
-            }))
+    //       if (proposalDetails) {
+    //         const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
+    //         const itemsWithComputationAmount = quotationItemData.map(d => ({
+    //             ...d,
+    //             markup_price: d.base_price,
+    //             amount: parseInt(d.qty) * parseInt(d.base_price)
+    //         }))
            
-            props.pid.setProductItemDetails(itemsWithComputationAmount);
-            // const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
-            // props.setTotalAmountref(parseInt(totalItemAmount))
-          }
-        };
+    //         props.pid.setProductItemDetails(itemsWithComputationAmount);
+    //         // const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
+    //         // props.setTotalAmountref(parseInt(totalItemAmount))
+    //       }
+    //     };
       
-        // Fetch the session storage data on component mount
-        fetchFromSession();
+    //     // Fetch the session storage data on component mount
+    //     fetchFromSession();
       
-        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
-        const handleSessionUpdate = () => {
-          fetchFromSession();
-        };
-        window.addEventListener('sessionUpdated', handleSessionUpdate);
+    //     // Add event listener for 'sessionUpdated' (if needed to listen to updates)
+    //     const handleSessionUpdate = () => {
+    //       fetchFromSession();
+    //     };
+    //     window.addEventListener('sessionUpdated', handleSessionUpdate);
       
-        // Clean up event listener when the component unmounts
-        return () => {
-          window.removeEventListener('sessionUpdated', handleSessionUpdate);
-        };
-    }, []); 
+    //     // Clean up event listener when the component unmounts
+    //     return () => {
+    //       window.removeEventListener('sessionUpdated', handleSessionUpdate);
+    //     };
+    // }, []); 
 
 
 

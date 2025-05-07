@@ -125,12 +125,20 @@ const QoutationForm = (props) => {
           const proposalDetails = sessionStorage.getItem('proposalDetails');
       
           if (proposalDetails) {
-            const { quotation: quotationData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
+            const { quotation: quotationData, taxDiscount: taxDiscountData, quotationItem: quotationItemData } = JSON.parse(proposalDetails);
               setQuotation(quotationData);
               setTax(taxDiscountData.filter(d => d.option_type === 'tax'));
               setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
             //   setAddtionalItems(taxDiscountData.filter(d => d.option_type === 'discount'))
             //   console.log('dsfjsdf', taxDiscountData)
+
+            const itemsWithComputationAmount = quotationItemData.map(d => ({
+                ...d,
+                markup_price: d.base_price,
+                amount: parseInt(d.qty) * parseInt(d.base_price)
+            }))
+
+            setProductItemDetails(itemsWithComputationAmount);
             
           }
         };
@@ -152,15 +160,15 @@ const QoutationForm = (props) => {
 
 
     // calculating tax and discount percentage
-  const calculateTaxDiscount = (row) => {
-    if (props.taf.totalAmountref > 0) {
-      return row.amount_type === 'percentage'
-        ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
-        : parseFloat(row.percentage);
-    } else {
-      return 0
+    const calculateTaxDiscount = (row) => {
+        if (props.taf.totalAmountref > 0) {
+        return row.amount_type === 'percentage'
+            ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
+            : parseFloat(row.percentage);
+        } else {
+        return 0
+        }
     }
-  }
 
     const getTotalTax = (tax) => {
         if (tax.length > 0) {
