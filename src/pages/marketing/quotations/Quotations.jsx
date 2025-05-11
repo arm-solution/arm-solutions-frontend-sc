@@ -10,6 +10,7 @@ import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscou
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
+import { getAdditionalItemsByProposalId } from '../../../store/features/additional.Slice';
 
 const Quotations = () => {
 
@@ -103,7 +104,6 @@ const Quotations = () => {
   
       });
     }
-    
     
   return (
     <>

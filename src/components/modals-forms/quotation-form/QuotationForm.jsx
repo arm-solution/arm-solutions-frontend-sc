@@ -522,6 +522,7 @@ const QoutationForm = (props) => {
     //  open pdf file on new tab
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
+            additional: addtionalItems,
             quotation: props.proposalEdit,
             tax: tax,
             discount: discount,
