@@ -25,7 +25,7 @@ export const formatDateAndTimeReadable = (isoDate) => {
     }).format(date);
 };
 
-
+// posible params 2025-04-14T00:00:00.000Z
 export const formatDateReadable = (isoDate) => {
     // Create a Date object from the date string, ignoring the time part
     const date = new Date(isoDate.split('T')[0]);  // Split to remove the time part

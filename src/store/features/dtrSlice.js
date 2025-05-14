@@ -28,10 +28,14 @@ export const postDtr = createAsyncThunk('dtr/postDtr', async(dtr, { rejectWithVa
     }
 });
 
-export const getDtrById = createAsyncThunk('dtr/getDtrById', async(id, { rejectWithValue }) => {
+export const getDtrById = createAsyncThunk('dtr/getDtrById', async({ id, from, to }, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/${id}`);
-
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/${id}`, {
+            params: {
+                ...(from && { from }),
+                ...(to && { to }),
+            }
+        });
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

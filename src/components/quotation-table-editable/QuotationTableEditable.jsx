@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
@@ -6,16 +6,17 @@ import { deleteProposalItem, deleteProposalItems } from '../../store/features/pr
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 import { useGlobalRefs } from '../../customs/global/useGlobalRef';
+// import FloatNotification from '../../float-notification/FloatNotification';
 
 
 const QoutationTableEditable = (props) => {
 
     const [products, setProducts] = useState([]);
-    const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
+    // for global reference
     const { preProductItemsRef } = useGlobalRefs();
     const dispatch = useDispatch();
 
@@ -35,38 +36,38 @@ const QoutationTableEditable = (props) => {
     
 
     // activating getting sessionStorage and set to product details state
-    useEffect(() => {
-        const fetchFromSession = () => { 
-          const proposalDetails = sessionStorage.getItem('proposalDetails');
+    // useEffect(() => {
+    //     const fetchFromSession = () => { 
+    //       const proposalDetails = sessionStorage.getItem('proposalDetails');
       
-          if (proposalDetails) {
-            const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const itemsWithComputationAmount = quotationItemData.map(d => ({
-                ...d,
-                markup_price: d.base_price,
-                amount: parseInt(d.qty) * parseInt(d.base_price)
-            }))
+    //       if (proposalDetails) {
+    //         const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
+    //         const itemsWithComputationAmount = quotationItemData.map(d => ({
+    //             ...d,
+    //             markup_price: d.base_price,
+    //             amount: parseInt(d.qty) * parseInt(d.base_price)
+    //         }))
            
-            setProductItemDetails(itemsWithComputationAmount)
-            const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
-            props.setTotalAmountref(parseInt(totalItemAmount))
-          }
-        };
+    //         props.pid.setProductItemDetails(itemsWithComputationAmount);
+    //         // const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
+    //         // props.setTotalAmountref(parseInt(totalItemAmount))
+    //       }
+    //     };
       
-        // Fetch the session storage data on component mount
-        fetchFromSession();
+    //     // Fetch the session storage data on component mount
+    //     fetchFromSession();
       
-        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
-        const handleSessionUpdate = () => {
-          fetchFromSession();
-        };
-        window.addEventListener('sessionUpdated', handleSessionUpdate);
+    //     // Add event listener for 'sessionUpdated' (if needed to listen to updates)
+    //     const handleSessionUpdate = () => {
+    //       fetchFromSession();
+    //     };
+    //     window.addEventListener('sessionUpdated', handleSessionUpdate);
       
-        // Clean up event listener when the component unmounts
-        return () => {
-          window.removeEventListener('sessionUpdated', handleSessionUpdate);
-        };
-    }, []);  // Empty dependency array ensures it runs once on mount
+    //     // Clean up event listener when the component unmounts
+    //     return () => {
+    //       window.removeEventListener('sessionUpdated', handleSessionUpdate);
+    //     };
+    // }, []); 
 
 
 
@@ -88,7 +89,7 @@ const QoutationTableEditable = (props) => {
             setValidateNegativeQty(false);
         }
         // Update the field first
-        setProductItemDetails(prevDetails => {
+        props.pid.setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
                 row.id === id
                     ? {
@@ -106,7 +107,7 @@ const QoutationTableEditable = (props) => {
     
     // adding row template in the table
     const addRow = () => {
-        setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
+        props.pid.setProductItemDetails([...props.pid.productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
@@ -130,39 +131,62 @@ const QoutationTableEditable = (props) => {
                 const { payload } = await dispatch(deleteProposalItem(mysqlId));
                 const result = payload.affectedRows > 0 ? true : false;
                 if (result) {
-                    updatedDetails = productItemDetails.filter(row => row.id !== rowId);
+                    updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
                 }
 
             } else {
-                updatedDetails = productItemDetails.filter(row => row.id !== rowId);
+                updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
             }
     
             // Updating state and then calculating total amount
             if (updatedDetails) {
-                setProductItemDetails(updatedDetails);
+                props.pid.setProductItemDetails(updatedDetails);
                 preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                props.totalAmount.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+                props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
                 props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
                 return true;
             }
         });
     };
+
+    // useEffect(() => {
+
+    //     if(props.pid.productItemDetails && props.pid.productItemDetails.length > 0) {
+    //     // for testing total
+    //     const taxT = props.tax ? props.tax.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const discountT = props.tax ? props.discount.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const additionalT = props.tax ? props.additional.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
+    //     const productT = props.pid.productItemDetails ? props.pid.productItemDetails.reduce((sum, item) => sum + (item.amount || 0), 0) : 0
+
+
+    //     console.log("taxT", taxT)
+    //     console.log("discountT", discountT)
+    //     console.log("additionalT", additionalT)
+    //     console.log("productT", productT)
+
+    //     }
+
+    // }, [props.pid.productItemDetails])
+    
     
 
     const toggleSaveAndEdit = (id) => {
-        const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+        const checkProduct = props.pid.productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+        const proposalDetails = sessionStorage.getItem("proposalDetails");
+        const proposalItemsFromDbTotal = JSON.parse(proposalDetails) ? JSON.parse(proposalDetails).quotationItem.reduce((sum, item) => sum + item.item_total, 0) || 0 : 0;
+        
         if (checkProduct) {
             errorDialog("All Fields Are Required");
             return;
         }
-    
-        const updatedDetails = productItemDetails.map(data => ({
+
+        const updatedDetails = props.pid.productItemDetails.map(data => ({
             ...data,
             amount: parseInt(data.qty) * parseInt(data.base_price)
         }));
     
-        setProductItemDetails(updatedDetails);
+        props.pid.setProductItemDetails(updatedDetails);
     
         // ✅ Initialize reference if undefined
         if (!preProductItemsRef.current || !Array.isArray(preProductItemsRef.current)) {
@@ -173,17 +197,22 @@ const QoutationTableEditable = (props) => {
         const prevProductTotal = preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
         const table2Diff = newProductTotal - prevProductTotal;
+
     
         // ✅ Accumulate the total correctly
-        props.totalAmount.setTotalAmount(prev => {
-            // console.log("product amout", prev + table2Diff)
-            // console.log("product prev", prev)
-            return  prev + table2Diff
+        // props.setTotalAmount(prev => {
+        //     const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
+        //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
+        // });
+        props.setTotalAmountref(prev => {
+            const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
+            return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
         });
-        props.setTotalAmountref(prev => prev + table2Diff);
     
         // ✅ Update prevItemsRef AFTER calculations
         preProductItemsRef.current = [...updatedDetails];
+
+        props.computeTotalProposal(null, updatedDetails)
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
@@ -199,7 +228,7 @@ const QoutationTableEditable = (props) => {
             props.setQoutationItem(updatedQuotationItems);
         }
     
-        setProductItemDetails(prevDetails =>
+        props.pid.setProductItemDetails(prevDetails =>
             prevDetails.map(row =>
                 row.id === id ? { ...row, isEditing: !row.isEditing } : row
             )
@@ -207,13 +236,12 @@ const QoutationTableEditable = (props) => {
     };
     
 
-
     // handle product onchange select dropdown
     const handleProductSelection = (e, rowId) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
-        const productExist = productItemDetails.find(p => p.id === selectedProductId);
+        const productExist = props.pid.productItemDetails.find(p => p.id === selectedProductId);
 
         if (productExist) {
             props.setNotification({
@@ -222,13 +250,13 @@ const QoutationTableEditable = (props) => {
             })
             return;
         }
-        setProductItemDetails(prevDetails => prevDetails.map(row => 
+        props.pid.setProductItemDetails(prevDetails => prevDetails.map(row => 
             row.id === rowId ? { ...row, ...selectedProduct, isEditing: true, markup_price: selectedProduct.base_price } : row
         ));
 
     };
 
-    const anyRowEditing = productItemDetails.some(row => row.isEditing);
+    const anyRowEditing = props.pid.productItemDetails.some(row => row.isEditing);
 
     const screenMobile = () => {
         if(window.innerWidth < 900){
@@ -267,9 +295,12 @@ const QoutationTableEditable = (props) => {
             successText: ""
         }, async () => {
             const { payload } = await dispatch(deleteProposalItems(selectedIds))
+
+            // hindi na kelangan mag lagay ng computeTotalProposal
+            // may useeffect ba nag hahandle if nag bago ang amount ref
             
             if(payload.success) {
-                setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
+                props.pid.setProductItemDetails(props.pid.productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
                 return false;
@@ -300,7 +331,7 @@ const QoutationTableEditable = (props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {productItemDetails.map((row, index) => (
+                    {props.pid.productItemDetails.map((row, index) => (
                         <tr key={index}>
                             
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>

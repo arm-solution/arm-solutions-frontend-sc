@@ -9,19 +9,28 @@ import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
+import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
+import { getAdditionalItemsByProposalId } from '../../../store/features/additional.Slice';
 
 const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
+
+    const [totalAmount, setTotalAmount] = useState(0)
+    const [totalAmountref, setTotalAmountref] = useState(0)
     
     const dispatch = useDispatch();
     
+    //  this is from the redux
     const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
+
+    // global red
+    const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
@@ -62,6 +71,11 @@ const Quotations = () => {
           taxDiscount: discountTaxResult.payload,
           additionalItems: additionalItems.payload
         }));
+
+        if(row) {
+          // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
+          setTotalAmountref(parseFloat(row.sub_total));
+        }
     
         // Dispatch a custom event to signal that sessionStorage is updated
         window.dispatchEvent(new Event('sessionUpdated'));
@@ -90,7 +104,6 @@ const Quotations = () => {
   
       });
     }
-    
     
   return (
     <>
@@ -144,6 +157,8 @@ const Quotations = () => {
               proposalItemLoading={proposalItemLoading}
               proposalItemSuccess={proposalItemSuccess}
               taxDiscountData={taxDiscountData}
+              totalAmountState={{ totalAmount, setTotalAmount }}
+              taf={{ totalAmountref, setTotalAmountref }}
             /> 
 
         </div>

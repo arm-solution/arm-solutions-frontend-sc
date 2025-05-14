@@ -59,7 +59,7 @@ const clientSlice = createSlice({
     initialState: {
         data: [],
         isSuccess: false,
-        loading: true,
+        loading: false,
         message: ''
     },
     reducers: {},
