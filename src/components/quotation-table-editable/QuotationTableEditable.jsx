@@ -125,30 +125,33 @@ const QoutationTableEditable = (props) => {
         }, async () => {
     
             let updatedDetails;
-    
-            // checking if id from the database is exist
-            if(mysqlId) {
-                const { payload } = await dispatch(deleteProposalItem(mysqlId));
-                const result = payload.affectedRows > 0 ? true : false;
-                if (result) {
-                    updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
-                }
 
-            } else {
-                updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
-            }
+
     
-            // Updating state and then calculating total amount
-            if (updatedDetails) {
+            // // checking if id from the database is exist
+            // if(mysqlId) {
+            //     const { payload } = await dispatch(deleteProposalItem(mysqlId));
+            //     const result = payload.affectedRows > 0 ? true : false;
+                // if (result) {
+                    updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+                // }
+
+            // } else {
+            //     updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+            // }
+    
+            // // Updating state and then calculating total amount
+            // if (updatedDetails) {
                 props.pid.setProductItemDetails(updatedDetails);
                 preProductItemsRef.current = [...updatedDetails];
                 // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
                 props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
                 props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
                 return true;
-            }
+            // }
         });
     };
+    
 
     // useEffect(() => {
 
@@ -294,6 +297,9 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
+
+
+
             const { payload } = await dispatch(deleteProposalItems(selectedIds))
 
             // hindi na kelangan mag lagay ng computeTotalProposal

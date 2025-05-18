@@ -99,6 +99,21 @@ const QoutationForm = (props) => {
             position
         };
     }
+
+
+    useEffect(() => {
+        const proposalDetails = sessionStorage.getItem('proposalDetails');
+
+        if(proposalDetails) {
+            console.log("update needed with localstorage")
+        }
+
+
+    }, [props.taf.totalAmountref]);
+    
+
+
+
      
     useEffect(() => {
         if (props.proposalEdit) {
@@ -140,6 +155,7 @@ const QoutationForm = (props) => {
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
 
+            // this is for quotation editable table
             setProductItemDetails(itemsWithComputationAmount);
             
           }
