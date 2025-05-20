@@ -45,7 +45,7 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
 export const updateProposalItems = createAsyncThunk('proposalItems/updateProposalItems', async(items, {rejectWithValue}) =>{
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/update-multiple-proposal-item`, items);
-
+        console.log("updare data response", data)
         return data;
     } catch (error) {
         return rejectWithValue(error.response.data);
@@ -63,14 +63,11 @@ export const deleteProposalItem = createAsyncThunk('proposalItems/deleteProposal
     }
 })
 
-export const deleteProposalItems = createAsyncThunk('proposalItems/deleteProposalItems', async (ids, { rejectWithValue }) => {
+export const deleteMultipleProposalItems = createAsyncThunk('proposalItems/deleteProposalItems', async (ids, { rejectWithValue }) => {
    
       try {
-        const { data } = await axios.delete(
-          `${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, 
-          { data: ids }
-        );
-
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, { data: ids });
+        console.log("deleteMultipleProposalItems", data);
         return data;
       } catch (error) {
         return rejectWithValue(error.response.data);

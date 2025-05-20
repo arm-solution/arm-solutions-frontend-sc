@@ -55,8 +55,17 @@ const TaxDiscountTable = (props) => {
 
   const handleDelete = (rowId, type, row) => {
 
-    // 🔄 Remove the row from the taxDiscount state
+    console.log("row id", row.id);
+
+    if(row.id) {
+        props.setDataTotDelete(prev => ({
+          ...prev,
+          taxDiscount: [...prev.taxDiscount, row.id]
+        }));
+    } 
+
     const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
+    // 🔄 Remove the row from the taxDiscount state
     props.taxDiscount.setTaxDiscount(filteredRows);
 
     // 🔄 Remove the row from merged discount/tax state
@@ -67,30 +76,11 @@ const TaxDiscountTable = (props) => {
         preTaxDiscountRef.current = { tax: 0, discount: 0 };
     }
 
-    // ✅ Get previous total tax & discount
-    // const prevTax = preTaxDiscountRef.current.tax || 0;
-    // const prevDiscount = preTaxDiscountRef.current.discount || 0;
-
-    // ✅ Get updated total tax & discount after deletion
-    // const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
-    // const newTax = totalTaxDiscount.tax || 0;
-    // const newDiscount = totalTaxDiscount.discount || 0;
-
-    // ✅ Compute the difference
-    // const taxDiff = newTax - prevTax;
-    // const discountDiff = newDiscount - prevDiscount;
-    // const taxDiscountDiff = taxDiff - discountDiff;
-
     const updateTax = updatedMergedDiscountTax ? updatedMergedDiscountTax.filter(d => d.option_type === 'tax'): [];
     const updateDiscount = updatedMergedDiscountTax ?  updatedMergedDiscountTax.filter(d => d.option_type === 'discount') : [];
     
     props.computeTotalProposal(null, null, updateTax, updateDiscount);
 
-    // ✅ Update totalAmount correctly
-    // props.setTotalAmount(prev => parseFloat(prev) + taxDiscountDiff);
-
-    // ✅ Update ref AFTER calculations
-    // preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
 };
 
 

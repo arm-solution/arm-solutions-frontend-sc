@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
-import { deleteProposalItem, deleteProposalItems } from '../../store/features/proposalItemSlice';
+import { deleteProposalItem, deleteMultipleProposalItems } from '../../store/features/proposalItemSlice';
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 import { useGlobalRefs } from '../../customs/global/useGlobalRef';
@@ -112,43 +112,72 @@ const QoutationTableEditable = (props) => {
 
     // delete row in the table 
     const  deleteRow = (rowId, mysqlId, row) => {
-        deleteConfirmation({
-            title: "",
-            text: "",
-            icon: "",
-            confirmButtonText: "",
-            cancelButtonText: "",
-            deleteTitle: "",
-            deleteText: "",
-            successTitle: "", 
-            successText: ""
-        }, async () => {
-    
-            let updatedDetails;
-    
-            // checking if id from the database is exist
-            if(mysqlId) {
-                const { payload } = await dispatch(deleteProposalItem(mysqlId));
-                const result = payload.affectedRows > 0 ? true : false;
-                if (result) {
-                    updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
-                }
 
-            } else {
-                updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
-            }
+        let updatedDetails;
+
+        if(mysqlId) {
+            // collecting data that need to delete
+            props.setDataTotDelete(prev => ({
+                ...prev,
+                quotationItems: [...prev.quotationItems, mysqlId]
+            }))
+
+            updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        } else {
+            updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        }
+
+        if (updatedDetails) {
+            props.pid.setProductItemDetails(updatedDetails);
+            preProductItemsRef.current = [...updatedDetails];
+            // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+            props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
+        }
+        
+
+
+
+        // deleteConfirmation({
+        //     title: "",
+        //     text: "",
+        //     icon: "",
+        //     confirmButtonText: "",
+        //     cancelButtonText: "",
+        //     deleteTitle: "",
+        //     deleteText: "",
+        //     successTitle: "", 
+        //     successText: ""
+        // }, async () => {
     
-            // Updating state and then calculating total amount
-            if (updatedDetails) {
-                props.pid.setProductItemDetails(updatedDetails);
-                preProductItemsRef.current = [...updatedDetails];
-                // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
-                props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
-                return true;
-            }
-        });
+        //     let updatedDetails;
+
+
+    
+        //     // // checking if id from the database is exist
+        //     if(mysqlId) {
+        //         const { payload } = await dispatch(deleteProposalItem(mysqlId));
+        //         const result = payload.affectedRows > 0 ? true : false;
+        //         if (result) {
+        //             updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        //         }
+
+        //     } else {
+        //         updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        //     }
+    
+        //     // // Updating state and then calculating total amount
+        //     if (updatedDetails) {
+        //         props.pid.setProductItemDetails(updatedDetails);
+        //         preProductItemsRef.current = [...updatedDetails];
+        //         // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+        //         props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+        //         props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
+        //         return true;
+        //     }
+        // });
     };
+    
 
     // useEffect(() => {
 
@@ -294,7 +323,10 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-            const { payload } = await dispatch(deleteProposalItems(selectedIds))
+
+
+
+            const { payload } = await dispatch(deleteMultipleProposalItems(selectedIds))
 
             // hindi na kelangan mag lagay ng computeTotalProposal
             // may useeffect ba nag hahandle if nag bago ang amount ref

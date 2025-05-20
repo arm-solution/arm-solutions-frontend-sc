@@ -154,11 +154,15 @@ const AdditionalItemtable = (props) => {
       let updateData;
 
       if(row.id) {
-        const { payload } = await dispatch(deleteAdditionalById(row.id));
+        // const { payload } = await dispatch(deleteAdditionalById(row.id));
 
-        if(payload.success) {
+        props.setDataTotDelete(prev => ({
+          ...prev,
+          additionalItems: [...prev.additionalItems, row.id]
+        }))
+
           updateData = props.additionalState.addtionalItems.filter(row => row.id !== rowId);
-        }
+        
       } else {
         updateData = props.additionalState.addtionalItems.filter(row => row.rowId !== rowId);
       }

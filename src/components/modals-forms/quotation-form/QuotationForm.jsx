@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
-// import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
@@ -9,15 +8,15 @@ import { getCurrentDate, dateFormatted } from '../../../customs/global/manageDat
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
 import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
-import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/features/taxDiscountSlice';
+import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems, deleteMultipleProposalItems } from '../../../store/features/proposalItemSlice'; 
+import { postDiscountAndTax, updateTaxAndDiscount, deleteMultipleTaxDiscount } from '../../../store/features/taxDiscountSlice';
+import { postAdditionalItems, updateMultipleAdditionalItems, getAdditionalByProposalID, deleteMultipleAdditionalItems } from '../../../store/features/additional.Slice';
 import { getModifiedAndNewItems, shallowEqualArrays } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
-import { postAdditionalItems, updateMultipleAdditionalItems, getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -58,6 +57,12 @@ const QoutationForm = (props) => {
     const preAdditionalRef = useRef([]);
     const preProductItemsRef = useRef([]);
     const preTaxDiscountRef = useRef([]);
+
+    const [dataTotDelete, setDataTotDelete] = useState({
+        quotationItems: [],
+        taxDiscount: [],
+        additionalItems: []
+    })
     
     const dispatch = useDispatch();
 
@@ -99,7 +104,34 @@ const QoutationForm = (props) => {
             position
         };
     }
-     
+
+
+    // update data from the database when the local storage is not empty
+    // this is for delete items
+    // useEffect(() => {
+    //     const storedProposal = sessionStorage.getItem('proposalDetails');
+    //     if (!storedProposal) return;
+    
+    //     const storedQuotation = JSON.parse(storedProposal).quotation;
+    //     const storedSubTotal = parseFloat(storedQuotation?.sub_total || 0);
+    
+    //     if (storedSubTotal !== props.taf.totalAmountref) {
+    //         const updatedQuotation = {
+    //             ...quotation,
+    //             sub_total: props.taf.totalAmountref,
+    //             tax: taxDiscountTotal.tax,
+    //             discount: taxDiscountTotal.discount,
+    //             additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+    //         };
+    
+    //         const data = dispatch(updateProposal({ quotation: updatedQuotation, id: quotation.id }));
+
+    //         console.log("data", data);
+    //     }
+    // }, [props.taf.totalAmountref, taxDiscountTotal, addtionalItems, quotation, dispatch]);
+    
+    
+
     useEffect(() => {
         if (props.proposalEdit) {
             const fetchQuotationDetails = async () => {
@@ -107,14 +139,7 @@ const QoutationForm = (props) => {
                 const creatorDet = await getCreatorDetails(props.proposalEdit.created_by)
 
                 setCreator(creatorDet)
-                // console.log('proposal creator', creator);
                 setClientDetails(client);
-                // setQuotation(props.proposalEdit);
-                // setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-                // setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-                // setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-                // setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
-                // setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
             }
 
             fetchQuotationDetails();
@@ -131,8 +156,6 @@ const QoutationForm = (props) => {
               setQuotation(quotationData);
               setTax(taxDiscountData.filter(d => d.option_type === 'tax'));
               setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
-            //   setAddtionalItems(taxDiscountData.filter(d => d.option_type === 'discount'))
-            //   console.log('dsfjsdf', taxDiscountData)
 
             const itemsWithComputationAmount = quotationItemData.map(d => ({
                 ...d,
@@ -140,6 +163,7 @@ const QoutationForm = (props) => {
                 amount: parseInt(d.qty) * parseInt(d.base_price)
             }))
 
+            // this is for quotation editable table
             setProductItemDetails(itemsWithComputationAmount);
             
           }
@@ -202,6 +226,7 @@ const QoutationForm = (props) => {
           }));
     };
 
+    // call this for every action for compute all table
     const computeTotalProposal = (
         latestAdditionalItems = null,
         latestProductItems = null,
@@ -228,12 +253,6 @@ const QoutationForm = (props) => {
           parseFloat(taxDiscountT?.tax || 0) +
           parseFloat(productsT || 0) -
           parseFloat(taxDiscountT?.discount || 0);
-
-        // console.log("additional ", additionalT)
-        // console.log("discount ", taxDiscountT?.discount)
-        // console.log("tax ", taxDiscountT?.tax)
-        // console.log("productsT ", productsT)
-        // console.log('new total', totalNew);
         
         setTaxDiscountTotal(taxDiscountT);
         props.totalAmountState.setTotalAmount(totalNew);
@@ -414,8 +433,9 @@ const QoutationForm = (props) => {
         }
     };
     
-
+    // UPDATE PROPOSAL
     const handleUpdateQoutation = async () => {
+
         let status = false;
         // use this for compring additional items
         const getLocalStorage = sessionStorage.getItem("proposalDetails");
@@ -469,7 +489,7 @@ const QoutationForm = (props) => {
         );
 
 
-    
+       // update propsal detail 
         if (isProposalModified) {
             await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
@@ -477,9 +497,10 @@ const QoutationForm = (props) => {
         
         // Add proposal_id to items and dispatch updates if necessary
         if (addEditItem.length > 0 || qoutationItem.length > 0) {
-            const itemsWithProId = addEditItem.map(d => ({
+            const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
                 ...d,
-                proposal_id: quotation.id
+                proposal_id: quotation.id,
+                item_total: amount
             }));
     
             await dispatch(updateProposalItems(itemsWithProId));
@@ -510,13 +531,28 @@ const QoutationForm = (props) => {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
+
+        // this is for deletion of the items from the database
+        if(dataTotDelete.additionalItems.length > 0) {
+            await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
+        }
+        if(dataTotDelete.quotationItems.length > 0) {
+            await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
+        }
+        if(dataTotDelete.taxDiscount.length > 0) {
+            await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
+        }
     
         // Show success or error message
         if (status) {
+            handleClearForm()
             successDialog("Updated Successfully");
         } else {
+            handleClearForm()
             errorDialog("No changes detected!");
         }
+
+        // end
     };
     
     //  open pdf file on new tab
@@ -562,6 +598,7 @@ const QoutationForm = (props) => {
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
                          reference={{preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
+                         setDataTotDelete={setDataTotDelete}
                     />
 
                     <div className="row table-editable">
@@ -581,6 +618,7 @@ const QoutationForm = (props) => {
                             discount={discount}
                             additional={addtionalItems}
                             computeTotalProposal={computeTotalProposal}
+                            setDataTotDelete={setDataTotDelete}
                          />
                     </div>
 
@@ -601,6 +639,7 @@ const QoutationForm = (props) => {
                                 actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
                                 preTaxDiscountRef={preTaxDiscountRef}
                                 computeTotalProposal={computeTotalProposal}
+                                setDataTotDelete={setDataTotDelete}
                             />
                         ))
                     )}
