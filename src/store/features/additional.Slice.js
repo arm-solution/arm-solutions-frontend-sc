@@ -32,8 +32,18 @@ export const deleteAdditionalById = createAsyncThunk('deleteAdditionalById', asy
     }
 })
 
+export const deleteMultipleAdditionalItems = createAsyncThunk('deleteMultipleAdditionalItems', async(ids, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-item/delete-multiple-additional-item`, { data: ids });
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 // this is not initialize on the inital state for direct getting the payload
-export const updateMultipleAdditionalItems = createAsyncThunk('updateMultipleAdditionalItems', async(additionalData, {rejectWithValue}) => {
+export const  updateMultipleAdditionalItems = createAsyncThunk('updateMultipleAdditionalItems', async(additionalData, {rejectWithValue}) => {
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-item/update-multiple-additiona-items`, additionalData);
 

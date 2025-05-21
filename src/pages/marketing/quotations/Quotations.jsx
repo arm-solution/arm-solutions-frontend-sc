@@ -16,6 +16,7 @@ const Quotations = () => {
 
     const [selectedTab, setSelectedTab] = useState('tab-one');
 
+    // this is the main computation of the proposal
     const [totalAmount, setTotalAmount] = useState(0)
     const [totalAmountref, setTotalAmountref] = useState(0)
     
@@ -29,7 +30,7 @@ const Quotations = () => {
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
 
-    // global red
+    // global ref
     const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
@@ -86,8 +87,6 @@ const Quotations = () => {
     };
   
     const handleDelete = (id) => {
-      // alert('deleted'+ id);
-
       deleteConfirmation({
         title: "",
         text: "",
