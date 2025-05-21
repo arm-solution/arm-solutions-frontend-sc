@@ -16,7 +16,6 @@ import messageRequestSlice from "./features/messageRequestSlice";
 import careerSlice from "./features/careerSlice";
 import additionalSlice from "./features/additional.Slice";
 import serviceSlice from "./features/serviceSlice";
-import messageRequestSlice from "./features/messageRequestSlice";
 
 export const store = configureStore({
     reducer: {

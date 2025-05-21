@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postMessage } from '../../../store/features/messageRequestSlice';
+// import { postMessage } from '../../../store/features/messageRequestSlice';
 import './Inquiry.css'
 
 const Inquiry = () => {
@@ -33,45 +33,45 @@ const Inquiry = () => {
     })
   }
 
-  const handleSubmit = async () => {
-    if(messageState.email === '' || messageState.message === '') {
-      setErrMessage({
-        status: true,
-        message: "Please fill out all the fields"
-      })
-      return;
-    }
+  // const handleSubmit = async () => {
+  //   if(messageState.email === '' || messageState.message === '') {
+  //     setErrMessage({
+  //       status: true,
+  //       message: "Please fill out all the fields"
+  //     })
+  //     return;
+  //   }
 
-    try {
+  //   try {
 
-     const { payload } = await dispatch(postMessage(messageState))
+  //    const { payload } = await dispatch(postMessage(messageState))
 
-     if(payload.success) {
+  //    if(payload.success) {
 
-      alert(`
-        Hello! Thanks so much for reaching out.
-        We’ve received your message and will be getting back to you shortly. Hang tight!
-        `);
+  //     alert(`
+  //       Hello! Thanks so much for reaching out.
+  //       We’ve received your message and will be getting back to you shortly. Hang tight!
+  //       `);
 
-        setMessageState({
-          email: '',
-          message: '',
-          status: '',
-        })
+  //       setMessageState({
+  //         email: '',
+  //         message: '',
+  //         status: '',
+  //       })
 
-     } else {
-      setErrMessage({
-        status: true,
-        message: "Server Error!"
-      })
-     }
+  //    } else {
+  //     setErrMessage({
+  //       status: true,
+  //       message: "Server Error!"
+  //     })
+  //    }
       
-    } catch (error) {
-      console.error("error: ", error);
-    }
+  //   } catch (error) {
+  //     console.error("error: ", error);
+  //   }
 
 
-  }
+  // }
 
   return (
     <>
@@ -85,7 +85,7 @@ const Inquiry = () => {
             </div>
 
             <div className="form-group">
-              <button className="btn btn-secondary btn-sm" onClick={handleSubmit}>Submit</button>
+              {/* <button className="btn btn-secondary btn-sm" onClick={handleSubmit}>Submit</button> */}
         </div>
 
         {errmessage.status && (

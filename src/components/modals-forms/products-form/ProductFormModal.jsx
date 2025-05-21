@@ -67,7 +67,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <input
                   type="text"
                   name="name"
-                  value={selectedProduct?.name}
+                  value={selectedProduct?.name || ''}
                   className="form-control"
                   onChange={(e) => handleInputChange(e)}
                 />
@@ -77,7 +77,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <input
                   type="text"
                   name="description"
-                  value={selectedProduct?.description}
+                  value={selectedProduct?.description || ''}
                   className="form-control"
                   onChange={(e) => handleInputChange(e)}
                 />
@@ -87,7 +87,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <input
                   type="text"
                   name="sku"
-                  value={selectedProduct?.sku}
+                  value={selectedProduct?.sku || ''}
                   className="form-control"
                   onChange={(e) => handleInputChange(e)}
                 />
@@ -97,7 +97,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <input
                   type="number"
                   name="base_price"
-                  value={selectedProduct?.base_price}
+                  value={selectedProduct?.base_price || ''}
                   className="form-control"
                   onChange={(e) => handleInputChange(e)}
                 />
@@ -107,7 +107,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <input
                   type="text"
                   name="category"
-                  value={selectedProduct?.category_name}
+                  value={selectedProduct?.category_name || ''}
                   className="form-control"
                   onChange={(e) => handleInputChange(e)}
                 />

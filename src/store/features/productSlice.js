@@ -97,6 +97,20 @@ const productSlice = createSlice({
             state.loading = false;
             state.isSuccess = false;
         })
+        .addCase(updateProduct.pending, (state) => {
+            state.loading = true;
+            state.isSuccess = false;
+        })
+        .addCase(updateProduct.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+        })
+        .addCase(updateProduct.rejected, (state, _) => {
+            state.loading = false;
+            state.isSuccess = false;
+            state.message = "rejected";
+        })
 
         
     }
