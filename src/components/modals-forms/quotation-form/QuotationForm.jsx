@@ -488,7 +488,8 @@ const QoutationForm = (props) => {
             ([key, value]) => originalProposal[key] !== value
         );
 
-
+        console.log("proposalfinal", proposalFinal)
+        console.log("amount ref", props.taf.totalAmountref)
        // update propsal detail 
         if (isProposalModified) {
             await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
@@ -552,8 +553,8 @@ const QoutationForm = (props) => {
             errorDialog("No changes detected!");
         }
 
-        // end
-    };
+       
+    };  // end of update
     
     //  open pdf file on new tab
     const openPdfFile = () => {
