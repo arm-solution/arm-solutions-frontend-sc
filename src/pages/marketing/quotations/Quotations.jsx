@@ -75,7 +75,7 @@ const Quotations = () => {
 
         if(row) {
           // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
-
+          // the issue is you getting the row the row is not from the database fix this
           console.log("db subtotal", row.sub_total)
           setTotalAmountref(parseFloat(row.sub_total));
         }

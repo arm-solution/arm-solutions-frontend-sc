@@ -17,6 +17,7 @@ import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
+import { getAllProposal } from '../../../store/features/proposalSlice';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -488,8 +489,6 @@ const QoutationForm = (props) => {
             ([key, value]) => originalProposal[key] !== value
         );
 
-        console.log("proposalfinal", proposalFinal)
-        console.log("amount ref", props.taf.totalAmountref)
        // update propsal detail 
         if (isProposalModified) {
             await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
@@ -547,6 +546,7 @@ const QoutationForm = (props) => {
         // Show success or error message
         if (status) {
             handleClearForm()
+            await dispatch(getAllProposal());
             successDialog("Updated Successfully");
         } else {
             handleClearForm()
