@@ -227,16 +227,22 @@ const QoutationTableEditable = (props) => {
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
         const table2Diff = newProductTotal - prevProductTotal;
 
+
+        // console.log("new", newProductTotal);
+
     
         // ✅ Accumulate the total correctly
         // props.setTotalAmount(prev => {
         //     const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
         //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
         // });
-        props.setTotalAmountref(prev => {
-            const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
-            return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
-        });
+
+        // props.setTotalAmountref(prev => {
+        //     const getDiff = JSON.parse(proposalDetails) ? parseFloat(prev) - parseFloat(proposalItemsFromDbTotal) : 0;
+        //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
+        // });
+
+        props.setTotalAmountref(newProductTotal);
     
         // ✅ Update prevItemsRef AFTER calculations
         preProductItemsRef.current = [...updatedDetails];
