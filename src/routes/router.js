@@ -35,6 +35,7 @@ const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'
 const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
 const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
 const EmployeeList = lazy(() => import('./../pages/admin/employeeList-page/EmplyeesList'))
+const CutOff = lazy(() => import('./../pages/cutoff-page/CutOff'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -84,6 +85,7 @@ export const router = createBrowserRouter(
           <Route path="employeeList" element={LazyComponent(EmployeeList)} />
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
+          <Route path='cutoff' element={LazyComponent(CutOff)}/>
           {CommonRoutes()}
         </Route>
       </Route>

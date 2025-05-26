@@ -8,7 +8,7 @@ import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
 import './DtrByUser.css';
 
-const DtrByUserTable = () => {
+const DtrByUserTable = (props) => {
   const dispatch = useDispatch();
   const { userId } = useParams();
   const modalRef = useRef(null);
@@ -31,6 +31,9 @@ const DtrByUserTable = () => {
   }, [dispatch, userId]);
 
   const handleCheckbox = (id, isChecked) => {
+    props.setListDtr(prevIds =>
+      isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
+    )
     setIds(prevIds =>
       isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
     );
@@ -47,6 +50,7 @@ const DtrByUserTable = () => {
     if (payload.success) {
       successDialog(`The records are now ${dtrStatus}`);
       // dispatch(getDtrById(userId));
+      props.setShowForm(true);
       setIds([]); // Reset selected IDs
     } else {
       errorDialog("Unsuccessful Operation", "Please report to the technical team");

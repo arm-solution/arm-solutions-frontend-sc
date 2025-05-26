@@ -61,6 +61,9 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             <li className="sidebar-item">
                                 <Link to='common/dtr-request' className="sidebar-link">Dtr Requests</Link>
                             </li>
+                            <li className="sidebar-item">
+                                <Link to='cutoff' className="sidebar-link">Cut off</Link>
+                            </li>
                         </ul>
                     </li>
 
