@@ -1,16 +1,62 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react';
+import './PaySlipInputForm.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { postAdditionalEarnings } from '../../../store/features/additionalEarningsSlice';
+import { postEarning } from '../../../store/features/earningSlice';
+import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 
 const PaySlipInputForm = (props) => {
 
+  const dispatch = useDispatch();
+
   const [grossPay, setGrossPay] = useState("");
-  const [additionalPays, setAdditionalPays] = useState([{ label: "", amount: "" }]);
-  const [deductions, setDeductions] = useState([{ label: "", amount: "" }]);
+  const [additionalPays, setAdditionalPays] = useState([]);
+  const [deductions, setDeductions] = useState([]);
+  const [cutoffDates, setCutoffDates] = useState({
+    from: '',
+    to: ''
+  });
+
+
+  useEffect(() => {
+    if (props.dateRangeStatus?.date_start && props.dateRangeStatus?.date_end) {
+      setCutoffDates({
+        from: props.dateRangeStatus.date_start,
+        to: props.dateRangeStatus.date_end
+      });
+    }
+  }, [props.dateRangeStatus]);
+
 
   const handleAddRow = (type) => {
     const newRow = { label: "", amount: "" };
+  
     if (type === "additional") {
+      if (additionalPays.length === 0) {
+        setAdditionalPays([newRow]);
+        return;
+      }
+  
+      const lastRow = additionalPays[additionalPays.length - 1];
+      if (!lastRow.label || !lastRow.amount) {
+        alert("Please fill in the current additional pay row before adding a new one.");
+        return;
+      }
+  
       setAdditionalPays([...additionalPays, newRow]);
-    } else {
+  
+    } else if (type === "deduction") {
+      if (deductions.length === 0) {
+        setDeductions([newRow]);
+        return;
+      }
+  
+      const lastRow = deductions[deductions.length - 1];
+      if (!lastRow.label || !lastRow.amount) {
+        alert("Please fill in the current deduction row before adding a new one.");
+        return;
+      }
+  
       setDeductions([...deductions, newRow]);
     }
   };
@@ -24,6 +70,7 @@ const PaySlipInputForm = (props) => {
   const calculateFinalPay = () => {
     const addTotal = additionalPays.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
     const dedTotal = deductions.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+
     return (parseFloat(grossPay || 0) + addTotal - dedTotal).toFixed(2);
   };
 
@@ -35,6 +82,34 @@ const PaySlipInputForm = (props) => {
   };
 
 
+  const handlePostEarnings = async (e) => {
+    e.preventDefault();
+
+    if (props.employee?.length > 0 && props.employee[0]?.id  && cutoffDates.from && cutoffDates.to) {
+
+        const addTotal = additionalPays.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+        const dedTotal = deductions.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+        
+        const finalEarnings = {
+            employee_id : props.employee[0]?.id,
+            date_from : cutoffDates.from,
+            date_to : cutoffDates.to,
+            generated_by : getLoggedInID() ? getLoggedInID() : 0,
+            gross_pay : grossPay,
+            total_additional_pay : addTotal,
+            total_deduction : dedTotal,
+            final_pay : calculateFinalPay(),
+        }
+    
+        const finalAdditionalEarnings = [
+            ...additionalPays,
+            ...deductions
+        ]
+        console.log("final", finalEarnings);
+    }
+
+  }
+
 
 
   return (
@@ -42,20 +117,54 @@ const PaySlipInputForm = (props) => {
     
     <div className="container my-4 p-4 bg-white border rounded shadow-sm">
 
-            <div className="row">
+        <div className="row">
 
             <div className="col-md-5">
                 <div className="border rounded p-3 bg-light h-100">
                 <h5>Employee Info</h5>
-                <p><strong>Name:</strong> John Doe</p>
-                <p><strong>Employee ID:</strong> 123456</p>
-                <p><strong>Department:</strong> Finance</p>
+                {props.employee ? props.employee.map(emp => (
+                    <>
+                        <p><strong>Name:</strong> {`${emp?.firstname} ${emp?.lastname}` || '---'}</p>
+                        <p><strong>Employee ID:</strong>{emp?.employee_id || '---'}</p>
+                        <p><strong>Department:</strong> { props.deprtmentById?.department || '---'}</p>
+                        <p><strong>Total hours:</strong> 169.34 hrs</p>
+                    
+                    </>
+                )) : (
+                    <p>No Information Found</p>
+                )}
                 {/* Add more info if needed */}
                 </div>
             </div>
             <div className="col-md-7">
 
             <form>
+                <div className="mb-3 row align-items-center">
+                    <label className="col-sm-2 col-form-label text-end">Cut-off From:</label>
+                    <div className="col-sm-4">
+                        <input
+                        type="date"
+                        className="form-control long-date-input"
+                        value={cutoffDates.from}
+                        onChange={(e) => setCutoffDates({ ...cutoffDates, from: e.target.value })}
+                        disabled={!!props.dateRangeStatus?.date_start}
+                        />
+                    </div>
+
+                    <label className="col-sm-2 col-form-label text-end">To:</label>
+                    <div className="col-sm-4">
+                        <input
+                        type="date"
+                        className="form-control long-date-input"
+                        value={cutoffDates.to}
+                        onChange={(e) => setCutoffDates({ ...cutoffDates, to: e.target.value })}
+                        disabled={!!props.dateRangeStatus?.date_end}
+                        />
+                    </div>
+                </div>
+
+
+
                 {/* GROSS PAY */}
                 <div className="mb-3 row align-items-center">
                     <label className="col-sm-3 col-form-label text-end">Gross Pay:</label>
@@ -78,7 +187,7 @@ const PaySlipInputForm = (props) => {
                         className="btn btn-sm btn-primary"
                         onClick={() => handleAddRow("additional")}
                     >
-                        Add
+                        Add additional
                     </button>
                     </div>
                 </div>
@@ -106,7 +215,7 @@ const PaySlipInputForm = (props) => {
                     <div className="col-sm-2">
                         <button
                         type="button"
-                        className="btn btn-danger btn-sm w-100"
+                        className="btn btn-outline-danger btn-sm w-100"
                         onClick={() => removeRow(idx, "additional")}
                         >
                         Remove
@@ -124,7 +233,7 @@ const PaySlipInputForm = (props) => {
                         className="btn btn-sm btn-primary"
                         onClick={() => handleAddRow("deduction")}
                     >
-                        Add
+                        Add deduction
                     </button>
                     </div>
                 </div>
@@ -152,7 +261,7 @@ const PaySlipInputForm = (props) => {
                     <div className="col-sm-2">
                         <button
                         type="button"
-                        className="btn btn-danger btn-sm w-100"
+                        className="btn btn-outline-danger btn-sm w-100"
                         onClick={() => removeRow(idx, "deduction")}
                         >
                         Remove
@@ -168,9 +277,13 @@ const PaySlipInputForm = (props) => {
                     <input type="text" className="form-control" value={calculateFinalPay()} readOnly />
                     </div>
                 </div>
-                </form>
+
+                <div className="text-end mt-3">
+                    <button type="button" className="btn btn-outline-primary" onClick={(e) => handlePostEarnings(e)}>Submit</button>
+                </div>
 
 
+            </form>
 
 
 

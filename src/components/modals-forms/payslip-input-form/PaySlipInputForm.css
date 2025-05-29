@@ -1,1 +1,4 @@
-rafce
+.long-date-input {
+    width: 100%;
+    max-width: 300px; /* You can increase this to 350px or more if needed */
+  }
