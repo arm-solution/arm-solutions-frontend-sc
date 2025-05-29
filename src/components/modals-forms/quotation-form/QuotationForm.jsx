@@ -490,10 +490,10 @@ const QoutationForm = (props) => {
         );
 
        // update propsal detail 
-        if (isProposalModified) {
+        // if (isProposalModified) {
             await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
-        }
+        // }
         
         // Add proposal_id to items and dispatch updates if necessary
         if (addEditItem.length > 0 || qoutationItem.length > 0) {
