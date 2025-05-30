@@ -14,10 +14,23 @@ export const getDepartment = createAsyncThunk('department/getAllDepartment', asy
     }
 })
 
+export const getDepartmentById = createAsyncThunk('department/getDepartmentById', async (id, { rejectWithValue }) => {
+    try {
+  
+       const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/departments/get-department/${id}`);
+        console.log("oyy",data)
+       return data
+        
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 const departmentSlice = createSlice({
     name: 'department',
     initialState: {
         data: [],
+        deprtmentById: [],
         isSuccess: false,
         loading: true,
         message: ''
@@ -36,6 +49,21 @@ const departmentSlice = createSlice({
 
         })
         .addCase(getDepartment.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload
+        })
+        .addCase(getDepartmentById.pending, (state, action) =>{
+            state.loading = true;
+        })
+        .addCase(getDepartmentById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.deprtmentById = action.payload
+
+        })
+        .addCase(getDepartmentById.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload

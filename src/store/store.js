@@ -12,6 +12,8 @@ import taxDiscountSlice from "./features/taxDiscountSlice";
 import dtrRequestSlice from "./features/dtrRequestSlice";
 import additionalSlice from "./features/additional.Slice";
 import messageRequestSlice from "./features/messageRequestSlice";
+import additionalEarningsSlice from './features/additionalEarningsSlice';
+import earningSlice from './features/earningSlice';
 
 export const store = configureStore({
     reducer: {
@@ -27,6 +29,8 @@ export const store = configureStore({
         taxDiscounts: taxDiscountSlice.reducer,
         dtrRequests: dtrRequestSlice.reducer,
         additionalItems: additionalSlice.reducer,
-        messageRequests: messageRequestSlice.reducer
+        messageRequests: messageRequestSlice.reducer,
+        additionalEarnings: additionalEarningsSlice.reducer,
+        earnings: earningSlice.reducer
     }
 })
