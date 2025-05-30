@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './PaySlipForm.css';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { capitalizeFirstLetter } from '../../../customs/global/manageObjects';
 
 const PaySlipForm = (props) => {
 
+  const [showDocs, setShowDocs] = useState(false);
 
   const showOnPdf = () => {
     if(props._getFullEarnings && getLoggedInUser()) {
@@ -14,6 +15,22 @@ const PaySlipForm = (props) => {
          window.open(`/pdf-viewer/payslip/id/3`, "_blank");
     }
   }
+
+  useEffect(() => {
+
+    const earnings = props._getFullEarnings;
+
+    const isNonEmptyArray = Array.isArray(earnings) && earnings.length > 0;
+    const isNonEmptyObject =
+      earnings &&
+      typeof earnings === "object" &&
+      !Array.isArray(earnings) &&
+      Object.keys(earnings).length > 0;
+
+      setShowDocs(isNonEmptyArray || isNonEmptyObject);
+
+  }, [props._getFullEarnings])
+  
 
 
   return (
@@ -106,7 +123,9 @@ const PaySlipForm = (props) => {
             </div>
 
             <div className="row">
+            { showDocs && (
                 <button className="btn btn-danger btn-payslip" onClick={showOnPdf}>Document</button>
+            )}
             </div>
                 
     </>
