@@ -1,7 +1,7 @@
 import React from 'react';
 import './PaySlipForm.css';
 
-const PaySlipForm = () => {
+const PaySlipForm = (props) => {
   return (
     <>
         <h1 className='mb-5'>PAYSLIP</h1>
@@ -15,59 +15,69 @@ const PaySlipForm = () => {
             <div className="custom-line"></div>
 
             <div className="row">
+
             
-            <table className="payslip-table">
+        {/* { props._getFullEarnings.map(item => (
+
+        ))}     */}
+        <table className="payslip-table">
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th>Amount (USD)</th>
+                    <th>Amount (Php)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Basic Salary</td>
-                    <td>$2,500.00</td>
+                    <td>Gross Pay</td>
+                    <td>Php {props._getFullEarnings.gross_pay || '---'}</td>
                 </tr>
                 <tr>
-                    <td>Housing Allowance</td>
-                    <td>$500.00</td>
+                    <td>Additional</td>
+                    <td>Php {props._getFullEarnings.total_additional_pay || '---'}</td>
                 </tr>
                 <tr>
-                    <td>Transport Allowance</td>
-                    <td>$200.00</td>
+                    <td>Deduction</td>
+                    <td>Php {props._getFullEarnings.total_deduction || '---'}</td>
                 </tr>
                 <tr>
-                    <td>Health Insurance</td>
-                    <td>$150.00</td>
+                    <td>Total</td>
+                    <td>Php {props._getFullEarnings.final_pay || '---'}</td>
                 </tr>
-                <tr>
-                    <td>Other Benefits</td>
-                    <td>$150.00</td>
-                </tr>
+
                 <tr className="total-row">
-                    <td><strong>Total Earnings</strong></td>
-                    <td><strong>$3,500.00</strong></td>
+                    <td><strong>Additional</strong></td>
+                    <td><strong></strong></td>
                 </tr>
-                <tr>
-                    <td>Tax Deductions</td>
-                    <td>$350.00</td>
-                </tr>
-                <tr>
-                    <td>Social Security Contribution</td>
-                    <td>$175.00</td>
-                </tr>
-                <tr>
-                    <td>Health Insurance Contribution</td>
-                    <td>$100.00</td>
-                </tr>
-                <tr>
-                    <td>Other Deductions</td>
-                    <td>$25.00</td>
-                </tr>
+                {Array.isArray(props._getFullEarnings?.additional) && props._getFullEarnings.additional.length > 0 ? props._getFullEarnings.additional.map(d => (
+                    <tr>
+                        <td>{d.title || '---'}</td>
+                        <td>Php {d.amount || '---'}</td>
+                    </tr>
+                )):(
+                    <tr>
+                        <td className='text-center'>No Data Available</td>
+                        <td>---</td>
+                    </tr>
+                )}
+     
                 <tr className="net-salary-row">
-                    <td><strong>Net Salary</strong></td>
-                    <td><strong>$2,850.00</strong></td>
+                    <td><strong>Deduction</strong></td>
+                    <td><strong></strong></td>
                 </tr>
+                {Array.isArray(props._getFullEarnings?.deduction) && props._getFullEarnings.deduction.length > 0 ? props._getFullEarnings.deduction.map(d => (
+                    <tr>
+                        <td>{d.title || '---'}</td>
+                        <td>Php {d.amount || '---'}</td>
+                    </tr>
+                )) : (
+                    <tr>
+                        <td className='text-center'>No Data Available</td>
+                        <td>---</td>
+                    </tr>
+                )}
+
+
             </tbody>
             <tfoot>
                 <tr>
@@ -76,7 +86,7 @@ const PaySlipForm = () => {
                     </td>
                 </tr>
             </tfoot>
-            </table>
+        </table>
 
 
             </div>

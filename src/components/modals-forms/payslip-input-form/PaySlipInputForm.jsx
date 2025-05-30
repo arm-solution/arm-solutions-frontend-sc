@@ -140,9 +140,7 @@ const PaySlipInputForm = (props) => {
         }
 
       }
-
   }
-
 
   return (
     <>
