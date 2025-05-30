@@ -47,6 +47,10 @@ const employeeAuthSlice = createSlice({
                 // Store token and user data in localStorage
                 localStorage.setItem('authEmployee', JSON.stringify({ data: data }));
                 localStorage.setItem('token', JSON.stringify(token));
+            } else {
+              state.loading = false;
+              state.isSuccess = false;
+              state.message = `Login failed`;
             }
         })
         .addCase(loginEmployee.rejected, (state, action) => {
