@@ -12,19 +12,29 @@ export const postEarning = createAsyncThunk('post/earning', async(earning, { rej
 
 export const getFullEarnings = createAsyncThunk('get/getFullEarnings', async(id, { rejectWithValue }) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
-})
+});
+
+export const getEarningsByUserId = createAsyncThunk('get/getEarningsByUserId', async(id, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-employee-id/${id}`);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
 
 
 const earningSlice = createSlice({
     name: 'earnings',
     initialState: {
         postEarning: [],
-        getFullEarnings: [],
+        _getFullEarnings: [],
+        _getEarningsByUserId: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -51,9 +61,22 @@ const earningSlice = createSlice({
         .addCase(getFullEarnings.fulfilled, (state, action) => {
             state.loading = false;
             state.isSuccess = true;
-            state.getFullEarnings = action.payload;
+            state._getFullEarnings = action.payload;
         })
         .addCase(getFullEarnings.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload
+        })
+        .addCase(getEarningsByUserId.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(getEarningsByUserId.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state._getEarningsByUserId = action.payload;
+        })
+        .addCase(getEarningsByUserId.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload
