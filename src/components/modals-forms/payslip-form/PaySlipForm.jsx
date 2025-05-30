@@ -1,14 +1,28 @@
 import React from 'react';
 import './PaySlipForm.css';
+import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
+import { capitalizeFirstLetter } from '../../../customs/global/manageObjects';
 
 const PaySlipForm = (props) => {
+
+
+  const showOnPdf = () => {
+    if(props._getFullEarnings && getLoggedInUser()) {
+        sessionStorage.setItem("paySlipSession", JSON.stringify(props._getFullEarnings));
+        sessionStorage.setItem("userLoggedIn", JSON.stringify(getLoggedInUser()));
+         // Open the new tab and navigate to the desired path
+         window.open(`/pdf-viewer/payslip/id/3`, "_blank");
+    }
+  }
+
+
   return (
     <>
         <h1 className='mb-5'>PAYSLIP</h1>
 
             <div className="row mt-3">
-            <p>Employee: Lance jared Cabiscuelas</p> 
-            <p>Employee Number: S20183527</p>
+            <p>Employee: {getLoggedInUser() ? `${capitalizeFirstLetter(getLoggedInUser().firstname)} ${capitalizeFirstLetter(getLoggedInUser().lastname)}` : '---'}</p> 
+            <p>Employee Number: {getLoggedInUser() ? getLoggedInUser().employee_id : '---'}</p>
             <p>Date: July 24, 2024</p>
             </div>
 
@@ -92,7 +106,7 @@ const PaySlipForm = (props) => {
             </div>
 
             <div className="row">
-            <button className="btn btn-danger btn-payslip">Print</button>
+                <button className="btn btn-danger btn-payslip" onClick={showOnPdf}>Document</button>
             </div>
                 
     </>
