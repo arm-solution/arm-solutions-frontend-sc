@@ -41,16 +41,16 @@ const DtrByUserTable = (props) => {
   };
 
   const handleAppproveReject = async (dtrStatus) => {
-    // const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids }));
+    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids }));
     
-    // if (payload.success) {
-    //   successDialog(`The records are now ${dtrStatus}`);
-    //   // dispatch(getDtrById(userId));
+    if (payload.success) {
+      successDialog(`The records are now ${dtrStatus}`);
+      // dispatch(getDtrById(userId));
       props.setShowForm(true);
-    //   setIds([]); // Reset selected IDs
-    // } else {
-    //   errorDialog("Unsuccessful Operation", "Please report to the technical team");
-    // }
+      setIds([]); // Reset selected IDs
+    } else {
+      errorDialog("Unsuccessful Operation", "Please report to the technical team");
+    }
   };
 
   const updateDateRangeStatus = ({ target: { name, value } }) => {

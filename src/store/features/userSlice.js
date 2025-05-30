@@ -41,8 +41,6 @@ export const getUserById = createAsyncThunk('user/getUserById', async (id, { rej
                 Authorization: `Bearer ${getToken()}`
             }
         });
-
-        console.log("datasjfhdsf", data);
         return data
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

@@ -21,6 +21,7 @@ const DtrListByUser = () => {
   const { listDtrByMultipleId } = useSelector(state => state.dtr);
   const { userById } = useSelector(state => state.users);
   const { deprtmentById } = useSelector(state => state.departments);
+  const [totalHours, setTotalHours] = useState(0);
 
   const [dateRangeStatus, setDateRangeStatus] = useState({
     date_start: '',
@@ -55,10 +56,11 @@ const DtrListByUser = () => {
   }, [dtrIds, showForm])
 
   useEffect(() => {
-    if (listDtrByMultipleId) {
-      console.log("Updated listDtrByMultipleId", listDtrByMultipleId);
-    }
 
+    if (listDtrByMultipleId.length > 0) {
+      const totalHours = listDtrByMultipleId.reduce((sum, log) => sum + log.total_hours, 0);
+      setTotalHours(totalHours);
+    }
 
   }, [listDtrByMultipleId, userById, deprtmentById]);
 
@@ -87,7 +89,12 @@ const DtrListByUser = () => {
         <hr></hr>
 
         {/* {showForm && listDtr.length > 0 && <PaySlipInputForm /> } */}
-        <PaySlipInputForm employee={userById} deprtmentById={deprtmentById[0]} dateRangeStatus={dateRangeStatus}/>
+        <PaySlipInputForm 
+          employee={userById} 
+          deprtmentById={deprtmentById[0]}
+          dateRangeStatus={dateRangeStatus}
+          totalHours={totalHours}
+        />
         
 
     </>

@@ -156,10 +156,10 @@ const PaySlipInputForm = (props) => {
                 <h5>Employee Info</h5>
                 {props.employee ? props.employee.map(emp => (
                     <>
-                        <p><strong>Name:</strong> {`${emp?.firstname} ${emp?.lastname}` || '---'}</p>
-                        <p><strong>Employee ID:</strong>{emp?.employee_id || '---'}</p>
-                        <p><strong>Department:</strong> { props.deprtmentById?.department || '---'}</p>
-                        <p><strong>Total hours:</strong> 169.34 hrs</p>
+                        <p><strong>Name: </strong> {`${emp?.firstname} ${emp?.lastname}` || '---'}</p>
+                        <p><strong>Employee ID: </strong>{emp?.employee_id || '---'}</p>
+                        <p><strong>Department: </strong> { props.deprtmentById?.department || '---'}</p>
+                        <p><strong>Total hours: </strong>{ props.totalHours ? props.totalHours : '---' }</p>
                     
                     </>
                 )) : (
