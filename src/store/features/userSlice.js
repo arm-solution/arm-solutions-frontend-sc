@@ -35,13 +35,14 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
 export const getUserById = createAsyncThunk('user/getUserById', async (id, { rejectWithValue, getState }) => {
     
     try {
-
         // console.log(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`);
         const {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`, {
             headers: {
                 Authorization: `Bearer ${getToken()}`
             }
         });
+
+        console.log("datasjfhdsf", data);
         return data
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -111,6 +112,7 @@ const userSlice = createSlice({
     name: 'users',
     initialState: {
         data: [],
+        userById: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -145,6 +147,7 @@ const userSlice = createSlice({
             state.isSuccess = true;
 
             state.data = action.payload
+            state.userById = action.payload
 
         })
         .addCase(getUserById.rejected, (state, action) => {
