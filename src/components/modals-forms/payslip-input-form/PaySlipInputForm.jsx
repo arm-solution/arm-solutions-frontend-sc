@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { postAdditionalEarnings } from '../../../store/features/additionalEarningsSlice';
 import { postEarning } from '../../../store/features/earningSlice';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
+import FloatNotification from '../../float-notification/FloatNotification';
 
 const PaySlipInputForm = (props) => {
 
@@ -17,6 +18,12 @@ const PaySlipInputForm = (props) => {
     to: ''
   });
 
+  const [notification, setNotification] = useState({
+    message: 'Generating Cutoff Success',
+    type: 'success'
+  });
+
+  const { postAdditionalEarningBool } = useSelector(state => state.additionalEarnings);
 
   useEffect(() => {
     if (props.dateRangeStatus?.date_start && props.dateRangeStatus?.date_end) {
@@ -29,7 +36,7 @@ const PaySlipInputForm = (props) => {
 
 
   const handleAddRow = (type) => {
-    const newRow = { label: "", amount: "" };
+    const newRow = { label: "", amount: "", earning_type: type };
   
     if (type === "additional") {
       if (additionalPays.length === 0) {
@@ -81,6 +88,24 @@ const PaySlipInputForm = (props) => {
     type === "additional" ? setAdditionalPays(updated) : setDeductions(updated);
   };
 
+  const closeNotification = () => {
+    setNotification({
+      message: '',
+      type: ''
+    });
+  };
+
+  const resetForms = () => {
+    setGrossPay("");
+    setAdditionalPays([]);
+    setDeductions([]);
+    setCutoffDates({
+        from: '',
+        to: ''
+    })
+  }
+
+
 
   const handlePostEarnings = async (e) => {
     e.preventDefault();
@@ -100,16 +125,23 @@ const PaySlipInputForm = (props) => {
             total_deduction : dedTotal,
             final_pay : calculateFinalPay(),
         }
-    
-        const finalAdditionalEarnings = [
-            ...additionalPays,
-            ...deductions
-        ]
-        console.log("final", finalEarnings);
-    }
+
+        const { payload } = await dispatch(postEarning(finalEarnings));
+
+        if(payload.success && payload?.lastid > 0) {
+          
+          const finalAdditionalEarnings = [
+            ...additionalPays.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
+            ...deductions.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
+          ];
+
+          await dispatch(postAdditionalEarnings(finalAdditionalEarnings)); 
+          resetForms();
+        }
+
+      }
 
   }
-
 
 
   return (
@@ -282,16 +314,16 @@ const PaySlipInputForm = (props) => {
                     <button type="button" className="btn btn-outline-primary" onClick={(e) => handlePostEarnings(e)}>Submit</button>
                 </div>
 
-
+                  { postAdditionalEarningBool && (
+                    <FloatNotification message={ notification.message } type={notification.type} onClose={closeNotification}/>
+                  )}
             </form>
 
 
 
             </div>
-
-            </div>
-
-            </div>
+          </div>
+        </div>
                 
     
     </>

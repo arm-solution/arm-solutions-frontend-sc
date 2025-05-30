@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 
-export const postAdditionalEarnings = createAsyncThunk('additionalEarning/post', async(data, { rejectWithValue }) =>{
+export const postAdditionalEarnings = createAsyncThunk('additionalEarning/post', async(additional, { rejectWithValue }) =>{
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings-additional/add`, data);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings-additional/add`, additional);
         console.log("postAdditionalEarnings", data);
         return data;
     } catch (error) {
@@ -19,6 +19,7 @@ const additionalEarningsSlice = createSlice({
     initialState: {
         postAdditionalEarnings: [],
         isSuccess: false,
+        postAdditionalEarningBool: false,
         loading: false,
         message: ''
     },
@@ -30,11 +31,11 @@ const additionalEarningsSlice = createSlice({
         })
         .addCase(postAdditionalEarnings.fulfilled, (state, action) => {
             state.loading = false;
-            state.isSuccess = true;
+            state.postAdditionalEarningBool = true;
             state.postAdditionalEarnings = action.payload;
         })
         .addCase(postAdditionalEarnings.rejected, (state, action) => {
-            state.isSuccess = false;
+            state.postAdditionalEarningBool = false;
             state.loading = false;
             state.message = action.payload
         })

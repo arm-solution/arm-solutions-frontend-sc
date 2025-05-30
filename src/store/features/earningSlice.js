@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
-export const postEarning = createAsyncThunk('post/earning', async(data, { rejectWithValue }) => {
+export const postEarning = createAsyncThunk('post/earning', async(earning, { rejectWithValue }) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings/add`, data);
-        console.log("postEarnings", data);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings/add`, earning);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
