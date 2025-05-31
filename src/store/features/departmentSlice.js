@@ -4,27 +4,21 @@ import axios from 'axios';
 
 export const getDepartment = createAsyncThunk('department/getAllDepartment', async (_, { rejectWithValue }) => {
     try {
-  
        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/departments`);
-
        return data
-        
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
-})
+});
 
 export const getDepartmentById = createAsyncThunk('department/getDepartmentById', async (id, { rejectWithValue }) => {
     try {
-  
        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/departments/get-department/${id}`);
-        console.log("oyy",data)
        return data
-        
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
-})
+});
 
 const departmentSlice = createSlice({
     name: 'department',
