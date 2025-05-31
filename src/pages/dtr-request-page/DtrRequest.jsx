@@ -33,13 +33,13 @@ const handleView = (row) => {
 
             { pendingDtrLoading ? <Loading /> : (
                 <DataTable
-                data={Array.isArray(getPendingUserDtr) ? getPendingUserDtr : []} // Ensure data is an array
-                columns={columns}
-                actions={{ handleView }}
-                perPage={10}
-                showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
-                deleteAccess={false}
-                tableLabel='Pending Dtr users'
+                  data={Array.isArray(getPendingUserDtr) ? getPendingUserDtr : []} // Ensure data is an array
+                  columns={columns}
+                  actions={{ handleView }}
+                  perPage={10}
+                  showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
+                  deleteAccess={false}
+                  tableLabel='Pending Dtr users'
                 />
             )}
         </div>

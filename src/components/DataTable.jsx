@@ -73,7 +73,6 @@ const DataTable = (props) => {
     </div>
     
  
-
     <div className="card" >
       <div className="card-header">
         <b>{ props.tableLabel ? props.tableLabel : 'Records'}</b>

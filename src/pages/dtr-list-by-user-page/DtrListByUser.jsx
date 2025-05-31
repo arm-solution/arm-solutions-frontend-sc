@@ -7,6 +7,8 @@ import { getDtrByMultipleIds } from '../../store/features/dtrSlice';
 import { useParams } from 'react-router-dom';
 import { getUserById } from '../../store/features/userSlice'; 
 import { getDepartmentById } from '../../store/features/departmentSlice';
+import { getEarningsByUserId, getFullEarnings } from '../../store/features/earningSlice';
+import EarningListByUser from '../../components/earning-list-by-user/EarningListByUser';
 
 const DtrListByUser = () => {
 
@@ -16,11 +18,12 @@ const DtrListByUser = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [dtrIds, setDtrIds] = useState([]);
-  const [dtrList, setDtrList] = useState([]);
 
   const { listDtrByMultipleId } = useSelector(state => state.dtr);
   const { userById } = useSelector(state => state.users);
   const { deprtmentById } = useSelector(state => state.departments);
+  const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
+
   const [totalHours, setTotalHours] = useState(0);
 
   const [dateRangeStatus, setDateRangeStatus] = useState({
@@ -33,7 +36,8 @@ const DtrListByUser = () => {
   useEffect(() => {
     const getEmployeeById = async () => {
       if(userId) {
-        await dispatch(getUserById(userId))
+        await dispatch(getUserById(userId));
+        await dispatch(getEarningsByUserId(userId));
       }
     }
 
@@ -88,13 +92,21 @@ const DtrListByUser = () => {
 
         <hr></hr>
 
-        {/* {showForm && listDtr.length > 0 && <PaySlipInputForm /> } */}
-        <PaySlipInputForm 
-          employee={userById} 
-          deprtmentById={deprtmentById[0]}
-          dateRangeStatus={dateRangeStatus}
-          totalHours={totalHours}
+        {/* list of all user payslip */}
+        <EarningListByUser 
+          _getEarningsByUserId={_getEarningsByUserId}
+          _getFullEarnings={_getFullEarnings}
         />
+        <hr />
+
+        {showForm && dtrIds.length > 0 && (
+          <PaySlipInputForm 
+            employee={userById} 
+            deprtmentById={deprtmentById[0]}
+            dateRangeStatus={dateRangeStatus}
+            totalHours={totalHours}
+          />
+        )}
         
 
     </>

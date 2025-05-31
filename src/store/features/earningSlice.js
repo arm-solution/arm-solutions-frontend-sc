@@ -39,7 +39,11 @@ const earningSlice = createSlice({
         loading: false,
         message: ''
     },
-    reducers: {},
+    reducers: {
+        resetFullEarnings: (state) => {
+            state._getFullEarnings = [];
+        }
+    },
     extraReducers(builder) {
         builder
         .addCase(postEarning.pending, (state, _) => {
@@ -84,4 +88,6 @@ const earningSlice = createSlice({
     }
 });
 
+
+export const { resetFullEarnings } = earningSlice.actions;
 export default earningSlice;
