@@ -36,6 +36,7 @@ const MainContent = lazy(() => import('../pages/landing-main-content/MainContent
 const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
 const EmployeeList = lazy(() => import('./../pages/admin/employeeList-page/EmplyeesList'))
 const CutOff = lazy(() => import('./../pages/cutoff-page/CutOff'));
+const DtrStandalone = lazy(() => import('./../pages/dtr-standalone-page/DtrForOnsite'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -109,6 +110,7 @@ export const router = createBrowserRouter(
       {/* Miscellaneous Routes */}
       <Route path="pdf-viewer/:name/id/:id" element={LazyComponent(PdfViewPage)} />
       <Route path="under-maintenance" element={LazyComponent(UnderMaintenance)} />
+      <Route path="dtr-onsite-access" element={LazyComponent(DtrStandalone)} />
       <Route path="forgot-password" element={LazyComponent(ForgotPassword)} />
       <Route path="not-found" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
