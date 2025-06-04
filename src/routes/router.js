@@ -1,42 +1,44 @@
 import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import LandingPage from '../pages/landing-page/LandingPage';
-import NotFound from '../pages/notFound-page/NotFound';
+import LandingPage from '../pages/reusable-pages/landing-page/LandingPage';
+import NotFound from '../pages/reusable-pages/notFound-page/NotFound';
 import Loading from '../components/loading-spinner/Loading';
 import LoadingLandingPage from '../components/loading-landing-page/LoadingLandingPage';
 import ProtectedRoute from './ProtectedRoute';
 import RequireAuth from './RequireAuth';
 
+// /reusable-pages
+
 // Lazy-loaded Components
-const AdminDashboard = lazy(() => import('../pages/admin/admin-dashboard-page/AdminDashboard'));
-const Analytics = lazy(() => import('../pages/admin/analytics-page/Analytics'));
-const Login = lazy(() => import('../pages/login-page/Login'));
-const EmployeeHomePage = lazy(() => import('../pages/employees-pages/employee-home-page/EmployeesHomePage'));
-const DtrPage = lazy(() => import('../pages/employees-pages/dtr-page/DtrPage'));
-const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
-const PaySlipPage = lazy(() => import("../pages/employees-pages/pay-slip-page/PaySlipPage"));
-const AttendancePage = lazy(() => import('../pages/employees-pages/attendance-page/AttendancePage'));
-const UserProfilePage = lazy(() => import('../pages/common-pages/user-profile-page/UserProfilePage'));
-const Services = lazy(() => import('../pages/common-pages/services-page/Services'));
-const Products = lazy(() => import('../pages/common-pages/products-page/Products'));
-const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/MarketingDashboard'));
-const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet'));
-const Quotations = lazy(() => import('../pages/marketing/quotations/Quotations'));
-const PdfViewPage = lazy(() => import('../pages/pdf-viewer-page/PdfViewPage'));
-const MessageRequest = lazy(() => import('../pages/message-request-page/MessageRequest'));
-const UnderMaintenance = lazy(() => import('../pages/under-maintenace-page/UnderMaintenace'));
-const CompanyClient = lazy(() => import('../pages/client-page/Client'));
-const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPassword'));
-const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
-const DtrListByUser = lazy(() => import('../pages/dtr-list-by-user-page/DtrListByUser'));
-const MyAnnouncement = lazy(() => import('../pages/common-pages/announcement-page/MyAnnouncement'));
-const AnnouncementPage = lazy(() => import('../pages/annoucement/Announcement'));
-const CompanyProfile = lazy(() => import('../pages/company-profile-page/Profile'));
-const MainContent = lazy(() => import('../pages/landing-main-content/MainContent'));
-const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
-const EmployeeList = lazy(() => import('./../pages/admin/employeeList-page/EmplyeesList'))
-const CutOff = lazy(() => import('./../pages/cutoff-page/CutOff'));
-const DtrStandalone = lazy(() => import('./../pages/dtr-standalone-page/DtrForOnsite'));
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const Analytics = lazy(() => import('../pages/reusable-pages/analytics-page/Analytics'));
+const Login = lazy(() => import('../pages/reusable-pages/login-page/Login'));
+const EmployeeHomePage = lazy(() => import('../pages/employees/EmployeesHomePage'));
+const DtrPage = lazy(() => import('../pages/reusable-pages/dtr-page/DtrPage'));
+const Maps = lazy(() => import('../pages/reusable-pages/common-pages/Map/Maps'));
+const PaySlipPage = lazy(() => import("../pages/reusable-pages/pay-slip-page/PaySlipPage"));
+const AttendancePage = lazy(() => import('../pages/reusable-pages/attendance-page/AttendancePage'));
+const UserProfilePage = lazy(() => import('../pages/reusable-pages/common-pages/user-profile-page/UserProfilePage'));
+const Services = lazy(() => import('../pages//reusable-pages/common-pages/services-page/Services'));
+const Products = lazy(() => import('../pages/reusable-pages/common-pages/products-page/Products'));
+const MarketingOutlet = lazy(() => import('../pages/marketing/MarketingOutlet'));
+const Quotations = lazy(() => import('../pages/reusable-pages/quotations/Quotations'));
+const PdfViewPage = lazy(() => import('../pages/reusable-pages/pdf-viewer-page/PdfViewPage'));
+const MessageRequest = lazy(() => import('../pages/reusable-pages/message-request-page/MessageRequest'));
+const UnderMaintenance = lazy(() => import('../pages/reusable-pages/under-maintenace-page/UnderMaintenace'));
+const CompanyClient = lazy(() => import('../pages/reusable-pages/client-page/Client'));
+const ForgotPassword = lazy(() => import('../pages/reusable-pages/forgot-password/ForgotPassword'));
+const DtrRequest = lazy(() => import('../pages/reusable-pages/dtr-request-page/DtrRequest'));
+const DtrListByUser = lazy(() => import('../pages/reusable-pages/dtr-list-by-user-page/DtrListByUser'));
+const MyAnnouncement = lazy(() => import('../pages/reusable-pages/common-pages/announcement-page/MyAnnouncement'));
+const AnnouncementPage = lazy(() => import('../pages/reusable-pages/annoucement/Announcement'));
+const CompanyProfile = lazy(() => import('../pages/reusable-pages/company-profile-page/Profile'));
+const MainContent = lazy(() => import('../pages/reusable-pages/landing-main-content/MainContent'));
+const Qoutations = lazy(() => import('../pages/reusable-pages/quotations/Quotations'));
+const EmployeeList = lazy(() => import('../pages/reusable-pages/employeeList-page/EmplyeesList'))
+const CutOff = lazy(() => import('./../pages/reusable-pages/cutoff-page/CutOff'));
+const DtrStandalone = lazy(() => import('./../pages/reusable-pages/dtr-standalone-page/DtrForOnsite'));
+const AccountingOutlet = lazy(() => import('../pages/accounting/AccountingOutlet'))
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -102,7 +104,13 @@ export const router = createBrowserRouter(
       {/* Marketing Routes */}
       <Route element={<RequireAuth />}>
         <Route path="marketing" element={LazyComponent(MarketingOutlet)}>
-          <Route path="" element={LazyComponent(MarketingDashboard)} />
+          {CommonRoutes()}
+        </Route>
+      </Route>
+
+      {/* Accounting Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="accounting" element={LazyComponent(AccountingOutlet)}>
           {CommonRoutes()}
         </Route>
       </Route>

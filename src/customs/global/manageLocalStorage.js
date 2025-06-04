@@ -158,7 +158,27 @@ export const checkAuthAndNavigate = (navigate) => {
       return null
     }
   };
-  
+
+// Get the logged-in user's department ID
+export const getDepartmentLoggedIn = () => {
+  try {
+    const loginUser = localStorage.getItem('authEmployee');
+    if (!loginUser) return null;
+
+    const parsedUser = JSON.parse(loginUser);
+    return parsedUser && parsedUser.data && parsedUser.data[0]
+      ? parsedUser.data[0].department
+      : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Check if the logged-in user's department is allowed
+export const isDepartmentAllowed = (allowedDepartments) => {
+  const userDepartment = getDepartmentLoggedIn();
+  return userDepartment !== null && allowedDepartments.includes(userDepartment);
+};
   
   
   
