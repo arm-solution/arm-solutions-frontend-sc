@@ -131,7 +131,7 @@ const Quotations = () => {
    
 
         <div className="tabs flex-tabs">
-          <label htmlFor="tab-one" id="tab-one-label" className="tab">Qoutation Lists</label>
+          <label htmlFor="tab-one" id="tab-one-label" className="tab">Quotation Lists</label>
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Qoutations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
@@ -160,6 +160,7 @@ const Quotations = () => {
               taxDiscountData={taxDiscountData}
               totalAmountState={{ totalAmount, setTotalAmount }}
               taf={{ totalAmountref, setTotalAmountref }}
+              setSelectedTab={setSelectedTab}
             /> 
 
         </div>

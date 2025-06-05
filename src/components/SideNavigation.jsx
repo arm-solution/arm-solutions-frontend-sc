@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { resetCurrentDtr } from '../store/features/dtrSlice';
 import { useDispatch } from 'react-redux';
 import "./../customs/css/SideNavigation.css";
+import { isDepartmentAllowed } from '../customs/global/manageLocalStorage';
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const navigate = useNavigate();
@@ -35,13 +36,15 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     </div>
                 </div>
                 <ul className="sidebar-nav">
-                    <li className="sidebar-item">
-                        <Link to='' className="sidebar-link">
-                            {/* <i className="lni lni-bar-chart"></i> */}
-                            <i className="lni lni-stats-up"></i>
-                            <span>Analytics</span>
-                        </Link>
-                    </li>
+                    {isDepartmentAllowed([1]) && (
+                        <li className="sidebar-item">
+                            <Link to='' className="sidebar-link">
+                                {/* <i className="lni lni-bar-chart"></i> */}
+                                <i className="lni lni-stats-up"></i>
+                                <span>Analytics</span>
+                            </Link>
+                        </li>
+                    )}
 
                     <li className="sidebar-item">
                         <a
@@ -56,7 +59,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </a>
                         <ul id="dtr" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'dtr' ? 'show' : ''}`}>
                             <li className="sidebar-item">
-                                <Link to='common/dtr' className="sidebar-link">My Dtr</Link>
+                                <Link to='general/dtr' className="sidebar-link">My Dtr</Link>
                             </li>
                             <li className="sidebar-item">
                                 <Link to='common/dtr-request' className="sidebar-link">Dtr Requests</Link>
@@ -88,10 +91,10 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </a>
                         <ul id="myrecords" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'myrecords' ? 'show' : ''}`}>
                             <li className="sidebar-item">
-                                <Link to='common/my-payslip' className="sidebar-link">Pay Slip</Link>
+                                <Link to='general/my-payslip' className="sidebar-link">Pay Slip</Link>
                             </li>
                             <li className="sidebar-item">
-                                <Link to='common/my-attendance' className="sidebar-link">My Attendance</Link>
+                                <Link to='general/my-attendance' className="sidebar-link">My Attendance</Link>
                             </li>
                         </ul>
                     </li>
@@ -167,7 +170,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </Link>
                     </li>
                     <li className="sidebar-item">
-                        <Link to={`common/user-profile`} className="sidebar-link">
+                        <Link to={`general/user-profile`} className="sidebar-link">
                             <i className="lni lni-cog"></i>
                             <span>Account Setting</span>
                         </Link>

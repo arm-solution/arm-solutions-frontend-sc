@@ -27,6 +27,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // checking navigation for employee roles
   useEffect(() => {
     if(isSuccess) {
       checkAuthAndNavigate(navigate)
@@ -46,46 +47,46 @@ const Login = () => {
   }
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-  
-    if (loginData.employee_id === '' || loginData.user_password === '') {
-      setErrMessage({
-        status: true,
-        message: 'All fields are required!',
-      });
-      return;
-    }
-  
-    try {
-      const { payload, error } = await dispatch(loginEmployee(loginData));
-  
-      if (error) {
-        // Log any error details for mobile debugging
-        console.error("Dispatch Error:", error);
+      e.preventDefault();
+    
+      if (loginData.employee_id === '' || loginData.user_password === '') {
         setErrMessage({
           status: true,
-          message: error.message || 'An unexpected error occurred during login',
+          message: 'All fields are required!',
         });
         return;
       }
-  
-      if (payload?.message) {
-        // Set the error message if API response includes an error message
+    
+      try {
+        const { payload, error } = await dispatch(loginEmployee(loginData));
+    
+        if (error) {
+          // Log any error details for mobile debugging
+          console.error("Dispatch Error:", error);
+          setErrMessage({
+            status: true,
+            message: error.message || 'An unexpected error occurred during login',
+          });
+          return;
+        }
+    
+        if (payload?.message) {
+          // Set the error message if API response includes an error message
+          setErrMessage({
+            status: true,
+            message: payload.message,
+          });
+          return;
+        }
+    
+      } catch (error) {
+        // Log unexpected errors for better insight
+        alert("Login Error:", error);
         setErrMessage({
-          status: true,
-          message: payload.message,
+          status: false,
+          message: 'An unexpected error occurred',
         });
-        return;
       }
-  
-    } catch (error) {
-      // Log unexpected errors for better insight
-      alert("Login Error:", error);
-      setErrMessage({
-        status: false,
-        message: 'An unexpected error occurred',
-      });
-    }
   }
   
 
