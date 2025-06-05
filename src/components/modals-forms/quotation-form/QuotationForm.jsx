@@ -425,6 +425,7 @@ const QoutationForm = (props) => {
             } else {
                 if(qoutationSuccess)  {
                     successDialog('Quotation is now available')
+                    props.setSelectedTab('tab-one')
                 } else {
                     errorDialog('Failed to create a Quotation ');
                 }
@@ -545,14 +546,14 @@ const QoutationForm = (props) => {
     
         // Show success or error message
         if (status) {
-            handleClearForm()
             await dispatch(getAllProposal());
             successDialog("Updated Successfully");
         } else {
-            handleClearForm()
             errorDialog("No changes detected!");
         }
-
+        
+        handleClearForm()
+        props.setSelectedTab('tab-one')
        
     };  // end of update
     

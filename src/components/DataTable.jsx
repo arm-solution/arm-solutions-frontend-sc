@@ -94,7 +94,7 @@ const DataTable = (props) => {
                 {props.columns.map((column, colIndex) => (
                   <td key={colIndex}>{row[column.accessor]}</td>
                 ))}
-                <td className='text-center'>
+                <td>
                 <div className="btn-group" role="group" aria-label="Basic example">
                   <button className="btn btn-info btn-sm text-white" onClick={() => props.actions.handleView(row)}>Details</button>
                   {props.deleteAccess && (
