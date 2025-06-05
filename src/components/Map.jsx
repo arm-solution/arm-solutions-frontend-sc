@@ -14,13 +14,13 @@ const Map = (props) => {
   const myLocation = useLocation();
 
   // armsol area
-  const geofenceCoords = useMemo(() =>[
-    [14.0385, 121.1130],
-    [14.0385, 121.1150],
-    [14.0415, 121.1150],
-    [14.0415, 121.1130],
-    [14.0385, 121.1130] 
-  ])
+const geofenceCoords = useMemo(() => ([
+  [14.0385, 121.1130],
+  [14.0385, 121.1150],
+  [14.0415, 121.1150],
+  [14.0415, 121.1130],
+  [14.0385, 121.1130] 
+]), []);
 
   // Check if positions are inside the geofence
   const [positionsInsideGeofence, setPositionsInsideGeofence] = useState(null);
