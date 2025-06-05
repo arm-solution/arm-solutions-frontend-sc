@@ -5,14 +5,28 @@ export const checkAuthAndNavigate = (navigate) => {
     
     if (authData) {
       const { data } = JSON.parse(authData);
-      const role = data.length > 0 ? data[0].user_type : null; // Assuming data is an array with role inside
+      const role = data.length > 0 ? data[0].department : null; // Assuming data is an array with role inside
   
-      if (role === 'admin') {
+      if (role === 1) {
         navigate('/admin');
-      } else if (role === 'employee') {
-        navigate('/employees');
-      } else if (role === 'marketing') {
+      } else if (role === 10) {
+        navigate('/producttion');
+      } else if (role === 8) {
         navigate('/marketing');
+      } else if (role === 6) {
+        navigate('/engineering');
+      } else if (role === 5) {
+        navigate('/warehouse');
+      } else if (role === 7) {
+        navigate('/purchasing');
+      } else if (role === 9) {
+        navigate('/sales');
+      } else if (role === 4) {
+        navigate('/finance');
+      } else if (role === 3) {
+        navigate('/accounting');
+      } else if (role === 2) {
+        navigate('/hr');
       }
     
     }
@@ -158,7 +172,34 @@ export const checkAuthAndNavigate = (navigate) => {
       return null
     }
   };
-  
+
+// Get the logged-in user's department ID
+export const getDepartmentLoggedIn = () => {
+  try {
+    const loginUser = localStorage.getItem('authEmployee');
+    if (!loginUser) return null;
+
+    const parsedUser = JSON.parse(loginUser);
+    return parsedUser && parsedUser.data && parsedUser.data[0]
+      ? parsedUser.data[0].department
+      : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Check if the logged-in user's department is allowed
+// sample parameters is department id [1,3,4]
+export const isDepartmentAllowed = (allowedDepartments) => {
+  const userDepartment = getDepartmentLoggedIn();
+
+  // If no departments are specified, allow all departments
+  if (!allowedDepartments || allowedDepartments.length === 0) {
+    return userDepartment !== null;
+  }
+
+  return userDepartment !== null && allowedDepartments.includes(userDepartment);
+};
   
   
   

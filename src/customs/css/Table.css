@@ -77,8 +77,6 @@
 }
 
 
-
-
 /* WebKit-based browsers */
 .card-body::-webkit-scrollbar {
     width: 6px; /* Set the width of the scrollbar */
