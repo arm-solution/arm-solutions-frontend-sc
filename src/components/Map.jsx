@@ -14,43 +14,40 @@ const Map = (props) => {
   const myLocation = useLocation();
 
   // armsol area
-const geofenceCoords = useMemo(() => ([
-  [14.0385, 121.1130],
-  [14.0385, 121.1150],
-  [14.0415, 121.1150],
-  [14.0415, 121.1130],
-  [14.0385, 121.1130] 
-]), []);
+  const geofenceCoords = useMemo(() =>[
+    [14.0385, 121.1130],
+    [14.0385, 121.1150],
+    [14.0415, 121.1150],
+    [14.0415, 121.1130],
+    [14.0385, 121.1130] 
+  ])
 
   // Check if positions are inside the geofence
   const [positionsInsideGeofence, setPositionsInsideGeofence] = useState(null);
-useEffect(() => {
-  const checkGeofence = () => {
-    try {
-      const queryParams = new URLSearchParams(myLocation.search);
-      const rawData = queryParams.get('data');
+  useEffect(() => {
+    const checkGeofence = () => {
 
-      if (!rawData) return; // Exit early if no data param
-      
-      const data = JSON.parse(decodeURIComponent(rawData));
+      const queryParams = new URLSearchParams(myLocation.search);
+      const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
 
       const polygon = turf.polygon([geofenceCoords]);
-      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]);
+
+      // Position is now a single object instead of an array
+      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]); // Use the longitude and latitude from the data
       const inside = turf.booleanPointInPolygon(point, polygon);
-
-      setPositionsInsideGeofence({
-        ...data,
-        insideGeofence: inside
-      });
-
-    } catch (error) {
-      console.error("Invalid or missing URL data:", error);
-    }
-  };
-
-  checkGeofence();
-}, [myLocation.search, geofenceCoords]);
-
+      
+      // Create the updated position object with the insideGeofence property
+      const updatedPosition = {
+          ...data,
+          insideGeofence: inside
+      };
+      
+      // Update the state with the updated position
+      setPositionsInsideGeofence(updatedPosition);
+    };
+  
+    checkGeofence();
+  }, []);
 
   const customIcon = new Icon({
     iconUrl: locationImg,
