@@ -24,30 +24,33 @@ const Map = (props) => {
 
   // Check if positions are inside the geofence
   const [positionsInsideGeofence, setPositionsInsideGeofence] = useState(null);
-  useEffect(() => {
-    const checkGeofence = () => {
-
+useEffect(() => {
+  const checkGeofence = () => {
+    try {
       const queryParams = new URLSearchParams(myLocation.search);
-      const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
+      const rawData = queryParams.get('data');
+
+      if (!rawData) return; // Exit early if no data param
+      
+      const data = JSON.parse(decodeURIComponent(rawData));
 
       const polygon = turf.polygon([geofenceCoords]);
-
-      // Position is now a single object instead of an array
-      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]); // Use the longitude and latitude from the data
+      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]);
       const inside = turf.booleanPointInPolygon(point, polygon);
-      
-      // Create the updated position object with the insideGeofence property
-      const updatedPosition = {
-          ...data,
-          insideGeofence: inside
-      };
-      
-      // Update the state with the updated position
-      setPositionsInsideGeofence(updatedPosition);
-    };
-  
-    checkGeofence();
-  }, []);
+
+      setPositionsInsideGeofence({
+        ...data,
+        insideGeofence: inside
+      });
+
+    } catch (error) {
+      console.error("Invalid or missing URL data:", error);
+    }
+  };
+
+  checkGeofence();
+}, [myLocation.search, geofenceCoords]);
+
 
   const customIcon = new Icon({
     iconUrl: locationImg,

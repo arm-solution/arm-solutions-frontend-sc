@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[650],{4650:(e,c,s)=>{s.r(c),s.d(c,{default:()=>l});s(5043);var t=s(579);const l=()=>(0,t.jsx)("div",{children:"CutOff"})}}]);
-//# sourceMappingURL=650.05b6c81c.chunk.js.map
