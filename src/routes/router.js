@@ -65,6 +65,7 @@ const CommonRoutes = () => (
     <Route path="dtr-request" element={LazyComponent(DtrRequest)} />
     <Route path="announcement" element={LazyComponent(MyAnnouncement)} />
     <Route path="qoutations" element={LazyComponent(Qoutations)} />
+    <Route path="map" element={LazyComponent(Maps)} />
   </Route>
 );
 
@@ -72,7 +73,6 @@ const CommonAllUsersRoutes = () => (
   <Route path="general">
       <Route path="dtr" element={LazyComponent(DtrPage)} />
       <Route path="user-profile" element={LazyComponent(UserProfilePage)} />
-      <Route path="map" element={LazyComponent(Maps)} />
       <Route path="my-attendance" element={LazyComponent(AttendancePage)} />
       <Route path="my-payslip" element={LazyComponent(PaySlipPage)} />
   </Route>
