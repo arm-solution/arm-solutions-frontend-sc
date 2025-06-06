@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './ProductsForm.css'
 import productIcon from './../../../assets/images/product.png'
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,10 +6,12 @@ import imageBroken from './../../../assets/images/brokenImage.png';
 import { addNewProduct, updateProduct, getAllProducts } from '../../../store/features/productSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { unwrapResult } from '@reduxjs/toolkit';
-
+import { getAllCategory } from '../../../store/features/categorySlice';
 
 const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => {
   const dispatch = useDispatch();
+
+  const { _getAllcategory } = useSelector(state => state.categories);
 
   const handleInputChange = (e) => {
     setSelectedProduct({
@@ -17,6 +19,12 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
       [e.target.name]: e.target.value,
     });
   };
+
+
+  useEffect(() => {
+    dispatch(getAllCategory());
+  }, [])
+  
 
   const saveUpdateProduct = async () => {
     if (
@@ -32,15 +40,18 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
 
     try {
         let actionResult;
+
+        
         if (selectedProduct.id) {
-            actionResult = await dispatch(updateProduct(selectedProduct));
+          const { category_name, ...dataToUpdate } = selectedProduct
+            actionResult = await dispatch(updateProduct([dataToUpdate]));
         } else {
             actionResult = await dispatch(addNewProduct(selectedProduct));
         }
 
         const result = unwrapResult(actionResult);
-
-        if (result?.affectedRows > 0 || result?.id) {
+        console.log("result", result)
+        if (result.success) {
             successDialog(selectedProduct.id ? 'Updated Successfully' : 'New Product Added');
             dispatch(getAllProducts());
         } else {
@@ -117,19 +128,16 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
                 <label htmlFor="category">Category</label>
                 <select
                 name="category_id"
-                value={selectedProduct?.category_name || ''}
+                value={selectedProduct?.category_id || ''}
                 className="form-control"
                 onChange={(e) => handleInputChange(e)}
                 >
-                <option value="">Select Category</option>
-                <option value="1">Equipment</option>
-                <option value="2">Pipes</option>
-                <option value="3">Fittings</option>
-                <option value="4">Valves</option>
-                <option value="5">Others</option>
-                <option value="6">Consumables</option>
-                <option value="7">Manpower</option>
-                <option value="8">Tools</option>
+                <option value="" disabled>Select Category</option>
+                {_getAllcategory.map(data => (
+                   <option value={data.id} key={data.id}>{data.name}</option>
+                ))}
+
+
                 </select>
               </div>
             </div>

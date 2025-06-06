@@ -39,7 +39,6 @@ const Client = () => {
   ]
 
   const handleView = (product) => {
-    // alert(product.id);
       const modalElement = modalRef.current;
       const modal = new Modal(modalElement);
       setSelectedProduct(product);
@@ -70,7 +69,6 @@ const Client = () => {
        })
 
   }
-
 
     const addProductModal = () => {
       const modalElement = modalRef.current;

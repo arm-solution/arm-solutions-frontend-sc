@@ -15,6 +15,7 @@ import messageRequestSlice from "./features/messageRequestSlice";
 import additionalEarningsSlice from './features/additionalEarningsSlice';
 import earningSlice from './features/earningSlice';
 import dashboardSlice from "./features/dashboardDataSlice";
+import categorySlice from "./features/categorySlice";
 
 export const store = configureStore({
     reducer: {
@@ -34,5 +35,6 @@ export const store = configureStore({
         additionalEarnings: additionalEarningsSlice.reducer,
         earnings: earningSlice.reducer,
         dasboardData: dashboardSlice.reducer,
+        categories: categorySlice.reducer
     }
 })
