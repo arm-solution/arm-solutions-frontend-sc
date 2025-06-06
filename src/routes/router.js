@@ -120,6 +120,7 @@ export const router = createBrowserRouter(
         <Route path="/marketing" element={LazyComponent(MarketingOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}  
+          {CommonRoutes()}
         </Route>
       </Route>
 
@@ -136,6 +137,7 @@ export const router = createBrowserRouter(
         <Route path="/engineering" element={LazyComponent(EngineeringOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
