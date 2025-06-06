@@ -82,7 +82,9 @@ const DtrDetailsModal = (props) => {
             backdrop.remove();
         }
 
-        navigate(`/${getLoggedInData().user_type}/common/map?data=${data}`);
+        // navigate(`/${getLoggedInData().user_type}/common/map?data=${data}`);
+        const url = `/${getLoggedInData().user_type}/common/map?data=${data}`;
+        window.open(url, '_blank'); // <-- opens in new tab
     };
 
     return (
