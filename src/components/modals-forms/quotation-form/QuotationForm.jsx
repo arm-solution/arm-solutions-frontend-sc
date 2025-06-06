@@ -18,6 +18,7 @@ import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
+import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -46,7 +47,6 @@ const QoutationForm = (props) => {
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
         proposal_date: dateFormatted(getCurrentDate()),
-        status: 'pending',
         description: '',
         sub_total: 0,
         grand_total: 0,
@@ -105,7 +105,6 @@ const QoutationForm = (props) => {
             position
         };
     }
-
 
     // update data from the database when the local storage is not empty
     // this is for delete items
@@ -378,7 +377,10 @@ const QoutationForm = (props) => {
                 discount: taxDiscountTotal.discount,
                 sub_total: props.taf.totalAmountref,
                 grand_total: props.totalAmountState.totalAmount,
-                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0)
+                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+                previous_department_stage_id: getDepartmentLoggedIn(),
+                department_stage_id: getDepartmentLoggedIn(),
+                status: 'pending'
             }));
 
             const { lastid, success: qoutationSuccess } = quotationResponse.payload;
@@ -481,7 +483,11 @@ const QoutationForm = (props) => {
             tax: taxDiscountTotal.tax,
             discount: taxDiscountTotal.discount,
             additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
-            grand_total: props.totalAmountState.totalAmount
+            grand_total: props.totalAmountState.totalAmount,
+            // previous_department_stage_id: getDepartmentLoggedIn(),
+            // department_stage_id: getApprovalState().targetDepartment,
+            // status: getApprovalState().status
+
         };
     
         // Check if proposal has changed by comparing specific fields
@@ -556,6 +562,32 @@ const QoutationForm = (props) => {
         props.setSelectedTab('tab-one')
        
     };  // end of update
+
+
+    const handleQuotationApproval = async () => {
+
+        const { id, status } = quotation;
+        const { status: deptStatus, targetDepartment} = getApprovalState(status); 
+
+        const proposalFinalStatus = {
+            previous_department_stage_id: getDepartmentLoggedIn(),
+            department_stage_id: targetDepartment,
+            status: deptStatus
+        };
+
+
+        if(id) {
+          const { payload } = await dispatch(updateProposal({ proposalFinal: proposalFinalStatus, id: id }));
+
+          if(payload.success) {
+            alert("Submit For Approval");
+            handleClearForm();
+            props.setSelectedTab('tab-one')
+          } else {
+            alert("Issue Detected While approving the proposal")
+          }
+        }
+    }
     
     //  open pdf file on new tab
     const openPdfFile = () => {
@@ -573,8 +605,14 @@ const QoutationForm = (props) => {
         window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
     } 
 
+    const checkApproval = () => {
+        console.log("get approval state", getApprovalState().status)
+        console.log("quotation", quotation);
+    }
+
     return (
         <>
+            {/* <button onClick={checkApproval}>check approval</button> */}
             <div className="qoutation">
                 <div className="container mt-5 p-5">
 
@@ -653,13 +691,18 @@ const QoutationForm = (props) => {
                         addEditItem={addtionalItems}
                     />
 
-                    <div className="row row-btn-qout mt-3 mr-auto">
+                    <div className="row row-btn-qout mt-3 justify-content-end gap-2">
+                    {quotation.id > 0 ? (
+                        <>                        
+                          <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button>
 
-                        {quotation.id > 0 ? 
-                        <button className='btn-qoutation' onClick={handleUpdateQoutation}>Save</button>
-                        :
-                        <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Qoutation</button>
-                        }
+                         {quotation.department_stage_id === getDepartmentLoggedIn() && (
+                             <button className="btn-qoutation btn-approval" onClick={handleQuotationApproval}>Submit For Approval</button>
+                         )}
+                        </>
+                    ) : (
+                        <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Quotation</button>
+                    )}
 
                     </div>
 
