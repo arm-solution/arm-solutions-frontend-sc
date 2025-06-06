@@ -1,78 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import './Products.css';
-import { useDispatch, useSelector } from 'react-redux';
-import ProductsForm from '../../../../components/modals-forms/products-form/ProductsForm';
-import { getAllProducts } from '../../../../store/features/productSlice';
-import EditProduct from '../../../../components/modals-forms/edit-product-modal/EditProduct';
-import Card from '../../../../components/card-product-v1/CardProduct';
+import React, { useState, useEffect, useRef } from 'react'
+// import './Client.css'
+import { useSelector, useDispatch } from 'react-redux' 
+import DataTable from '../../../../components/DataTable';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+// import ClientDetails from '../../components/modals-forms/clients-details-modal/ClientDetails'
+import { deleteConfirmation } from '../../../../customs/global/alertDialog';
+import { getAllProducts, deleteProduct } from '../../../../store/features/productSlice';
+import { currencyFormat } from '../../../../customs/global/currency';
+import ProductsFormModal from '../../../../components/modals-forms/products-form/ProductFormModal';
 
-const Products = () => {
-  const [selectedTab, setSelectedTab] = useState('tab-one');
+const Client = () => {
+  const modalRef = useRef(null);
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.products);
+ 
+  const [selectedProduct, setSelectedProduct] = useState({
+    name: '',
+    description: '',
+    sku: '',
+    stock_quantity: '',
+    base_price: '',
+    category_id: ''
+  })
 
-  const columns = [
-    { header: 'Product Name', accessor: 'product_name' },
-    { header: 'Product Description', accessor: 'product_description' },
-    { header: 'Product Price', accessor: 'product_price' },
-    { header: 'Image Link', accessor: 'product_image_link' },
-    { header: 'Product ID', accessor: 'id' },
-    { header: 'Product Image Original Name', accessor: 'product_image_original_name' },
-    { header: 'Product Image Name', accessor: 'product_image_name' },
-    { header: 'Date Created', accessor: 'date_created' },
-    { header: 'Product Drive Id', accessor: 'product_drive_id' },
-  ];
-
-  const handleTabChange = (event) => {
-    setSelectedTab(event.target.id);
-  };
+  const { data: allProducts, loading: productLoading } = useSelector(state => state.products);
 
   useEffect(() => {
-    dispatch(getAllProducts());
-  }, [dispatch]);
+    dispatch(getAllProducts())
+  }, [dispatch])
+  
+
+  const columns = [
+    { header: 'Name', accessor: 'name' },
+    { header: 'Description', accessor: 'description' },
+    { header: 'SKU', accessor: 'sku' },
+    { header: 'Quantity', accessor: 'stock_quantity' },
+    { header: 'Base Price', accessor: 'base_price' },
+    { header: 'Category', accessor: 'category_name' },
+  ]
+
+  const handleView = (product) => {
+    // alert(product.id);
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedProduct(product);
+      modal.show();
+  }
+
+  const handleDelete = (id) => {
+   deleteConfirmation({
+         title: "",
+         text: "",
+         icon: "",
+         confirmButtonText: "",
+         cancelButtonText: "",
+         deleteTitle: "",
+         deleteText: "",
+         successTitle: "", 
+         successText: ""
+       }, async () => {
+       
+         const { payload } =  await dispatch(deleteProduct(id)) 
+         const result = payload.affectedRows > 0 ? true : false;
+         if (result) {
+           dispatch(getAllProducts());
+           return true;
+         }
+         return false;
+   
+       })
+
+  }
+
+
+    const addProductModal = () => {
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedProduct({
+        name: '',
+        description: '',
+        sku: '',
+        stock_quantity: '',
+        base_price: '',
+        category_id: ''
+      });
+      modal.show();
+    }
+
 
   return (
     <>
-      <div className="worko-tabs">
-        <input
-          className="state"
-          type="radio"
-          title="tab-one"
-          name="tabs-state"
-          id="tab-one"
-          checked={selectedTab === 'tab-one'}
-          onChange={handleTabChange}
-        />
-        <input
-          className="state"
-          type="radio"
-          title="tab-two"
-          name="tabs-state"
-          id="tab-two"
-          checked={selectedTab === 'tab-two'}
-          onChange={handleTabChange}
+    {/* Navbar-style header */}
+      <div className="px-4 py-3 text-black fw-bold fs-4 rounded" style={{ backgroundColor: "#ededed", marginBottom: "15px" }}>
+      Product Management
+    </div>
+
+        <DataTable
+          data={Array.isArray(allProducts) ? allProducts : []} // Ensure data is an array
+          columns={columns}
+          actions={{ handleView, handleDelete }}
+          perPage={10}
+          showAddButtonAndSearchInput={{ searchInput: true, addButton: true }}
+          deleteAccess={true}
+          tableLabel='Products List'
+          addData={ addProductModal }
         />
 
-        <div className="tabs flex-tabs">
-          <label htmlFor="tab-one" id="tab-one-label" className="tab">Product Form</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Product List</label>
-
-          <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-            <ProductsForm />
-          </div>
-
-          <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
-            <Card
-              products={products.data}
-              columns={columns}
-              perPage={5}
-            />
-          </div>
-        </div>
-      </div>
-
+        <ProductsFormModal
+        modalRef={modalRef}
+        selectedProduct={selectedProduct}
+        setSelectedProduct={setSelectedProduct}
+        />
     </>
-  );
-};
+  )
+}
 
-export default Products;
+export default Client

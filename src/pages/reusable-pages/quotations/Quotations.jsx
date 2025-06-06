@@ -44,7 +44,7 @@ const Quotations = () => {
 
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
-      {header: 'Estemate', accessor: 'sub_total'},
+      {header: 'Estimate', accessor: 'sub_total'},
       {header: 'Date', accessor: 'date_created'},
       {header: 'Status', accessor: 'status'},
     ]
@@ -132,7 +132,7 @@ const Quotations = () => {
 
         <div className="tabs flex-tabs">
           <label htmlFor="tab-one" id="tab-one-label" className="tab">Quotation Lists</label>
-          <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Qoutations</label>
+          <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Quotations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 

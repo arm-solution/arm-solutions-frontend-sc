@@ -121,29 +121,16 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </ul>
                     </li>
 
-                    {/* Products Dropdown */}
+                    {/* Products */}
+
                     <li className="sidebar-item">
-                        <a
-                            href="#"
-                            className={`sidebar-link has-dropdown ${expandedDropdown === 'products' ? '' : 'collapsed'}`}
-                            data-bs-toggle="collapse"
-                            aria-expanded={expandedDropdown === 'products'}
-                            onClick={() => toggleDropdown('products')}
-                        >
+                        <Link to='common/products' className="sidebar-link">
                             <i className="lni lni-package"></i>
                             <span>Products</span>
-                        </a>
-                        <ul id="products" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'products' ? 'show' : ''}`}>
-                            <li className="sidebar-item">
-                                <Link to='' className="sidebar-link">Fire Extinguisher</Link>
-                            </li>
-                            <li className="sidebar-item">
-                                <Link to='' className="sidebar-link">Maintenance</Link>
-                            </li>
-                        </ul>
+                        </Link>
                     </li>
 
-                    {/* Employees */}
+                    {/* Clients */}
                     <li className="sidebar-item">
                         <Link to='common/clients' className="sidebar-link">
                              <i className="lni lni-network"></i>
