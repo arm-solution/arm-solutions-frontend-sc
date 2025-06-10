@@ -89,7 +89,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </Link>
                     </li>
                 )}
-                {isDepartmentAllowed([]) && (
+                {isDepartmentAllowed() && (
                     <>
                     {/* My Records Dropdown */}
                     <li className="sidebar-item">
@@ -115,7 +115,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     </>
                 )}
 
-                {isDepartmentAllowed([0]) && (
+                {isDepartmentAllowed() && (
                     <>
                        {/* Services Dropdown */}
                         <li className="sidebar-item">
@@ -187,7 +187,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                         </Link>
                     </li>
                 )}
-                {isDepartmentAllowed([0]) && (
+                {isDepartmentAllowed() && (
                    <>
                     <li className="sidebar-item">
                         <Link to='message-request' className="sidebar-link">
