@@ -3,9 +3,8 @@ import axios from 'axios';
 
 
 export const addNewProduct = createAsyncThunk('addNewProduct', async (product, { rejectWithValue }) => {
-    console.log(product);
     try {
-        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/add-product`, product);
+        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/add-product`, [product]);
         return res.data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -54,6 +53,7 @@ const productSlice = createSlice({
     name: 'products',
     initialState: {
         data: [],
+        getAllProduct: [],
         isSuccess: false,
         loading: true,
         message: '',
