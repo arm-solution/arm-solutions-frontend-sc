@@ -200,6 +200,75 @@ export const isDepartmentAllowed = (allowedDepartments) => {
 
   return userDepartment !== null && allowedDepartments.includes(userDepartment);
 };
+
+
+export const getApprovalState = (status) => {
+  let approver = {
+    previousDepartment: 0,
+    status: '',
+    targetDepartment: 0
+  }
+
+  if(!getDepartmentLoggedIn()) {
+    return approver;
+  }
+  
+
+  if(getDepartmentLoggedIn() === 8) {
+    // marketing statage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for engineering"
+    approver.targetDepartment = 6
+  } else if(getDepartmentLoggedIn() === 6 && status === 'for engineering') {
+    // engineering stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for warehouse"
+    approver.targetDepartment = 5
+  } if(getDepartmentLoggedIn() === 5) {
+    // warehouse stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for purchasing"
+    approver.targetDepartment = 7
+  } if(getDepartmentLoggedIn() === 7) {
+    // purchasing stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for accounting"
+    approver.targetDepartment = 3
+  } if(getDepartmentLoggedIn() === 3) {
+    // accounting stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for finance"
+    approver.targetDepartment = 4
+  } if(getDepartmentLoggedIn() === 4) {
+    // finance stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for admin"
+    approver.targetDepartment = 1
+  } if(getDepartmentLoggedIn() === 1) {
+    // admin stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for engineering review"
+    approver.targetDepartment = 6
+  }
+
+  if(getDepartmentLoggedIn() === 6 && approver.status === 'for engineering review') {
+        // enginering review stage
+        approver.previousDepartment = getDepartmentLoggedIn()
+        approver.status = "for finence review"
+        approver.targetDepartment = 6
+  } 
+
+  if(getDepartmentLoggedIn() === 4 && approver.status === 'for engineering review') {
+    // finance review stage 
+    // the final stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "completed"
+    approver.targetDepartment = 0
+ } 
+
+ return approver;
+
+}
   
   
   

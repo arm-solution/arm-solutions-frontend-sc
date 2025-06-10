@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Map from '../../../../components/Map'
+import { useNavigate } from 'react-router-dom';
 import './Maps.css'
 
 
 const Maps = () => {
-
+  const navigate = useNavigate();
 
   const [selectedDate, setSelectedDate] = useState('');
 
