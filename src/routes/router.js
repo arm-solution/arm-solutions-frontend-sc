@@ -129,6 +129,7 @@ export const router = createBrowserRouter(
         <Route path="/accounting" element={LazyComponent(AccountingOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
@@ -146,6 +147,7 @@ export const router = createBrowserRouter(
         <Route path="/finance" element={LazyComponent(FinanceOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
@@ -162,6 +164,7 @@ export const router = createBrowserRouter(
         <Route path="/hr" element={LazyComponent(HrOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
@@ -170,6 +173,7 @@ export const router = createBrowserRouter(
         <Route path="/purchasing" element={LazyComponent(PurchasingOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
@@ -178,6 +182,7 @@ export const router = createBrowserRouter(
         <Route path="/warehouse" element={LazyComponent(WareHouseOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 

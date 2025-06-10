@@ -251,14 +251,14 @@ export const getApprovalState = (status) => {
     approver.targetDepartment = 6
   }
 
-  if(getDepartmentLoggedIn() === 6 && approver.status === 'for engineering review') {
+  if(getDepartmentLoggedIn() === 6 && status === 'for engineering review') {
         // enginering review stage
         approver.previousDepartment = getDepartmentLoggedIn()
-        approver.status = "for finence review"
-        approver.targetDepartment = 6
+        approver.status = "for finance review"
+        approver.targetDepartment = 4
   } 
 
-  if(getDepartmentLoggedIn() === 4 && approver.status === 'for engineering review') {
+  if(getDepartmentLoggedIn() === 4 && status === 'for finance review') {
     // finance review stage 
     // the final stage
     approver.previousDepartment = getDepartmentLoggedIn()
