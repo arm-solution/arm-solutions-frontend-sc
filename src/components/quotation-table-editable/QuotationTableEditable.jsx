@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
@@ -6,6 +6,7 @@ import { deleteProposalItem, deleteMultipleProposalItems } from '../../store/fea
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
 import { useGlobalRefs } from '../../customs/global/useGlobalRef';
+import ProductDropdown from '../product-dropdown-cell/ProductDropdown';
 // import FloatNotification from '../../float-notification/FloatNotification';
 
 
@@ -15,6 +16,7 @@ const QoutationTableEditable = (props) => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
+
 
     // for global reference
     const { preProductItemsRef } = useGlobalRefs();
@@ -33,42 +35,6 @@ const QoutationTableEditable = (props) => {
 
         fetchData();
     }, []);
-    
-
-    // activating getting sessionStorage and set to product details state
-    // useEffect(() => {
-    //     const fetchFromSession = () => { 
-    //       const proposalDetails = sessionStorage.getItem('proposalDetails');
-      
-    //       if (proposalDetails) {
-    //         const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-    //         const itemsWithComputationAmount = quotationItemData.map(d => ({
-    //             ...d,
-    //             markup_price: d.base_price,
-    //             amount: parseInt(d.qty) * parseInt(d.base_price)
-    //         }))
-           
-    //         props.pid.setProductItemDetails(itemsWithComputationAmount);
-    //         // const totalItemAmount = itemsWithComputationAmount.reduce((sum, item) => sum + item.amount, 0)
-    //         // props.setTotalAmountref(parseInt(totalItemAmount))
-    //       }
-    //     };
-      
-    //     // Fetch the session storage data on component mount
-    //     fetchFromSession();
-      
-    //     // Add event listener for 'sessionUpdated' (if needed to listen to updates)
-    //     const handleSessionUpdate = () => {
-    //       fetchFromSession();
-    //     };
-    //     window.addEventListener('sessionUpdated', handleSessionUpdate);
-      
-    //     // Clean up event listener when the component unmounts
-    //     return () => {
-    //       window.removeEventListener('sessionUpdated', handleSessionUpdate);
-    //     };
-    // }, []); 
-
 
 
     // calculate the total amount
@@ -179,32 +145,10 @@ const QoutationTableEditable = (props) => {
     };
     
 
-    // useEffect(() => {
-
-    //     if(props.pid.productItemDetails && props.pid.productItemDetails.length > 0) {
-    //     // for testing total
-    //     const taxT = props.tax ? props.tax.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
-    //     const discountT = props.tax ? props.discount.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
-    //     const additionalT = props.tax ? props.additional.reduce((sum, item) => sum + (item.item_total || 0), 0) : 0
-    //     const productT = props.pid.productItemDetails ? props.pid.productItemDetails.reduce((sum, item) => sum + (item.amount || 0), 0) : 0
-
-
-    //     console.log("taxT", taxT)
-    //     console.log("discountT", discountT)
-    //     console.log("additionalT", additionalT)
-    //     console.log("productT", productT)
-
-    //     }
-
-    // }, [props.pid.productItemDetails])
     
-    
-
     const toggleSaveAndEdit = (id) => {
         const checkProduct = props.pid.productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-        const proposalDetails = sessionStorage.getItem("proposalDetails");
-        const proposalItemsFromDbTotal = JSON.parse(proposalDetails) ? JSON.parse(proposalDetails).quotationItem.reduce((sum, item) => sum + item.item_total, 0) || 0 : 0;
-        
+       
         if (checkProduct) {
             errorDialog("All Fields Are Required");
             return;
@@ -221,26 +165,9 @@ const QoutationTableEditable = (props) => {
         if (!preProductItemsRef.current || !Array.isArray(preProductItemsRef.current)) {
             preProductItemsRef.current = [];
         }
-    
-        // ✅ Preserve previous total correctly
-        const prevProductTotal = preProductItemsRef.current.reduce((sum, item) => sum + (item.amount || 0), 0);
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
-        const table2Diff = newProductTotal - prevProductTotal;
 
 
-        // console.log("new", newProductTotal);
-
-    
-        // ✅ Accumulate the total correctly
-        // props.setTotalAmount(prev => {
-        //     const getDiff = JSON.parse(proposalDetails) ? prev - proposalItemsFromDbTotal : 0;
-        //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
-        // });
-
-        // props.setTotalAmountref(prev => {
-        //     const getDiff = JSON.parse(proposalDetails) ? parseFloat(prev) - parseFloat(proposalItemsFromDbTotal) : 0;
-        //     return  ((prev + table2Diff) - proposalItemsFromDbTotal) - getDiff;
-        // });
 
         props.setTotalAmountref(newProductTotal);
     
@@ -378,22 +305,15 @@ const QoutationTableEditable = (props) => {
          
                             </td>
                             <td>
-                                {row.isEditing ? (
-                                    <select
-                                        className="form-select"
-                                        aria-label="Default select example"
-                                        defaultValue='0'
-                                        name="product_id"
-                                        onChange={(e) => handleProductSelection(e, row.id)}
-                                    >
-                                        <option value='0' disabled>Products</option>
-                                        {products.map(product => (
-                                            <option key={product.id} value={product.id}>{product.name}</option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    row.name
-                                )}
+                            {row.isEditing ? (
+                                <ProductDropdown 
+                                row={row}
+                                products={products}
+                                handleProductSelection={handleProductSelection}
+                                />
+                            ) : (
+                                row.name
+                            )}
                             </td>
                             <td>{row.category_name}</td>
                             <td>
