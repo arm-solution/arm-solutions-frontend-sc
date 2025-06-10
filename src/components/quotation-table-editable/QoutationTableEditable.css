@@ -28,6 +28,24 @@
 
 
 
+/* Dropdown container */
+.dropdown-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Dropdown toggle (the visible trigger) */
+.dropdown-toggle {
+  cursor: pointer;
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  width: 100%;
+  text-align: left;
+}
+
+
 @media (max-width: 900px) { 
     .table-editable-container {
         width: 80vw;
@@ -71,3 +89,4 @@
 
 
 }
+
