@@ -19,6 +19,7 @@ import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
+import TermsCondition from '../../terms-condition-editor/TermsCondition';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -26,6 +27,7 @@ const QoutationForm = (props) => {
     const [addtionalItems, setAddtionalItems] = useState([]);
     // const [first, setfirst] = useState(second)
 
+    const [termsCondition, setTermsCondition] = useState('');
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [tax, setTax] = useState([])
@@ -380,6 +382,7 @@ const QoutationForm = (props) => {
                 additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
                 previous_department_stage_id: getDepartmentLoggedIn(),
                 department_stage_id: getDepartmentLoggedIn(),
+                terms_condition: termsCondition,
                 status: 'pending'
             }));
 
@@ -683,6 +686,11 @@ const QoutationForm = (props) => {
                             />
                         ))
                     )}
+
+                    <TermsCondition 
+                        termsCondition={termsCondition}
+                        setTermsCondition={setTermsCondition}
+                    />
 
                     <TotalAmount 
                         totalAmountref={props.taf.totalAmountref}
