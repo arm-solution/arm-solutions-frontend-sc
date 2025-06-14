@@ -35,6 +35,7 @@ const Qoutations = lazy(() => import('../pages/reusable-pages/quotations/Quotati
 const EmployeeList = lazy(() => import('../pages/reusable-pages/employeeList-page/EmplyeesList'))
 const CutOff = lazy(() => import('./../pages/reusable-pages/cutoff-page/CutOff'));
 const DtrStandalone = lazy(() => import('./../pages/reusable-pages/dtr-standalone-page/DtrForOnsite'));
+const JobOrder = lazy(() => import('./../components/modals-forms/job-order-form/JobOrderForm'));
 
 // outlets
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
@@ -187,6 +188,7 @@ export const router = createBrowserRouter(
       <Route path="under-maintenance" element={LazyComponent(UnderMaintenance)} />
       <Route path="dtr-onsite-access" element={LazyComponent(DtrStandalone)} />
       <Route path="forgot-password" element={LazyComponent(ForgotPassword)} />
+      <Route path="job-order" element={LazyComponent(JobOrder)} />
       <Route path="not-found" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
     </Route>

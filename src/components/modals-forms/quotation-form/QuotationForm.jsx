@@ -352,93 +352,92 @@ const QoutationForm = (props) => {
 
       
     const handleAddNewQoutation = async () => {
-
-        console.log("terms and con", termsCondition); 
        
-        // if (quotation.client_id === 0 || quotation.created_by === 0) {
-        //         setNotification({
-        //             message: 'All Fields Are Required',
-        //             type: 'error'
-        //         });
-        //     return;
-        // } 
+        if (quotation.client_id === 0 || quotation.created_by === 0) {
+                setNotification({
+                    message: 'All Fields Are Required',
+                    type: 'error'
+                });
+            return;
+        } 
 
-        // const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
+        const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
 
-        // if(checkEditing) {
-        //     setNotification({
-        //         message: 'Need to save some changes',
-        //         type: 'error'
-        //     });
-        //     return;
-        // } 
+        if(checkEditing) {
+            setNotification({
+                message: 'Need to save some changes',
+                type: 'error'
+            });
+            return;
+        } 
 
-        // try {
+        try {
 
-        //     const quotationResponse = await dispatch(createProposal({
-        //         ...quotation,
-        //         tax: taxDiscountTotal.tax,
-        //         discount: taxDiscountTotal.discount,
-        //         sub_total: props.taf.totalAmountref,
-        //         grand_total: props.totalAmountState.totalAmount,
-        //         additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
-        //         previous_department_stage_id: getDepartmentLoggedIn(),
-        //         department_stage_id: getDepartmentLoggedIn(),
-        //         status: 'pending'
-        //     }));
+            const quotationResponse = await dispatch(createProposal({
+                ...quotation,
+                tax: taxDiscountTotal.tax,
+                discount: taxDiscountTotal.discount,
+                sub_total: props.taf.totalAmountref,
+                grand_total: props.totalAmountState.totalAmount,
+                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+                previous_department_stage_id: getDepartmentLoggedIn(),
+                department_stage_id: getDepartmentLoggedIn(),
+                terms_condition: termsCondition,
+                status: 'pending'
+            }));
 
-        //     const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+            const { lastid, success: qoutationSuccess } = quotationResponse.payload;
 
 
-        //     if(lastid > 0 && qoutationItem.length > 0) {
-        //         const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-        //         const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+            if(lastid > 0 && qoutationItem.length > 0) {
+                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
                 
-        //         const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
-        //             ...rest,
-        //             item_total: item_total,
-        //             proposal_id: parseInt(lastid), 
-        //         }));
+                const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+                    ...rest,
+                    item_total: item_total,
+                    proposal_id: parseInt(lastid), 
+                }));
 
 
-        //         setQoutationItem(updatedQoutationItems);
+                setQoutationItem(updatedQoutationItems);
 
-        //         // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
-        //         const promises = [
-        //             dispatch(postAdditionalItems(additionalItemsData)),
-        //             dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
-        //         ];
+                // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+                const promises = [
+                    dispatch(postAdditionalItems(additionalItemsData)),
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
+                ];
                 
-        //         if (taxAndDiscountMerge.length > 0) {
-        //             promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
-        //         } else {
-        //             promises.push(Promise.resolve({ payload: { success: true } }));
-        //         }
+                if (taxAndDiscountMerge.length > 0) {
+                    promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+                } else {
+                    promises.push(Promise.resolve({ payload: { success: true } }));
+                }
                 
-        //         const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+                const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
                 
 
-        //         const { success: itemsStatus } = saveItemsResponse.payload;
-        //         const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
-        //         const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
+                const { success: itemsStatus } = saveItemsResponse.payload;
+                const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+                const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-        //         if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
-        //             successDialog('Quotation is now available');
-        //         } else {
-        //             errorDialog('Failed to create a Quotation');
-        //         }
+                if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
+                    successDialog('Quotation is now available');
+                } else {
+                    errorDialog('Failed to create a Quotation');
+                }
 
-        //     } else {
-        //         if(qoutationSuccess)  {
-        //             successDialog('Quotation is now available')
-        //             props.setSelectedTab('tab-one')
-        //         } else {
-        //             errorDialog('Failed to create a Quotation ');
-        //         }
-        //     }
-        // } catch (error) {
-        //     errorDialog('Failed To Save The Quotation');
-        // }
+            } else {
+                if(qoutationSuccess)  {
+                    successDialog('Quotation is now available')
+                    props.setSelectedTab('tab-one')
+                } else {
+                    errorDialog('Failed to create a Quotation ');
+                }
+            }
+        } catch (error) {
+            errorDialog('Failed To Save The Quotation');
+        }
     };
     
     // UPDATE PROPOSAL
