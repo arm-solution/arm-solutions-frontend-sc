@@ -57,7 +57,7 @@ const PaySlipPage = () => {
   return (
     <>
     <div className="card-container">
-    <div className="card">
+    <div className="card payslipCard">
       <div className="card-body">
 
        <div className="row">
