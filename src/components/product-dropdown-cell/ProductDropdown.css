@@ -13,9 +13,9 @@
   z-index: 1050;
 
   /* Width control */
-  min-width: 300px;         /* Ensures wider box */
-  width: max-content;       /* Adapts to content size */
-  max-width: 600px;         /* Optional: limit extreme cases */
+  min-width: 300px;      
+  width: max-content;    
+  max-width: 600px;      
 
   max-height: 300px;
   overflow-y: auto;
@@ -28,7 +28,6 @@
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   white-space: normal; /* allow wrapping */
 }
-
 
 /* Ensure dropdown isn't clipped inside table cells */
 table, tr, td, th {
@@ -68,8 +67,26 @@ table, tr, td, th {
   padding: 0.25rem 1rem;
 }
 
-/* Scrollable items container */
-.dropdown-items-container {
-  max-height: 250px;
-  overflow-y: auto;
+/* ======================== */
+/* === ProductDropdown === */
+/* ======================== */
+
+/* Cell wrapper for dropdown */
+.product-dropdown-container {
+  position: relative;
+}
+
+/* Toggle/select box styling */
+.product-dropdown-toggle {
+  cursor: pointer;
+  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+}
+
+.dropdown-item.disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+  color: #999;
 }

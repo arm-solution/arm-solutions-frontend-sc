@@ -19,6 +19,7 @@ import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
 import { getAllProposal } from '../../../store/features/proposalSlice';
 import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
+import TermsCondition from '../../terms-condition-editor/TermsCondition';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -26,6 +27,7 @@ const QoutationForm = (props) => {
     const [addtionalItems, setAddtionalItems] = useState([]);
     // const [first, setfirst] = useState(second)
 
+    const [termsCondition, setTermsCondition] = useState('');
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
     const [tax, setTax] = useState([])
@@ -287,39 +289,6 @@ const QoutationForm = (props) => {
         
         }
       }, [props.taf.totalAmountref])
-
-
-    // when detect changes on the object array it will compute the computation
-    //   useEffect(() => {
-    //     const proposalDetails = sessionStorage.getItem('proposalDetails');
-
-    //     var taxDiscountT;
-    //     const additionalT = addtionalItems ? addtionalItems.reduce((sum, item) => sum + item.item_total, 0) : 0;
-    //     const productsT = productItemDetails ? productItemDetails.reduce((sum, item) => sum + item.amount, 0) : 0;
-
-
-    //     if(props.taf.totalAmountref > 0) {
-    //         const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-    //         taxDiscountT = getTotalTax(updatedRows);
-  
-    //         setTaxDiscountTotal(taxDiscountT);
-    //     }
-
-    //     const totalNew = (
-    //         parseFloat(additionalT || 0) +
-    //         parseFloat(taxDiscountT?.tax || 0) +
-    //         parseFloat(productsT || 0)
-    //       ) - parseFloat(taxDiscountT?.discount || 0);
-
-
-    //     console.log("new total", totalNew)
-
-    //     // props.totalAmountState.setTotalAmount(
-
-    //     // )
-      
-    //   }, [tax, discount, addtionalItems])
-
     
     const handleClearForm = () => {
         const proposalDetails = sessionStorage.getItem('proposalDetails');
@@ -380,6 +349,7 @@ const QoutationForm = (props) => {
                 additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
                 previous_department_stage_id: getDepartmentLoggedIn(),
                 department_stage_id: getDepartmentLoggedIn(),
+                terms_condition: termsCondition,
                 status: 'pending'
             }));
 
@@ -683,6 +653,11 @@ const QoutationForm = (props) => {
                             />
                         ))
                     )}
+
+                    <TermsCondition 
+                        termsCondition={termsCondition}
+                        setTermsCondition={setTermsCondition}
+                    />
 
                     <TotalAmount 
                         totalAmountref={props.taf.totalAmountref}

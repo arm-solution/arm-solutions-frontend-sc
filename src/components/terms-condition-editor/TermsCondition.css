@@ -1,0 +1,16 @@
+.custom-editor-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.ql-container {
+  background-color: #fff; /* solid white background */
+  min-height: 300px;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.ql-editor {
+  min-height: 200px;
+}

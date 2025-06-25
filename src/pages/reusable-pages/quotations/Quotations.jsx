@@ -11,6 +11,7 @@ import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
 import { getAdditionalItemsByProposalId } from '../../../store/features/additional.Slice';
+import TermsCondition from '../../../components/terms-condition-editor/TermsCondition';
 
 const Quotations = () => {
 

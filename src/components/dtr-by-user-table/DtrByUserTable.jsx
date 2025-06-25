@@ -13,6 +13,7 @@ const DtrByUserTable = (props) => {
   const modalRef = useRef(null);
 
   const [ids, setIds] = useState([]);
+  const [imageLinks, setImageLinks] = useState([]);
   const [selectedDtr, setSelectedDtr] = useState(null);
 
 
@@ -26,12 +27,15 @@ const DtrByUserTable = (props) => {
     }
   }, [dispatch, props.userId]);
 
-  const handleCheckbox = (id, isChecked) => {
+  const handleCheckbox = (data, isChecked) => {
+    setImageLinks(preImage => 
+      isChecked ? [...preImage, data.image_link] : preImage.filter(item => item !== data.image_link)
+    );
     setIds(prevIds =>
-      isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
+      isChecked ? [...prevIds, data.id] : prevIds.filter(item => item !== data.id)
     );
     props.setDtrIds(prevIds =>
-      isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
+      isChecked ? [...prevIds, data.id] : prevIds.filter(item => item !== data.id)
     );
   };
 
@@ -41,7 +45,8 @@ const DtrByUserTable = (props) => {
   };
 
   const handleAppproveReject = async (dtrStatus) => {
-    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids }));
+
+    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids, imageLinks: imageLinks }));
     
     if (payload.success) {
       successDialog(`The records are now ${dtrStatus}`);
@@ -149,7 +154,7 @@ const DtrByUserTable = (props) => {
                           type="checkbox"
                           className="form-check-input"
                           checked={ids.includes(d.id)}
-                          onChange={(e) => handleCheckbox(d.id, e.target.checked)}
+                          onChange={(e) => handleCheckbox(d, e.target.checked)}
                         />
                       </td>
                       <td>{d?.shift_date ? formatDateReadable(d?.shift_date) : 'No data available'}</td>
