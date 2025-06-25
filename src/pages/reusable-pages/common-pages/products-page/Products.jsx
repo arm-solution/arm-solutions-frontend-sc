@@ -139,14 +139,14 @@ const Client = () => {
             <input
               type="text"
               className="form-control w-50"
-              placeholder="Search..."
+              placeholder="Search for product..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setCurrentPage(1); // Reset to page 1 on search
               }}
             />
-            <button className="btn btn-success" onClick={addProductModal}>Add</button>
+            <button className="btn btn-success p-2" onClick={addProductModal}>Add Product</button>
           </div>
 
 
@@ -173,7 +173,7 @@ const Client = () => {
                         <td key={col.accessor}>{item[col.accessor]}</td>
                       ))}
                       <td>
-                        <button className="btn btn-info btn-sm me-1" onClick={() => handleView(item)}>Details</button>
+                        <button className="btn btn-info btn-sm me-1 text-white" onClick={() => handleView(item)}>Details</button>
                         <button className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
                       </td>
                     </tr>

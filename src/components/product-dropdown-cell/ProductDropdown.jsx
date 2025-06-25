@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './ProductDropdown.css';
 
 const ProductDropdown = ({ row, products, handleProductSelection }) => {
- const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const dropdownRef = useRef(null);
@@ -40,39 +40,17 @@ const ProductDropdown = ({ row, products, handleProductSelection }) => {
   }
 
   return (
-    <td ref={dropdownRef} style={{ position: 'relative' }}>
+    <td ref={dropdownRef} className="product-dropdown-container">
       <div 
-        className="form-select dropdown-toggle"
+        className="form-select dropdown-toggle product-dropdown-toggle"
         onClick={toggleDropdown}
-        style={{
-          cursor: 'pointer',
-          padding: '0.375rem 2.25rem 0.375rem 0.75rem', 
-          backgroundColor: '#fff',
-          border: '1px solid #ced4da',
-          borderRadius: '0.375rem',
-        }}
       >
         {selectedProduct ? selectedProduct.name : 'Select a product...'}
       </div>
-      
+
       {isOpen && (
-        <div 
-          className="dropdown-menu show"
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            zIndex: 1000,
-            maxHeight: '300px',
-            overflowY: 'auto',
-            border: '1px solid rgba(0,0,0,.15)',
-            borderRadius: '0.375rem',
-            backgroundColor: '#fff',
-            padding: '0.5rem',
-          }}
-        >
-          <div className="px-2 mb-2">
+        <div className="dropdown-menu show">
+          <div className="dropdown-search-box">
             <input
               type="text"
               className="form-control form-control-sm"
@@ -82,33 +60,42 @@ const ProductDropdown = ({ row, products, handleProductSelection }) => {
               autoFocus
             />
           </div>
-          
-          <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
+
+          <div className="dropdown-items-container">
             {filteredProducts.length > 0 ? (
-              filteredProducts.map(product => (
-                <div
-                  key={product.id}
-                  className="dropdown-item"
-                  onClick={() => handleProductClick(product, row.id)}
-                  style={{
-                    cursor: 'pointer',
-                    padding: '0.25rem 1rem',
-                    ':hover': {
-                      backgroundColor: '#f8f9fa',
-                    },
-                  }}
-                >
-                  {product.name}
-                </div>
-              ))
+              filteredProducts.map(product => {
+                const isOutOfStock = product.stock_quantity === 0;
+
+                const handleClick = () => {
+                  if (isOutOfStock) {
+                    alert(`${product.name} is out of stock.`);
+                    return;
+                  }
+                  handleProductClick(product, row.id);
+                };
+
+                return (
+                  <div
+                    key={product.id}
+                    className={`dropdown-item ${isOutOfStock ? 'disabled' : ''}`}
+                    onClick={handleClick}
+                    style={{
+                      color: isOutOfStock ? '#999' : 'inherit',
+                      pointerEvents: isOutOfStock ? 'none' : 'auto'
+                    }}
+                  >
+                    {product.name} {isOutOfStock ? '(Out of stock)' : `   (${product.stock_quantity})` }
+                  </div>
+                );
+              })
             ) : (
-              <div className="dropdown-item text-muted">No products found</div>
+              <div className="dropdown-no-results">No products found</div>
             )}
           </div>
         </div>
       )}
     </td>
   );
-}
+};
 
-export default ProductDropdown
+export default ProductDropdown;
