@@ -91,7 +91,7 @@ const DtrListByUser = () => {
         />
 
         <hr></hr>
-
+ 
         {/* list of all user payslip */}
         <EarningListByUser 
           _getEarningsByUserId={_getEarningsByUserId}

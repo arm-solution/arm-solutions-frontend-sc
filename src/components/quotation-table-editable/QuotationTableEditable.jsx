@@ -148,16 +148,26 @@ const QoutationTableEditable = (props) => {
     
     const toggleSaveAndEdit = (id) => {
         const checkProduct = props.pid.productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+
+        const checkStock = props.pid.productItemDetails.find(p => parseInt(p.qty) > parseInt(p.stock_quantity));
        
         if (checkProduct) {
             errorDialog("All Fields Are Required");
             return;
         }
 
+        if(checkStock) {
+            errorDialog("The stock is not enough for the quantity you entered.");
+            return;
+        }
+
         const updatedDetails = props.pid.productItemDetails.map(data => ({
             ...data,
-            amount: parseInt(data.qty) * parseInt(data.base_price)
+            amount: parseInt(data.qty) * parseInt(data.base_price),
+            stock_quantity:  parseInt(data.stock_quantity) - parseInt(data.qty)
         }));
+
+        // console.log("updatedDetails", updatedDetails)
     
         props.pid.setProductItemDetails(updatedDetails);
     
@@ -166,7 +176,6 @@ const QoutationTableEditable = (props) => {
             preProductItemsRef.current = [];
         }
         const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
-
 
 
         props.setTotalAmountref(newProductTotal);
