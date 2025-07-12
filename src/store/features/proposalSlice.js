@@ -29,20 +29,28 @@ export const updateProposal = createAsyncThunk('proposals/updateProposal', async
 
     try {
         const result =  await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal/edit-proposal/${id}`, proposalFinal);
-        // return getState().proposals;
         return result.data 
+    } catch (error) {
+        return rejectWithValue(error.response.data);
+    }
+});
+
+export const getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
+    try {
+        const { data } =  await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all-by-filter?page=1&limit=1`, filter);
+
+        return data 
     } catch (error) {
         return rejectWithValue(error.response.data);
     }
 })
 
 
-
-
 const proposalSlice = createSlice({
     name: 'proposal',
     initialState: {
         data: [],
+        dataByFilter:[],
         isSuccess: false,
         loading: true,
         message: ''
@@ -94,6 +102,20 @@ const proposalSlice = createSlice({
             state.isSuccess = false;
         })
         .addCase(updateProposal.rejected, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
+            state.message = "rejected"
+        })
+        .addCase(getProposalByFilter.pending, (state, action) => {
+            state.loading = true;
+            state.isSuccess = false
+        })
+        .addCase(getProposalByFilter.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = false;
+            state.dataByFilter = action.payload;
+        })
+        .addCase(getProposalByFilter.rejected, (state, action) => {
             state.loading = false;
             state.isSuccess = false;
             state.message = "rejected"
