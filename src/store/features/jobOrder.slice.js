@@ -37,6 +37,23 @@ export const getAllJobOrderByFilter = createAsyncThunk('jobOrder/getAllJobOrderB
     }
 })
 
+export const updateJobOrder = createAsyncThunk('jobOrder/updateJobOrder/', async(jo, {rejectWithValue}) => {
+    try {
+        const { id, ...restJo} = jo;
+
+        if(!id) {
+            return rejectWithValue("No ID Specified");
+        }
+
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/job-order/update-job-order/${id}`, restJo);
+
+        return data;
+
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message); 
+    }
+})
+
 
 const jobOrderSlice = createSlice({
     name: 'jobOrder',

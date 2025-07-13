@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './JobOrderForm.css';
-import { addNewJobOrder, getAllJobOrderByFilter } from '../../../store/features/jobOrder.slice';
+import { addNewJobOrder, getAllJobOrderByFilter, updateJobOrder } from '../../../store/features/jobOrder.slice';
 import { getProposalByFilter } from '../../../store/features/proposalSlice';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateProposal } from '../../../store/features/proposalSlice';
 
 
 const JobOrderForm = () => {
@@ -75,7 +76,7 @@ const JobOrderForm = () => {
        const getProposal = async () => {
             await dispatch(getProposalByFilter({ id: proposalID, page: 1, limit: 1 }));
             await dispatch(getAllJobOrderByFilter({
-               filter: { proposal_id: 1000 },
+               filter: { proposal_id: 100 },
                page: 1,
                limit: 10
             }))
@@ -127,7 +128,6 @@ useEffect(() => {
 
 
     const handleDynamicJobOrderChange = (field, value, index = null) => {
-        console.log("value", value)
         setJobOrder(prev => {
             const updated = structuredClone(prev);
 
@@ -144,10 +144,26 @@ useEffect(() => {
     };
 
 
-    const handleUpSertJO = () => {
+    const handleUpSertJO = async () => {
 
-        console.log("joborder", jobOrder)
-        console.log("proposal", proposal)
+        const { user, job_order_items, ...restJO } = jobOrder;
+
+        const finalJO = {
+            ...restJO,
+            joborderitems: job_order_items
+        };
+        const finalProposal = {};
+
+        // console.log("joborder", restJO)
+        // console.log("proposal", proposal)
+
+        if(jobOrder.id) {
+            const { payload } = await dispatch(updateJobOrder(finalJO));
+            console.log("payload", payload)
+        } else {
+            const { payload } = await dispatch(addNewJobOrder(finalJO))
+            console.log("add new jo", payload)   
+        }
 
 
     }
@@ -159,7 +175,6 @@ useEffect(() => {
 
   return (
     <>
-
         <div className="container mt-4 job-order-form border p-4 bg-white">
         <h5 className="text-center fw-bold">ARM SOLUTION ENTERPRISES</h5>
         <p className="text-center small mb-4">Today's answer for tomorrow's needs!</p>
