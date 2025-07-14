@@ -5,6 +5,7 @@ import { getProposalByFilter } from '../../../store/features/proposalSlice';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProposal } from '../../../store/features/proposalSlice';
+import { successDialog, errorDialog } from '../../../customs/global/alertDialog';
 
 
 const JobOrderForm = () => {
@@ -14,6 +15,8 @@ const JobOrderForm = () => {
 
     const { dataByFilter, isSuccess, loading } = useSelector(state => state.proposals);
     const { allJobOrderByFilter, filterJoLoading } = useSelector(state => state.jobOrders);
+
+    const [message, setMessage] = useState('')
 
     const systemList = [
         "Fire Detection and Alarm System",
@@ -76,7 +79,7 @@ const JobOrderForm = () => {
        const getProposal = async () => {
             await dispatch(getProposalByFilter({ id: proposalID, page: 1, limit: 1 }));
             await dispatch(getAllJobOrderByFilter({
-               filter: { proposal_id: 100 },
+               filter: { proposal_id: proposalID },
                page: 1,
                limit: 10
             }))
@@ -159,10 +162,18 @@ useEffect(() => {
 
         if(jobOrder.id) {
             const { payload } = await dispatch(updateJobOrder(finalJO));
-            console.log("payload", payload)
+            if(payload.success) {
+                successDialog("Updated job order is now available")
+            } else {
+                errorDialog("Cannot update job order")
+            }
         } else {
             const { payload } = await dispatch(addNewJobOrder(finalJO))
-            console.log("add new jo", payload)   
+            if(payload.success) {
+                successDialog("New job order is now available")
+            } else {
+                errorDialog("Cannot add new job order")
+            }
         }
 
 
