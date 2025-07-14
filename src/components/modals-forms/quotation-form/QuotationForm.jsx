@@ -266,7 +266,7 @@ const QoutationForm = (props) => {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          props.totalAmountState.setTotalAmount(pre => {
+        props.totalAmountState.setTotalAmount(pre => {
             return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
         });
    
@@ -338,73 +338,75 @@ const QoutationForm = (props) => {
             return;
         } 
 
-        try {
+        console.log("quotation items", qoutationItem);
 
-            const quotationResponse = await dispatch(createProposal({
-                ...quotation,
-                tax: taxDiscountTotal.tax,
-                discount: taxDiscountTotal.discount,
-                sub_total: props.taf.totalAmountref,
-                grand_total: props.totalAmountState.totalAmount,
-                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
-                previous_department_stage_id: getDepartmentLoggedIn(),
-                department_stage_id: getDepartmentLoggedIn(),
-                terms_condition: termsCondition,
-                status: 'pending'
-            }));
+        // try {
 
-            const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+        //     const quotationResponse = await dispatch(createProposal({
+        //         ...quotation,
+        //         tax: taxDiscountTotal.tax,
+        //         discount: taxDiscountTotal.discount,
+        //         sub_total: props.taf.totalAmountref,
+        //         grand_total: props.totalAmountState.totalAmount,
+        //         additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+        //         previous_department_stage_id: getDepartmentLoggedIn(),
+        //         department_stage_id: getDepartmentLoggedIn(),
+        //         terms_condition: termsCondition,
+        //         status: 'pending'
+        //     }));
+
+        //     const { lastid, success: qoutationSuccess } = quotationResponse.payload;
 
 
-            if(lastid > 0 && qoutationItem.length > 0) {
-                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+        //     if(lastid > 0 && qoutationItem.length > 0) {
+        //         const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+        //         const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
                 
-                const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
-                    ...rest,
-                    item_total: item_total,
-                    proposal_id: parseInt(lastid), 
-                }));
+        //         const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+        //             ...rest,
+        //             item_total: item_total,
+        //             proposal_id: parseInt(lastid), 
+        //         }));
 
 
-                setQoutationItem(updatedQoutationItems);
+        //         setQoutationItem(updatedQoutationItems);
 
-                // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
-                const promises = [
-                    dispatch(postAdditionalItems(additionalItemsData)),
-                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
-                ];
+        //         // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+        //         const promises = [
+        //             dispatch(postAdditionalItems(additionalItemsData)),
+        //             dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
+        //         ];
                 
-                if (taxAndDiscountMerge.length > 0) {
-                    promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
-                } else {
-                    promises.push(Promise.resolve({ payload: { success: true } }));
-                }
+        //         if (taxAndDiscountMerge.length > 0) {
+        //             promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+        //         } else {
+        //             promises.push(Promise.resolve({ payload: { success: true } }));
+        //         }
                 
-                const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+        //         const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
                 
 
-                const { success: itemsStatus } = saveItemsResponse.payload;
-                const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
-                const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
+        //         const { success: itemsStatus } = saveItemsResponse.payload;
+        //         const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+        //         const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-                if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
-                    successDialog('Quotation is now available');
-                } else {
-                    errorDialog('Failed to create a Quotation');
-                }
+        //         if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
+        //             successDialog('Quotation is now available');
+        //         } else {
+        //             errorDialog('Failed to create a Quotation');
+        //         }
 
-            } else {
-                if(qoutationSuccess)  {
-                    successDialog('Quotation is now available')
-                    props.setSelectedTab('tab-one')
-                } else {
-                    errorDialog('Failed to create a Quotation ');
-                }
-            }
-        } catch (error) {
-            errorDialog('Failed To Save The Quotation');
-        }
+        //     } else {
+        //         if(qoutationSuccess)  {
+        //             successDialog('Quotation is now available')
+        //             props.setSelectedTab('tab-one')
+        //         } else {
+        //             errorDialog('Failed to create a Quotation ');
+        //         }
+        //     }
+        // } catch (error) {
+        //     errorDialog('Failed To Save The Quotation');
+        // }
     };
     
     // UPDATE PROPOSAL

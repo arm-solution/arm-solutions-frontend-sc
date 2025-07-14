@@ -1,8 +1,11 @@
-import React from 'react'
-import './AnnouncementList.css'
+import React, { useState, useEffect } from 'react'
+import './AnnouncementList.css';
+import StatusCard from '../status-card/StatusCard';
 const AnnouncementList = () => {
   return (
-    <div>AnnouncementList</div>
+    <>
+      <StatusCard />
+    </>
   )
 }
 

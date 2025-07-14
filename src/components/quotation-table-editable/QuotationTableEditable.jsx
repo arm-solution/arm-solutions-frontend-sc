@@ -184,6 +184,8 @@ const QoutationTableEditable = (props) => {
         preProductItemsRef.current = [...updatedDetails];
 
         props.computeTotalProposal(null, updatedDetails)
+
+        console.log("updatedDetails", updatedDetails)
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
@@ -194,6 +196,7 @@ const QoutationTableEditable = (props) => {
             sku: data.sku,
             amount: data.amount
         }));
+
     
         if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
             props.setQoutationItem(updatedQuotationItems);
