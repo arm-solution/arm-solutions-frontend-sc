@@ -6,7 +6,7 @@ import AnnouncementList from '../../../../components/announcement-list/Announcem
 const Announcement = () => {
   return (
     <>
-          <div className="container">
+    <div className="container">
       <ul className="nav nav-tabs border-bottom border-primary mt-2" id="myTab" role="tablist">
         <li className="nav-item" role="presentation">
           <button

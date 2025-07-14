@@ -17,6 +17,8 @@ Font.register({
   src: RobotoItalic,
 });
 
+
+
 // Stylesheet
 const styles = StyleSheet.create({
   page: {
@@ -130,6 +132,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexWrap: 'wrap',
   },
+  signature: {
+    width: 150,
+    height: 50,
+    marginTop: 10,
+  }
 });
 
 
@@ -436,6 +443,11 @@ const PDFDocument = ({ id, state}) => {
           </View>
         </View>
         {/* end of table discount */}
+
+      {/* <Text style={{ marginTop: 20 }}>Signature:</Text>
+      {pdfData && (
+        <Image style={styles.signature} src={pdfData.signature} />
+      )} */}
 
 
       {/* Bottom Space */}

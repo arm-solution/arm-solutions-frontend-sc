@@ -146,8 +146,20 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     {/* Products */}
                         <li className="sidebar-item">
                             <Link to='common/products' className="sidebar-link">
-                                <i className="lni lni-package"></i>
+                                <i className="lni lni-briefcase"></i>
                                 <span>Products</span>
+                            </Link>
+                        </li>	
+                    </>
+                )}
+
+                {isDepartmentAllowed([1,5,7]) && (
+                    <>
+                    {/* Products */}
+                        <li className="sidebar-item">
+                            <Link to='common/job-order' className="sidebar-link">
+                               <i className="lni lni-users"></i>
+                                <span>Job Order</span>
                             </Link>
                         </li>	
                     </>

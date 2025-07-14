@@ -19,19 +19,28 @@
     "dotenv": "^16.4.5",
     "leaflet": "^1.9.4",
     "leaflet-geodesy": "^0.2.1",
+<<<<<<< HEAD
     "lineicons": "^1.3.2",
     "quill": "^1.3.7",
+=======
+>>>>>>> 14d08dff4c960af0592875b096c215670e3ffc79
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-facebook": "^9.0.12",
-    "react-icons": "^5.3.0",
+    "react-icons": "^5.5.0",
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
     "react-quill": "^2.0.0",
     "react-redux": "^9.1.2",
     "react-router-dom": "^6.23.0",
+<<<<<<< HEAD
     "react-scripts": "^5.0.1",
     "sweetalert2": "^11.6.13",
+=======
+    "react-scripts": "5.0.1",
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "sweetalert2": "^11.12.2",
+>>>>>>> 14d08dff4c960af0592875b096c215670e3ffc79
     "web-vitals": "^2.1.4"
   },
   "scripts": {
