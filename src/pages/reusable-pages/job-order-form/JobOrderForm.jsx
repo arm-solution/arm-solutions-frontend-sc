@@ -158,8 +158,8 @@ useEffect(() => {
         };
         const finalProposal = {};
 
-        console.log("joborder", finalJO)
-        console.log("proposal", proposal)
+        // console.log("joborder", finalJO)
+        // console.log("proposal", proposal)
 
 
         if(jobOrder.id) {
