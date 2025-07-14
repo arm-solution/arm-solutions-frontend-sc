@@ -153,12 +153,14 @@ useEffect(() => {
 
         const finalJO = {
             ...restJO,
+            proposal_id: proposalID,
             joborderitems: job_order_items
         };
         const finalProposal = {};
 
-        // console.log("joborder", restJO)
+        // console.log("joborder", finalJO)
         // console.log("proposal", proposal)
+
 
         if(jobOrder.id) {
             const { payload } = await dispatch(updateJobOrder(finalJO));
@@ -168,7 +170,8 @@ useEffect(() => {
                 errorDialog("Cannot update job order")
             }
         } else {
-            const { payload } = await dispatch(addNewJobOrder(finalJO))
+            const { payload } = await dispatch(addNewJobOrder(finalJO));
+            console.log("payload", payload)
             if(payload.success) {
                 successDialog("New job order is now available")
             } else {
@@ -227,7 +230,7 @@ useEffect(() => {
             <div className="col-md-6 mt-2">
                 <label>Total Area:</label>
                 <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     name='total_area' value={ jobOrder ? jobOrder?.total_area : '' }
                     onChange={(e) => handleDynamicJobOrderChange('total_area', e.target.value)}

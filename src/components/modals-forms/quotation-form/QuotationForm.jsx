@@ -6,7 +6,7 @@ import { getAllCleints, getClientById } from '../../../store/features/clientsSli
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { getCurrentDate, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
-import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
+import { updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems, deleteMultipleProposalItems } from '../../../store/features/proposalItemSlice'; 
 import { postDiscountAndTax, updateTaxAndDiscount, deleteMultipleTaxDiscount } from '../../../store/features/taxDiscountSlice';

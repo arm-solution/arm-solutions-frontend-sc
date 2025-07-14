@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo  } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProposalByFilter } from '../../../store/features/proposalSlice';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { formatDateReadable } from '../../../customs/global/manageDates';
 import './JobOrder.css';
 
 const JobOrder = () => {
@@ -15,9 +16,12 @@ const JobOrder = () => {
   const department = location.pathname.split("/")[1]
 
   const [page, setPage] = useState(1);
-  const limit = 1;
+  const limit = 10;
 
   const { dataByFilter } = useSelector((state) => state.proposals);
+  const total = dataByFilter?.total || 0;
+  const totalPages = Math.ceil(total / limit);
+
 
   useEffect(() => {
     dispatch(getProposalByFilter({ status: 'pending', page, limit }));
@@ -60,7 +64,7 @@ const JobOrder = () => {
                     <tr key={proposal.id} style={{ borderBottom: "1px solid #dee2e6" }}>
                         <td>{`${proposal.user.firstname} ${proposal.user.lastname}` || "-"}</td>
                         <td>{proposal.client.name || "-"}</td>
-                        <td>{proposal.date_created || "-"}</td>
+                        <td>{formatDateReadable(proposal.date_created) || "-"}</td>
                         <td>
                             <Link className="btn btn-sm btn-outline-success" to={`/${department}/common/job-order-form/${proposal.id}`} >Job Order</Link>
                         </td>
@@ -72,24 +76,27 @@ const JobOrder = () => {
             </div>
             {/* Pagination: placed INSIDE table-wrapper */}
             <div className="pagination-container p-3 d-flex justify-content-end">
+            <ul className="pagination pagination-sm custom-pagination mb-0">
+                <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setPage(page - 1)}>
+                    Previous
+                </button>
+                </li>
 
-                <ul className="pagination pagination-sm custom-pagination mb-0">
-                    <li className="page-item disabled">
-                    <a className="page-link" href="#" tabIndex="-1">Previous</a>
-                    </li>
-                    <li className="page-item active">
-                    <a className="page-link" href="#">1</a>
-                    </li>
-                    <li className="page-item">
-                    <a className="page-link" href="#">2</a>
-                    </li>
-                    <li className="page-item">
-                    <a className="page-link" href="#">3</a>
-                    </li>
-                    <li className="page-item">
-                    <a className="page-link" href="#">Next</a>
-                    </li>
-                </ul>
+                {Array.from({ length: totalPages }, (_, i) => (
+                <li key={i + 1} className={`page-item ${page === i + 1 ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => setPage(i + 1)}>
+                    {i + 1}
+                    </button>
+                </li>
+                ))}
+
+                <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                <button className="page-link" onClick={() => setPage(page + 1)}>
+                    Next
+                </button>
+                </li>
+            </ul>
             </div>
         </div>
         </div>
