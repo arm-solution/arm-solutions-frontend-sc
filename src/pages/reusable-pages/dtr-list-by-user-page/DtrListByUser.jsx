@@ -71,6 +71,7 @@ const DtrListByUser = () => {
   useEffect(() => {
     const fetchDepartment = async () => {
       if (userById && Array.isArray(userById) && userById[0]?.department) {
+        console.log("user", userById)
         await dispatch(getDepartmentById(userById[0].department));
       }
     };
@@ -90,7 +91,7 @@ const DtrListByUser = () => {
           dateRangeStatus={dateRangeStatus}
         />
 
-        <hr></hr>
+        <hr></hr>/
  
         {/* list of all user payslip */}
         <EarningListByUser 
@@ -99,14 +100,14 @@ const DtrListByUser = () => {
         />
         <hr />
 
-        {showForm && dtrIds.length > 0 && (
+        {/* {showForm && dtrIds.length > 0 && ( */}
           <PaySlipInputForm 
             employee={userById} 
             deprtmentById={deprtmentById[0]}
             dateRangeStatus={dateRangeStatus}
             totalHours={totalHours}
           />
-        )}
+        {/*  )} */}
         
 
     </>

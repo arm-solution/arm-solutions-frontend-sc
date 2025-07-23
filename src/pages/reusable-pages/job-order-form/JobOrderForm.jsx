@@ -99,7 +99,6 @@ const JobOrderForm = () => {
 
         if (allJobOrderByFilter?.data?.length) {
             setJobOrder(allJobOrderByFilter.data[0]);
-            console.log("allJobOrderByFilter.data[0]", allJobOrderByFilter.data[0])
         } else {
         // No job order returned, set up blank form inside jobOrder
             setJobOrder({
@@ -169,7 +168,6 @@ const JobOrderForm = () => {
 
         if(jobOrder.id) {
 
-            console.log("Final JO", finalJO);
             const { payload } = await dispatch(updateJobOrder(finalJO));
             if(payload.success) {
                 successDialog("Updated job order is now available")
@@ -178,7 +176,6 @@ const JobOrderForm = () => {
             }
         } else {
             const { payload } = await dispatch(addNewJobOrder(finalJO));
-            console.log("payload", payload)
             if(payload.success) {
                 successDialog("New job order is now available")
             } else {

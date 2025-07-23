@@ -10,7 +10,7 @@ const PaySlipInputForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const [grossPay, setGrossPay] = useState("");
+  const [grossPay, setGrossPay] = useState(0);
   const [additionalPays, setAdditionalPays] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [cutoffDates, setCutoffDates] = useState({
@@ -67,6 +67,13 @@ const PaySlipInputForm = (props) => {
       setDeductions([...deductions, newRow]);
     }
   };
+
+  useEffect(() => {
+      if(props.employee.length > 0 && props.employee[0].salary > 0) {
+        setGrossPay(props.employee[0].salary || 0);
+      }
+  }, [props.employee])
+  
 
   const handleChange = (index, field, value, type) => {
     const updater = type === "additional" ? [...additionalPays] : [...deductions];
@@ -202,7 +209,7 @@ const PaySlipInputForm = (props) => {
                     <input
                         type="number"
                         className="form-control"
-                        value={grossPay}
+                        value={ grossPay }
                         onChange={(e) => setGrossPay(e.target.value)}
                     />
                     </div>
