@@ -1,0 +1,11 @@
+{
+  "routes": [
+    {
+      "path": "/*",
+      "match": "prefix",
+      "static": {
+        "fallback": "index.html"
+      }
+    }
+  ]
+}
