@@ -1,56 +1,72 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import './QuotationForm.css';
 import QoutationTableEditable from '../../quotation-table-editable/QuotationTableEditable';
-import { getLoggedInFullname } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllCleints, getClientById } from '../../../store/features/clientsSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { getCurrentDate, formatDateReadable, dateFormatted } from '../../../customs/global/manageDates';
+import { getCurrentDate, dateFormatted } from '../../../customs/global/manageDates';
 import { errorDialog, successDialog  } from '../../../customs/global/alertDialog';
-import { createProposal, updateProposal } from '../../../store/features/proposalSlice';
+import { updateProposal } from '../../../store/features/proposalSlice';
 import FloatNotification from '../../float-notification/FloatNotification';
-import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems } from '../../../store/features/proposalItemSlice'; 
-import { postDiscountAndTax, updateTaxAndDiscount } from '../../../store/features/taxDiscountSlice';
-import { deepEqual, getModifiedAndNewItems } from '../../../customs/global/manageObjects';
+import { getProposalItemsByProposalId, saveProposalItems, updateProposalItems, deleteMultipleProposalItems } from '../../../store/features/proposalItemSlice'; 
+import { postDiscountAndTax, updateTaxAndDiscount, deleteMultipleTaxDiscount } from '../../../store/features/taxDiscountSlice';
+import { postAdditionalItems, updateMultipleAdditionalItems, getAdditionalByProposalID, deleteMultipleAdditionalItems } from '../../../store/features/additional.Slice';
+import { getModifiedAndNewItems, shallowEqualArrays } from '../../../customs/global/manageObjects';
 import TaxDiscountTable from '../../tax-table/TaxDiscountTable';
 import TotalAmount from '../../total-qoutation/TotalAmount';
-import { useNavigate } from 'react-router-dom';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
+import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
+import { getAllProposal } from '../../../store/features/proposalSlice';
+import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
+import TermsCondition from '../../terms-condition-editor/TermsCondition';
 
 const QoutationForm = (props) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
+    const [addtionalItems, setAddtionalItems] = useState([]);
+    // const [first, setfirst] = useState(second)
+
+    const [termsCondition, setTermsCondition] = useState('');
     const [proposalIsSuccess, setProposalIsSuccess] = useState(props.proposalStatus);
     const [creator, setCreator] = useState({ fullname: '', position: '' });
-    const [totalAmount, setTotalAmount] = useState(0)
-    const [totalAmountref, setTotalAmountref] = useState(0)
     const [tax, setTax] = useState([])
     const [discount, setDiscount] = useState([])
-    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ additional: 0, discount: 0 })
+    const [taxDiscountTotal, setTaxDiscountTotal] = useState({ discount: 0, tax: 0 })
     const [clientDetails, setClientDetails] = useState([])
     const [notification, setNotification] = useState({
         message: '',
         type: ''
     });
+
+    // this is for product details or item
+    const [productItemDetails, setProductItemDetails] = useState([]);
  
+    const [qoutationItem, setQoutationItem] = useState([]);
+    
+    //  state for the form
     const [quotation, setQuotation] = useState({
         client_id: 0,
         created_by: parseInt(getLoggedInUser().id),
         proposal_date: dateFormatted(getCurrentDate()),
-        status: 'pending',
         description: '',
         sub_total: 0,
-        deductions: 0,
-        additional_payments: 0,
         grand_total: 0,
         date_created: dateFormatted(getCurrentDate()),
         contact_person: ''
     });
 
-    const [qoutationItem, setQoutationItem] = useState([]);
-    
+    // reference for both additional table and product table
+    const preAdditionalRef = useRef([]);
+    const preProductItemsRef = useRef([]);
+    const preTaxDiscountRef = useRef([]);
 
+    const [dataTotDelete, setDataTotDelete] = useState({
+        quotationItems: [],
+        taxDiscount: [],
+        additionalItems: []
+    })
+    
     const dispatch = useDispatch();
 
     const { data: clientData } = useSelector(state => state.clients);
@@ -65,10 +81,10 @@ const QoutationForm = (props) => {
 
 
     useEffect(() => {
-        if(totalAmount < 0) {
+        if(props.totalAmountState.totalAmount < 0) {
             errorDialog("The Grand Total must be not negative!");
         }
-    }, [props.proposalItemData, totalAmount])
+    }, [props.proposalItemData, props.totalAmountState.totalAmount])
 
     const getClient = async (id) => {
         const { payload } = await dispatch(getClientById(id));
@@ -91,7 +107,33 @@ const QoutationForm = (props) => {
             position
         };
     }
-     
+
+    // update data from the database when the local storage is not empty
+    // this is for delete items
+    // useEffect(() => {
+    //     const storedProposal = sessionStorage.getItem('proposalDetails');
+    //     if (!storedProposal) return;
+    
+    //     const storedQuotation = JSON.parse(storedProposal).quotation;
+    //     const storedSubTotal = parseFloat(storedQuotation?.sub_total || 0);
+    
+    //     if (storedSubTotal !== props.taf.totalAmountref) {
+    //         const updatedQuotation = {
+    //             ...quotation,
+    //             sub_total: props.taf.totalAmountref,
+    //             tax: taxDiscountTotal.tax,
+    //             discount: taxDiscountTotal.discount,
+    //             additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+    //         };
+    
+    //         const data = dispatch(updateProposal({ quotation: updatedQuotation, id: quotation.id }));
+
+    //         console.log("data", data);
+    //     }
+    // }, [props.taf.totalAmountref, taxDiscountTotal, addtionalItems, quotation, dispatch]);
+    
+    
+
     useEffect(() => {
         if (props.proposalEdit) {
             const fetchQuotationDetails = async () => {
@@ -100,12 +142,6 @@ const QoutationForm = (props) => {
 
                 setCreator(creatorDet)
                 setClientDetails(client);
-                // setQuotation(props.proposalEdit);
-                // setTotalAmountref(parseInt(props.proposalEdit?.sub_total))
-                // setTotalAmount(parseInt(props.proposalEdit?.grand_total))
-                // setTax(props.taxDiscountData.filter(d => d.option_type === 'additional'))
-                // setDiscount(props.taxDiscountData.filter(d => d.option_type === 'discount'))
-                // setTaxDiscountTotal({ additional: props.proposalEdit?.additional_payments, discount: props.proposalEdit?.deductions })
             }
 
             fetchQuotationDetails();
@@ -118,10 +154,20 @@ const QoutationForm = (props) => {
           const proposalDetails = sessionStorage.getItem('proposalDetails');
       
           if (proposalDetails) {
-            const { quotation: quotationData, taxDiscount: taxDiscountData } = JSON.parse(proposalDetails);
+            const { quotation: quotationData, taxDiscount: taxDiscountData, quotationItem: quotationItemData } = JSON.parse(proposalDetails);
               setQuotation(quotationData);
-              setTax(taxDiscountData.filter(d => d.option_type === 'additional'));
+              setTax(taxDiscountData.filter(d => d.option_type === 'tax'));
               setDiscount(taxDiscountData.filter(d => d.option_type === 'discount'));
+
+            const itemsWithComputationAmount = quotationItemData.map(d => ({
+                ...d,
+                markup_price: d.base_price,
+                amount: parseInt(d.qty) * parseInt(d.base_price)
+            }))
+
+            // this is for quotation editable table
+            setProductItemDetails(itemsWithComputationAmount);
+            
           }
         };
       
@@ -138,20 +184,19 @@ const QoutationForm = (props) => {
         return () => {
           window.removeEventListener('sessionUpdated', handleSessionUpdate);
         };
-    }, []);  // Empty dependency array ensures it runs once on mount
+    }, []);
 
 
-
-      // calculating tax and discount percentage
-  const calculateTaxDiscount = (row) => {
-    if (totalAmountref > 0) {
-      return row.amount_type === 'percentage'
-        ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
-        : parseFloat(row.percentage);
-    } else {
-      return 0
+    // calculating tax and discount percentage
+    const calculateTaxDiscount = (row) => {
+        if (props.taf.totalAmountref > 0) {
+        return row.amount_type === 'percentage'
+            ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
+            : parseFloat(row.percentage);
+        } else {
+        return 0
+        }
     }
-  }
 
     const getTotalTax = (tax) => {
         if (tax.length > 0) {
@@ -166,56 +211,112 @@ const QoutationForm = (props) => {
             // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
             totals[type] += parseFloat(item.item_total) || 0;
             return totals;
-          }, { additional: 0, discount: 0 }); // Start with 0 for both additional and discount
+          }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
         } else {
-          return { additional: 0, discount: 0 }; // Default structure if no tax items are provided
+          return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
         }
-      };
-    
-        // Calculate total amount for each row and return updated rows
+    };
+
+    // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
           return rows.map((row) => ({
             ...row,
             item_total:
               row.amount_type === 'percentage'
-                ? (parseFloat(totalAmountref) * parseFloat(row.percentage)) / 100
+                ? (parseFloat(props.taf.totalAmountref) * parseFloat(row.percentage)) / 100
                 : parseFloat(row.percentage),
           }));
     };
 
+    // call this for every action for compute all table
+    const computeTotalProposal = (
+        latestAdditionalItems = null,
+        latestProductItems = null,
+        latestTax = null,
+        latestDiscount = null
+      ) => {
+        const additionalT = (latestAdditionalItems || addtionalItems)
+          .reduce((sum, item) => sum + Number(item.item_total || 0), 0);
+      
+        const productsT = (latestProductItems || productItemDetails)
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      
+        const taxData = latestTax || tax;
+        const discountData = latestDiscount || discount;
+      
+        let taxDiscountT = { tax: 0, discount: 0 };
+        if (props.taf.totalAmountref > 0) {
+          const updatedRows = calculateAllTaxDiscount([...taxData, ...discountData]);
+          taxDiscountT = getTotalTax(updatedRows);
+        }
+      
+        const totalNew =
+          parseFloat(additionalT || 0) +
+          parseFloat(taxDiscountT?.tax || 0) +
+          parseFloat(productsT || 0) -
+          parseFloat(taxDiscountT?.discount || 0);
+        
+        setTaxDiscountTotal(taxDiscountT);
+        props.totalAmountState.setTotalAmount(totalNew);
+      
+      };
+
     useEffect(() => {
-        if(totalAmountref > 0) {
+        if(props.taf.totalAmountref > 0) {
           const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
           const totalTaxDiscount = getTotalTax(updatedRows);
           
-          setTotalAmount(parseFloat(totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
+        props.totalAmountState.setTotalAmount(pre => {
+            return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
+        });
+   
         }
 
-      }, [calculateAllTaxDiscount, totalAmountref]);
+      }, [props.taf.totalAmountref]);
 
       useEffect(() => {
-        if(totalAmountref > 0) {
+        if(props.taf.totalAmountref > 0) {
         const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
 
-        const taxUpdate = updatedRows.filter(d => d.option_type === 'additional');
+        const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
         const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
         // const totalTaxDiscount = getTotalTax(updatedRows);
         
         setTax(taxUpdate);
         setDiscount(discountUpdate);
+
+        computeTotalProposal(null, null, taxUpdate, discountUpdate);
         
         }
-      }, [totalAmountref])
+      }, [props.taf.totalAmountref])
+    
+    const handleClearForm = () => {
+        const proposalDetails = sessionStorage.getItem('proposalDetails');
 
-      useEffect(() => {
-        if(totalAmountref > 0) {
-            const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-            const totalTaxDiscount = getTotalTax(updatedRows);
-  
-            setTaxDiscountTotal(totalTaxDiscount);
-          }
-      }, [tax, discount])
-      
+        if(JSON.parse(proposalDetails)) {
+            sessionStorage.removeItem('proposalDetails');
+            setAddtionalItems([]);
+            setTax([]);
+            setDiscount([]);
+            setTaxDiscountTotal({discount: 0, tax: 0})
+            props.taf.setTotalAmountref(0);
+            setQoutationItem([])
+            setProductItemDetails([])
+            props.totalAmountState.setTotalAmount(0)
+            setQuotation({
+                client_id: 0,
+                created_by: parseInt(getLoggedInUser().id),
+                proposal_date: dateFormatted(getCurrentDate()),
+                status: 'pending',
+                description: '',
+                sub_total: 0,
+                grand_total: 0,
+                date_created: dateFormatted(getCurrentDate()),
+                contact_person: ''
+            })
+        }
+    }
+
       
     const handleAddNewQoutation = async () => {
        
@@ -225,7 +326,7 @@ const QoutationForm = (props) => {
                     type: 'error'
                 });
             return;
-        }
+        } 
 
         const checkEditing = [...tax, ...discount].find(d => d.isEditing === true);
 
@@ -236,107 +337,234 @@ const QoutationForm = (props) => {
             });
             return;
         } 
-       
-        try {
-            const quotationResponse = await dispatch(createProposal({
-                ...quotation,
-                additional_payments: taxDiscountTotal.additional,
-                deductions: taxDiscountTotal.discount,
-                sub_total: totalAmountref,
-                grand_total: totalAmount
-            }));
 
-            const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+        console.log("quotation items", qoutationItem);
 
-            if(lastid > 0 && qoutationItem.length > 0) {
-                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
-                setQoutationItem(updatedQoutationItems);
+        // try {
 
-                const [saveItemsResponse, saveTaxDiscountResponse] = await Promise.all([
-                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, ...rest }) => rest))),
-                    taxAndDiscountMerge.length > 0
-                    ? dispatch(postDiscountAndTax(taxAndDiscountMerge))
-                    : Promise.resolve({ payload: { success: true } })
-                ]);
+        //     const quotationResponse = await dispatch(createProposal({
+        //         ...quotation,
+        //         tax: taxDiscountTotal.tax,
+        //         discount: taxDiscountTotal.discount,
+        //         sub_total: props.taf.totalAmountref,
+        //         grand_total: props.totalAmountState.totalAmount,
+        //         additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+        //         previous_department_stage_id: getDepartmentLoggedIn(),
+        //         department_stage_id: getDepartmentLoggedIn(),
+        //         terms_condition: termsCondition,
+        //         status: 'pending'
+        //     }));
 
-                const { success: itemsSuccess } = saveItemsResponse.payload;
-                const { success: taxDiscountSuccess } = saveTaxDiscountResponse.payload;
+        //     const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+
+
+        //     if(lastid > 0 && qoutationItem.length > 0) {
+        //         const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+        //         const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+                
+        //         const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+        //             ...rest,
+        //             item_total: item_total,
+        //             proposal_id: parseInt(lastid), 
+        //         }));
+
+
+        //         setQoutationItem(updatedQoutationItems);
+
+        //         // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+        //         const promises = [
+        //             dispatch(postAdditionalItems(additionalItemsData)),
+        //             dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
+        //         ];
+                
+        //         if (taxAndDiscountMerge.length > 0) {
+        //             promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+        //         } else {
+        //             promises.push(Promise.resolve({ payload: { success: true } }));
+        //         }
+                
+        //         const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+                
+
+        //         const { success: itemsStatus } = saveItemsResponse.payload;
+        //         const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+        //         const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-                if (itemsSuccess && taxDiscountSuccess) {
-                    successDialog('Quotation is now available');
-                } else {
-                    errorDialog('Failed to create a Quotation');
-                }
+        //         if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
+        //             successDialog('Quotation is now available');
+        //         } else {
+        //             errorDialog('Failed to create a Quotation');
+        //         }
 
-            } else {
-                if(qoutationSuccess)  {
-                    successDialog('Quotation is now available')
-                } else {
-                    errorDialog('Failed to create a Quotation ');
-                }
-            }
-        } catch (error) {
-            errorDialog('Failed To Save The Quotation');
-        }
+        //     } else {
+        //         if(qoutationSuccess)  {
+        //             successDialog('Quotation is now available')
+        //             props.setSelectedTab('tab-one')
+        //         } else {
+        //             errorDialog('Failed to create a Quotation ');
+        //         }
+        //     }
+        // } catch (error) {
+        //     errorDialog('Failed To Save The Quotation');
+        // }
     };
     
-
+    // UPDATE PROPOSAL
     const handleUpdateQoutation = async () => {
 
-        let status = false 
-        const taxDiscountModified = getModifiedAndNewItems(props.taxDiscountData, [...tax, ...discount].map(d => { 
-            const { isEditing, isSaved, rowId, ...rest } = d;
-            return {...rest, proposal_id: quotation.id};
-        }));
-        
-        let addEditItem = qoutationItem.filter(item2 =>
-            !props.proposalItemData.some(item1 => parseInt(item1.qty) === parseInt(item2.quantity) && item2.proposal_item_id > 0)
+        let status = false;
+        // use this for compring additional items
+        const getLocalStorage = sessionStorage.getItem("proposalDetails");
+
+
+        // Format tax and discount into consistent structure
+        const taxDiscountModified = getModifiedAndNewItems(
+            props.taxDiscountData,
+            [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({
+                ...rest,
+                proposal_id: quotation.id
+            }))
         );
-         
-        const { firstname, fullname, user_id, id, lastname, ...dataReshapeItems } = quotation;
+
+        // Determine which items are new or updated
+        const addEditItem = qoutationItem.filter(item2 =>
+            !props.proposalItemData.some(
+                item1 =>
+                    parseInt(item1.qty) === parseInt(item2.quantity) &&
+                    item2.proposal_item_id > 0
+            )
+        );
+    
+        // Destructure and reshape quotation for comparison and dispatch
+        const {
+            firstname,
+            fullname,
+            user_id,
+            id,
+            lastname,
+            ...dataReshapeItems
+        } = quotation;
+    
         const proposalFinal = {
             ...dataReshapeItems,
             proposal_date: dateFormatted(dataReshapeItems.proposal_date),
-            date_created: dataReshapeItems.date_created ? dateFormatted(dataReshapeItems.date_created) : '',
-            sub_total: totalAmountref,
-            additional_payments: taxDiscountTotal.additional,
-            deductions: taxDiscountTotal.discount
-        };
-        
-        //This is for qoutation/proposal form
-        if(!deepEqual(props.proposalEdit, quotation)) {
+            date_created: dataReshapeItems.date_created
+                ? dateFormatted(dataReshapeItems.date_created)
+                : '',
+            sub_total: props.taf.totalAmountref,
+            tax: taxDiscountTotal.tax,
+            discount: taxDiscountTotal.discount,
+            additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+            grand_total: props.totalAmountState.totalAmount,
+            // previous_department_stage_id: getDepartmentLoggedIn(),
+            // department_stage_id: getApprovalState().targetDepartment,
+            // status: getApprovalState().status
 
-            dispatch(updateProposal({ proposalFinal, id: quotation.id }));
+        };
+    
+        // Check if proposal has changed by comparing specific fields
+        const originalProposal = props.proposalEdit;
+        const isProposalModified = Object.entries(proposalFinal).some(
+            ([key, value]) => originalProposal[key] !== value
+        );
+
+       // update propsal detail 
+        if (isProposalModified) {
+            await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
             status = true;
-        } 
-        
-        // adding proposal id for every items
-        const itemsWithProId = addEditItem.map(d =>  ({ ...d, proposal_id: quotation.id}))
-        //  this is for proposalItem editable table update
-        if(addEditItem.length > 0) {
-                // dispatch update the items 
-                await dispatch(updateProposalItems(itemsWithProId));
-                //  refreshing the table to get the new ID from the database
-                await dispatch(getProposalItemsByProposalId(quotation.id));
-                setQoutationItem([]);
-                status = true;
         }
-        if(taxDiscountModified.length > 0) {
+        
+        // Add proposal_id to items and dispatch updates if necessary
+        if (addEditItem.length > 0 || qoutationItem.length > 0) {
+            const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
+                ...d,
+                proposal_id: quotation.id,
+                item_total: amount
+            }));
+    
+            await dispatch(updateProposalItems(itemsWithProId));
+            await dispatch(getProposalItemsByProposalId(quotation.id));
+    
+            
+            setQoutationItem([]);
+            status = true;
+        }
+
+        if(!shallowEqualArrays(JSON.parse(getLocalStorage).additionalItems, addtionalItems)) {           
+            // Prepare additional items for update
+            const updatedAdditionalItems = addtionalItems.map(
+                ({ rowId, isSaved, isEditing, ...rest }) => ({
+                    ...rest,
+                    proposal_id: quotation.id
+                })
+            );
+    
+            // update the additional items
+            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+            await dispatch(getAdditionalByProposalID(quotation.id));
+        } 
+
+
+        // Dispatch tax and discount updates if any
+        if (taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
-        
-        if(status) {
+
+        // this is for deletion of the items from the database
+        if(dataTotDelete.additionalItems.length > 0) {
+            await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
+        }
+        if(dataTotDelete.quotationItems.length > 0) {
+            await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
+        }
+        if(dataTotDelete.taxDiscount.length > 0) {
+            await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
+        }
+    
+        // Show success or error message
+        if (status) {
+            await dispatch(getAllProposal());
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
         }
         
-    }
+        handleClearForm()
+        props.setSelectedTab('tab-one')
+       
+    };  // end of update
 
+
+    const handleQuotationApproval = async () => {
+
+        const { id, status } = quotation;
+        const { status: deptStatus, targetDepartment} = getApprovalState(status); 
+
+        const proposalFinalStatus = {
+            previous_department_stage_id: getDepartmentLoggedIn(),
+            department_stage_id: targetDepartment,
+            status: deptStatus
+        };
+
+
+        if(id) {
+          const { payload } = await dispatch(updateProposal({ proposalFinal: proposalFinalStatus, id: id }));
+
+          if(payload.success) {
+            alert("Submit For Approval");
+            handleClearForm();
+            props.setSelectedTab('tab-one')
+          } else {
+            alert("Issue Detected While approving the proposal")
+          }
+        }
+    }
+    
+    //  open pdf file on new tab
     const openPdfFile = () => {
         sessionStorage.setItem("pdfViewerState", JSON.stringify({
+            additional: addtionalItems,
             quotation: props.proposalEdit,
             tax: tax,
             discount: discount,
@@ -349,8 +577,14 @@ const QoutationForm = (props) => {
         window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
     } 
 
+    const checkApproval = () => {
+        console.log("get approval state", getApprovalState().status)
+        console.log("quotation", quotation);
+    }
+
     return (
         <>
+            {/* <button onClick={checkApproval}>check approval</button> */}
             <div className="qoutation">
                 <div className="container mt-5 p-5">
 
@@ -358,6 +592,7 @@ const QoutationForm = (props) => {
                      clientData={clientData}
                      quotation={{ quotation, setQuotation}}
                      creator={ creator }
+                     handleClearForm={handleClearForm}
                     />
            
 
@@ -365,63 +600,95 @@ const QoutationForm = (props) => {
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
 
+                    
+                    <AdditionalItemtable 
+                         totalAmount={props.totalAmountState.totalAmount}
+                         setTotalAmount={props.totalAmountState.setTotalAmount}
+                         additionalState={{ addtionalItems, setAddtionalItems }}
+                         totalAmountref={props.taf.totalAmountref }
+                         setTotalAmountref={ props.taf.setTotalAmountref }
+                         actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                         reference={{preAdditionalRef, preProductItemsRef}}
+                         computeTotalProposal={computeTotalProposal}
+                         setDataTotDelete={setDataTotDelete}
+                    />
+
                     <div className="row table-editable">
                         <QoutationTableEditable
-                         setQoutationItem={setQoutationItem}
-                         proposalItemSuccess={props.proposalItemSuccess}
-                         setNotification={ setNotification }
-                         totalAmount={{ totalAmount, setTotalAmount }}
-                         setTotalAmountref={setTotalAmountref}
-                         totalAmountref={totalAmountref}
-                         actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
+                            setQoutationItem={setQoutationItem}
+                            proposalItemSuccess={props.proposalItemSuccess}
+                            setNotification={ setNotification }
+                            totalAmount={ props.totalAmountState.totalAmount }
+                            setTotalAmount={ props.totalAmountState.setTotalAmount }
+                            setTotalAmountref={props.taf.setTotalAmountref}
+                            totalAmountref={props.taf.totalAmountref}
+                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                            reference={{preAdditionalRef, preProductItemsRef}}
+                            pid={{ productItemDetails, setProductItemDetails }}
+                            taxDiscountTotal={taxDiscountTotal}
+                            tax={tax}
+                            discount={discount}
+                            additional={addtionalItems}
+                            computeTotalProposal={computeTotalProposal}
+                            setDataTotDelete={setDataTotDelete}
                          />
                     </div>
 
-
-                    {parseInt(totalAmount) > 0 && (
-                        <>
-                        <TaxDiscountTable
-                            type="additional"
-                            totalAmount={totalAmount}
-                            setTotalAmount={setTotalAmount}
-                            taxDiscount={{ taxDiscount: tax, setTaxDiscount: setTax }}
-                            totalAmountref={totalAmountref}
-                            mergeDiscountTax={[...tax, ...discount]}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                        />
-
-                        <TaxDiscountTable
-                            type="discount"
-                            totalAmount={totalAmount}
-                            setTotalAmount={setTotalAmount}
-                            taxDiscount={{ taxDiscount: discount, setTaxDiscount: setDiscount }}
-                            totalAmountref={totalAmountref}
-                            mergeDiscountTax={[...tax, ...discount]}
-                            actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                        />
-                        </>
+                    {parseInt(props.taf.totalAmountref) > 0 && (
+                        ["tax", "discount"].map((type) => (
+                            <TaxDiscountTable
+                                key={type}
+                                type={type}
+                                totalAmount={ props.totalAmountState.totalAmount }
+                                setTotalAmount={ props.totalAmountState.setTotalAmount }
+                                taxDiscount={
+                                    type === "tax"
+                                        ? { taxDiscount: tax, setTaxDiscount: setTax }
+                                        : { taxDiscount: discount, setTaxDiscount: setDiscount }
+                                }
+                                totalAmountref={props.taf.totalAmountref}
+                                mergeDiscountTax={[...tax, ...discount]}
+                                actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax }}
+                                preTaxDiscountRef={preTaxDiscountRef}
+                                computeTotalProposal={computeTotalProposal}
+                                setDataTotDelete={setDataTotDelete}
+                            />
+                        ))
                     )}
 
-                    <TotalAmount 
-                        totalAmountref={totalAmountref}
-                        totalAmount={totalAmount}
-                        taxDiscountTotal={taxDiscountTotal}
+                    <TermsCondition 
+                        termsCondition={termsCondition}
+                        setTermsCondition={setTermsCondition}
                     />
 
-                    <div className="row row-btn-qout mt-3 mr-auto">
+                    <TotalAmount 
+                        totalAmountref={props.taf.totalAmountref}
+                        totalAmount={ props.totalAmountState.totalAmount }
+                        taxDiscountTotal={taxDiscountTotal}
+                        addEditItem={addtionalItems}
+                    />
 
-                        {quotation.id > 0 ? 
-                        <button className='btn-qoutation' onClick={handleUpdateQoutation}>Save</button>
-                        :
-                        <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Qoutation</button>
-                        }
+                    <div className="row row-btn-qout mt-3 justify-content-end gap-2">
+                    {quotation.id > 0 ? (
+                        <>                        
+                          <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button>
+
+                         {quotation.department_stage_id === getDepartmentLoggedIn() && (
+                             <button className="btn-qoutation btn-approval" onClick={handleQuotationApproval}>Submit For Approval</button>
+                         )}
+                        </>
+                    ) : (
+                        <button className="btn-qoutation" onClick={handleAddNewQoutation}>Create Quotation</button>
+                    )}
 
                     </div>
 
                     <div className="row row-btn-pdf"> 
-                      { props.proposalEdit && 
-                      <button className="btn-pdf mt-3 mr-auto" onClick={openPdfFile}>View on PDF</button>
-                      }
+                    {props.proposalEdit && sessionStorage.getItem('proposalDetails') && (
+                        <button className="btn-pdf mt-3 mr-auto" onClick={openPdfFile}>
+                            View on PDF
+                        </button>
+                    )}
                     </div>
                 </div>
             </div>

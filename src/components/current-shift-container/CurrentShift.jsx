@@ -4,7 +4,6 @@ import { dateFormatted } from '../../customs/global/manageDates';
 
 const CurrentShift = (props) => {
 
-  const modalRemarks = useRef(null);
   const { shift, setShift } = props.shiftState
 
   useEffect(() => {

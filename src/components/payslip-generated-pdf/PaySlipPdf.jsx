@@ -1,116 +1,257 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { capitalizeFirstLetter } from '../../customs/global/manageObjects';
+import { formatDateReadable } from '../../customs/global/manageDates';
 import {
   Document,
   Page,
   Text,
   View,
-  StyleSheet,
-  PDFViewer,
-  PDFDownloadLink
+  StyleSheet
 } from '@react-pdf/renderer';
 
-// Define styles
+// Styles
 const styles = StyleSheet.create({
   page: {
-    padding: 20,
+    padding: 30,
+    fontSize: 10,
+    fontFamily: 'Helvetica',
+  },
+  header: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subHeader: {
+    marginBottom: 10,
+    fontSize: 12,
   },
   section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
+    marginBottom: 10,
+  },
+  divider: {
+    borderBottom: '1 solid #000',
+    marginVertical: 10,
   },
   table: {
-    display: "table",
-    width: "auto",
-    marginVertical: 10,
-    borderStyle: "solid",
+    display: 'table',
+    width: 'auto',
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#bfbfbf",
+    borderColor: '#bfbfbf',
     borderRightWidth: 0,
     borderBottomWidth: 0,
   },
   tableRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   tableColHeader: {
-    width: "25%",
-    borderStyle: "solid",
+    width: '50%',
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#bfbfbf",
+    borderColor: '#bfbfbf',
     borderLeftWidth: 0,
     borderTopWidth: 0,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: '#007bff',
   },
   tableCol: {
-    width: "25%",
-    borderStyle: "solid",
+    width: '50%',
+    borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: "#bfbfbf",
+    borderColor: '#bfbfbf',
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
   tableCellHeader: {
     margin: 5,
-    fontSize: 12,
-    fontWeight: "bold",
+    fontSize: 10,
+    color: 'white',
+    fontWeight: 'bold',
   },
   tableCell: {
     margin: 5,
+  },
+  groupHeader: {
+    marginTop: 10,
     fontSize: 10,
+    fontWeight: 'bold',
+    backgroundColor: '#e6f2f7',
+    padding: 4,
+  },
+  note: {
+    fontStyle: 'italic',
+    marginTop: 10,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    marginBottom: 2,
+  },
+  labelKey: {
+    width: '40%',
+    textAlign: 'right',
+    paddingRight: 5,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  labelValue: {
+    width: '60%',
+    textAlign: 'left',
+    fontSize: 12,
+  },
+
+
+  subHeaderTable: {
+    display: 'table',
+    width: 'auto',
+    marginBottom: 10,
+  },
+  subHeaderRow: {
+    flexDirection: 'row',
+  },
+  subHeaderCellLabel: {
+    width: 130, // fixed width for labels
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  subHeaderCellValue: {
+    fontSize: 12,
+  },
+
+  tableRowHighlight: {
+    flexDirection: 'row',
+    backgroundColor: '#dff0d8', // light green for highlight
+  },
+  tableCellBold: {
+    margin: 5,
+    fontWeight: 'bold',
   },
 });
 
-// Sample data
-const data = [
-  { id: 1, name: "John Doe", age: 28, email: "john@example.com" },
-  { id: 2, name: "Jane Doe", age: 34, email: "jane@example.com" },
-  { id: 3, name: "Mike Smith", age: 41, email: "mike@example.com" },
-  { id: 4, name: "Sara Wilson", age: 25, email: "sara@example.com" },
-];
-
 const PaySlipPdf = () => {
+
+  const [earnings, setEarnings] = useState({});
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.sessionStorage) {
+        const pay = sessionStorage.getItem('paySlipSession');
+        const userInfo = sessionStorage.getItem('userLoggedIn');
+
+        if(pay && userInfo) {
+          setEarnings(JSON.parse(pay));
+          setUser(JSON.parse(userInfo));
+        } else {
+          window.location.href = '/not-found';
+        }
+
+    } else {
+      window.location.href = '/not-found';
+    }
+  }, [])
+  
+
+
+
   return (
-    <>
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.table}>
-        {/* Table Header */}
-        <View style={styles.tableRow}>
-          <View style={styles.tableColHeader}>
-            <Text style={styles.tableCellHeader}>ID</Text>
+    <Document>
+      <Page size="A4" style={styles.page}>
+ 
+        {/* Title */}
+        <Text style={styles.header}>PAYSLIP</Text>
+
+        {/* Employee Details */}
+        <View style={styles.subHeaderTable}>
+          <View style={styles.subHeaderRow}>
+            <Text style={styles.subHeaderCellLabel}>Employee:</Text>
+            <Text style={styles.subHeaderCellValue}>
+              {user?.firstname && user?.lastname
+                ? `${capitalizeFirstLetter(user.firstname)} ${capitalizeFirstLetter(user.lastname)}`
+                : '---'}
+            </Text>
           </View>
-          <View style={styles.tableColHeader}>
-            <Text style={styles.tableCellHeader}>Name</Text>
+
+          <View style={styles.subHeaderRow}>
+            <Text style={styles.subHeaderCellLabel}>Employee Number:</Text>
+            <Text style={styles.subHeaderCellValue}>{user?.employee_id || '---'}</Text>
           </View>
-          <View style={styles.tableColHeader}>
-            <Text style={styles.tableCellHeader}>Age</Text>
+
+          <View style={styles.subHeaderRow}>
+            <Text style={styles.subHeaderCellLabel}>Date From:</Text>
+            <Text style={styles.subHeaderCellValue}>
+              {earnings?.date_from ? formatDateReadable(earnings.date_from) : '---'}
+            </Text>
           </View>
-          <View style={styles.tableColHeader}>
-            <Text style={styles.tableCellHeader}>Email</Text>
+
+          <View style={styles.subHeaderRow}>
+            <Text style={styles.subHeaderCellLabel}>Date To:</Text>
+            <Text style={styles.subHeaderCellValue}>
+              {earnings?.date_to ? formatDateReadable(earnings.date_to) : '---'}
+            </Text>
           </View>
         </View>
-        {/* Table Data */}
-        {data.map((item, index) => (
-          <View style={styles.tableRow} key={index}>
+
+        <View style={styles.divider}></View>
+
+        {/* Summary Table */}
+        <View style={styles.table}>
+          <View style={styles.tableRow}>
+            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Description</Text></View>
+            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Amount (Php)</Text></View>
+          </View>
+
+          <View style={styles.tableRow}>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Gross Pay</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.gross_pay : '---' } </Text></View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Additional</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.total_additional_pay : '---' }</Text></View>
+          </View>
+          <View style={styles.tableRow}>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Deduction</Text></View>
+            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.total_deduction : '---' }</Text></View>
+          </View>
+
+          <View style={styles.tableRowHighlight}>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{item.id}</Text>
+              <Text style={styles.tableCellBold}>Total</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{item.name}</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{item.age}</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{item.email}</Text>
+              <Text style={styles.tableCellBold}>Php {earnings ? earnings.final_pay : '---'}</Text>
             </View>
           </View>
-        ))}
-      </View>
-    </Page>
-  </Document>
-    </>
-  )
-}
 
-export default PaySlipPdf
+        </View>
+
+        {/* Additional Section */}
+        <Text style={styles.groupHeader}>Additional</Text>
+        <View style={styles.table}>
+          {Array.isArray(earnings.additional) && earnings.additional.length > 0 && earnings.additional.map(d => (
+            <View style={styles.tableRow}>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{d.title}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>Php {d.amount}</Text></View>
+            </View>
+          ))}
+        </View>
+
+        {/* Deduction Section */}
+        <Text style={styles.groupHeader}>Deduction</Text>
+        <View style={styles.table}>
+          {Array.isArray(earnings.deduction) && earnings.deduction.length > 0 && earnings.deduction.map(d => (
+            <View style={styles.tableRow}>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>{d.title}</Text></View>
+              <View style={styles.tableCol}><Text style={styles.tableCell}>Php {d.amount}</Text></View>
+            </View>
+          ))}
+        </View>
+
+        {/* Footer Note */}
+        <Text style={styles.note}>
+          Note: Please contact HR for any discrepancies in your payslip.
+        </Text>
+
+      </Page>
+    </Document>
+  )
+};
+
+export default PaySlipPdf;

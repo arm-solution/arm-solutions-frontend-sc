@@ -1,0 +1,9 @@
+.card-container {
+    display: flex;
+    justify-content: center;
+}
+
+.payslipCard {
+    width: 80%;
+}
+

@@ -35,7 +35,6 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
 export const getUserById = createAsyncThunk('user/getUserById', async (id, { rejectWithValue, getState }) => {
     
     try {
-
         // console.log(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`);
         const {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`, {
             headers: {
@@ -93,15 +92,34 @@ export const changePassword = createAsyncThunk('update/userPassword', async ( us
     }
 })
 
+export const forgotPasswordRequest = createAsyncThunk('user/forgotPassword', async (userCred, {rejectWithValue}) => {
+    try {
+        if(userCred) {
+            const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees/forgot-password`, { 
+                params: userCred 
+            });
+        
+            return data;
+        }
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message); 
+    }
+})
+
 const userSlice = createSlice({
     name: 'users',
     initialState: {
         data: [],
+        userById: [],
         isSuccess: false,
-        loading: true,
+        loading: false,
         message: ''
     },
-    reducers: {},
+    reducers: {
+        clearMessage(state) {
+            state.message = '';
+        }
+    },
     extraReducers(builder) {
         builder
         .addCase(getUser.pending, (state, action) =>{
@@ -127,6 +145,7 @@ const userSlice = createSlice({
             state.isSuccess = true;
 
             state.data = action.payload
+            state.userById = action.payload
 
         })
         .addCase(getUserById.rejected, (state, action) => {
@@ -151,6 +170,26 @@ const userSlice = createSlice({
             state.loading = false;
             state.message = action.payload
         })
+        .addCase(forgotPasswordRequest.pending, (state, _) =>{
+            state.loading = true;
+        })
+        .addCase(forgotPasswordRequest.fulfilled, (state, action) => {
+
+            const { message, success} = action.payload;
+
+            state.loading = false;
+            state.isSuccess = success;  
+            state.message = message;
+
+        })
+        .addCase(forgotPasswordRequest.rejected, (state, action) => {
+            const { message, success } = action.payload;
+
+            state.loading = false;
+            state.isSuccess = success;  
+            state.message = message;
+
+        })
         // .addCase(changePassword.pending, (state, _) => {
         //     state.loading = true;
         // })
@@ -165,5 +204,7 @@ const userSlice = createSlice({
 
     }
 });
+
+export const { clearMessage } = userSlice.actions;
 
 export default userSlice;

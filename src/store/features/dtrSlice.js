@@ -16,18 +16,26 @@ export const getDtr = createAsyncThunk('dtr/getDtr', async(_, { rejectWithValue 
 
 export const postDtr = createAsyncThunk('dtr/postDtr', async(dtr, { rejectWithValue }) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/dtr/add-dtr`, dtr);
-
+        
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/dtr/add-dtr`, dtr, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            },
+          });
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 });
 
-export const getDtrById = createAsyncThunk('dtr/getDtrById', async(id, { rejectWithValue }) => {
+export const getDtrById = createAsyncThunk('dtr/getDtrById', async({ id, from, to }, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/${id}`);
-
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/by-user-id/${id}`, {
+            params: {
+                ...(from && { from }),
+                ...(to && { to }),
+            }
+        });
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -99,6 +107,18 @@ export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRan
     }
 });
 
+export const getDtrByMultipleIds = createAsyncThunk('dtr/getDtrByMultipleIds', async(ids, { rejectWithValue }) => {
+    try {
+
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/dtr/get-by-multiple-ids`, ids);
+        // console.log("getDtrByMultipleIds", data?.data);
+        return data?.data;
+        
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 const dtrSlice = createSlice({
     name: 'dtr',
     initialState:{
@@ -109,8 +129,10 @@ const dtrSlice = createSlice({
         getPendingUserDtr: [],
         updateDtrStatus: [],
         dtrWithDateRange: [],
+        listDtrByMultipleId: [],
         isSuccess: false,
         loading: false,
+        dtrPostLoading: false,
         message: ''
     },
     reducers: {
@@ -150,20 +172,23 @@ const dtrSlice = createSlice({
             state.message = action.payload
         })
         .addCase(postDtr.pending, (state, _) => {
-            state.loading = true
+            state.dtrPostLoading = true
+            console.log("pending")
         })
         .addCase(postDtr.fulfilled, (state, action) => {
 
             const { success } = action.payload; 
 
-            state.loading = false;
+            state.dtrPostLoading = false;
+            console.log("fullfiled")
             state.isSuccess = success;
         })
         .addCase(postDtr.rejected, (state, action) => {
             const { message } = action.payload; 
             state.isSuccess = false;
-            state.loading = false;
+            state.dtrPostLoading = false;
             state.message = message;
+            console.log("rejected")
             // state.message = action.payload
         })
 
@@ -218,6 +243,19 @@ const dtrSlice = createSlice({
             state.isSuccess = false;
             state.loading = false;
             state.message = "Un able to fetch the current dtr";
+        })
+        .addCase(getDtrByMultipleIds.pending, (state, _) => {
+            state.loading = true
+        })
+        .addCase(getDtrByMultipleIds.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state.listDtrByMultipleId = action.payload
+        })
+        .addCase(getDtrByMultipleIds.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = "Un able to fetch the dtr by ids";
         })
     }
 })

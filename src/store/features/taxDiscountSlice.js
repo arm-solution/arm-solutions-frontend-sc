@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const getDiscountAndTax = createAsyncThunk('taxDiscount/getAlltaxDiscount', async(_, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items`);
 
         return data;
     } catch (error) {
@@ -13,8 +13,9 @@ export const getDiscountAndTax = createAsyncThunk('taxDiscount/getAlltaxDiscount
 
 export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAlltaxDiscountByProposalId', async(proposalID, {rejectWithValue}) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/get-additional-proposal-items/${proposalID}`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items/get-tax-discount-proposal-items/${proposalID}`);
 
+        console.log("data from database", data);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -24,7 +25,7 @@ export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAl
 
 export const postDiscountAndTax = createAsyncThunk('taxDiscount/addTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
     try {
-        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/add-additional-proposal-items`, taxDiscount);
+        const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items/add-tax-discount-proposal-items`, taxDiscount);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -33,15 +34,28 @@ export const postDiscountAndTax = createAsyncThunk('taxDiscount/addTaxDiscount',
 
 export const updateTaxAndDiscount = createAsyncThunk('taxDiscount/updateTaxDiscount', async(taxDiscount, {rejectWithValue}) => {
     try {
-        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/update-additional-multiple-proposal-item`, taxDiscount);
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items/update-tax-discount-multiple-proposal-item`, taxDiscount);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 })
 
+export const deleteMultipleTaxDiscount = createAsyncThunk('taxDiscount/deleteMultipleTaxDiscount', async(ids, {rejectWithValue}) => {
+    try {
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/delete-tax-discount-multiple-proposal-items`, { data: ids });
+        console.log("deleteMultipleTaxDiscount", data);
+
+        return data;
+    } catch (error) {
+
+        console.log("nasa catch po")
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 const taxDiscountSlice = createSlice({
-    name: 'additional',
+    name: 'taxDiscount',
     initialState: {
         data: [],
         postStatus: [],

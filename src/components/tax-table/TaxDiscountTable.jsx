@@ -1,23 +1,28 @@
-import React, { useState, useEffect } from 'react';
+ import React, { useState, useEffect } from 'react';
 import './TaxDiscountTable.css';
+import { useGlobalRefs } from '../../customs/global/useGlobalRef';
 
 const TaxDiscountTable = (props) => {
   const [nextRowId, setNextRowId] = useState(1);
   const [initialized, setInitialized] = useState(false); // To prevent reinitializing rows on each render
+
+  const { preTaxDiscountRef } = useGlobalRefs();
 
   useEffect(() => {
     if (!initialized) {
       // Initialize rowId for existing data from props only once
       const updatedRows = props.taxDiscount.taxDiscount.map((row, index) => ({
         ...row,
-        rowId: row.id || nextRowId + index, // Use existing 'id' or assign a unique rowId for new rows
+        rowId: nextRowId + index,
       }));
+
+      // console.log("updated row", updatedRows);
 
       props.taxDiscount.setTaxDiscount(updatedRows);
       setNextRowId(nextRowId + updatedRows.length); // Update the nextRowId
       setInitialized(true); // Set initialized to true to avoid further updates
     }
-  }, [initialized, props.taxDiscount.taxDiscount]); // Dependencies: initialized and the taxDiscount data from props
+  }, [initialized, props.taxDiscount.taxDiscount]); 
 
   const handleAddRow = () => {
     const newRow = {
@@ -47,34 +52,95 @@ const TaxDiscountTable = (props) => {
     );
   };
 
-  const handleDelete = (rowId, type) => {
+
+  const handleDelete = (rowId, type, row) => {
+
+    console.log("row id", row.id);
+
+    if(row.id) {
+        props.setDataTotDelete(prev => ({
+          ...prev,
+          taxDiscount: [...prev.taxDiscount, row.id]
+        }));
+    } 
+
     const filteredRows = props.taxDiscount.taxDiscount.filter(row => row.rowId !== rowId);
+    // 🔄 Remove the row from the taxDiscount state
     props.taxDiscount.setTaxDiscount(filteredRows);
 
-    const updatedMergedDiscountTax = [...props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type))];
-    const totalTaxDiscount = props.actions.getTotalTax(updatedMergedDiscountTax);
+    // 🔄 Remove the row from merged discount/tax state
+    const updatedMergedDiscountTax = props.mergeDiscountTax.filter(row => !(row.rowId === rowId && row.option_type === type));
 
-    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
-  };
+    // ✅ Initialize ref if undefined
+    if (!preTaxDiscountRef.current) {
+        preTaxDiscountRef.current = { tax: 0, discount: 0 };
+    }
+
+    const updateTax = updatedMergedDiscountTax ? updatedMergedDiscountTax.filter(d => d.option_type === 'tax'): [];
+    const updateDiscount = updatedMergedDiscountTax ?  updatedMergedDiscountTax.filter(d => d.option_type === 'discount') : [];
+    
+    props.computeTotalProposal(null, null, updateTax, updateDiscount);
+
+};
+
 
   const handleSave = (rowId) => {
+    const proposalDetails = sessionStorage.getItem("proposalDetails");
     const row = props.taxDiscount.taxDiscount.find(row => row.rowId === rowId);
+    if (!row) return;
+
     const itemTotal = props.actions.calculateTaxDiscount(row);
 
     props.taxDiscount.setTaxDiscount(
-      props.taxDiscount.taxDiscount.map(row =>
-        row.rowId === rowId ? { ...row, item_total: itemTotal, isEditing: false, isSaved: true } : row
-      )
+        props.taxDiscount.taxDiscount.map(row =>
+            row.rowId === rowId
+                ? { ...row, item_total: itemTotal, isEditing: false, isSaved: true }
+                : row
+        )
     );
 
-    const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
+    // ✅ Initialize `prevMergeDiscountTaxRef` if undefined
+    if (!preTaxDiscountRef.current) {
+        preTaxDiscountRef.current = { tax: 0, discount: 0 };
+    }
 
-    props.setTotalAmount(parseFloat(props.totalAmountref) + parseFloat(totalTaxDiscount.additional) - parseFloat(totalTaxDiscount.discount));
-  };
+    // ✅ Calculate previous and new total for tax & discount
+    // const prevTax = preTaxDiscountRef.current.tax || 0;
+    // const prevDiscount = preTaxDiscountRef.current.discount || 0;
+
+    // const totalTaxDiscount = props.actions.getTotalTax(props.mergeDiscountTax);
+    // const newTax = totalTaxDiscount.tax || 0;
+    // const newDiscount = totalTaxDiscount.discount || 0;
+    
+    // ✅ Compute the difference
+    // const taxDiff = newTax - prevTax;
+    // const discountDiff = newDiscount - prevDiscount;
+    // const taxDiscountDiff = taxDiff - discountDiff;
+
+    const updateTax = props.mergeDiscountTax ? props.mergeDiscountTax.filter(d => d.option_type === 'tax'): [];
+    const updateDiscount = props.mergeDiscountTax ?  props.mergeDiscountTax.filter(d => d.option_type === 'discount') : [];
+    
+    props.computeTotalProposal(null, null, updateTax, updateDiscount);
+
+    // props.setTotalAmount((prev) => {
+      
+    //   console.log("pre", prev);
+    //   // kunin ang labis na total na isinama sa total product 
+    //   const getDiffTotalProduct = taxDiscountDiff > 0 && JSON.parse(proposalDetails) ? (parseFloat(prev) - props.totalAmountref) || 0 : 0;
+
+    //   console.log("getDiffTotalProduct", getDiffTotalProduct);
+
+    //   return (parseFloat(prev) + taxDiscountDiff) - getDiffTotalProduct
+    // });
+
+    // ✅ Update ref AFTER calculations
+    //preTaxDiscountRef.current = { tax: newTax, discount: newDiscount };
+};
+
 
   return (
     <div className="container mt-4">
-      <h4>{ props.type === 'additional' ? 'Additional Items' : 'Discount' }</h4>
+      <h4>{ props.type === 'tax' ? 'Tax' : 'Discount' }</h4>
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -132,13 +198,13 @@ const TaxDiscountTable = (props) => {
                     <button onClick={() => handleEdit(row.rowId, row)} className="btn btn-primary btn-sm me-2">Edit</button>
                   </>
                 )}
-                <button onClick={() => handleDelete(row.rowId, props.type)} className="btn btn-danger btn-sm">Delete</button>
+                <button onClick={() => handleDelete(row.rowId, props.type, row)} className="btn btn-danger btn-sm">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button onClick={handleAddRow} className="btn btn-primary mb-3">Add Row</button>
+      <button onClick={handleAddRow} className="btn btn-primary btn-sm mb-3">Add Row</button>
     </div>
   );
 };

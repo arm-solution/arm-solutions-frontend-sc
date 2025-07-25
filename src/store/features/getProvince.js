@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 const provinceSlice = createSlice({
-    name: 'client',
+    name: 'province',
     initialState: {
         provinces: [],
         cities: [],

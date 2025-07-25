@@ -1,0 +1,8 @@
+.image-capture {
+    height: 35%;
+    width: 35%;
+    display: block; 
+    margin: auto;   
+    max-width: 80%; 
+    height: auto;  
+}

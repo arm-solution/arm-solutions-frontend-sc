@@ -1,221 +1,203 @@
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
-import LandingPage from '../pages/landing-page/LandingPage'
-import NotFound from '../pages/notFound-page/NotFound';
+import LandingPage from '../pages/reusable-pages/landing-page/LandingPage';
+import NotFound from '../pages/reusable-pages/notFound-page/NotFound';
 import Loading from '../components/loading-spinner/Loading';
+import LoadingLandingPage from '../components/loading-landing-page/LoadingLandingPage';
 import ProtectedRoute from './ProtectedRoute';
 import RequireAuth from './RequireAuth';
 
-const AdminDashboard = lazy(() => import('../pages/admin/admin-dashboard-page/AdminDashboard'));
-const Analytics = lazy(() => import('../pages/admin/analytics-page/Analytics'));
-const Login = lazy(() => import('../pages/login-page/Login'));
-const EmplyeesList = lazy(() => import('../pages/admin/employeeList-page/EmplyeesList'));
-const EmployeeHomePage = lazy(() => import('../pages/employee/employee-home-page/EmployeesHomePage'))
-const DtrPage = lazy(() => import('../pages/employee/dtr-page/DtrPage'));
-const Maps = lazy(() => import('../pages/common-pages/Map/Maps'));
-const PaySlipPage = lazy(() => import("../pages/employee/pay-slip-page/PaySlipPage"));
-const AttendancePage = lazy(() => import('../pages/employee/attendance-page/AttendancePage'));
-const UserProfilePage = lazy(() => import('../pages/common-pages/user-profile-page/UserProfilePage'));
-const Services = lazy(() => import('../pages/common-pages/services-page/Services'));
-const Products = lazy(() => import('../pages/common-pages/products-page/Products'));
-const MarketingDashboard = lazy(() => import('../pages/marketing/dashboard/MarketingDashboard'));
-const MarketingOutlet = lazy(() => import('../pages/marketing/outlet/MarketingOutlet')); 
-const Qoutations = lazy(() => import('./../pages/marketing/quotations/Quotations'));
-const PdfViewPage = lazy(() => import('./../pages/pdf-viewer-page/PdfViewPage'));
-const MessageRequest = lazy(() => import('./../pages/message-request-page/MessageRequest'));
-const UnderMaintenace = lazy(() => import('./../pages/under-maintenace-page/UnderMaintenace'));
-const CompanyClient = lazy(() => import('../pages/client-page/Client'));
-const ForgotPassword = lazy(() => import('../pages/forgot-password/ForgotPassword'));
-const DtrRequest = lazy(() => import('../pages/dtr-request-page/DtrRequest'));
-const DtrListByUser = lazy(() => import('../pages/dtr-list-by-user-page/DtrListByUser'));
+// /reusable-pages
 
+// Lazy-loaded Components
+const Analytics = lazy(() => import('../pages/reusable-pages/analytics-page/Analytics'));
+const Login = lazy(() => import('../pages/reusable-pages/login-page/Login'));
+const DtrPage = lazy(() => import('../pages/reusable-pages/dtr-page/DtrPage'));
+const Maps = lazy(() => import('../pages/reusable-pages/common-pages/Map/Maps'));
+const PaySlipPage = lazy(() => import("../pages/reusable-pages/pay-slip-page/PaySlipPage"));
+const AttendancePage = lazy(() => import('../pages/reusable-pages/attendance-page/AttendancePage'));
+const UserProfilePage = lazy(() => import('../pages/reusable-pages/common-pages/user-profile-page/UserProfilePage'));
+const Services = lazy(() => import('../pages//reusable-pages/common-pages/services-page/Services'));
+const Products = lazy(() => import('../pages/reusable-pages/common-pages/products-page/Products'));
+const Quotations = lazy(() => import('../pages/reusable-pages/quotations/Quotations'));
+const PdfViewPage = lazy(() => import('../pages/reusable-pages/pdf-viewer-page/PdfViewPage'));
+const MessageRequest = lazy(() => import('../pages/reusable-pages/message-request-page/MessageRequest'));
+const UnderMaintenance = lazy(() => import('../pages/reusable-pages/under-maintenace-page/UnderMaintenace'));
+const CompanyClient = lazy(() => import('../pages/reusable-pages/client-page/Client'));
+const ForgotPassword = lazy(() => import('../pages/reusable-pages/forgot-password/ForgotPassword'));
+const DtrRequest = lazy(() => import('../pages/reusable-pages/dtr-request-page/DtrRequest'));
+const DtrListByUser = lazy(() => import('../pages/reusable-pages/dtr-list-by-user-page/DtrListByUser'));
+const MyAnnouncement = lazy(() => import('../pages/reusable-pages/common-pages/announcement-page/MyAnnouncement'));
+const AnnouncementPage = lazy(() => import('../pages/reusable-pages/annoucement/Announcement'));
+const CompanyProfile = lazy(() => import('../pages/reusable-pages/company-profile-page/Profile'));
+const MainContent = lazy(() => import('../pages/reusable-pages/landing-main-content/MainContent'));
+const Qoutations = lazy(() => import('../pages/reusable-pages/quotations/Quotations'));
+const EmployeeList = lazy(() => import('../pages/reusable-pages/employeeList-page/EmplyeesList'))
+const CutOff = lazy(() => import('./../pages/reusable-pages/cutoff-page/CutOff'));
+const DtrStandalone = lazy(() => import('./../pages/reusable-pages/dtr-standalone-page/DtrForOnsite'));
+const JobOrder = lazy(() => import('./../pages/reusable-pages/job-order/JobOrder'));
+const JobOrderForm = lazy(() => import('./../pages/reusable-pages/job-order-form/JobOrderForm'))
+
+// outlets
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const EmployeeHomePage = lazy(() => import('../pages/employees/EmployeesHomePage'));
+const MarketingOutlet = lazy(() => import('../pages/marketing/MarketingOutlet'));
+const AccountingOutlet = lazy(() => import('../pages/accounting/AccountingOutlet'));
+const HrOutlet = lazy(() => import('../pages/hr/HrOutlet'));
+const PurchasingOutlet = lazy(() => import('../pages/purchasing/PurchasingOutlet'));
+const SalesOutlet = lazy(() => import('../pages/sales/SalesOutlet'));
+const WareHouseOutlet = lazy(() => import('../pages/warehouse/WareHouseOutlet'));
+const EngineeringOutlet = lazy(() => import('../pages/engineering/EngineeringOutlet'))
+const FinanceOutlet = lazy(() => import('../pages/finance/FinanceOutlet'));
+
+// Helper Component for Lazy Loading with Suspense
+const LazyComponent = (Component, Fallback = <Loading />) => (
+  <Suspense fallback={Fallback}>
+    <Component />
+  </Suspense>
+);
+
+// Common Routes
 const CommonRoutes = () => (
-    <>
-    <Route path='common'>
-        <Route path='user-profile' element={
-            <Suspense fallback={ <Loading /> }>
-                <UserProfilePage />
-            </Suspense>
-        } ></Route>
+  <Route path="common">
+    <Route path="products" element={LazyComponent(Products)} />
+    <Route path="services" element={LazyComponent(Services)} />
+    <Route path="quotations" element={LazyComponent(Quotations)} />
+    <Route path="clients" element={LazyComponent(CompanyClient)} />
+    <Route path="dtr-request" element={LazyComponent(DtrRequest)} />
+    <Route path="announcement" element={LazyComponent(MyAnnouncement)} />
+    <Route path="qoutations" element={LazyComponent(Qoutations)} />
+    <Route path="map" element={LazyComponent(Maps)} />
+    <Route path="job-order" element={LazyComponent(JobOrder)} />
+    <Route path="job-order-form/:proposalID" element={LazyComponent(JobOrderForm)} />
+  </Route>
+);
 
-        <Route path='map' element={
-            <Suspense fallback={<Loading/> } >
-                <Maps />
-            </Suspense>
-        } />
+const CommonAllUsersRoutes = () => (
+  <Route path="general">
+      <Route path="dtr" element={LazyComponent(DtrPage)} />
+      <Route path="user-profile" element={LazyComponent(UserProfilePage)} />
+      <Route path="my-attendance" element={LazyComponent(AttendancePage)} />
+      <Route path="my-payslip" element={LazyComponent(PaySlipPage)} />
+  </Route>
+);
 
-        <Route path='products' element={
-            <Suspense fallback={<Loading/> } >
-                <Products />
-            </Suspense>
-        } />
-
-        <Route path='services' element={
-            <Suspense fallback={<Loading/> } >
-                <Services />
-            </Suspense>
-        } />
-
-        <Route path='my-attendance' element={ 
-            <Suspense fallback={ <Loading /> }>
-                <AttendancePage /> 
-            </Suspense>
-        }/>
-
-        <Route path='dtr' element={ 
-            <Suspense fallback={ <Loading /> }>
-                <DtrPage /> 
-            </Suspense>
-        }/>
-
-        <Route path='my-payslip' element={ 
-            <Suspense fallback={ <Loading /> }>
-                <PaySlipPage /> 
-            </Suspense>
-        }/>
-
-        <Route path='qoutations' element={ 
-            <Suspense fallback={ <Loading /> }>
-                 <Qoutations /> 
-            </Suspense>
-        }/>
-
-        <Route path='clients' element={ 
-            <Suspense fallback={ <Loading /> }>
-                 <CompanyClient /> 
-            </Suspense>
-        }/>
-
-        <Route path='dtr-request' element={ 
-            <Suspense fallback={ <Loading /> }>
-                 <DtrRequest /> 
-            </Suspense>
-        }/>
-
-    </Route>
-    </>
-)
-
-export const router = createBrowserRouter(createRoutesFromElements(
+// Router
+export const router = createBrowserRouter(
+  createRoutesFromElements(
     <Route>
-        <Route path='/' element={ <LandingPage /> } />
+      {/* Landing Page */}
+      <Route path="/" element={<LandingPage />}>
+        <Route path="" element={LazyComponent(MainContent, <LoadingLandingPage />)} />
+        <Route path="company-profile" element={LazyComponent(CompanyProfile, <LoadingLandingPage />)} />
+        <Route path="announcement" element={LazyComponent(AnnouncementPage, <LoadingLandingPage />)} />
+      </Route>
 
-        {/* this is checking not to access the login if you are already login */}
-        <Route element={<ProtectedRoute />}>
-            <Route path='/login' element={ 
-                <Suspense fallback={ <Loading />}>
-                    <Login />
-                </Suspense>
-            } />
+      {/* Protected Login */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/login" element={LazyComponent(Login)} />
+      </Route>
+
+      {/* Admin Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/admin" element={LazyComponent(AdminDashboard)}>
+          <Route path="" element={LazyComponent(Analytics)} />
+          <Route path="employeeList" element={LazyComponent(EmployeeList)} />
+          <Route path="message-request" element={LazyComponent(MessageRequest)} />
+          <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
+          <Route path='cutoff' element={LazyComponent(CutOff)}/>
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
+      </Route>
 
-
-        {/* Admin Routing */}
-        <Route element={<RequireAuth />}>
-
-                <Route path='/admin' element={ 
-                    <Suspense fallback={<Loading />}>
-                        <AdminDashboard />
-                    </Suspense>
-                } >
-
-
-                <Route path='' element={ 
-                        <Suspense fallback={<Loading />}>
-                            <Analytics />
-                        </Suspense>
-                 } />
-
-                <Route path='employees' element={
-                    <Suspense fallback={<Loading />}>
-                        <EmplyeesList /> 
-                    </Suspense>
-                } />
-
-                <Route path='message-request' element={
-                    <Suspense fallback={<Loading />}>
-                        <MessageRequest />
-                    </Suspense>
-                } >
-
-                </Route>
-
-                <Route path='dtr-record/:userId' element={
-                    <Suspense fallback={<Loading/> } >
-                        <DtrListByUser />
-                    </Suspense>
-                } />
-
-                {CommonRoutes()}
-                
-            </Route>
-        
+      {/* Employee Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/production" element={LazyComponent(EmployeeHomePage)}>
+          <Route path="" element={LazyComponent(DtrPage)} />
+          {CommonAllUsersRoutes()}
         </Route>
+      </Route>
 
-        {/* Employees routing */}
-        <Route element={<RequireAuth />}>
-            <Route path='employees' element={<EmployeeHomePage />}>
-            
-
-                <Route path='' element={ 
-                    <Suspense fallback={ <Loading /> }>
-                        <DtrPage /> 
-                    </Suspense>
-                }/>
-
-                {CommonRoutes()}
-
-            </Route>
-        
+      {/* Marketing Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/marketing" element={LazyComponent(MarketingOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}  
+          {CommonRoutes()}
         </Route>
+      </Route>
 
-
-        {/* Marketing Routing */}
-        <Route element={<RequireAuth />}>
-
-                <Route path='marketing' element={ <MarketingOutlet /> } >
-
-                    <Route path='' element={ 
-                        <Suspense fallback={ <Loading /> }>
-                            <MarketingDashboard /> 
-                        </Suspense>
-                    }/>
-
-                    {CommonRoutes()}
-
-                </Route>
-        
+      {/* Accounting Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/accounting" element={LazyComponent(AccountingOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
+      </Route>
 
-        {/* pdf viewer */}
-        <Route path='pdf-viewer/:name/id/:id' element={
-            <Suspense fallback={<Loading/> } >
-                <PdfViewPage />
-            </Suspense>
-        } />
+      {/* Engineering Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/engineering" element={LazyComponent(EngineeringOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
+        </Route>
+      </Route>
+
+      {/* Finance Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/finance" element={LazyComponent(FinanceOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
+        </Route>
+      </Route>
+
+      {/* Sales Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/sales" element={LazyComponent(SalesOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+        </Route>
+      </Route>
+
+      {/* HR Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/hr" element={LazyComponent(HrOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
+        </Route>
+      </Route>
+
+      {/* Purchasing Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/purchasing" element={LazyComponent(PurchasingOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
+        </Route>
+      </Route>
+
+      {/* WareHouse Routes */}
+      <Route element={<RequireAuth />}>
+        <Route path="/warehouse" element={LazyComponent(WareHouseOutlet)}>
+          <Route path="" element={LazyComponent(DtrPage)} /> 
+          {CommonAllUsersRoutes()}
+          {CommonRoutes()}
+        </Route>
+      </Route>
 
 
-        <Route path='under-maintenace' element={
-            <Suspense fallback={<Loading/> } >
-                <UnderMaintenace />
-            </Suspense>
-        } />
-
-        <Route path='forgot-password' element={
-            <Suspense fallback={<Loading/> } >
-                <ForgotPassword />
-            </Suspense>
-        } />
-
-        {/* <Route path='company-profile' element={
-            <Suspense fallback={<Loading/> } >
-                <Profile />
-            </Suspense>
-        } /> */}
-
-        <Route path="not-found" element={<NotFound />} />
-
-        {/* This is for not found route */}
-        <Route path='*' element={ <NotFound /> } />
+      {/* Miscellaneous Routes */}
+      <Route path="pdf-viewer/:name/id/:id" element={LazyComponent(PdfViewPage)} />
+      <Route path="under-maintenance" element={LazyComponent(UnderMaintenance)} />
+      <Route path="dtr-onsite-access" element={LazyComponent(DtrStandalone)} />
+      <Route path="forgot-password" element={LazyComponent(ForgotPassword)} />
+      <Route path="not-found" element={<NotFound />} />
+      <Route path="*" element={<NotFound />} />
     </Route>
-));
+  )
+);
