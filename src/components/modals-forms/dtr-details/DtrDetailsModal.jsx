@@ -119,7 +119,7 @@ const DtrDetailsModal = (props) => {
                             <p>Break In: {props.selectedDtr?.break_start || "---"}</p>
                             <p>Break Out: {props.selectedDtr?.break_end || "---"}</p>
                             <p>Time In: {props.selectedDtr?.time_in || "---"}</p>
-                            <p>Time Out: {props.selectedDtr?.time_out || "---"}</p>
+                            <p>Time Outssss: {props.selectedDtr?.time_out || "---"}</p>
                             <p>
                                 Over Time Start: {props.selectedDtr?.ot_start || "No Overtime"}
                             </p>

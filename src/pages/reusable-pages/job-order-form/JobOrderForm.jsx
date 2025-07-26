@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProposal } from '../../../store/features/proposalSlice';
 import { successDialog, errorDialog } from '../../../customs/global/alertDialog';
+import { dateFormatted } from '../../../customs/global/manageDates';
 
 
 const JobOrderForm = () => {
@@ -90,25 +91,25 @@ const JobOrderForm = () => {
 
 
 
-useEffect(() => {
-  const getData = () => {
-    if (dataByFilter?.proposal) {
-      setProposal(dataByFilter?.proposal[0]);
-    }
+    useEffect(() => {
+    const getData = () => {
+        if (dataByFilter?.proposal) {
+        setProposal(dataByFilter?.proposal[0]);
+        }
 
-    if (allJobOrderByFilter?.data?.length) {
-      setJobOrder(allJobOrderByFilter.data[0]);
-    } else {
-      // No job order returned, set up blank form inside jobOrder
-      setJobOrder({
-        ...defaultJobOrder,
-        job_order_items: [...jobOrderItemsForm], // optional sync
-      });
-    }
-  };
+        if (allJobOrderByFilter?.data?.length) {
+            setJobOrder(allJobOrderByFilter.data[0]);
+        } else {
+        // No job order returned, set up blank form inside jobOrder
+            setJobOrder({
+                ...defaultJobOrder,
+                job_order_items: [...jobOrderItemsForm], // optional sync
+            });
+        }
+    };
 
-  getData();
-}, [dataByFilter, isSuccess, dispatch, allJobOrderByFilter]);
+    getData();
+    }, [dataByFilter, isSuccess, dispatch, allJobOrderByFilter]);
 
 
     const handleProposalInputChange = (path, value) => {
@@ -149,10 +150,13 @@ useEffect(() => {
 
     const handleUpSertJO = async () => {
 
-        const { user, job_order_items, ...restJO } = jobOrder;
+        const { user, job_order_items, turnover_date, mobilization_date, date_signed, ...restJO } = jobOrder;
 
         const finalJO = {
             ...restJO,
+            mobilization_date: dateFormatted(mobilization_date) || '',
+            turnover_date: dateFormatted(turnover_date) || '',
+            date_signed: dateFormatted(date_signed) || '',
             proposal_id: proposalID,
             joborderitems: job_order_items
         };
@@ -163,6 +167,7 @@ useEffect(() => {
 
 
         if(jobOrder.id) {
+
             const { payload } = await dispatch(updateJobOrder(finalJO));
             if(payload.success) {
                 successDialog("Updated job order is now available")
@@ -171,7 +176,6 @@ useEffect(() => {
             }
         } else {
             const { payload } = await dispatch(addNewJobOrder(finalJO));
-            console.log("payload", payload)
             if(payload.success) {
                 successDialog("New job order is now available")
             } else {
@@ -389,7 +393,11 @@ useEffect(() => {
                 <input
                     type="date"
                     className="form-control"
-                    value={ jobOrder ? jobOrder?.date_signed : '' }
+                    value={
+                        jobOrder?.date_signed
+                        ? new Date(jobOrder.date_signed).toISOString().split('T')[0]
+                        : ''
+                    }
                     onChange={(e) => handleDynamicJobOrderChange('date_signed', e.target.value)}
                 />
             </div>
@@ -413,7 +421,11 @@ useEffect(() => {
                     type="date"
                     className="form-control"
                     name='mobilization_date'
-                    value={ jobOrder ? jobOrder?.mobilization_date : '' }
+                     value={
+                        jobOrder?.mobilization_date
+                        ? new Date(jobOrder.mobilization_date).toISOString().split('T')[0]
+                        : ''
+                    }
                     onChange={(e) => handleDynamicJobOrderChange('mobilization_date', e.target.value)}
                 />
             </div>
@@ -423,7 +435,11 @@ useEffect(() => {
                     type="date"
                     className="form-control"
                     name='turnover_date'
-                    value={ jobOrder ? jobOrder?.turnover_date : '' }
+                     value={
+                        jobOrder?.turnover_date
+                        ? new Date(jobOrder.turnover_date).toISOString().split('T')[0]
+                        : ''
+                    }
                     onChange={(e) => handleDynamicJobOrderChange('turnover_date', e.target.value)}
                 />
             </div>
