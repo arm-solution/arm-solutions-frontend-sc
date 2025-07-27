@@ -19,6 +19,8 @@ const DtrDetailsModal = (props) => {
 
         const image_link = props.selectedDtr?.image_link;
 
+        console.log("image links", image_link)
+
         if(image_link) {
             setImageUrl(image_link);
         }

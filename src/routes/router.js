@@ -63,15 +63,15 @@ export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       {/* Landing Page */}
-      <Route path="/" element={<LandingPage />}>
+      {/* <Route path="/" element={<LandingPage />}>
         <Route path="" element={LazyComponent(MainContent, <LoadingLandingPage />)} />
         <Route path="company-profile" element={LazyComponent(CompanyProfile, <LoadingLandingPage />)} />
         <Route path="announcement" element={LazyComponent(AnnouncementPage, <LoadingLandingPage />)} />
-      </Route>
+      </Route> */}
 
       {/* Protected Login */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/login" element={LazyComponent(Login)} />
+        <Route path="/" element={LazyComponent(Login)} />
       </Route>
 
       {/* Admin Routes */}
