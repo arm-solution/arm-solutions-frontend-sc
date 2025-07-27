@@ -1,0 +1,16 @@
+.job-order-form {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: 14px;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.btn-save {
+  width: 10rem!important;
+  margin-top: 5rem;
+}

@@ -1,38 +1,41 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { formatDateReadable } from '../../customs/global/manageDates';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+
 import { getDtrById, updateMultipleDtrStatus, getAllDtrWithDateRange } from '../../store/features/dtrSlice';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
 import './DtrByUser.css';
 
-const DtrByUserTable = () => {
+const DtrByUserTable = (props) => {
   const dispatch = useDispatch();
-  const { userId } = useParams();
   const modalRef = useRef(null);
 
   const [ids, setIds] = useState([]);
+  const [imageLinks, setImageLinks] = useState([]);
   const [selectedDtr, setSelectedDtr] = useState(null);
-  const [dateRangeStatus, setDateRangeStatus] = useState({
-    date_start: '',
-    date_end: '',
-    status: ''
-  });
 
-  const { dtrWithDateRange } = useSelector(state => state.dtr);
+
+  
+  const { dtrWithDateRange } = useSelector(state => state.dtr);  
 
   // Load DTR data on initial load and whenever dateRangeStatus changes
   useEffect(() => {
-    if(parseInt(userId)) {
-      dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
+    if(parseInt(props.userId)) {
+      dispatch(getAllDtrWithDateRange({userId: props.userId, dtrParams: props.dateRangeStatus}));
     }
-  }, [dispatch, userId]);
+  }, [dispatch, props.userId]);
 
-  const handleCheckbox = (id, isChecked) => {
+  const handleCheckbox = (data, isChecked) => {
+    setImageLinks(preImage => 
+      isChecked ? [...preImage, data.image_link] : preImage.filter(item => item !== data.image_link)
+    );
     setIds(prevIds =>
-      isChecked ? [...prevIds, id] : prevIds.filter(item => item !== id)
+      isChecked ? [...prevIds, data.id] : prevIds.filter(item => item !== data.id)
+    );
+    props.setDtrIds(prevIds =>
+      isChecked ? [...prevIds, data.id] : prevIds.filter(item => item !== data.id)
     );
   };
 
@@ -42,11 +45,13 @@ const DtrByUserTable = () => {
   };
 
   const handleAppproveReject = async (dtrStatus) => {
-    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids }));
+
+    const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids, imageLinks: imageLinks }));
     
     if (payload.success) {
       successDialog(`The records are now ${dtrStatus}`);
       // dispatch(getDtrById(userId));
+      props.setShowForm(true);
       setIds([]); // Reset selected IDs
     } else {
       errorDialog("Unsuccessful Operation", "Please report to the technical team");
@@ -54,11 +59,11 @@ const DtrByUserTable = () => {
   };
 
   const updateDateRangeStatus = ({ target: { name, value } }) => {
-    setDateRangeStatus(prev => ({ ...prev, [name]: value }));
+    props.setDateRangeStatus(prev => ({ ...prev, [name]: value }));
   };
 
   const searchDtr = async () => {
-    await dispatch(getAllDtrWithDateRange({userId: userId, dtrParams: dateRangeStatus}));
+    await dispatch(getAllDtrWithDateRange({userId: props.userId, dtrParams: props.dateRangeStatus}));
   };
 
   return (
@@ -75,7 +80,7 @@ const DtrByUserTable = () => {
                 className="form-control"
                 name="date_start"
                 onChange={updateDateRangeStatus}
-                value={dateRangeStatus.date_start}
+                value={props.dateRangeStatus.date_start}
               />
             </div>
             <div className="col-md-3">
@@ -85,7 +90,7 @@ const DtrByUserTable = () => {
                 className="form-control"
                 name="date_end"
                 onChange={updateDateRangeStatus}
-                value={dateRangeStatus.date_end}
+                value={props.dateRangeStatus.date_end}
               />
             </div>
             <div className="col-md-2">
@@ -94,7 +99,7 @@ const DtrByUserTable = () => {
                 className="form-select mb-3"
                 name="status"
                 onChange={updateDateRangeStatus}
-                value={dateRangeStatus.status}
+                value={props.dateRangeStatus.status}
               >
                 <option value="" disabled>Status</option>
                 <option value="approved">Approved</option>
@@ -149,7 +154,7 @@ const DtrByUserTable = () => {
                           type="checkbox"
                           className="form-check-input"
                           checked={ids.includes(d.id)}
-                          onChange={(e) => handleCheckbox(d.id, e.target.checked)}
+                          onChange={(e) => handleCheckbox(d, e.target.checked)}
                         />
                       </td>
                       <td>{d?.shift_date ? formatDateReadable(d?.shift_date) : 'No data available'}</td>
