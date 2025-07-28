@@ -155,10 +155,10 @@ const Quotations = () => {
               proposalStatus={proposalStatus}
               loadingProposal={loadingProposal}
               proposalEdit={proposalEdit}
-              proposalItemData={proposalItemData}
+              proposalItemData={Array.isArray(proposalItemData) ? proposalItemData : []}
               proposalItemLoading={proposalItemLoading}
               proposalItemSuccess={proposalItemSuccess}
-              taxDiscountData={taxDiscountData}
+              taxDiscountData={Array.isArray(taxDiscountData) ? taxDiscountData : [] }
               totalAmountState={{ totalAmount, setTotalAmount }}
               taf={{ totalAmountref, setTotalAmountref }}
               setSelectedTab={setSelectedTab}
