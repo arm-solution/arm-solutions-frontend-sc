@@ -38,7 +38,7 @@ const Quotations = () => {
         setSelectedTab(event.target.id);
     };
 
-    const clientDataWithFormattedDate = proposalData.map(d => ({
+    const clientDataWithFormattedDate = (proposalData || []).map(d => ({
       ...d,
       date_created: formatDateTime(d.date_created)
     }))
