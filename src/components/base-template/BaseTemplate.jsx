@@ -8,14 +8,14 @@ import { getLoggedInData } from '../../customs/global/manageLocalStorage';
 const BaseTemplate = () => {
     const [showSideNav, setShowSideNav] = useState(false);
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
   
-    useEffect(() => {
-    //   console.log("logged in data", getDepartmentLoggedIn());
-      if (!getLoggedInData() || getLoggedInData().user_type !== 'admin') {
-        navigate('/'); // Redirect to home page if not admin
-      }
-    }, [navigate])
+    // useEffect(() => {
+    // //   console.log("logged in data", getDepartmentLoggedIn());
+    //   if (!getLoggedInData() || getLoggedInData().department !== 1) {
+    //     navigate('/'); // Redirect to home page if not admin
+    //   }
+    // }, [navigate])
   
     return (
       <>
