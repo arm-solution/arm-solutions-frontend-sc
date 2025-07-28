@@ -6,32 +6,38 @@ const DataTable = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const getIndex = () => {
-      const startIndex = (currentPage - 1) * parseInt(props.perPage, 10);
-      const endIndex = startIndex + parseInt(props.perPage, 10);
+// Defensive defaults
+  const safeData = Array.isArray(props.data) ? props.data : [];
+  const safeColumns = Array.isArray(props.columns) ? props.columns : [];
 
-      return { start: startIndex, end: endIndex };
-      
-    }
-    
-    const handleSearchChange = (e) => {
-      // console.log(props.data);
-        setSearchTerm(e.target.value);
-    };
+  const getIndex = () => {
+    const perPage = parseInt(props.perPage, 10) || 10;
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    return { start: startIndex, end: endIndex };
+  };
 
-  // if need to combine on one column
-   const combinedData = props.data.map(d => ({
-      ...d,
-      fullname: d.firstname && d.lastname ? `${d.firstname} ${d.lastname}` : undefined
-    }));
-    
-    const filteredData = combinedData.filter(d =>
-      props.columns.some(column =>
-        (d[column.accessor] && d[column.accessor].toString().toLowerCase().includes(searchTerm.toLowerCase()))
-      )
-    );
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
-    const totalPages = Math.ceil(filteredData.length / parseInt(props.perPage, 10));
+  // Combine first + last name safely
+  const combinedData = safeData.map(d => ({
+    ...d,
+    fullname:
+      d.firstname && d.lastname ? `${d.firstname} ${d.lastname}` : d.fullname,
+  }));
+
+  const filteredData = combinedData.filter(d =>
+    safeColumns.some(column =>
+      (d[column.accessor] ?? "")
+        .toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+  );
+
+  const totalPages = Math.ceil(filteredData.length / (parseInt(props.perPage, 10) || 10));
 
     const handlePrevPage = () => {
         setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
