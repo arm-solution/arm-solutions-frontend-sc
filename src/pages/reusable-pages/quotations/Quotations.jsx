@@ -18,94 +18,94 @@ const Quotations = () => {
     const [selectedTab, setSelectedTab] = useState('tab-one');
 
     // this is the main computation of the proposal
-    const [totalAmount, setTotalAmount] = useState(0)
-    const [totalAmountref, setTotalAmountref] = useState(0)
+    // const [totalAmount, setTotalAmount] = useState(0)
+    // const [totalAmountref, setTotalAmountref] = useState(0)
     
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     
-    //  this is from the redux
-    const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
-    const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
-    const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
+    // //  this is from the redux
+    // const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
+    // const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
+    // const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
-    // propsal data for editing
-    const [proposalEdit, setProposalEdit] = useState()
+    // // propsal data for editing
+    // const [proposalEdit, setProposalEdit] = useState()
 
-    // global ref
-    const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
+    // // global ref
+    // const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
-    const handleTabChange = (event) => {
-        setSelectedTab(event.target.id);
-    };
+    // const handleTabChange = (event) => {
+    //     setSelectedTab(event.target.id);
+    // };
 
-    const clientDataWithFormattedDate = (proposalData || []).map(d => ({
-      ...d,
-      date_created: formatDateTime(d.date_created)
-    }))
+    // const clientDataWithFormattedDate = (proposalData || []).map(d => ({
+    //   ...d,
+    //   date_created: formatDateTime(d.date_created)
+    // }))
 
-    const columns = [
-      {header: 'Created by', accessor: 'fullname'},
-      {header: 'Estimate', accessor: 'sub_total'},
-      {header: 'Date', accessor: 'date_created'},
-      {header: 'Status', accessor: 'status'},
-    ]
+    // const columns = [
+    //   {header: 'Created by', accessor: 'fullname'},
+    //   {header: 'Estimate', accessor: 'sub_total'},
+    //   {header: 'Date', accessor: 'date_created'},
+    //   {header: 'Status', accessor: 'status'},
+    // ]
 
-    useEffect(() => {
-      dispatch(getAllProposal());
-    }, [dispatch]);
+    // useEffect(() => {
+    //   dispatch(getAllProposal());
+    // }, [dispatch]);
     
 
-    const handleView = async (row) => {
-      try {
-        setSelectedTab('tab-two');
-        setProposalEdit(row);
+    // const handleView = async (row) => {
+    //   try {
+    //     setSelectedTab('tab-two');
+    //     setProposalEdit(row);
     
-        const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
-          dispatch(getDiscountAndTaxByproposalId(row.id)),
-          dispatch(getProposalItemsByProposalId(row.id)),
-          dispatch(getAdditionalByProposalID(row.id))
-        ]);
+    //     const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
+    //       dispatch(getDiscountAndTaxByproposalId(row.id)),
+    //       dispatch(getProposalItemsByProposalId(row.id)),
+    //       dispatch(getAdditionalByProposalID(row.id))
+    //     ]);
     
-        // Store the data in sessionStorage after dispatches complete
-        sessionStorage.setItem('proposalDetails', JSON.stringify({
-          quotation: row,  // Use the row since it's already the proposalEdit data
-          quotationItem: proposalItemsResult.payload,
-          taxDiscount: discountTaxResult.payload,
-          additionalItems: additionalItems.payload
-        }));
+    //     // Store the data in sessionStorage after dispatches complete
+    //     sessionStorage.setItem('proposalDetails', JSON.stringify({
+    //       quotation: row,  // Use the row since it's already the proposalEdit data
+    //       quotationItem: proposalItemsResult.payload,
+    //       taxDiscount: discountTaxResult.payload,
+    //       additionalItems: additionalItems.payload
+    //     }));
 
-        if(row) {
-          // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
-          // the issue is you getting the row the row is not from the database fix this
-          console.log("db subtotal", row.sub_total)
-          setTotalAmountref(parseFloat(row.sub_total));
-        }
+    //     if(row) {
+    //       // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
+    //       // the issue is you getting the row the row is not from the database fix this
+    //       console.log("db subtotal", row.sub_total)
+    //       setTotalAmountref(parseFloat(row.sub_total));
+    //     }
     
-        // Dispatch a custom event to signal that sessionStorage is updated
-        window.dispatchEvent(new Event('sessionUpdated'));
+    //     // Dispatch a custom event to signal that sessionStorage is updated
+    //     window.dispatchEvent(new Event('sessionUpdated'));
     
-      } catch (error) {
-        console.log("Error: ", error);
-      }
-    };
+    //   } catch (error) {
+    //     console.log("Error: ", error);
+    //   }
+    // };
   
-    const handleDelete = (id) => {
-      deleteConfirmation({
-        title: "",
-        text: "",
-        icon: "",
-        confirmButtonText: "",
-        cancelButtonText: "",
-        deleteTitle: "",
-        deleteText: "",
-        successTitle: "", 
-        successText: ""
-      }, async () => {
+    // const handleDelete = (id) => {
+    //   deleteConfirmation({
+    //     title: "",
+    //     text: "",
+    //     icon: "",
+    //     confirmButtonText: "",
+    //     cancelButtonText: "",
+    //     deleteTitle: "",
+    //     deleteText: "",
+    //     successTitle: "", 
+    //     successText: ""
+    //   }, async () => {
       
-        alert("Need to delete child rows of: "+id);
+    //     alert("Need to delete child rows of: "+id);
   
-      });
-    }
+    //   });
+    // }
     
   return (
     <>
@@ -118,7 +118,7 @@ const Quotations = () => {
           name="tabs-state"
           id="tab-one"
           checked={selectedTab === 'tab-one'}
-          onChange={handleTabChange}
+          // onChange={handleTabChange}
         />
         <input
           className="state"
@@ -127,7 +127,7 @@ const Quotations = () => {
           name="tabs-state"
           id="tab-two"
           checked={selectedTab === 'tab-two'}
-          onChange={handleTabChange}
+          // onChange={handleTabChange}
         />
    
 
