@@ -10,12 +10,28 @@ const ProtectedRoute = ({ children }) => {
       
       // Check if the parsed data is an object and contains a non-empty array in `data`
       if (parsedAuthData && typeof parsedAuthData === 'object' && Array.isArray(parsedAuthData.data) && parsedAuthData.data.length > 0) {
-        const role = parsedAuthData.data[0].user_type;
+        const role = parsedAuthData.data[0].department;
 
-        if (role === 'admin') {
+        if (role === 1) {
           return <Navigate to="/admin" />;
-        } else if (role === 'employee') {
-          return <Navigate to="/employees" />;
+        } else if (role === 2) {
+          return <Navigate to="/hr" />;
+        } else if (role === 3) {
+          return <Navigate to="/accounting" />;
+        } else if (role === 4) {
+          return <Navigate to="/finance" />;
+        } else if (role === 5) {
+          return <Navigate to="/warehouse" />;
+        } else if (role === 6) {
+          return <Navigate to="/engineering" />;
+        } else if (role === 7) {
+          return <Navigate to="/purchasing" />;
+        } else if (role === 8) {
+          return <Navigate to="/marketing" />;
+        } else if (role === 9) {
+          return <Navigate to="/sales" />;
+        } else if (role === 10) {
+          return <Navigate to="/production" />;
         }
       }
     } catch (error) {
