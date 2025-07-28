@@ -174,7 +174,7 @@ const Client = () => {
                       ))}
                       <td>
                         <button className="btn btn-info btn-sm me-1 text-white" onClick={() => handleView(item)}>Details</button>
-                        <button className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
+                        <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>Delete</button>
                       </td>
                     </tr>
                   ))}
