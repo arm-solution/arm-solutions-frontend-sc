@@ -14,47 +14,49 @@ export const loginEmployee = createAsyncThunk('employee/login', async ({ employe
 
 
 const employeeAuthSlice = createSlice({
-    name: 'employeeLogin',
-    initialState: {
-        data: [],
-        token: '',
-        isSuccess: false,
-        loading: false,
-        message: ''
+  name: 'employeeLogin',
+  initialState: {
+    data: [],
+    token: '',
+    isSuccess: false,
+    loading: false,
+    message: ''
+  },
+  reducers: {
+    clearLoginState: (state) => {
+      state.isSuccess = false;
+      state.loading = false;
+      state.message = '';
     },
-    reducers: {},
-    extraReducers(builder) {
-        builder 
-        .addCase(loginEmployee.pending, (state, _) => {
-            state.loading = true;
-            state.isSuccess = false;
-        })
-        .addCase(loginEmployee.fulfilled, (state, action) => {
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(loginEmployee.pending, (state) => {
+        state.loading = true;
+        state.isSuccess = false;
+      })
+      .addCase(loginEmployee.fulfilled, (state, action) => {
+        const { data, token, success } = action.payload;
+        if (success) {
+          state.loading = false;
+          state.isSuccess = true;
+          state.token = token;
+          state.data = data;
 
-            const { data, token, success } = action.payload; 
-
-            if(success) {
-                state.loading = false;
-                state.isSuccess = true;
-    
-                state.token = token
-                state.data = data
-    
-                // Store token and user data in localStorage
-                localStorage.setItem('authEmployee', JSON.stringify({ data: data }));
-                localStorage.setItem('token', JSON.stringify(token));
-            }
-        })
-        .addCase(loginEmployee.rejected, (state, action) => {
-            const { message } = action.payload; 
-            state.loading = false;
-            state.isSuccess = false;
-
-            state.message = `Login failed - ${message}`;
-        })
-    }
-
+          localStorage.setItem('authEmployee', JSON.stringify({ data }));
+          localStorage.setItem('token', JSON.stringify(token));
+        }
+      })
+      .addCase(loginEmployee.rejected, (state, action) => {
+        const { message } = action.payload;
+        state.loading = false;
+        state.isSuccess = false;
+        state.message = `Login failed - ${message}`;
+      });
+  },
 });
 
+export const { clearLoginState } = employeeAuthSlice.actions;
 export default employeeAuthSlice;
+
 

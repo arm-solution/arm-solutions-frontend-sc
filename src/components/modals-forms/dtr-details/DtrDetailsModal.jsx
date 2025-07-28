@@ -17,13 +17,18 @@ const DtrDetailsModal = (props) => {
 
     useEffect(() => {
 
-        const image_link = props.selectedDtr?.image_link;
-
-        console.log("image links", image_link)
-
-        if(image_link) {
-            setImageUrl(image_link);
+        const getLoginImage = () => {
+            const image_link = props.selectedDtr?.image_link;
+    
+            console.log("image links", image_link)
+    
+            if(image_link) {
+                setImageUrl(image_link);
+            }
         }
+
+        getLoginImage();
+
         // if (imageData) {
         //     // Handle case when the image is a Buffer
         //     if (imageData.type === 'Buffer' && Array.isArray(imageData.data)) {
@@ -84,8 +89,7 @@ const DtrDetailsModal = (props) => {
             backdrop.remove();
         }
 
-        // navigate(`/${getLoggedInData().user_type}/common/map?data=${data}`);
-        const url = `/${getLoggedInData().user_type}/common/map?data=${data}`;
+        const url = `/${getLoggedInData().department_name}/common/map?data=${data}`;
         window.open(url, '_blank'); // <-- opens in new tab
     };
 

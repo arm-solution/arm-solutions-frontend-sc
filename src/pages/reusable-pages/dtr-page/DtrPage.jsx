@@ -45,8 +45,8 @@ const Home = () => {
     const getDefaultLoad = () => {
       if(getLoggedInID()) {
         // dispatch(getDtrById({ id: getLoggedInID() }));
-        dispatch(getWeeklyDtr(getLoggedInID()));
-        dispatch(getCurrentDtr(getLoggedInID()));
+        // dispatch(getWeeklyDtr(getLoggedInID()));
+        // dispatch(getCurrentDtr(getLoggedInID()));
       }
     }
 
