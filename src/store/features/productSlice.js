@@ -4,7 +4,8 @@ import axios from 'axios';
 
 export const addNewProduct = createAsyncThunk('addNewProduct', async (product, { rejectWithValue }) => {
     try {
-        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/add-product`, [product]);
+
+        const res = axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/save-product`, product);
         return res.data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -14,8 +15,8 @@ export const addNewProduct = createAsyncThunk('addNewProduct', async (product, {
 
 export const deleteProduct = createAsyncThunk('deleteProduct', async(id, {rejectWithValue}) => {
     try {
-        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/products/delete/${id}`);
 
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/products/delete/${id}`);
         return data;
     } catch (error) {
         return rejectWithValue(error.response.data);

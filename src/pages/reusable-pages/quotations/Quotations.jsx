@@ -138,7 +138,7 @@ const Quotations = () => {
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 
                 <DataTable 
-                  data={clientDataWithFormattedDate}
+                  data={ clientDataWithFormattedDate || [] }
                   columns={columns}
                   actions={{ handleView, handleDelete }}
                   perPage={10}
