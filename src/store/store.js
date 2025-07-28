@@ -10,6 +10,13 @@ import provinceSlice from "./features/getProvince";
 import dtrSlice from "./features/dtrSlice";
 import taxDiscountSlice from "./features/taxDiscountSlice";
 import dtrRequestSlice from "./features/dtrRequestSlice";
+import additionalSlice from "./features/additional.Slice";
+import messageRequestSlice from "./features/messageRequestSlice";
+import additionalEarningsSlice from './features/additionalEarningsSlice';
+import earningSlice from './features/earningSlice';
+import dashboardSlice from "./features/dashboardDataSlice";
+import categorySlice from "./features/categorySlice";
+import jobOrderSlice from './features/jobOrder.slice'
 
 export const store = configureStore({
     reducer: {
@@ -23,6 +30,13 @@ export const store = configureStore({
         provinces: provinceSlice.reducer,
         dtr: dtrSlice.reducer,
         taxDiscounts: taxDiscountSlice.reducer,
-        dtrRequests: dtrRequestSlice.reducer
+        dtrRequests: dtrRequestSlice.reducer,
+        additionalItems: additionalSlice.reducer,
+        messageRequests: messageRequestSlice.reducer,
+        additionalEarnings: additionalEarningsSlice.reducer,
+        earnings: earningSlice.reducer,
+        dasboardData: dashboardSlice.reducer,
+        categories: categorySlice.reducer,
+        jobOrders: jobOrderSlice.reducer
     }
 })

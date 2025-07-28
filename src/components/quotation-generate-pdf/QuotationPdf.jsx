@@ -4,7 +4,7 @@ import RobotoBold from './../../assets/fonts/Roboto-Black.ttf';
 import RobotoItalic from './../../assets/fonts/Roboto-Italic.ttf'; 
 import Logo from './../../assets/images/logo.png';
 import backgroundImage from './../../assets/images/arm_circle_logo-nbg.png'
-import { dateFormatted, formatDateToStringv2 } from '../../customs/global/manageDates';
+import { formatDateReadable, formatDateToStringv2 } from '../../customs/global/manageDates';
 
 // Register fonts
 Font.register({
@@ -16,6 +16,8 @@ Font.register({
   family: 'RobotoItalics',
   src: RobotoItalic,
 });
+
+
 
 // Stylesheet
 const styles = StyleSheet.create({
@@ -49,7 +51,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textSize: {
-    fontSize: 10
+    fontSize: 10,
   },
   horizontalLine: {
     display: 'flex',
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#000',
     borderBottomStyle: 'solid',
     width: '90%',
-    left: 30
+    left: 30,
   },
   bold: {
     fontFamily: 'RobotoBold',
@@ -75,60 +77,68 @@ const styles = StyleSheet.create({
     left: '13%',
     width: '80%',
     height: '55%',
-    zIndex: -1, 
-    opacity: 0.3
+    zIndex: -1,
+    opacity: 0.3,
   },
 
+  // ✅ TABLE (updated to avoid double borders)
+  tableContainer: {
+    marginTop: 20,
+  },
   table: {
-    marginTop: 45,
+    marginTop: 20,
     width: '90%',
-    display: "table",
-    left: 35  ,
-    borderStyle: "solid",
+    alignSelf: 'center',
     borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0
+    borderColor: '#000', // outer border of the table
+    borderStyle: 'solid',
   },
   tableRow: {
-    margin: "auto",
-    flexDirection: "row"
+    flexDirection: 'row',
+  },
+  tableRowTotal: {
+    flexDirection: 'row',
+    backgroundColor: '#FAFAD2'
   },
   tableHeaderRow: {
-    flexDirection: "row",
-    backgroundColor: '#d3d3d3'
+    flexDirection: 'row',
+    backgroundColor: '#d3d3d3',
   },
   tableCol: {
-    width: "15%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0
+    flex: 1,
+    borderLeftWidth: 1,
+    borderTopWidth: 1,
+    borderColor: '#000',
+    borderStyle: 'solid',
+    justifyContent: 'center',
+  },
+  descriptionCol: {
+    flex: 2,
+    borderLeftWidth: 1,
+    borderTopWidth: 1,
+    borderColor: '#000',
+    borderStyle: 'solid',
+    justifyContent: 'center',
   },
   tableCellHeader: {
     margin: 5,
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   tableCell: {
     margin: 5,
-    fontSize: 10
+    fontSize: 10,
+    textAlign: 'center',
+    flexWrap: 'wrap',
   },
-  descriptionRow: {
-    width: "40%", // Wider width for the "Name" column
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0
-  },
-  fullRow: {
-    width: "100%", // Wider width for the "Name" column
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0
+  signature: {
+    width: 150,
+    height: 50,
+    marginTop: 10,
   }
-  
 });
+
 
 // PDF Document component
 const PDFDocument = ({ id, state}) => {
@@ -149,12 +159,18 @@ const PDFDocument = ({ id, state}) => {
         window.location.href = '/not-found';
     }
   }, []);
-  
+
+  const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+
  return (
   <>
   <Document>
       <Page size="A4" style={styles.page}>
-      <Image source={backgroundImage} style={styles.backgroundImage}></Image>
+      <Image source={backgroundImage} style={styles.backgroundImage} fixed></Image>
         <View style={styles.imageContainer}>
           <Image style={styles.logo} source={Logo} />
           <View>
@@ -222,17 +238,28 @@ const PDFDocument = ({ id, state}) => {
           
           <Text style={styles.textSize}>FROM:</Text>
           <View style={[styles.textSize, { left: 29}]}>
-            <Text>MR ALDRED DEL MUNDO</Text>
-            <Text>Marketing Specialist</Text>
+            <Text>Mr./Ms. { capitalizeFirstLetter(pdfData?.creator?.fullname) }</Text>
+            <Text>{ capitalizeFirstLetter(pdfData?.creator?.position) }</Text>
           </View>
         
         </View>
 
-        <View style={{ display: 'flex', flexDirection: 'row', left: 40, top: 45 }}>
-          
-          <Text style={styles.textSize}>SUBJECT:</Text>
-          {/* <Text style={[styles.textSize, { left: 13}]}>{ quotation?.description }</Text> */}
-        
+        <View style={{ 
+            display: 'flex', 
+            flexDirection: 'row', 
+            flexWrap: 'wrap', 
+            left: 40, 
+            top: 45
+        }}>
+            <Text style={styles.textSize}>SUBJECT:</Text>
+            <Text 
+                style={[
+                    styles.textSize, 
+                    { marginLeft: 13, flexShrink: 1, maxWidth: 450 } // set maxWidth here too
+                ]}
+            >
+                {pdfData?.quotation?.description}
+            </Text>
         </View>
 
         <View style={{ display: 'flex', flexDirection: 'row', left: 40, top: 60}}>
@@ -259,95 +286,177 @@ const PDFDocument = ({ id, state}) => {
           <Text>PERFORMA INVOICE</Text>
         </View>
 
-      {/* table */}
 
-      <View style={styles.table}>
+      <View style={{ height: 20 }} />
+
+        {/* table additional */}
+        <View style={styles.table}>
+            {/* Table Header */}
+            <View style={styles.tableHeaderRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>TITLE</Text>
+              </View>
+                  
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>QTY</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>UNIT</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>PRICE</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>TOTAL</Text>
+              </View>
+            </View>
+            {/* Table Content */}
+            {pdfData?.additional.map((item, index) => (
+              <View key={index} style={styles.tableRow}>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>{item.title}</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>{item.quantity}</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>{item.unit}</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>{item.price}</Text>
+                </View>
+                <View style={styles.tableCol}>
+                  <Text style={styles.tableCell}>{item.item_total}</Text>
+                </View>
+              </View>
+            ))}
+
+        </View>
+        {/* end of table additional */}
+
+        {/* table products */}
+
+        <View style={styles.table}>
           {/* Table Header */}
           <View style={styles.tableHeaderRow}>
             <View style={styles.tableCol}>
+              <Text style={styles.tableCellHeader}>TITLE</Text>
+            </View>
+                
+            <View style={styles.tableCol}>
               <Text style={styles.tableCellHeader}>QTY</Text>
             </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCellHeader}>UNIT</Text>
-            </View>
-            <View style={styles.descriptionRow}>
+            <View style={styles.descriptionCol}>
               <Text style={styles.tableCellHeader}>DESCRIPTION</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCellHeader}>UNIT PRICE</Text>
+              <Text style={styles.tableCellHeader}>PRICE</Text>
             </View>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCellHeader}>AMOUNT</Text>
+              <Text style={styles.tableCellHeader}>TOTAL</Text>
             </View>
           </View>
           {/* Table Content */}
-          <View style={styles.tableRow}>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>John Doe</Text>
+          {pdfData?.quotationItem.map((item, index) => (
+            <View key={index} style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.product_name}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.qty}</Text>
+              </View>
+              <View style={styles.descriptionCol}>
+                <Text style={styles.tableCell}>{item.description}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.base_price}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.item_total}</Text>
+              </View>
             </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>John Doe</Text>
-            </View>
-            <View style={styles.descriptionRow}>
-              <Text style={styles.tableCell}>
-              Paragraphs are the building blocks of papers. Many students define paragraphs in terms of length: a paragraph is a group of at least five sentences, a paragraph is half a page long, etc. In reality, though, the unity and coherence of ideas among sentences is what constitutes a paragraph. A paragraph is defined as “a group of sentences or a single sentence that forms a unit” (Lunsford and Connors 116). Length and appearance do not determine whether a section in a paper is a paragraph. For instance, in some styles of writing, particularly journalistic styles, 
-              </Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>1234 Main St</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>555-1234</Text>
-            </View>
-          </View>
-          {/* row 100% */}
-          <View>
-            <View style={styles.fullRow}>
-              <Text style={styles.tableCell}>555-1234</Text>
-            </View>
-          </View>
-
-
-          <View style={styles.tableRow}>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>John Doe</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>John Doe</Text>
-            </View>
-            <View style={styles.descriptionRow}>
-              <Text style={styles.tableCell}>
-              Paragraphs are the building blocks of papers. Many students define paragraphs in terms of length: a paragraph is a group of at least five sentences, a paragraph is half a page long, etc. In reality, though, the unity and coherence of ideas among sentences is what constitutes a paragraph. A paragraph is defined as “a group of sentences or a single sentence that forms a unit” (Lunsford and Connors 116). Length and appearance do not determine whether a section in a paper is a paragraph. For instance, in some styles of writing, particularly journalistic styles, 
-              </Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>1234 Main St</Text>
-            </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>555-1234</Text>
-            </View>
-          </View>
-
-          {/* row 100% */}
-          <View>
-            <View style={styles.fullRow}>
-              <Text style={styles.tableCell}>555-1234</Text>
-            </View>
-          </View>
-
-          {/* Add more rows as needed */}
+          ))}
         </View>
+        {/* end of table products */}
 
 
+        {/* table tax */}
+        <View style={styles.table}>
+          {/* Table Header */}
+          <View style={styles.tableHeaderRow}>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCellHeader}>TITLE</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCellHeader}>TOTAL</Text>
+            </View>
+          </View>
+          {/* Table Content */}
+          {pdfData?.tax.map((item, index) => (
+            <View key={index} style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.title}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.item_total}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+        {/* end of table tax */}
 
+        {/* table discount */}
+        <View style={styles.table}>
+          {/* Table Header */}
+          <View style={styles.tableHeaderRow}>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCellHeader}>TITLE</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCellHeader}>TOTAL</Text>
+            </View>
+          </View>
+          {/* Table Content */}
+          {pdfData?.discount.map((item, index) => (
+            <View key={index} style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.title}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{item.item_total}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+        {/* end of table discount */}
+
+
+        {/* table discount */}
+        <View style={styles.table}>
+          <View style={styles.tableRowTotal}>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>TOTAL AMOUNT</Text>
+            </View>
+            <View style={styles.tableCol}>
+              <Text style={styles.tableCell}>{pdfData?.quotation.grand_total}</Text>
+            </View>
+          </View>
+        </View>
+        {/* end of table discount */}
+
+      {/* <Text style={{ marginTop: 20 }}>Signature:</Text>
+      {pdfData && (
+        <Image style={styles.signature} src={pdfData.signature} />
+      )} */}
+
+
+      {/* Bottom Space */}
+      <View style={{ height: 100 }} />
       </Page>
 
 
   </Document>
   </>
-
-
-
  )
 }
 

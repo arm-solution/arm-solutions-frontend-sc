@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { errorDialog } from '../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
-import { deleteProposalItem, deleteProposalItems } from '../../store/features/proposalItemSlice';
+import { deleteProposalItem, deleteMultipleProposalItems } from '../../store/features/proposalItemSlice';
 import { deleteConfirmation } from '../../customs/global/alertDialog'; 
 import './QoutationTableEditable.css';
+import { useGlobalRefs } from '../../customs/global/useGlobalRef';
+import ProductDropdown from '../product-dropdown-cell/ProductDropdown';
+// import FloatNotification from '../../float-notification/FloatNotification';
 
 
 const QoutationTableEditable = (props) => {
 
-    const [inputAccessNumDays, setInputAccessNumDays] = useState(false);
     const [products, setProducts] = useState([]);
-    const [productItemDetails, setProductItemDetails] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [selectedRow, setSelectedRow] = useState([]);
     const [validateNegativeQty, setValidateNegativeQty] = useState(false);
 
+
+    // for global reference
+    const { preProductItemsRef } = useGlobalRefs();
     const dispatch = useDispatch();
 
     // calling product api for select options
@@ -31,41 +35,6 @@ const QoutationTableEditable = (props) => {
 
         fetchData();
     }, []);
-    
-
-    // activating getting sessionStorage and set to product details state
-    useEffect(() => {
-        const fetchFromSession = () => {
-          const proposalDetails = sessionStorage.getItem('proposalDetails');
-      
-          if (proposalDetails) {
-            const { quotationItem: quotationItemData } = JSON.parse(proposalDetails);
-            const setAmount = quotationItemData.map(d => ({
-                ...d,
-                amount: parseInt(d.qty) * parseInt(d.base_price)
-            }))
-           
-            setProductItemDetails(setAmount)
-            const totalItemAmount = setAmount.reduce((sum, item) => sum + item.amount, 0)
-            props.setTotalAmountref(parseInt(totalItemAmount))
-          }
-        };
-      
-        // Fetch the session storage data on component mount
-        fetchFromSession();
-      
-        // Add event listener for 'sessionUpdated' (if needed to listen to updates)
-        const handleSessionUpdate = () => {
-          fetchFromSession();
-        };
-        window.addEventListener('sessionUpdated', handleSessionUpdate);
-      
-        // Clean up event listener when the component unmounts
-        return () => {
-          window.removeEventListener('sessionUpdated', handleSessionUpdate);
-        };
-    }, []);  // Empty dependency array ensures it runs once on mount
-
 
 
     // calculate the total amount
@@ -73,11 +42,8 @@ const QoutationTableEditable = (props) => {
         // Convert all relevant fields to numbers
         const basePrice = parseFloat(row.base_price) || 0;
         const quantity = parseInt(row.qty, 10) || 0; // Changed to `qty`
-        const numberOfDays = parseInt(row.number_of_days, 10) || 0;
     
-        return row.name === 'Man Power'
-            ? basePrice * quantity * numberOfDays
-            : basePrice * quantity;
+        return basePrice * quantity;
     };
     
     const handleInputChange = (e, id) => {
@@ -89,7 +55,7 @@ const QoutationTableEditable = (props) => {
             setValidateNegativeQty(false);
         }
         // Update the field first
-        setProductItemDetails(prevDetails => {
+        props.pid.setProductItemDetails(prevDetails => {
             const updatedDetails = prevDetails.map(row =>
                 row.id === id
                     ? {
@@ -107,100 +73,149 @@ const QoutationTableEditable = (props) => {
     
     // adding row template in the table
     const addRow = () => {
-        setProductItemDetails([...productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
+        props.pid.setProductItemDetails([...props.pid.productItemDetails, { id: 0, proposal_id: 0,  name: '', category_name: '', qty: 0, unit: '', number_of_days: 0, price: 0, amount: 0, isEditing: true }]);
     };
 
     // delete row in the table 
-    const deleteRow = (id, item_id) => {
-        deleteConfirmation({
-            title: "",
-            text: "",
-            icon: "",
-            confirmButtonText: "",
-            cancelButtonText: "",
-            deleteTitle: "",
-            deleteText: "",
-            successTitle: "", 
-            successText: ""
-        }, async () => {
-    
-            let updatedDetails;
-    
-            // checking if id from the database is exist
-            if(item_id) {
-                const { payload } = await dispatch(deleteProposalItem(item_id));
-                const result = payload.affectedRows > 0 ? true : false;
-                if (result) {
-                    updatedDetails = productItemDetails.filter(row => row.id !== id);
-                }
+    const  deleteRow = (rowId, mysqlId, row) => {
 
-            } else {
-                updatedDetails = productItemDetails.filter(row => row.id !== id);
-            }
-    
-            // Updating state and then calculating total amount
-            if (updatedDetails) {
-                setProductItemDetails(updatedDetails);
-                const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
-                props.totalAmount.setTotalAmount(totalItemAmount);
-                props.setTotalAmountref(totalItemAmount)
-                return true;
-            }
-        });
-    };
+        let updatedDetails;
 
-    // save and edit row
-    const toggleSaveAndEdit = (id) => {
+        if(mysqlId) {
+            // collecting data that need to delete
+            props.setDataTotDelete(prev => ({
+                ...prev,
+                quotationItems: [...prev.quotationItems, mysqlId]
+            }))
 
-       const checkProduct = productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
-       const totalItemAmount = productItemDetails.reduce((sum, item) => sum + item.amount, 0)
-       props.totalAmount.setTotalAmount(totalItemAmount)
-       props.setTotalAmountref(totalItemAmount)
-       const getproductItemDetails = productItemDetails.find(d => d.id === id);
+            updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        } else {
+            updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        }
 
-       console.log("productItemDetails", productItemDetails)
-
-       if(getproductItemDetails.name !== 'Man Power') {
-        setInputAccessNumDays(true);
-       }
-       
-       if(checkProduct) {
-           errorDialog("All Fields Are Required")
-           return;
+        if (updatedDetails) {
+            props.pid.setProductItemDetails(updatedDetails);
+            preProductItemsRef.current = [...updatedDetails];
+            // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+            props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+            props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
         }
         
-        // reshaping data
-        const updatedQoutationItems = productItemDetails.map(data => ({
+
+
+
+        // deleteConfirmation({
+        //     title: "",
+        //     text: "",
+        //     icon: "",
+        //     confirmButtonText: "",
+        //     cancelButtonText: "",
+        //     deleteTitle: "",
+        //     deleteText: "",
+        //     successTitle: "", 
+        //     successText: ""
+        // }, async () => {
+    
+        //     let updatedDetails;
+
+
+    
+        //     // // checking if id from the database is exist
+        //     if(mysqlId) {
+        //         const { payload } = await dispatch(deleteProposalItem(mysqlId));
+        //         const result = payload.affectedRows > 0 ? true : false;
+        //         if (result) {
+        //             updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        //         }
+
+        //     } else {
+        //         updatedDetails = props.pid.productItemDetails.filter(row => row.id !== rowId);
+        //     }
+    
+        //     // // Updating state and then calculating total amount
+        //     if (updatedDetails) {
+        //         props.pid.setProductItemDetails(updatedDetails);
+        //         preProductItemsRef.current = [...updatedDetails];
+        //         // const totalItemAmount = updatedDetails.reduce((sum, item) => sum + item.amount, 0)
+        //         props.setTotalAmount(pre => parseFloat(pre) - parseFloat(row.amount));
+        //         props.setTotalAmountref(pre => parseFloat(pre) - parseFloat(row.amount))
+        //         return true;
+        //     }
+        // });
+    };
+    
+
+    
+    const toggleSaveAndEdit = (id) => {
+        const checkProduct = props.pid.productItemDetails.find(p => parseInt(p.qty) === 0 || p.name === '');
+
+        const checkStock = props.pid.productItemDetails.find(p => parseInt(p.qty) > parseInt(p.stock_quantity));
+       
+        if (checkProduct) {
+            errorDialog("All Fields Are Required");
+            return;
+        }
+
+        if(checkStock) {
+            errorDialog("The stock is not enough for the quantity you entered.");
+            return;
+        }
+
+        const updatedDetails = props.pid.productItemDetails.map(data => ({
+            ...data,
+            amount: parseInt(data.qty) * parseInt(data.base_price),
+            stock_quantity:  parseInt(data.stock_quantity) - parseInt(data.qty)
+        }));
+
+        // console.log("updatedDetails", updatedDetails)
+    
+        props.pid.setProductItemDetails(updatedDetails);
+    
+        // ✅ Initialize reference if undefined
+        if (!preProductItemsRef.current || !Array.isArray(preProductItemsRef.current)) {
+            preProductItemsRef.current = [];
+        }
+        const newProductTotal = updatedDetails.reduce((sum, item) => sum + (item.amount || 0), 0);
+
+
+        props.setTotalAmountref(newProductTotal);
+    
+        // ✅ Update prevItemsRef AFTER calculations
+        preProductItemsRef.current = [...updatedDetails];
+
+        props.computeTotalProposal(null, updatedDetails)
+
+        console.log("updatedDetails", updatedDetails)
+    
+        const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,
             product_id: data.id,
             quantity: parseInt(data.qty),
             price: parseInt(data.base_price),
-            proposal_item_id: data.proposal_item_id | 0,
+            proposal_item_id: data.proposal_item_id || 0,
             sku: data.sku,
+            amount: data.amount
         }));
-    // this is the state  that going to save to database 
-    // on QoutationForm jsx
-     props.setQoutationItem(updatedQoutationItems);
-        
-    // saving another row on the table
-        setProductItemDetails(prevDetails => prevDetails.map(row =>
-            row.id === id ? { ...row, isEditing: !row.isEditing } : row
-        ));
 
+    
+        if (JSON.stringify(updatedQuotationItems) !== JSON.stringify(props.qoutationItem)) {
+            props.setQoutationItem(updatedQuotationItems);
+        }
+    
+        props.pid.setProductItemDetails(prevDetails =>
+            prevDetails.map(row =>
+                row.id === id ? { ...row, isEditing: !row.isEditing } : row
+            )
+        );
     };
+    
 
     // handle product onchange select dropdown
-    const handleProduct = (e, rowId) => {
+    const handleProductSelection = (e, rowId) => {
         const selectedProductId = parseInt(e.target.value);
         const selectedProduct = products.find(product => product.id === selectedProductId);
 
-        const productExist = productItemDetails.find(p => p.id === selectedProductId);
-
-        if(selectedProduct.name === 'Man Power') {
-            setInputAccessNumDays(false)
-        } else {
-            setInputAccessNumDays(true)
-        }
+        const productExist = props.pid.productItemDetails.find(p => p.id === selectedProductId);
 
         if (productExist) {
             props.setNotification({
@@ -209,15 +224,13 @@ const QoutationTableEditable = (props) => {
             })
             return;
         }
-
-        setProductItemDetails(prevDetails => prevDetails.map(row => 
-            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true } : row
-        
+        props.pid.setProductItemDetails(prevDetails => prevDetails.map(row => 
+            row.id === rowId ? { ...row, ...selectedProduct, isEditing: true, markup_price: selectedProduct.base_price } : row
         ));
 
     };
 
-    const anyRowEditing = productItemDetails.some(row => row.isEditing);
+    const anyRowEditing = props.pid.productItemDetails.some(row => row.isEditing);
 
     const screenMobile = () => {
         if(window.innerWidth < 900){
@@ -255,10 +268,16 @@ const QoutationTableEditable = (props) => {
             successTitle: "", 
             successText: ""
         }, async () => {
-            const response = await dispatch(deleteProposalItems(selectedIds))
+
+
+
+            const { payload } = await dispatch(deleteMultipleProposalItems(selectedIds))
+
+            // hindi na kelangan mag lagay ng computeTotalProposal
+            // may useeffect ba nag hahandle if nag bago ang amount ref
             
-            if(response.payload.success) {
-                setProductItemDetails(productItemDetails.filter(row => !selectedRow.includes(row.id)));
+            if(payload.success) {
+                props.pid.setProductItemDetails(props.pid.productItemDetails.filter(row => !selectedRow.includes(row.id)));
                 return true;
             } else {
                 return false;
@@ -273,6 +292,7 @@ const QoutationTableEditable = (props) => {
         <div className="table-editable-container">
 
           <div className="container mt-4">
+            <h5 className="text-muted">Products</h5>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -281,14 +301,14 @@ const QoutationTableEditable = (props) => {
                         <th>Category</th>
                         <th>Qty</th>
                        { !screenMobile() && <th>Unit</th> }
-                        <th>No. Days</th>
                         <th>Price</th>
-                        <th>Amount</th>
+                        <th>Markup price</th>
+                        <th>Total</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {productItemDetails.map((row, index) => (
+                    {props.pid.productItemDetails.map((row, index) => (
                         <tr key={index}>
                             
                             <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
@@ -297,22 +317,15 @@ const QoutationTableEditable = (props) => {
          
                             </td>
                             <td>
-                                {row.isEditing ? (
-                                    <select
-                                        className="form-select"
-                                        aria-label="Default select example"
-                                        defaultValue='0'
-                                        name="product_id"
-                                        onChange={(e) => handleProduct(e, row.id)}
-                                    >
-                                        <option value='0' disabled>Products</option>
-                                        {products.map(product => (
-                                            <option key={product.id} value={product.id}>{product.name}</option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    row.name
-                                )}
+                            {row.isEditing ? (
+                                <ProductDropdown 
+                                row={row}
+                                products={products}
+                                handleProductSelection={handleProductSelection}
+                                />
+                            ) : (
+                                row.name
+                            )}
                             </td>
                             <td>{row.category_name}</td>
                             <td>
@@ -331,19 +344,7 @@ const QoutationTableEditable = (props) => {
                             { !screenMobile() && <td>{row.unit}</td> }
 
                                 <td>
-                                 {row.isEditing ? (
-                                     <input
-                                         type="number"
-                                         className="form-control"
-                                         value={row.number_of_days || ''}
-                                         name='number_of_days'
-                                         onChange={(e) => handleInputChange(e, row.id)}
-                                         disabled={inputAccessNumDays}
-                                     />
-                                 ) : (
-                                     row.number_of_days
-                                 )}
-
+                                    {row.markup_price | 0}
                                 </td>
 
                             {/* <td>{row.base_price | 0}</td> */}
@@ -362,7 +363,7 @@ const QoutationTableEditable = (props) => {
                                 ) : (
                                     <button className="btn btn-primary btn-sm" onClick={() => toggleSaveAndEdit(row.id)}>Edit</button>
                                 )}
-                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id)} disabled={selectedIds.length}>Delete</button>
+                                <button className="btn btn-danger ms-2 btn-sm" onClick={() => deleteRow(row.id, row.proposal_item_id, row)} disabled={selectedIds.length}>Delete</button>
                             </td>
                         </tr>
 
@@ -371,7 +372,7 @@ const QoutationTableEditable = (props) => {
                 </tbody>
             </table>
             <button
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 onClick={addRow}
                 disabled={anyRowEditing}
             >

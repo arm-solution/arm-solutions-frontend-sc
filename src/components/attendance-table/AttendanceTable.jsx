@@ -15,6 +15,19 @@ const AttendanceTable = (props) => {
     const { dtrById } = useSelector(state => state.dtr);
 
     const [currentPage, setCurrentPage] = useState(1);
+    const [dateRange, setDateRange] = useState({
+        dateFrom: '',
+        dateTo: ''
+    })
+    
+    useEffect(() => {
+        dispatch(getDtrById({
+          id: getLoggedInID(),
+          from: dateRange.dateFrom | undefined,
+          to: dateRange.dateTo | undefined
+        }));
+      }, []);
+
 
     const getIndex = () => {
       const startIndex = (currentPage - 1) * parseInt(props.perPage, 10);
@@ -23,9 +36,6 @@ const AttendanceTable = (props) => {
       return { start: startIndex, end: endIndex };
       
     }
-    useEffect(() => {
-      dispatch(getDtrById(getLoggedInID()));
-    }, [dispatch])
     
     const totalPages = Math.ceil(dtrById.length / 10);
 
@@ -38,7 +48,25 @@ const AttendanceTable = (props) => {
         setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
     };
 
-    
+
+    const getDateChange = (e, field) => {
+        setDateRange((pre) => ({
+            ...pre,
+            [field]: e.target.value
+        }))
+    }
+
+    const searchAttendance = () => {
+        if(dateRange.dateFrom === '' || dateRange.dateTo ) {
+            return;
+        }
+        
+        dispatch(getDtrById({
+            id: getLoggedInID(),
+            from: dateRange.dateFrom || undefined,
+            to: dateRange.dateTo || undefined
+          }));
+    }
 
 
   return (
@@ -50,9 +78,9 @@ const AttendanceTable = (props) => {
                     
                 <p>Search By Date Range</p>
                 <div className="input-group">
-                <input type="date" className="form-control" placeholder="First Name" aria-label="First Name" />
-                <input type="date" className="form-control" placeholder="Last Name" aria-label="Last Name" />
-                <button className="btn btn-primary">Search</button>
+                <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateFrom')} />
+                <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateTo')} />
+                <button className="btn btn-primary" onClick={searchAttendance}>Search</button>
                 </div>
 
 

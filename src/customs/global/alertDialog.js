@@ -88,7 +88,7 @@ export const handleConfirmation = async (
 
       if (callbackResult) {
         await swalWithBootstrapButtons.fire({
-          title: confirmationTitle || "Successfull",
+          title: confirmationTitle || "Successful",
           text: confirmationText || "",
           icon: "success"
         });

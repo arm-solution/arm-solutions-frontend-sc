@@ -1,0 +1,92 @@
+/* -------------------------------------------------
+   Main card wrapper
+-------------------------------------------------- */
+.admin-table-wrapper {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+}
+
+/* -------------------------------------------------
+   Search pill
+-------------------------------------------------- */
+.search-group .form-control {
+  border-top-left-radius: 2rem;
+  border-bottom-left-radius: 2rem;
+  padding-left: 1rem;
+}
+.search-group .btn {
+  border-top-right-radius: 2rem;
+  border-bottom-right-radius: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+/* -------------------------------------------------
+   Table container (outer border only)
+-------------------------------------------------- */
+.table-wrapper {
+  border: 2px solid #dee2e6;
+  background-color: #ffffff;
+  overflow: hidden;
+  border-radius: 0;
+}
+
+/* -------------------------------------------------
+   TABLE RESET & STRUCTURE
+-------------------------------------------------- */
+.clean-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.clean-table thead th {
+  color: #5a5757 !important;
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1.15rem 1rem;
+  letter-spacing: 0.5px;
+  background-color: #f8f9fa; /* light background so border is visible */
+}
+
+/* ✅ Apply visible bottom borders via td */
+.clean-table tbody tr:not(:last-child) td {
+  border-bottom: 1px solid #ced4da !important; /* thicker and darker */
+}
+
+/* Ensure table rows have background so border shows */
+.clean-table tbody tr {
+  background-color: #fff;
+}
+
+.clean-table td {
+  border: none !important;
+  padding: 1rem;
+  vertical-align: middle;
+}
+/* -------------------------------------------------
+   Pagination (inside table-wrapper)
+-------------------------------------------------- */
+.pagination-container {
+  width: 100%;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.custom-pagination .page-link {
+  border-radius: 0.375rem;
+  color: #0d6efd;
+  padding: 0.375rem 0.75rem;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

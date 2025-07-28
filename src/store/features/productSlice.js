@@ -2,8 +2,7 @@ import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 
-export const addNewProduct = createAsyncThunk('addNewProduct', async (product, {rejectWithValue}) => {
-    
+export const addNewProduct = createAsyncThunk('addNewProduct', async (product, { rejectWithValue }) => {
     try {
 
         const res = axios.post(`${process.env.REACT_APP_API_BASE_URL}/products/save-product`, product);
@@ -22,23 +21,40 @@ export const deleteProduct = createAsyncThunk('deleteProduct', async(id, {reject
     } catch (error) {
         return rejectWithValue(error.response.data);
     }
-    
 })
 
-
-export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
+export const updateProduct = createAsyncThunk('updateProduct', async (product, { rejectWithValue }) => {
     try {
-        const response = await axios.get('http://localhost:5000/products/get-products');
-        return [...response.data]
+        const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/products/update-product`, product);
+        return data;
     } catch (error) {
-        return error.message;
+        return rejectWithValue(error.response ? error.response.data : error.message);
     }
-})
+});
+
+// export const getAllProducts = createAsyncThunk('getAllProducts', async () => {
+//     try {
+//         const response = await axios.get('http://localhost:5000/products/get-products');
+//         return [...response.data]
+//     } catch (error) {
+//         return error.message;
+//     }
+// })
+export const getAllProducts = createAsyncThunk('getAllProducts', async (_, {rejectWithValue}) => {
+
+    try {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`);
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+});
 
 const productSlice = createSlice({
     name: 'products',
     initialState: {
         data: [],
+        getAllProduct: [],
         isSuccess: false,
         loading: true,
         message: '',
@@ -82,6 +98,20 @@ const productSlice = createSlice({
         .addCase(addNewProduct.rejected, (state, action) => {
             state.loading = false;
             state.isSuccess = false;
+        })
+        .addCase(updateProduct.pending, (state) => {
+            state.loading = true;
+            state.isSuccess = false;
+        })
+        .addCase(updateProduct.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+        })
+        .addCase(updateProduct.rejected, (state, _) => {
+            state.loading = false;
+            state.isSuccess = false;
+            state.message = "rejected";
         })
 
         

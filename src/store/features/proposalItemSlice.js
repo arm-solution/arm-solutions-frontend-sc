@@ -13,7 +13,8 @@ export const saveProposalItems = createAsyncThunk('proposalItems/addProposalItem
 export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/getitembyproposalid', async (proposal_id, { rejectWithValue }) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/get-item/${proposal_id}`);
-
+        
+        // console.log("proposal items", result.data);
         const newSet = result.data.map(d => ({
                 base_price: parseInt(d.proposal_price),
                 sku: d.product_base_sku,
@@ -23,10 +24,15 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
                 qty: d.proposal_quantity,
                 description: d.product_descriptio,
                 name: d.product_name,
+                description: d.product_description,
                 id: d.product_id,
                 category_name: d.product_category_name,
-                proposal_item_id: d.id // this is the main id
+                proposal_item_id: d.id,
+                item_total: d.item_total
+
         }))
+
+        console.log("new set", newSet);
 
         return newSet
 
@@ -39,7 +45,7 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
 export const updateProposalItems = createAsyncThunk('proposalItems/updateProposalItems', async(items, {rejectWithValue}) =>{
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/update-multiple-proposal-item`, items);
-
+        console.log("updare data response", data)
         return data;
     } catch (error) {
         return rejectWithValue(error.response.data);
@@ -57,14 +63,11 @@ export const deleteProposalItem = createAsyncThunk('proposalItems/deleteProposal
     }
 })
 
-export const deleteProposalItems = createAsyncThunk('proposalItems/deleteProposalItems', async (ids, { rejectWithValue }) => {
+export const deleteMultipleProposalItems = createAsyncThunk('proposalItems/deleteProposalItems', async (ids, { rejectWithValue }) => {
    
       try {
-        const { data } = await axios.delete(
-          `${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, 
-          { data: ids }
-        );
-
+        const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, { data: ids });
+        console.log("deleteMultipleProposalItems", data);
         return data;
       } catch (error) {
         return rejectWithValue(error.response.data);

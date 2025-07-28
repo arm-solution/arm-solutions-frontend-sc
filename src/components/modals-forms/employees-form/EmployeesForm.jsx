@@ -7,7 +7,6 @@ import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { dateFormatted } from '../../../customs/global/manageDates';
 import { fetchAllBarangays, fetchAllCities, fetchAllProvince } from '../../../store/features/getProvince';
-import { unwrapResult } from '@reduxjs/toolkit';
 
 const EmployeesForm = (props) => {
   const dispatch = useDispatch();
@@ -63,6 +62,12 @@ const EmployeesForm = (props) => {
     dispatch(getDepartment());
     dispatch(fetchAllProvince());
   }, [dispatch]);
+
+
+    useEffect(() => {
+      console.log("province", provinces)
+    }, [])
+  
   
   
     const handleSelectedProvince = async (e) => {
@@ -138,11 +143,13 @@ const EmployeesForm = (props) => {
   // FOR SAVING NEW EMPLOYEE FUNCTION
   const saveNewEmployee = async (e) => {
     e.preventDefault();
-
-    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number) {
+    
+    console.log("employee data", employeeData)
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_type || !employeeData.contact_number || !employeeData.birthday) {
       errorDialog('Please fill in all required fields.');
       return;
     }
+
 
     try {
 
@@ -421,23 +428,23 @@ const EmployeesForm = (props) => {
 
                 <div className="row">
 
-                 <div className="col col-md-4">
+                 {/* <div className="col col-md-4">
                     <div className="form-group">
                       <label htmlFor="seection">Section</label>
                       <select className="form-select" name="section" value={employeeData.section || ''} onChange={handleEmployeeFormInput}>
                         <option value="" disabled>Select</option>
                       </select>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="col col-md-4">
+                  <div className="col col-md-6">
                     <div className="form-group">
                       <label htmlFor="user_password">Password</label>
                       <input type="text" className="form-control" name="user_password" value={employeeData.user_password || ''} onChange={handleEmployeeFormInput}/>
                     </div>
                   </div>
 
-                  <div className="col col-md-4">
+                  <div className="col col-md-6">
                     <div className="form-group">
                       <label htmlFor="confirm_password">Confirm-Password</label>
                       <input type="text" className="form-control" name="confirm_password" value={conPass} onChange={confirmPassword}/>

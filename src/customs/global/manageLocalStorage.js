@@ -5,14 +5,28 @@ export const checkAuthAndNavigate = (navigate) => {
     
     if (authData) {
       const { data } = JSON.parse(authData);
-      const role = data.length > 0 ? data[0].user_type : null; // Assuming data is an array with role inside
+      const role = data.length > 0 ? data[0].department : null; // Assuming data is an array with role inside
   
-      if (role === 'admin') {
+      if (role === 1) {
         navigate('/admin');
-      } else if (role === 'employee') {
-        navigate('/employee');
-      } else if (role === 'marketing') {
+      } else if (role === 10) {
+        navigate('/producttion');
+      } else if (role === 8) {
         navigate('/marketing');
+      } else if (role === 6) {
+        navigate('/engineering');
+      } else if (role === 5) {
+        navigate('/warehouse');
+      } else if (role === 7) {
+        navigate('/purchasing');
+      } else if (role === 9) {
+        navigate('/sales');
+      } else if (role === 4) {
+        navigate('/finance');
+      } else if (role === 3) {
+        navigate('/accounting');
+      } else if (role === 2) {
+        navigate('/hr');
       }
     
     }
@@ -158,7 +172,103 @@ export const checkAuthAndNavigate = (navigate) => {
       return null
     }
   };
+
+// Get the logged-in user's department ID
+export const getDepartmentLoggedIn = () => {
+  try {
+    const loginUser = localStorage.getItem('authEmployee');
+    if (!loginUser) return null;
+
+    const parsedUser = JSON.parse(loginUser);
+    return parsedUser && parsedUser.data && parsedUser.data[0]
+      ? parsedUser.data[0].department
+      : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+// Check if the logged-in user's department is allowed
+// sample parameters is department id [1,3,4]
+export const isDepartmentAllowed = (allowedDepartments) => {
+  const userDepartment = getDepartmentLoggedIn();
+
+  // If no departments are specified, allow all departments
+  if (!allowedDepartments || allowedDepartments.length === 0) {
+    return userDepartment !== null;
+  }
+
+  return userDepartment !== null && allowedDepartments.includes(userDepartment);
+};
+
+
+export const getApprovalState = (status) => {
+  let approver = {
+    previousDepartment: 0,
+    status: '',
+    targetDepartment: 0
+  }
+
+  if(!getDepartmentLoggedIn()) {
+    return approver;
+  }
   
+
+  if(getDepartmentLoggedIn() === 8) {
+    // marketing statage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for engineering"
+    approver.targetDepartment = 6
+  } else if(getDepartmentLoggedIn() === 6 && status === 'for engineering') {
+    // engineering stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for warehouse"
+    approver.targetDepartment = 5
+  } if(getDepartmentLoggedIn() === 5) {
+    // warehouse stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for purchasing"
+    approver.targetDepartment = 7
+  } if(getDepartmentLoggedIn() === 7) {
+    // purchasing stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for accounting"
+    approver.targetDepartment = 3
+  } if(getDepartmentLoggedIn() === 3) {
+    // accounting stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for finance"
+    approver.targetDepartment = 4
+  } if(getDepartmentLoggedIn() === 4) {
+    // finance stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for admin"
+    approver.targetDepartment = 1
+  } if(getDepartmentLoggedIn() === 1) {
+    // admin stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "for engineering review"
+    approver.targetDepartment = 6
+  }
+
+  if(getDepartmentLoggedIn() === 6 && status === 'for engineering review') {
+        // enginering review stage
+        approver.previousDepartment = getDepartmentLoggedIn()
+        approver.status = "for finance review"
+        approver.targetDepartment = 4
+  } 
+
+  if(getDepartmentLoggedIn() === 4 && status === 'for finance review') {
+    // finance review stage 
+    // the final stage
+    approver.previousDepartment = getDepartmentLoggedIn()
+    approver.status = "completed"
+    approver.targetDepartment = 0
+ } 
+
+ return approver;
+
+}
   
   
   
