@@ -94,9 +94,9 @@ export const router = createBrowserRouter(
       </Route> */}
 
       {/* Protected Login */}
-      <Route element={<ProtectedRoute />}>
-        <Route path="/" element={LazyComponent(Login)} />
-      </Route>
+      {/* <Route element={<ProtectedRoute />}> */}
+        <Route path="/" element={<Login />} />
+      {/* </Route> */}
 
       {/* Admin Routes */}
       <Route element={<RequireAuth />}>
