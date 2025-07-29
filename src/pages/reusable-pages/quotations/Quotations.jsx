@@ -50,9 +50,9 @@ const Quotations = () => {
       {header: 'Status', accessor: 'status'},
     ]
 
-    useEffect(() => {
-      dispatch(getAllProposal());
-    }, [dispatch]);
+      useEffect(() => {
+        dispatch(getAllProposal());
+      }, [dispatch]);
     
 
     const handleView = async (row) => {
