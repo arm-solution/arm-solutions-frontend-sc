@@ -52,7 +52,15 @@ const Quotations = () => {
 
       useEffect(() => {
         dispatch(getAllProposal());
-      }, [dispatch]);
+        if(proposalData) {
+          console.log("proposal data", proposalData);
+        }
+      }, [dispatch, proposalData]);
+
+      useEffect(() => {
+
+      }, [])
+      
     
 
     const handleView = async (row) => {
