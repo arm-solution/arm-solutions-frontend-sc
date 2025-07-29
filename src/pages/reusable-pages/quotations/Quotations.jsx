@@ -45,11 +45,6 @@ const Quotations = () => {
       {header: 'Status', accessor: 'status'},
     ]
 
-    useEffect(() => {
-      dispatch(getAllProposal());
-    }, [dispatch]);
-    
-
 
   
     const handleDelete = (id) => {
