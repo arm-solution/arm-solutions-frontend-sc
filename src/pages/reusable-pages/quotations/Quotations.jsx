@@ -51,7 +51,7 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      // dispatch(getAllProposal());
+      dispatch(getAllProposal());
     }, [dispatch]);
     
 
