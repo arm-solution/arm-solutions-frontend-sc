@@ -50,18 +50,10 @@ const Quotations = () => {
       {header: 'Status', accessor: 'status'},
     ]
 
-      useEffect(() => {
-        dispatch(getAllProposal());
-        if(proposalData) {
-          console.log("proposal data", proposalData);
-        }
-      }, [dispatch, proposalData]);
+    useEffect(() => {
+      dispatch(getAllProposal());
+    }, [dispatch]);
 
-      useEffect(() => {
-
-      }, [])
-      
-    
 
     const handleView = async (row) => {
       try {
@@ -85,7 +77,6 @@ const Quotations = () => {
         if(row) {
           // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
           // the issue is you getting the row the row is not from the database fix this
-          console.log("db subtotal", row.sub_total)
           setTotalAmountref(parseFloat(row.sub_total));
         }
     
