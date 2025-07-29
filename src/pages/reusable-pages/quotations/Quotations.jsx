@@ -38,10 +38,10 @@ const Quotations = () => {
         setSelectedTab(event.target.id);
     };
 
-    const clientDataWithFormattedDate = (proposalData || []).map(d => ({
-      ...d,
-      date_created: formatDateTime(d.date_created)
-    }))
+    // const clientDataWithFormattedDate = (proposalData || []).map(d => ({
+    //   ...d,
+    //   date_created: formatDateTime(d.date_created)
+    // }))
 
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
@@ -137,7 +137,7 @@ const Quotations = () => {
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 
-                <DataTable 
+                {/* <DataTable 
                   data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
                   columns={columns}
                   actions={{ handleView, handleDelete }}
@@ -145,7 +145,7 @@ const Quotations = () => {
                   deleteAccess={true}
                   showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
                   tableLabel = 'Proposal Lists'
-                />
+                /> */}
 
           </div>
 
