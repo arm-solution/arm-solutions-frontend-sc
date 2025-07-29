@@ -38,6 +38,11 @@ const Quotations = () => {
         setSelectedTab(event.target.id);
     };
 
+    const clientDataWithFormattedDate = (proposalData || []).map(d => ({
+      ...d,
+      date_created: formatDateTime(d.date_created)
+    }))
+
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
       {header: 'Estimate', accessor: 'sub_total'},
@@ -45,7 +50,44 @@ const Quotations = () => {
       {header: 'Status', accessor: 'status'},
     ]
 
+    useEffect(() => {
+      // dispatch(getAllProposal());
+    }, [dispatch]);
+    
 
+    const handleView = async (row) => {
+      try {
+        setSelectedTab('tab-two');
+        setProposalEdit(row);
+    
+        const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
+          dispatch(getDiscountAndTaxByproposalId(row.id)),
+          dispatch(getProposalItemsByProposalId(row.id)),
+          dispatch(getAdditionalByProposalID(row.id))
+        ]);
+    
+        // Store the data in sessionStorage after dispatches complete
+        sessionStorage.setItem('proposalDetails', JSON.stringify({
+          quotation: row,  // Use the row since it's already the proposalEdit data
+          quotationItem: proposalItemsResult.payload,
+          taxDiscount: discountTaxResult.payload,
+          additionalItems: additionalItems.payload
+        }));
+
+        if(row) {
+          // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
+          // the issue is you getting the row the row is not from the database fix this
+          console.log("db subtotal", row.sub_total)
+          setTotalAmountref(parseFloat(row.sub_total));
+        }
+    
+        // Dispatch a custom event to signal that sessionStorage is updated
+        window.dispatchEvent(new Event('sessionUpdated'));
+    
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
   
     const handleDelete = (id) => {
       deleteConfirmation({
@@ -95,13 +137,32 @@ const Quotations = () => {
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 
-
+                <DataTable 
+                  data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
+                  columns={columns}
+                  actions={{ handleView, handleDelete }}
+                  perPage={10}
+                  deleteAccess={true}
+                  showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
+                  tableLabel = 'Proposal Lists'
+                />
 
           </div>
 
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
             
-
+            <QuotationForm 
+              proposalStatus={proposalStatus}
+              loadingProposal={loadingProposal}
+              proposalEdit={proposalEdit}
+              proposalItemData={Array.isArray(proposalItemData) ? proposalItemData : []}
+              proposalItemLoading={proposalItemLoading}
+              proposalItemSuccess={proposalItemSuccess}
+              taxDiscountData={Array.isArray(taxDiscountData) ? taxDiscountData : []}
+              totalAmountState={{ totalAmount, setTotalAmount }}
+              taf={{ totalAmountref, setTotalAmountref }}
+              setSelectedTab={setSelectedTab}
+            /> 
 
         </div>
 

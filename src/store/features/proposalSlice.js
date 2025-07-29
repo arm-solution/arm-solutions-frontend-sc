@@ -5,9 +5,9 @@ import axios from 'axios';
 export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async (_, {rejectWithValue}) => {
 
     try {
-        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
         
-        return res.data;
+        return data;
 
     } catch (error) {
         rejectWithValue(error.response.data);
