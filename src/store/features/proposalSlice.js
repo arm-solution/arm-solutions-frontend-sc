@@ -75,9 +75,8 @@ const proposalSlice = createSlice({
             state.isSuccess = true;
             
             const payload = action.payload;
-            state.data = Array.isArray(payload) ? payload
-                        : Array.isArray(payload.data) ? payload.data
-                        : [];
+            state.data = Array.isArray(payload) ? payload : [];
+            
         })
         .addCase(getAllProposal.rejected, (state, action) => {
             state.isSuccess = false;
