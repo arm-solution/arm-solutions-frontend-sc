@@ -144,7 +144,7 @@ const Quotations = () => {
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Quotations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-
+{/* 
                 <DataTable 
                   data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
                   columns={columns}
@@ -153,7 +153,7 @@ const Quotations = () => {
                   deleteAccess={true}
                   showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
                   tableLabel = 'Proposal Lists'
-                />
+                /> */}
 
           </div>
 
