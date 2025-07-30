@@ -5,7 +5,7 @@ import axios from 'axios';
 export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async (_, {rejectWithValue}) => {
 
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all`);
         
         return data;
 
@@ -69,18 +69,18 @@ const proposalSlice = createSlice({
         //     state.loading = true;
         //     state.isSuccess = false
         // })
-        .addCase(getAllProposal.fulfilled, (state, action) => {
+        // .addCase(getAllProposal.fulfilled, (state, action) => {
             // console.log("getAllProposal payload:", action.payload);
             // state.loading = false;
-            state.isSuccess = true;
+            // state.isSuccess = true;
 
-            console.log("action", action);
+            // console.log("action", action);
             
-            const payload = action.payload;
-            console.log("the payload", payload);
-            state.data = Array.isArray(payload) ? payload : [];
+            // const payload = action.payload;
+            // console.log("the payload", payload);
+            // state.data = Array.isArray(payload) ? payload : [];
             
-        })
+        // })
         // .addCase(getAllProposal.rejected, (state, action) => {
         //     state.isSuccess = false;
         //     state.loading = false;
@@ -125,6 +125,11 @@ const proposalSlice = createSlice({
             state.loading = false;
             state.isSuccess = false;
             state.message = "rejected"
+        })
+        .addCase(getAllProposal.fulfilled, (state, action) => {
+            
+            state.data = action.payload;
+            console.log("payload", action.payload);
         })
     
     }, 
