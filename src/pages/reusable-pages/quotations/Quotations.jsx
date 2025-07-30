@@ -24,9 +24,9 @@ const Quotations = () => {
     const dispatch = useDispatch();
     
     //  this is from the redux
-    // const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
-    // const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
-    // const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
+    const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
+    const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
+    const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
     // propsal data for editing
     const [proposalEdit, setProposalEdit] = useState()
@@ -43,12 +43,12 @@ const Quotations = () => {
     //   date_created: formatDateTime(d.date_created)
     // }))
 
-    // const columns = [
-    //   {header: 'Created by', accessor: 'fullname'},
-    //   {header: 'Estimate', accessor: 'sub_total'},
-    //   {header: 'Date', accessor: 'date_created'},
-    //   {header: 'Status', accessor: 'status'},
-    // ]
+    const columns = [
+      {header: 'Created by', accessor: 'fullname'},
+      {header: 'Estimate', accessor: 'sub_total'},
+      {header: 'Date', accessor: 'date_created'},
+      {header: 'Status', accessor: 'status'},
+    ]
 
     useEffect(() => {
       dispatch(getAllProposal());
