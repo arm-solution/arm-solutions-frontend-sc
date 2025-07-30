@@ -10,7 +10,7 @@ export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async
         return data;
 
     } catch (error) {
-        rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data);
     }
 });
 
