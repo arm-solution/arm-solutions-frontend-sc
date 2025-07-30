@@ -35,7 +35,7 @@ export const updateProposal = createAsyncThunk('proposals/updateProposal', async
     }
 });
 
-export const   getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
+export const getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
     try {
         const { data } =  await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all-by-filter?page=1&limit=1`, filter);
         console.log("data", data);
@@ -65,25 +65,25 @@ const proposalSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-        .addCase(getAllProposal.pending, (state, action) => {
-            state.loading = true;
-            state.isSuccess = false
-        })
-        .addCase(getAllProposal.fulfilled, (state, action) => {
-            console.log("getAllProposal payload:", action.payload);
-            state.loading = false;
-            state.isSuccess = true;
+        // .addCase(getAllProposal.pending, (state, action) => {
+        //     state.loading = true;
+        //     state.isSuccess = false
+        // })
+        // .addCase(getAllProposal.fulfilled, (state, action) => {
+        //     console.log("getAllProposal payload:", action.payload);
+        //     state.loading = false;
+        //     state.isSuccess = true;
             
-            const payload = action.payload;
-            console.log("the payload", payload);
-            // state.data = Array.isArray(payload) ? payload : [];
+        //     const payload = action.payload;
+        //     console.log("the payload", payload);
+        //     // state.data = Array.isArray(payload) ? payload : [];
             
-        })
-        .addCase(getAllProposal.rejected, (state, action) => {
-            state.isSuccess = false;
-            state.loading = false;
-            state.message = action.payload;
-        })
+        // })
+        // .addCase(getAllProposal.rejected, (state, action) => {
+        //     state.isSuccess = false;
+        //     state.loading = false;
+        //     state.message = action.payload;
+        // })
         .addCase(createProposal.pending, (state, action) => {
             state.loading = true;
             state.isSuccess = false
