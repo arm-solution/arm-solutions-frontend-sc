@@ -24,7 +24,7 @@ const Quotations = () => {
     const dispatch = useDispatch();
     
     //  this is from the redux
-    const { isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
+    const { data: proposalData, isSuccess: proposalStatus, loading: loadingProposal } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
