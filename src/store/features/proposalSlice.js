@@ -75,6 +75,7 @@ const proposalSlice = createSlice({
             state.isSuccess = true;
             
             const payload = action.payload;
+            console.log("the payload", payload);
             state.data = Array.isArray(payload) ? payload : [];
             
         })
