@@ -28,10 +28,10 @@ const Quotations = () => {
     // const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     // const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
-    // // propsal data for editing
-    // const [proposalEdit, setProposalEdit] = useState()
+    // propsal data for editing
+    const [proposalEdit, setProposalEdit] = useState()
 
-    // // global ref
+    // global ref
     // const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
@@ -55,56 +55,56 @@ const Quotations = () => {
     }, [dispatch]);
 
 
-    // const handleView = async (row) => {
-    //   try {
-    //     setSelectedTab('tab-two');
-    //     setProposalEdit(row);
+    const handleView = async (row) => {
+      try {
+        setSelectedTab('tab-two');
+        setProposalEdit(row);
     
-    //     const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
-    //       dispatch(getDiscountAndTaxByproposalId(row.id)),
-    //       dispatch(getProposalItemsByProposalId(row.id)),
-    //       dispatch(getAdditionalByProposalID(row.id))
-    //     ]);
+        const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
+          dispatch(getDiscountAndTaxByproposalId(row.id)),
+          dispatch(getProposalItemsByProposalId(row.id)),
+          dispatch(getAdditionalByProposalID(row.id))
+        ]);
     
-    //     // Store the data in sessionStorage after dispatches complete
-    //     sessionStorage.setItem('proposalDetails', JSON.stringify({
-    //       quotation: row,  // Use the row since it's already the proposalEdit data
-    //       quotationItem: proposalItemsResult.payload,
-    //       taxDiscount: discountTaxResult.payload,
-    //       additionalItems: additionalItems.payload
-    //     }));
+        // Store the data in sessionStorage after dispatches complete
+        sessionStorage.setItem('proposalDetails', JSON.stringify({
+          quotation: row,  // Use the row since it's already the proposalEdit data
+          quotationItem: proposalItemsResult.payload,
+          taxDiscount: discountTaxResult.payload,
+          additionalItems: additionalItems.payload
+        }));
 
-    //     if(row) {
-    //       // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
-    //       // the issue is you getting the row the row is not from the database fix this
-    //       setTotalAmountref(parseFloat(row.sub_total));
-    //     }
+        if(row) {
+          // setTotalAmount(parseFloat(row.grand_total) - parseFloat(row.discount));
+          // the issue is you getting the row the row is not from the database fix this
+          setTotalAmountref(parseFloat(row.sub_total));
+        }
     
-    //     // Dispatch a custom event to signal that sessionStorage is updated
-    //     window.dispatchEvent(new Event('sessionUpdated'));
+        // Dispatch a custom event to signal that sessionStorage is updated
+        window.dispatchEvent(new Event('sessionUpdated'));
     
-    //   } catch (error) {
-    //     console.log("Error: ", error);
-    //   }
-    // };
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
   
-    // const handleDelete = (id) => {
-    //   deleteConfirmation({
-    //     title: "",
-    //     text: "",
-    //     icon: "",
-    //     confirmButtonText: "",
-    //     cancelButtonText: "",
-    //     deleteTitle: "",
-    //     deleteText: "",
-    //     successTitle: "", 
-    //     successText: ""
-    //   }, async () => {
+    const handleDelete = (id) => {
+      deleteConfirmation({
+        title: "",
+        text: "",
+        icon: "",
+        confirmButtonText: "",
+        cancelButtonText: "",
+        deleteTitle: "",
+        deleteText: "",
+        successTitle: "", 
+        successText: ""
+      }, async () => {
       
-    //     alert("Need to delete child rows of: "+id);
+        alert("Need to delete child rows of: "+id);
   
-    //   });
-    // }
+      });
+    }
     
   return (
     <>
