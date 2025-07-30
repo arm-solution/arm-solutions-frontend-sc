@@ -50,6 +50,7 @@ const proposalSlice = createSlice({
     name: 'proposal',
     initialState: {
         data: [],
+        allProposal: [],
         dataByFilter:[],
         isSuccess: false,
         loading: true,
@@ -128,7 +129,7 @@ const proposalSlice = createSlice({
         })
         .addCase(getAllProposal.fulfilled, (state, action) => {
             
-            state.data = action.payload;
+            state.allProposal = action?.payload;
             console.log("payload", action.payload);
         })
     
