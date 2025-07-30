@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './EmployeesForm.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUser, updateUser } from '../../../store/features/userSlice';
+import { addUser, updateUser, getUser } from '../../../store/features/userSlice';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { getDepartment } from '../../../store/features/departmentSlice';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
@@ -161,6 +161,7 @@ const EmployeesForm = (props) => {
      } else {
           if(payload.success) {
             successDialog('New Employee is added');
+            dispatch(getUser());
           } else {
             errorDialog('Failed to add new employee');
           }
@@ -201,7 +202,8 @@ const EmployeesForm = (props) => {
      const  { payload } = await dispatch(updateUser({...modifyEmployeeData, birthday: modifyEmployeeData.birthday ? dateFormatted(modifyEmployeeData.birthday) : ''}))
       
       if(payload.success) {
-        successDialog('Updated Success');
+        successDialog('Employee Updated Successfully!');
+        dispatch(getUser());
       } else {
         errorDialog('Failed to update the employee');
       }
@@ -386,12 +388,12 @@ const EmployeesForm = (props) => {
 
                 <div className="row">
 
-                  <div className="col col-md-4">
+                  {/* <div className="col col-md-4">
                     <div className="form-group">
                       <label htmlFor="region">Region</label>
                       <input type="text" className="form-control" name="region" value={employeeData.region || ''} onChange={handleEmployeeFormInput}/>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="col col-md-4">
                     <div className="form-group">
@@ -424,9 +426,9 @@ const EmployeesForm = (props) => {
                     </div>
                   </div> */}
 
-                </div>
+                {/* </div>
 
-                <div className="row">
+                <div className="row"> */}
 
                  {/* <div className="col col-md-4">
                     <div className="form-group">
@@ -437,14 +439,14 @@ const EmployeesForm = (props) => {
                     </div>
                   </div> */}
 
-                  <div className="col col-md-6">
+                  <div className="col col-md-64">
                     <div className="form-group">
                       <label htmlFor="user_password">Password</label>
                       <input type="text" className="form-control" name="user_password" value={employeeData.user_password || ''} onChange={handleEmployeeFormInput}/>
                     </div>
                   </div>
 
-                  <div className="col col-md-6">
+                  <div className="col col-md-4">
                     <div className="form-group">
                       <label htmlFor="confirm_password">Confirm-Password</label>
                       <input type="text" className="form-control" name="confirm_password" value={conPass} onChange={confirmPassword}/>
