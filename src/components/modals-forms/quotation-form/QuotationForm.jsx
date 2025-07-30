@@ -524,7 +524,7 @@ const QoutationForm = (props) => {
     
         // Show success or error message
         if (status) {
-            await dispatch(getAllProposal());
+            // await dispatch(getAllProposal());
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
