@@ -70,12 +70,12 @@ const proposalSlice = createSlice({
         //     state.isSuccess = false
         // })
         .addCase(getAllProposal.fulfilled, (state, action) => {
-            console.log("getAllProposal payload:", action.payload);
+            // console.log("getAllProposal payload:", action.payload);
             state.loading = false;
             state.isSuccess = true;
             
-            const payload = action.payload;
-            console.log("the payload", payload);
+            // const payload = action.payload;
+            // console.log("the payload", payload);
             // state.data = Array.isArray(payload) ? payload : [];
             
         })
