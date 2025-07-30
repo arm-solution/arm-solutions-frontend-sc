@@ -1,7 +1,7 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { loginEmployee } from '../../../store/features/authEmployee';
+import { loginEmployee, clearLoginState } from '../../../store/features/authEmployee';
 import './LoginPage.css'
 import { checkAuthAndNavigate } from './../../../customs/global/manageLocalStorage';
 // import { unwrapResult } from '@reduxjs/toolkit';
@@ -11,7 +11,7 @@ import Loading from '../../../components/loading-spinner/Loading';
 const Login = () => {
 
   const employeeAuth = useSelector((state) => state.auth)
-  const { isSuccess, message, loading: loginLoading } = employeeAuth;
+  const { isSuccess: loginSuccess, message, loading: loginLoading } = employeeAuth;
 
 
   const [errmessage, setErrMessage] = useState({
@@ -24,15 +24,15 @@ const Login = () => {
   })
 
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+const navigate = useNavigate();
+const dispatch = useDispatch();
 
-  // checking navigation for employee roles
-  useEffect(() => {
-    if(isSuccess) {
-      checkAuthAndNavigate(navigate)
-    }
-  }, [isSuccess, navigate]);
+useEffect(() => {
+  if (loginSuccess) {
+    checkAuthAndNavigate(navigate);
+    // dispatch(clearLoginState());
+  }
+}, [loginSuccess, navigate]);
   
 
   const handleChange = (e) => {

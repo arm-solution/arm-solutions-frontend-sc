@@ -58,7 +58,7 @@ const EmployeesList = () => {
     }, async () => {
      const { payload } =  await dispatch(deleteUser(id)) 
      const result = payload.affectedRows > 0 ? true : false;
-
+    dispatch(getUser());
      return result;
     })
 

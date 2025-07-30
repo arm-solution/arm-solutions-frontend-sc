@@ -96,9 +96,9 @@ const QoutationForm = (props) => {
         let position = ''
         const { payload } = await dispatch(getUserById(id));
 
-        if(payload[0].user_type === 'admin') {
+        if(payload[0].department === 1) {
             position = 'System Administrator'
-        } else if(payload[0].user_type === 'marketing') {
+        } else if(payload[0].department === 'marketing') {
             position = 'Marketing Specialist '
         }
 

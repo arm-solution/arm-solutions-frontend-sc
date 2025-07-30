@@ -5,9 +5,9 @@ import axios from 'axios';
 export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async (_, {rejectWithValue}) => {
 
     try {
-        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
         
-        return res.data;
+        return data;
 
     } catch (error) {
         rejectWithValue(error.response.data);
@@ -70,10 +70,13 @@ const proposalSlice = createSlice({
             state.isSuccess = false
         })
         .addCase(getAllProposal.fulfilled, (state, action) => {
+            console.log("getAllProposal payload:", action.payload);
             state.loading = false;
             state.isSuccess = true;
             
-            state.data = action.payload;
+            const payload = action.payload;
+            state.data = Array.isArray(payload) ? payload : [];
+            
         })
         .addCase(getAllProposal.rejected, (state, action) => {
             state.isSuccess = false;

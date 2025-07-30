@@ -6,11 +6,14 @@ export const checkAuthAndNavigate = (navigate) => {
     if (authData) {
       const { data } = JSON.parse(authData);
       const role = data.length > 0 ? data[0].department : null; // Assuming data is an array with role inside
+
+
+      console.log("my role", data[0]);
   
       if (role === 1) {
         navigate('/admin');
       } else if (role === 10) {
-        navigate('/producttion');
+        navigate('/production');
       } else if (role === 8) {
         navigate('/marketing');
       } else if (role === 6) {
@@ -107,7 +110,7 @@ export const checkAuthAndNavigate = (navigate) => {
     try {
       const parsedUser = JSON.parse(loginUser);
       if(parsedUser && parsedUser.data && parsedUser.data.length > 0) {
-        return { path: parsedUser.data[0].user_type , status: true}
+        return { path: parsedUser.data[0].department_name , status: true}
       } else {
         return { path: '/login', status: false}
       }

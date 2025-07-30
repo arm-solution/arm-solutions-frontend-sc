@@ -2,9 +2,8 @@ import React from 'react';
 import './ClientDetails.css';
 import { errorDialog, successDialog } from '../../../customs/global/alertDialog';
 import { useDispatch } from 'react-redux';
-import { addNewClient, updateClient } from '../../../store/features/clientsSlice';
+import { addNewClient, updateClient, getAllCleints } from '../../../store/features/clientsSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
-
 const ClientDetails = ({ modalRef, selectedClient, setSelectedClient }) => {
   const dispatch = useDispatch();
 
@@ -40,7 +39,8 @@ const ClientDetails = ({ modalRef, selectedClient, setSelectedClient }) => {
             const result = unwrapResult(actionResult);
     
             if (result.success) {
-                successDialog(selectedClient.id ? 'Updated Successfully' : 'New Client Added');
+                successDialog(selectedClient.id ? 'Client Updated Successfully' : 'New Client Added');
+                dispatch(getAllCleints());
             } else {
                 errorDialog(selectedClient.id ? 'Failed to Update Client' : 'Failed to Add Client');
             }

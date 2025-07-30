@@ -42,9 +42,15 @@ const Home = () => {
   const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
 
   useEffect(() => {
-    dispatch(getDtrById(getLoggedInID()));
-    dispatch(getWeeklyDtr(getLoggedInID()));
-    dispatch(getCurrentDtr(getLoggedInID()));
+    const getDefaultLoad = () => {
+      if(getLoggedInID()) {
+        // dispatch(getDtrById({ id: getLoggedInID() }));
+        // dispatch(getWeeklyDtr(getLoggedInID()));
+        // dispatch(getCurrentDtr(getLoggedInID()));
+      }
+    }
+
+    getDefaultLoad();
   }, [dispatch]); 
   
   useEffect(() => {
