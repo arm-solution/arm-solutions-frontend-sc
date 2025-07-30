@@ -51,7 +51,12 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      dispatch(getAllProposal());
+      const sample = () => {
+        dispatch(getAllProposal());
+      }
+
+
+      sample();
     }, [dispatch]);
 
 
