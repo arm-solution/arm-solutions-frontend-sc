@@ -76,7 +76,7 @@ const proposalSlice = createSlice({
             
             const payload = action.payload;
             console.log("the payload", payload);
-            state.data = Array.isArray(payload) ? payload : [];
+            // state.data = Array.isArray(payload) ? payload : [];
             
         })
         .addCase(getAllProposal.rejected, (state, action) => {
