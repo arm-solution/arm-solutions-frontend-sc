@@ -53,7 +53,8 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      dispatch(getUser());
+      // dispatch(getUser());
+      console.log("dispatch")
     }, [dispatch]);
 
 
