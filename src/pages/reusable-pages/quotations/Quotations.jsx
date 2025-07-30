@@ -34,7 +34,7 @@ const Quotations = () => {
     const [proposalEdit, setProposalEdit] = useState()
 
     // global ref
-    // const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
+    const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
