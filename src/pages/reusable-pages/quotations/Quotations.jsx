@@ -11,6 +11,7 @@ import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
 import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
 import { getAdditionalItemsByProposalId } from '../../../store/features/additional.Slice';
+import { getUser } from '../../../store/features/userSlice';
 import TermsCondition from '../../../components/terms-condition-editor/TermsCondition';
 
 const Quotations = () => {
@@ -25,6 +26,7 @@ const Quotations = () => {
     
     //  this is from the redux
     const { data: proposalData } = useSelector(state => state.proposals);
+    const { data: users } = useSelector(state => state.users);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
@@ -51,12 +53,7 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      const sample = () => {
-        dispatch(getAllProposal());
-      }
-
-
-      sample();
+      dispatch(getUser());
     }, [dispatch]);
 
 
