@@ -470,20 +470,20 @@ const QoutationForm = (props) => {
         }
         
         // Add proposal_id to items and dispatch updates if necessary
-        if (addEditItem.length > 0 || qoutationItem.length > 0) {
-            const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
-                ...d,
-                proposal_id: quotation.id,
-                item_total: amount
-            }));
+        // if (addEditItem.length > 0 || qoutationItem.length > 0) {
+        //     const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
+        //         ...d,
+        //         proposal_id: quotation.id,
+        //         item_total: amount
+        //     }));
     
-            await dispatch(updateProposalItems(itemsWithProId));
-            await dispatch(getProposalItemsByProposalId(quotation.id));
+        //     await dispatch(updateProposalItems(itemsWithProId));
+        //     await dispatch(getProposalItemsByProposalId(quotation.id));
     
             
-            setQoutationItem([]);
-            status = true;
-        }
+        //     setQoutationItem([]);
+        //     status = true;
+        // }
 
         if(!shallowEqualArrays(JSON.parse(getLocalStorage).additionalItems, addtionalItems)) {           
             // Prepare additional items for update
