@@ -84,3 +84,31 @@ export function compareIfExist(array1, array2) {
     if (!string) return '';
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  export const getPositionByDepartmentID = (deptID) => {
+    let position = '';
+
+    if(deptID === 1) {
+        position = 'System Administrator'
+    } else if(deptID === 2) {
+        position = 'Hr'
+    } else if(deptID === 3) {
+        position = 'Accounting'
+    } else if(deptID === 4) {
+        position = 'Finance'
+    } else if(deptID === 5) {
+        position = 'Warehouse'
+    } else if(deptID === 6) {
+        position = 'Engineering'
+    } else if(deptID === 7) {
+        position = 'Purchasing'
+    } else if(deptID === 8) {
+        position = 'Marketing'
+    } else if(deptID === 9) {
+        position = 'Sales'
+    } else if(deptID === 10) {
+        position = 'Production'
+    }
+
+    return position
+  }
