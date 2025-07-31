@@ -66,27 +66,23 @@ const proposalSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-        // .addCase(getAllProposal.pending, (state, action) => {
-        //     state.loading = true;
-        //     state.isSuccess = false
-        // })
-        // .addCase(getAllProposal.fulfilled, (state, action) => {
-            // console.log("getAllProposal payload:", action.payload);
-            // state.loading = false;
-            // state.isSuccess = true;
+        .addCase(getAllProposal.pending, (state, action) => {
+            state.loading = true;
+            state.isSuccess = false
+        })
+        .addCase(getAllProposal.fulfilled, (state, action) => {
 
-            // console.log("action", action);
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.data = action.payload;
             
-            // const payload = action.payload;
-            // console.log("the payload", payload);
-            // state.data = Array.isArray(payload) ? payload : [];
-            
-        // })
-        // .addCase(getAllProposal.rejected, (state, action) => {
-        //     state.isSuccess = false;
-        //     state.loading = false;
-        //     state.message = action.payload;
-        // })
+        })
+        .addCase(getAllProposal.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload;
+        })
         .addCase(createProposal.pending, (state, action) => {
             state.loading = true;
             state.isSuccess = false
@@ -127,11 +123,7 @@ const proposalSlice = createSlice({
             state.isSuccess = false;
             state.message = "rejected"
         })
-        .addCase(getAllProposal.fulfilled, (state, action) => {
-            
-            state.allProposal = action?.payload;
-            console.log("payload", action.payload);
-        })
+
     
     }, 
 

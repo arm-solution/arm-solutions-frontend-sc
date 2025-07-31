@@ -9,10 +9,6 @@ import { formatDateTime } from '../../../customs/global/manageDates';
 import { getDiscountAndTaxByproposalId } from '../../../store/features/taxDiscountSlice';
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
 import { getAdditionalByProposalID } from '../../../store/features/additional.Slice';
-import { useGlobalRefs } from '../../../customs/global/useGlobalRef';
-import { getAdditionalItemsByProposalId } from '../../../store/features/additional.Slice';
-import { getUser } from '../../../store/features/userSlice';
-import TermsCondition from '../../../components/terms-condition-editor/TermsCondition';
 
 const Quotations = () => {
 
@@ -25,8 +21,7 @@ const Quotations = () => {
     const dispatch = useDispatch();
     
     //  this is from the redux
-    const { data: proposalData } = useSelector(state => state.proposals);
-    const { data: users } = useSelector(state => state.users);
+    const { data: proposalData, loading: loadingProposal, isSuccess: proposalStatus } = useSelector(state => state.proposals);
     const { data: proposalItemData, isSuccess: proposalItemSuccess, loading: proposalItemLoading} = useSelector(state => state.proposalItems);
     const { data: taxDiscountData } = useSelector(state => state.taxDiscounts);
 
@@ -34,16 +29,16 @@ const Quotations = () => {
     const [proposalEdit, setProposalEdit] = useState()
 
     // global ref
-    const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
+    // const { preAdditionalRef, preProductItemsRef, preTaxDiscountRef } = useGlobalRefs(); 
     
     const handleTabChange = (event) => {
         setSelectedTab(event.target.id);
     };
 
-    // const clientDataWithFormattedDate = (proposalData || []).map(d => ({
-    //   ...d,
-    //   date_created: formatDateTime(d.date_created)
-    // }))
+    const clientDataWithFormattedDate = (proposalData || []).map(d => ({
+      ...d,
+      date_created: formatDateTime(d.date_created)
+    }))
 
     const columns = [
       {header: 'Created by', accessor: 'fullname'},
@@ -53,7 +48,7 @@ const Quotations = () => {
     ]
 
     useEffect(() => {
-      dispatch(getUser());
+      dispatch(getAllProposal());
       console.log("dispatch")
     }, [dispatch]);
 
@@ -138,33 +133,14 @@ const Quotations = () => {
           <label htmlFor="tab-two" id="tab-two-label" className="tab">Create Quotations</label>
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
-{/* 
-                <DataTable 
-                  data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
-                  columns={columns}
-                  actions={{ handleView, handleDelete }}
-                  perPage={10}
-                  deleteAccess={true}
-                  showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
-                  tableLabel = 'Proposal Lists'
-                /> */}
+
+
 
           </div>
 
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
             
-            {/* <QuotationForm 
-              proposalStatus={proposalStatus}
-              loadingProposal={loadingProposal}
-              proposalEdit={proposalEdit}
-              proposalItemData={Array.isArray(proposalItemData) ? proposalItemData : []}
-              proposalItemLoading={proposalItemLoading}
-              proposalItemSuccess={proposalItemSuccess}
-              taxDiscountData={Array.isArray(taxDiscountData) ? taxDiscountData : []}
-              totalAmountState={{ totalAmount, setTotalAmount }}
-              taf={{ totalAmountref, setTotalAmountref }}
-              setSelectedTab={setSelectedTab}
-            />  */}
+
 
         </div>
 

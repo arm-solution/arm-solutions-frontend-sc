@@ -17,7 +17,7 @@ import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
-import { getAllProposal } from '../../../store/features/proposalSlice';
+import { getPositionByDepartmentID } from '../../../customs/global/manageObjects';
 import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
 import TermsCondition from '../../terms-condition-editor/TermsCondition';
 
@@ -93,18 +93,13 @@ const QoutationForm = (props) => {
     }
 
     const getCreatorDetails = async(id) => {
-        let position = ''
         const { payload } = await dispatch(getUserById(id));
 
-        if(payload[0].department === 1) {
-            position = 'System Administrator'
-        } else if(payload[0].department === 'marketing') {
-            position = 'Marketing Specialist '
-        }
+        getPositionByDepartmentID(payload.data.department);
 
         return {
-            fullname: `${payload[0].firstname} ${payload[0].lastname}`,
-            position
+            fullname: `${payload.data.firstname} ${payload.data.lastname}`,
+            position: getPositionByDepartmentID(payload.data.department) || 'No Position Specified'
         };
     }
 
