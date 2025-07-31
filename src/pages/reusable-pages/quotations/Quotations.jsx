@@ -148,7 +148,7 @@ const Quotations = () => {
 
           <div id="tab-two-panel" className={`panel ${selectedTab === 'tab-two' ? 'active' : ''}`}>
             
-            {/* <QuotationForm 
+            <QuotationForm 
               proposalStatus={proposalStatus}
               loadingProposal={loadingProposal}
               proposalEdit={proposalEdit}
@@ -159,7 +159,7 @@ const Quotations = () => {
               totalAmountState={{ totalAmount, setTotalAmount }}
               taf={{ totalAmountref, setTotalAmountref }}
               setSelectedTab={setSelectedTab}
-            />   */}
+            />  
 
         </div>
 
