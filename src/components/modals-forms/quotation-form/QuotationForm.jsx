@@ -194,7 +194,7 @@ const QoutationForm = (props) => {
     }
 
     const getTotalTax = (tax) => {
-        if (tax.length > 0) {
+        if (Array.isArray(tax) && tax.length > 0) {
           return tax.reduce((totals, item) => {
             const type = item.option_type || 'other'; // Default to 'other' if no type is provided
       
@@ -501,19 +501,21 @@ const QoutationForm = (props) => {
 
 
         // Dispatch tax and discount updates if any
-        if (taxDiscountModified.length > 0) {
+        if (Array.isArray(taxDiscountModified) && taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
 
         // this is for deletion of the items from the database
-        if(dataTotDelete.additionalItems.length > 0) {
+        if (Array.isArray(dataTotDelete?.additionalItems) && dataTotDelete.additionalItems.length > 0) {
             await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
         }
-        if(dataTotDelete.quotationItems.length > 0) {
+
+        if (Array.isArray(dataTotDelete?.quotationItems) && dataTotDelete.quotationItems.length > 0) {
             await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
         }
-        if(dataTotDelete.taxDiscount.length > 0) {
+
+        if (Array.isArray(dataTotDelete?.taxDiscount) && dataTotDelete.taxDiscount.length > 0) {
             await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
         }
     
