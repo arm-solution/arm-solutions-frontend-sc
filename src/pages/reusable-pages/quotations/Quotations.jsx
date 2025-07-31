@@ -134,15 +134,7 @@ const Quotations = () => {
 
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 
-                <DataTable 
-                  data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
-                  columns={columns}
-                  actions={{ handleView, handleDelete }}
-                  perPage={10}
-                  deleteAccess={true}
-                  showAddButtonAndSearchInput={{ searchInput: true, addButton: false }}
-                  tableLabel = 'Proposal Lists'
-                /> 
+
 
           </div>
 
