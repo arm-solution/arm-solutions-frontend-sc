@@ -204,24 +204,24 @@ const QoutationForm = (props) => {
         }
     }
 
-    // const getTotalTax = (tax) => {
-    //     if (Array.isArray(tax) && tax.length > 0) {
-    //       return tax.reduce((totals, item) => {
-    //         const type = item.option_type || 'other'; // Default to 'other' if no type is provided
+    const getTotalTax = (tax) => {
+        if (Array.isArray(tax) && tax.length > 0) {
+          return tax.reduce((totals, item) => {
+            const type = item.option_type || 'other'; // Default to 'other' if no type is provided
       
-    //         // Initialize the total for this type if not already there
-    //         if (!totals[type]) {
-    //           totals[type] = 0;
-    //         }
+            // Initialize the total for this type if not already there
+            if (!totals[type]) {
+              totals[type] = 0;
+            }
       
-    //         // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
-    //         totals[type] += parseFloat(item.item_total) || 0;
-    //         return totals;
-    //       }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
-    //     } else {
-    //       return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
-    //     }
-    // };
+            // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
+            totals[type] += parseFloat(item.item_total) || 0;
+            return totals;
+          }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
+        } else {
+          return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
+        }
+    };
 
     // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
