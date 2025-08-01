@@ -614,16 +614,11 @@ const QoutationForm = (props) => {
                     <AdditionalItemtable 
                          totalAmount={props.totalAmountState.totalAmount}
                          setTotalAmount={props.totalAmountState.setTotalAmount}
-                         additionalState={{ 
-                            addtionalItems: Array.isArray(addtionalItems) ? addtionalItems : [], 
-                            setAddtionalItems 
-                        }}
+                         additionalState={{ addtionalItems, setAddtionalItems }}
                          totalAmountref={props.taf.totalAmountref }
                          setTotalAmountref={ props.taf.setTotalAmountref }
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                         reference={{
-                            preAdditionalRef: Array.isArray(preAdditionalRef) ? preAdditionalRef : [], 
-                            preProductItemsRef}}
+                         reference={{ preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
                          setDataTotDelete={setDataTotDelete}
                     />
