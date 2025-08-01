@@ -235,66 +235,66 @@ const QoutationForm = (props) => {
     };
 
     // call this for every action for compute all table
-    // const computeTotalProposal = (
-    //     latestAdditionalItems = null,
-    //     latestProductItems = null,
-    //     latestTax = null,
-    //     latestDiscount = null
-    //   ) => {
-    //     const additionalT = (latestAdditionalItems || addtionalItems)
-    //       .reduce((sum, item) => sum + Number(item.item_total || 0), 0);
+    const computeTotalProposal = (
+        latestAdditionalItems = null,
+        latestProductItems = null,
+        latestTax = null,
+        latestDiscount = null
+      ) => {
+        const additionalT = (latestAdditionalItems || addtionalItems)
+          .reduce((sum, item) => sum + Number(item.item_total || 0), 0);
       
-    //     const productsT = (latestProductItems || productItemDetails)
-    //       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const productsT = (latestProductItems || productItemDetails)
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
       
-    //     const taxData = latestTax || tax;
-    //     const discountData = latestDiscount || discount;
+        const taxData = latestTax || tax;
+        const discountData = latestDiscount || discount;
       
-    //     let taxDiscountT = { tax: 0, discount: 0 };
-    //     if (props.taf.totalAmountref > 0) {
-    //       const updatedRows = calculateAllTaxDiscount([...taxData, ...discountData]);
-    //       taxDiscountT = getTotalTax(updatedRows);
-    //     }
+        let taxDiscountT = { tax: 0, discount: 0 };
+        if (props.taf.totalAmountref > 0) {
+          const updatedRows = calculateAllTaxDiscount([...taxData, ...discountData]);
+          taxDiscountT = getTotalTax(updatedRows);
+        }
       
-    //     const totalNew =
-    //       parseFloat(additionalT || 0) +
-    //       parseFloat(taxDiscountT?.tax || 0) +
-    //       parseFloat(productsT || 0) -
-    //       parseFloat(taxDiscountT?.discount || 0);
+        const totalNew =
+          parseFloat(additionalT || 0) +
+          parseFloat(taxDiscountT?.tax || 0) +
+          parseFloat(productsT || 0) -
+          parseFloat(taxDiscountT?.discount || 0);
         
-    //     setTaxDiscountTotal(taxDiscountT);
-    //     props.totalAmountState.setTotalAmount(totalNew);
+        setTaxDiscountTotal(taxDiscountT);
+        props.totalAmountState.setTotalAmount(totalNew);
       
-    //   };
+      };
 
-    // useEffect(() => {
-    //     if(props.taf.totalAmountref > 0) {
-    //       const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-    //       const totalTaxDiscount = getTotalTax(updatedRows);
+    useEffect(() => {
+        if(props.taf.totalAmountref > 0) {
+          const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+          const totalTaxDiscount = getTotalTax(updatedRows);
           
-    //     props.totalAmountState.setTotalAmount(pre => {
-    //         return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
-    //     });
+        props.totalAmountState.setTotalAmount(pre => {
+            return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
+        });
    
-    //     }
+        }
 
-    //   }, [props.taf.totalAmountref]);
+      }, [props.taf.totalAmountref]);
 
-    //   useEffect(() => {
-    //     if(props.taf.totalAmountref > 0) {
-    //     const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+      useEffect(() => {
+        if(props.taf.totalAmountref > 0) {
+        const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
 
-    //     const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
-    //     const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
-    //     // const totalTaxDiscount = getTotalTax(updatedRows);
+        const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
+        const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
+        // const totalTaxDiscount = getTotalTax(updatedRows);
         
-    //     setTax(taxUpdate);
-    //     setDiscount(discountUpdate);
+        setTax(taxUpdate);
+        setDiscount(discountUpdate);
 
-    //     computeTotalProposal(null, null, taxUpdate, discountUpdate);
+        computeTotalProposal(null, null, taxUpdate, discountUpdate);
         
-    //     }
-    //   }, [props.taf.totalAmountref])
+        }
+      }, [props.taf.totalAmountref])
     
     const handleClearForm = () => {
         const proposalDetails = sessionStorage.getItem('proposalDetails');
