@@ -621,7 +621,7 @@ const QoutationForm = (props) => {
                          setDataTotDelete={setDataTotDelete}
                     /> */}
 
-                    <div className="row table-editable">
+                    {/* <div className="row table-editable">
                         <QoutationTableEditable
                             setQoutationItem={setQoutationItem}
                             proposalItemSuccess={props.proposalItemSuccess}
@@ -640,9 +640,9 @@ const QoutationForm = (props) => {
                             computeTotalProposal={computeTotalProposal}
                             setDataTotDelete={setDataTotDelete}
                          />
-                    </div>
+                    </div> */}
 
-                    {/* {parseInt(props.taf.totalAmountref) > 0 && (
+                    {parseInt(props.taf.totalAmountref) > 0 && (
                         ["tax", "discount"].map((type) => (
                             <TaxDiscountTable
                                 key={type}
@@ -662,7 +662,7 @@ const QoutationForm = (props) => {
                                 setDataTotDelete={setDataTotDelete}
                             />
                         ))
-                    )} */}
+                    )}
 
                     <TermsCondition 
                         termsCondition={termsCondition}
