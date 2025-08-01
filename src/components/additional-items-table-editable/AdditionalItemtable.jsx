@@ -111,31 +111,31 @@ const AdditionalItemtable = (props) => {
   };
 
   const handleSave = (rowId) => {
-    const rowTest = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
-    const proposalDetails = sessionStorage.getItem("proposalDetails");
+    // const rowTest = props.additionalState.addtionalItems.find((row) => row.rowId === rowId);
+    // const proposalDetails = sessionStorage.getItem("proposalDetails");
 
-    if (!rowTest) return;
+    // if (!rowTest) return;
 
-    if (!rowTest.title || rowTest.quantity <= 0 || !rowTest.unit) {
-      alert("All fields are required");
-      return;
-    }
+    // if (!rowTest.title || rowTest.quantity <= 0 || !rowTest.unit) {
+    //   alert("All fields are required");
+    //   return;
+    // }
 
-    const prevTable1Total = preAdditionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
-    const newTable1Total = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0) || 0;
-    const table1Diff = newTable1Total - prevTable1Total;
+    // const prevTable1Total = preAdditionalRef.current.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    // const newTable1Total = props.additionalState.addtionalItems.reduce((sum, item) => sum + item.item_total, 0) || 0;
+    // const table1Diff = newTable1Total - prevTable1Total;
 
-    preAdditionalRef.current = [...props.additionalState.addtionalItems];
+    // preAdditionalRef.current = [...props.additionalState.addtionalItems];
 
-    const updatedItems = props.additionalState.addtionalItems.map((item) =>
-      item.rowId === rowId ? { ...item, isEditing: false, isSaved: true } : item
-    );
+    // const updatedItems = props.additionalState.addtionalItems.map((item) =>
+    //   item.rowId === rowId ? { ...item, isEditing: false, isSaved: true } : item
+    // );
 
-    props.additionalState.setAddtionalItems(updatedItems);
+    // props.additionalState.setAddtionalItems(updatedItems);
 
-    if (table1Diff !== 0) {
-      props.computeTotalProposal(updatedItems);
-    }
+    // if (table1Diff !== 0) {
+    //   props.computeTotalProposal(updatedItems);
+    // }
   };
 
   const handleDelete = (rowId, row) => {
