@@ -135,7 +135,7 @@ const Quotations = () => {
           <div id="tab-one-panel" className={`panel ${selectedTab === 'tab-one' ? 'active' : ''}`}>
 
                 <DataTable 
-                  data={Array.isArray(clientDataWithFormattedDate) ? clientDataWithFormattedDate : []}
+                  data={clientDataWithFormattedDate}
                   columns={columns}
                   actions={{ handleView, handleDelete }}
                   perPage={10}
@@ -152,10 +152,10 @@ const Quotations = () => {
               proposalStatus={proposalStatus}
               loadingProposal={loadingProposal}
               proposalEdit={proposalEdit}
-              proposalItemData={Array.isArray(proposalItemData) ? proposalItemData : []}
+              proposalItemData={proposalItemData}
               proposalItemLoading={proposalItemLoading}
               proposalItemSuccess={proposalItemSuccess}
-              taxDiscountData={Array.isArray(taxDiscountData) ? taxDiscountData : []}
+              taxDiscountData={taxDiscountData}
               totalAmountState={{ totalAmount, setTotalAmount }}
               taf={{ totalAmountref, setTotalAmountref }}
               setSelectedTab={setSelectedTab}
