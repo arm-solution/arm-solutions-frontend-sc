@@ -103,6 +103,17 @@ const QoutationForm = (props) => {
         };
     }
 
+    useEffect(() => {
+        // lance
+    console.log("props.proposalItemData", props.proposalItemData);
+    console.log("tax", tax);
+    console.log("discount", discount);
+    // console.log("addEditItem", addEditItem)
+    console.log("qoutationItem", qoutationItem)
+    // console.log("qoutationItem", taxDiscountModified)
+    }, [])
+    
+
     // update data from the database when the local storage is not empty
     // this is for delete items
     // useEffect(() => {
@@ -193,24 +204,24 @@ const QoutationForm = (props) => {
         }
     }
 
-    const getTotalTax = (tax) => {
-        if (Array.isArray(tax) && tax.length > 0) {
-          return tax.reduce((totals, item) => {
-            const type = item.option_type || 'other'; // Default to 'other' if no type is provided
+    // const getTotalTax = (tax) => {
+    //     if (Array.isArray(tax) && tax.length > 0) {
+    //       return tax.reduce((totals, item) => {
+    //         const type = item.option_type || 'other'; // Default to 'other' if no type is provided
       
-            // Initialize the total for this type if not already there
-            if (!totals[type]) {
-              totals[type] = 0;
-            }
+    //         // Initialize the total for this type if not already there
+    //         if (!totals[type]) {
+    //           totals[type] = 0;
+    //         }
       
-            // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
-            totals[type] += parseFloat(item.item_total) || 0;
-            return totals;
-          }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
-        } else {
-          return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
-        }
-    };
+    //         // Add the amount to the respective type, parsing as float and defaulting to 0 if invalid
+    //         totals[type] += parseFloat(item.item_total) || 0;
+    //         return totals;
+    //       }, { discount: 0, tax: 0 }); // Start with 0 for both additional and discount
+    //     } else {
+    //       return { discount: 0, tax: 0 }; // Default structure if no tax items are provided
+    //     }
+    // };
 
     // Calculate total amount for each row and return updated rows
      const calculateAllTaxDiscount = (rows) => {
@@ -224,66 +235,66 @@ const QoutationForm = (props) => {
     };
 
     // call this for every action for compute all table
-    const computeTotalProposal = (
-        latestAdditionalItems = null,
-        latestProductItems = null,
-        latestTax = null,
-        latestDiscount = null
-      ) => {
-        const additionalT = (latestAdditionalItems || addtionalItems)
-          .reduce((sum, item) => sum + Number(item.item_total || 0), 0);
+    // const computeTotalProposal = (
+    //     latestAdditionalItems = null,
+    //     latestProductItems = null,
+    //     latestTax = null,
+    //     latestDiscount = null
+    //   ) => {
+    //     const additionalT = (latestAdditionalItems || addtionalItems)
+    //       .reduce((sum, item) => sum + Number(item.item_total || 0), 0);
       
-        const productsT = (latestProductItems || productItemDetails)
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    //     const productsT = (latestProductItems || productItemDetails)
+    //       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
       
-        const taxData = latestTax || tax;
-        const discountData = latestDiscount || discount;
+    //     const taxData = latestTax || tax;
+    //     const discountData = latestDiscount || discount;
       
-        let taxDiscountT = { tax: 0, discount: 0 };
-        if (props.taf.totalAmountref > 0) {
-          const updatedRows = calculateAllTaxDiscount([...taxData, ...discountData]);
-          taxDiscountT = getTotalTax(updatedRows);
-        }
+    //     let taxDiscountT = { tax: 0, discount: 0 };
+    //     if (props.taf.totalAmountref > 0) {
+    //       const updatedRows = calculateAllTaxDiscount([...taxData, ...discountData]);
+    //       taxDiscountT = getTotalTax(updatedRows);
+    //     }
       
-        const totalNew =
-          parseFloat(additionalT || 0) +
-          parseFloat(taxDiscountT?.tax || 0) +
-          parseFloat(productsT || 0) -
-          parseFloat(taxDiscountT?.discount || 0);
+    //     const totalNew =
+    //       parseFloat(additionalT || 0) +
+    //       parseFloat(taxDiscountT?.tax || 0) +
+    //       parseFloat(productsT || 0) -
+    //       parseFloat(taxDiscountT?.discount || 0);
         
-        setTaxDiscountTotal(taxDiscountT);
-        props.totalAmountState.setTotalAmount(totalNew);
+    //     setTaxDiscountTotal(taxDiscountT);
+    //     props.totalAmountState.setTotalAmount(totalNew);
       
-      };
+    //   };
 
-    useEffect(() => {
-        if(props.taf.totalAmountref > 0) {
-          const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
-          const totalTaxDiscount = getTotalTax(updatedRows);
+    // useEffect(() => {
+    //     if(props.taf.totalAmountref > 0) {
+    //       const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+    //       const totalTaxDiscount = getTotalTax(updatedRows);
           
-        props.totalAmountState.setTotalAmount(pre => {
-            return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
-        });
+    //     props.totalAmountState.setTotalAmount(pre => {
+    //         return (parseFloat(pre) + parseFloat(totalTaxDiscount.tax)) - parseFloat(totalTaxDiscount.discount)
+    //     });
    
-        }
+    //     }
 
-      }, [props.taf.totalAmountref]);
+    //   }, [props.taf.totalAmountref]);
 
-      useEffect(() => {
-        if(props.taf.totalAmountref > 0) {
-        const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
+    //   useEffect(() => {
+    //     if(props.taf.totalAmountref > 0) {
+    //     const updatedRows = calculateAllTaxDiscount([...tax, ...discount]);
 
-        const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
-        const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
-        // const totalTaxDiscount = getTotalTax(updatedRows);
+    //     const taxUpdate = updatedRows.filter(d => d.option_type === 'tax');
+    //     const discountUpdate = updatedRows.filter(d => d.option_type === 'discount');
+    //     // const totalTaxDiscount = getTotalTax(updatedRows);
         
-        setTax(taxUpdate);
-        setDiscount(discountUpdate);
+    //     setTax(taxUpdate);
+    //     setDiscount(discountUpdate);
 
-        computeTotalProposal(null, null, taxUpdate, discountUpdate);
+    //     computeTotalProposal(null, null, taxUpdate, discountUpdate);
         
-        }
-      }, [props.taf.totalAmountref])
+    //     }
+    //   }, [props.taf.totalAmountref])
     
     const handleClearForm = () => {
         const proposalDetails = sessionStorage.getItem('proposalDetails');
@@ -405,132 +416,132 @@ const QoutationForm = (props) => {
     };
     
     // UPDATE PROPOSAL
-    const handleUpdateQoutation = async () => {
+    // const handleUpdateQoutation = async () => {
 
-        let status = false;
-        // use this for compring additional items
-        const getLocalStorage = sessionStorage.getItem("proposalDetails");
+    //     let status = false;
+    //     // use this for compring additional items
+    //     const getLocalStorage = sessionStorage.getItem("proposalDetails");
 
 
-        // Format tax and discount into consistent structure
-        const taxDiscountModified = getModifiedAndNewItems(
-            props.taxDiscountData,
-            [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({
-                ...rest,
-                proposal_id: quotation.id
-            }))
-        );
+    //     // Format tax and discount into consistent structure
+    //     const taxDiscountModified = getModifiedAndNewItems(
+    //         props.taxDiscountData,
+    //         [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({
+    //             ...rest,
+    //             proposal_id: quotation.id
+    //         }))
+    //     );
 
-        // Determine which items are new or updated
-        const addEditItem = qoutationItem.filter(item2 =>
-            !props.proposalItemData.some(
-                item1 =>
-                    parseInt(item1.qty) === parseInt(item2.quantity) &&
-                    item2.proposal_item_id > 0
-            )
-        );
+    //     // Determine which items are new or updated
+    //     const addEditItem = qoutationItem.filter(item2 =>
+    //         !props.proposalItemData.some(
+    //             item1 =>
+    //                 parseInt(item1.qty) === parseInt(item2.quantity) &&
+    //                 item2.proposal_item_id > 0
+    //         )
+    //     );
     
-        // Destructure and reshape quotation for comparison and dispatch
-        const {
-            firstname,
-            fullname,
-            user_id,
-            id,
-            lastname,
-            ...dataReshapeItems
-        } = quotation;
+    //     // Destructure and reshape quotation for comparison and dispatch
+    //     const {
+    //         firstname,
+    //         fullname,
+    //         user_id,
+    //         id,
+    //         lastname,
+    //         ...dataReshapeItems
+    //     } = quotation;
     
-        const proposalFinal = {
-            ...dataReshapeItems,
-            proposal_date: dateFormatted(dataReshapeItems.proposal_date),
-            date_created: dataReshapeItems.date_created
-                ? dateFormatted(dataReshapeItems.date_created)
-                : '',
-            sub_total: props.taf.totalAmountref,
-            tax: taxDiscountTotal.tax,
-            discount: taxDiscountTotal.discount,
-            additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
-            grand_total: props.totalAmountState.totalAmount,
-            // previous_department_stage_id: getDepartmentLoggedIn(),
-            // department_stage_id: getApprovalState().targetDepartment,
-            // status: getApprovalState().status
+    //     const proposalFinal = {
+    //         ...dataReshapeItems,
+    //         proposal_date: dateFormatted(dataReshapeItems.proposal_date),
+    //         date_created: dataReshapeItems.date_created
+    //             ? dateFormatted(dataReshapeItems.date_created)
+    //             : '',
+    //         sub_total: props.taf.totalAmountref,
+    //         tax: taxDiscountTotal.tax,
+    //         discount: taxDiscountTotal.discount,
+    //         additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+    //         grand_total: props.totalAmountState.totalAmount,
+    //         // previous_department_stage_id: getDepartmentLoggedIn(),
+    //         // department_stage_id: getApprovalState().targetDepartment,
+    //         // status: getApprovalState().status
 
-        };
+    //     };
     
-        // Check if proposal has changed by comparing specific fields
-        const originalProposal = props.proposalEdit;
-        const isProposalModified = Object.entries(proposalFinal).some(
-            ([key, value]) => originalProposal[key] !== value
-        );
+    //     // Check if proposal has changed by comparing specific fields
+    //     const originalProposal = props.proposalEdit;
+    //     const isProposalModified = Object.entries(proposalFinal).some(
+    //         ([key, value]) => originalProposal[key] !== value
+    //     );
 
-       // update propsal detail 
-        if (isProposalModified) {
-            await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
-            status = true;
-        }
+    //    // update propsal detail 
+    //     if (isProposalModified) {
+    //         await dispatch(updateProposal({ proposalFinal, id: quotation.id }));
+    //         status = true;
+    //     }
         
-        // Add proposal_id to items and dispatch updates if necessary
-        // if (addEditItem.length > 0 || qoutationItem.length > 0) {
-        //     const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
-        //         ...d,
-        //         proposal_id: quotation.id,
-        //         item_total: amount
-        //     }));
+    //     // Add proposal_id to items and dispatch updates if necessary
+    //     if (addEditItem.length > 0 || qoutationItem.length > 0) {
+    //         const itemsWithProId = addEditItem.map(({ amount, ...d}) => ({
+    //             ...d,
+    //             proposal_id: quotation.id,
+    //             item_total: amount
+    //         }));
     
-        //     await dispatch(updateProposalItems(itemsWithProId));
-        //     await dispatch(getProposalItemsByProposalId(quotation.id));
+    //         await dispatch(updateProposalItems(itemsWithProId));
+    //         await dispatch(getProposalItemsByProposalId(quotation.id));
     
             
-        //     setQoutationItem([]);
-        //     status = true;
-        // }
+    //         setQoutationItem([]);
+    //         status = true;
+    //     }
 
-        if(!shallowEqualArrays(JSON.parse(getLocalStorage).additionalItems, addtionalItems)) {           
-            // Prepare additional items for update
-            const updatedAdditionalItems = addtionalItems.map(
-                ({ rowId, isSaved, isEditing, ...rest }) => ({
-                    ...rest,
-                    proposal_id: quotation.id
-                })
-            );
+    //     if(!shallowEqualArrays(JSON.parse(getLocalStorage).additionalItems, addtionalItems)) {           
+    //         // Prepare additional items for update
+    //         const updatedAdditionalItems = addtionalItems.map(
+    //             ({ rowId, isSaved, isEditing, ...rest }) => ({
+    //                 ...rest,
+    //                 proposal_id: quotation.id
+    //             })
+    //         );
     
-            // update the additional items
-            await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
-            await dispatch(getAdditionalByProposalID(quotation.id));
-        } 
+    //         // update the additional items
+    //         await dispatch(updateMultipleAdditionalItems(updatedAdditionalItems));
+    //         await dispatch(getAdditionalByProposalID(quotation.id));
+    //     } 
 
 
-        // Dispatch tax and discount updates if any
-        if (Array.isArray(taxDiscountModified) && taxDiscountModified.length > 0) {
-            await dispatch(updateTaxAndDiscount(taxDiscountModified));
-            status = true;
-        }
+    //     // Dispatch tax and discount updates if any
+    //     if (Array.isArray(taxDiscountModified) && taxDiscountModified.length > 0) {
+    //         await dispatch(updateTaxAndDiscount(taxDiscountModified));
+    //         status = true;
+    //     }
 
-        // this is for deletion of the items from the database
-        if (Array.isArray(dataTotDelete?.additionalItems) && dataTotDelete.additionalItems.length > 0) {
-            await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
-        }
+    //     // this is for deletion of the items from the database
+    //     if (Array.isArray(dataTotDelete?.additionalItems) && dataTotDelete.additionalItems.length > 0) {
+    //         await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
+    //     }
 
-        if (Array.isArray(dataTotDelete?.quotationItems) && dataTotDelete.quotationItems.length > 0) {
-            await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
-        }
+    //     if (Array.isArray(dataTotDelete?.quotationItems) && dataTotDelete.quotationItems.length > 0) {
+    //         await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
+    //     }
 
-        if (Array.isArray(dataTotDelete?.taxDiscount) && dataTotDelete.taxDiscount.length > 0) {
-            await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
-        }
+    //     if (Array.isArray(dataTotDelete?.taxDiscount) && dataTotDelete.taxDiscount.length > 0) {
+    //         await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
+    //     }
     
-        // Show success or error message
-        if (status) {
-            // await dispatch(getAllProposal());
-            successDialog("Updated Successfully");
-        } else {
-            errorDialog("No changes detected!");
-        }
+    //     // Show success or error message
+    //     if (status) {
+    //         // await dispatch(getAllProposal());
+    //         successDialog("Updated Successfully");
+    //     } else {
+    //         errorDialog("No changes detected!");
+    //     }
         
-        handleClearForm()
-        props.setSelectedTab('tab-one')
+    //     handleClearForm()
+    //     props.setSelectedTab('tab-one')
        
-    };  // end of update
+    // };  // end of update
 
 
     const handleQuotationApproval = async () => {
@@ -598,7 +609,7 @@ const QoutationForm = (props) => {
                     )}
 
                     
-                    <AdditionalItemtable 
+                    {/* <AdditionalItemtable 
                          totalAmount={props.totalAmountState.totalAmount}
                          setTotalAmount={props.totalAmountState.setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
@@ -608,9 +619,9 @@ const QoutationForm = (props) => {
                          reference={{preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
                          setDataTotDelete={setDataTotDelete}
-                    />
+                    /> */}
 
-                    <div className="row table-editable">
+                    {/* <div className="row table-editable">
                         <QoutationTableEditable
                             setQoutationItem={setQoutationItem}
                             proposalItemSuccess={props.proposalItemSuccess}
@@ -629,9 +640,9 @@ const QoutationForm = (props) => {
                             computeTotalProposal={computeTotalProposal}
                             setDataTotDelete={setDataTotDelete}
                          />
-                    </div>
+                    </div> */}
 
-                    {parseInt(props.taf.totalAmountref) > 0 && (
+                    {/* {parseInt(props.taf.totalAmountref) > 0 && (
                         ["tax", "discount"].map((type) => (
                             <TaxDiscountTable
                                 key={type}
@@ -651,7 +662,7 @@ const QoutationForm = (props) => {
                                 setDataTotDelete={setDataTotDelete}
                             />
                         ))
-                    )}
+                    )} */}
 
                     <TermsCondition 
                         termsCondition={termsCondition}
@@ -668,7 +679,7 @@ const QoutationForm = (props) => {
                     <div className="row row-btn-qout mt-3 justify-content-end gap-2">
                     {quotation.id > 0 ? (
                         <>                        
-                          <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button>
+                          {/* <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button> */}
 
                          {quotation.department_stage_id === getDepartmentLoggedIn() && (
                              <button className="btn-qoutation btn-approval" onClick={handleQuotationApproval}>Submit For Approval</button>
