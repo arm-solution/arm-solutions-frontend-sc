@@ -609,7 +609,7 @@ const QoutationForm = (props) => {
                     )}
 
                     
-                    {/* <AdditionalItemtable 
+                    <AdditionalItemtable 
                          totalAmount={props.totalAmountState.totalAmount}
                          setTotalAmount={props.totalAmountState.setTotalAmount}
                          additionalState={{ addtionalItems, setAddtionalItems }}
@@ -619,7 +619,7 @@ const QoutationForm = (props) => {
                          reference={{preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
                          setDataTotDelete={setDataTotDelete}
-                    /> */}
+                    />
 
                     {/* <div className="row table-editable">
                         <QoutationTableEditable
