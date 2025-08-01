@@ -608,7 +608,7 @@ const QoutationForm = (props) => {
                         <FloatNotification message={notification.message} type={notification.type} onClose={() => setNotification('')}/>
                     )}
 
-                    
+{/*                     
                     <AdditionalItemtable 
                          totalAmount={props.totalAmountState.totalAmount}
                          setTotalAmount={props.totalAmountState.setTotalAmount}
@@ -619,9 +619,9 @@ const QoutationForm = (props) => {
                          reference={{preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
                          setDataTotDelete={setDataTotDelete}
-                    />
+                    /> */}
 
-                    {/* <div className="row table-editable">
+                    <div className="row table-editable">
                         <QoutationTableEditable
                             setQoutationItem={setQoutationItem}
                             proposalItemSuccess={props.proposalItemSuccess}
@@ -640,7 +640,7 @@ const QoutationForm = (props) => {
                             computeTotalProposal={computeTotalProposal}
                             setDataTotDelete={setDataTotDelete}
                          />
-                    </div> */}
+                    </div>
 
                     {/* {parseInt(props.taf.totalAmountref) > 0 && (
                         ["tax", "discount"].map((type) => (
