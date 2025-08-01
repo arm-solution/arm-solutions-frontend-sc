@@ -88,7 +88,7 @@ export const checkAuthAndNavigate = (navigate) => {
       localStorage.removeItem('token');
       
       if (typeof navigate === 'function') {
-        navigate('/login');
+        navigate('/');
         sessionStorage.clear();
         window.dispatchEvent(new Event('currentShift'));
       } else {
