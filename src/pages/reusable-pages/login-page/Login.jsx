@@ -10,8 +10,7 @@ import Loading from '../../../components/loading-spinner/Loading';
 
 const Login = () => {
 
-  const employeeAuth = useSelector((state) => state.auth)
-  const { isSuccess: loginSuccess, message, loading: loginLoading } = employeeAuth;
+  const { isSuccess: loginSuccess, message, loading: loginLoading } = useSelector((state) => state.auth);
 
 
   const [errmessage, setErrMessage] = useState({
@@ -98,7 +97,7 @@ useEffect(() => {
             <div className="d-flex justify-content-center back-text">
               <div className="col-12 col-xl-9">
 
-                { loginLoading && ( <Loading /> )}
+                {/* { loginLoading && ( <Loading /> )} */}
 
                 <h2 className="h2 mb-4 mt-0">Arm Solution Enterprises Portal</h2>
                 {/* <img className="img-fluid rounded mb-4" loading="lazy" src="./assets/img/bsb-logo-light.svg" width="245" height="80" alt="BootstrapBrain Logo"/> */}
