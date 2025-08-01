@@ -17,9 +17,9 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const style = { display: !showSideNav && 'flex' }
 
 
-    const handleLogout = async () => {
+    const handleLogout = () => {
         dispatch(resetCurrentDtr());
-        await logout(navigate);
+        logout();
     };
 
     const toggleDropdown = (id) => {
