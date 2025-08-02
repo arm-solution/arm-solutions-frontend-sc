@@ -388,13 +388,6 @@ const EmployeesForm = (props) => {
 
                 <div className="row">
 
-                  {/* <div className="col col-md-4">
-                    <div className="form-group">
-                      <label htmlFor="region">Region</label>
-                      <input type="text" className="form-control" name="region" value={employeeData.region || ''} onChange={handleEmployeeFormInput}/>
-                    </div>
-                  </div> */}
-
                   <div className="col col-md-4">
                     <div className="form-group">
                       <label htmlFor="department">Department</label>
@@ -409,35 +402,31 @@ const EmployeesForm = (props) => {
                     </div>
                   </div>
 
-                  {/* <div className="col col-md-4">
+                  <div className="col col-md-4">
                     <div className="form-group">
-                      <label htmlFor="user_type">User Type</label>
-                      <select className="form-select" name="user_type" value={employeeData.user_type || ''} onChange={handleEmployeeFormInput}>
-                        <option value="" disabled>Select</option>
-                        <option value="employee" >Employee</option>
-                        <option value="admin" >Admin</option>
-                        <option value="marketing" >Marketing</option>
-                        <option value="engineering" >Engineering</option>
-                        <option value="hr" >HR</option>
-                        <option value="sales" >Sales</option>
-                        <option value="it" >IT</option>
-                        
-                      </select>
+                      <label htmlFor="position">Position</label>
+                      <input type="text" className="form-control" name="position" value={employeeData.position || ''} onChange={handleEmployeeFormInput} />
                     </div>
-                  </div> */}
+                  </div>
 
-                {/* </div>
-
-                <div className="row"> */}
-
-                 {/* <div className="col col-md-4">
+                  <div className="col col-md-4">
                     <div className="form-group">
-                      <label htmlFor="seection">Section</label>
-                      <select className="form-select" name="section" value={employeeData.section || ''} onChange={handleEmployeeFormInput}>
-                        <option value="" disabled>Select</option>
-                      </select>
+                      <label htmlFor="start_date">Date Hired</label>
+                      <input type="date" className="form-control" name="start_date" value={ employeeData.start_date ? dateFormatted(employeeData.start_date) : ''} onChange={handleEmployeeFormInput} />
                     </div>
-                  </div> */}
+                  </div>
+
+                </div>
+
+                <div className="row">
+
+                  <div className="col col-md-4">
+                    <div className="form-group">
+                      <label htmlFor="salary">Salary (Daily)</label>
+                      <input type="text" className="form-control" name="salary" value={employeeData.salary || ''} onChange={handleEmployeeFormInput} />
+                    </div>
+                  </div>
+
 
                   <div className="col col-md-64">
                     <div className="form-group">
@@ -452,6 +441,25 @@ const EmployeesForm = (props) => {
                       <input type="text" className="form-control" name="confirm_password" value={conPass} onChange={confirmPassword}/>
                     </div>
                   </div>
+
+                </div>
+
+                
+                <div className="row">
+
+                  <div className="col col-md-8">
+                    <div className="form-group">
+                      <label htmlFor="trainings_seminars_attended">Trainings/Seminars Attended</label>
+                      <textarea
+                        className="form-control"
+                        name="trainings_seminars_attended"
+                        value={employeeData.trainings_seminars_attended || ''}
+                        onChange={handleEmployeeFormInput}
+                        rows={2}
+                      ></textarea>
+                    </div>
+                  </div>
+
 
                 </div>
 
