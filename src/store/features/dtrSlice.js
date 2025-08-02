@@ -69,10 +69,12 @@ export const getWeeklyDtr = createAsyncThunk('dtr/getWeeklyDtr', async(user_id, 
     }
 })
 
-export const getCurrentDtr = createAsyncThunk('dtr/getCurrentDtr', async(user_id, { rejectWithValue }) => {
+export const getCurrentDtr = createAsyncThunk('dtr/getCurrentDtr', async({user_id, status}, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/get-current-dtr/${user_id}`);
+
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/get-current-dtr/${user_id}/${status}`);
         return data;
+        
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
@@ -173,14 +175,12 @@ const dtrSlice = createSlice({
         })
         .addCase(postDtr.pending, (state, _) => {
             state.dtrPostLoading = true
-            console.log("pending")
         })
         .addCase(postDtr.fulfilled, (state, action) => {
 
             const { success } = action.payload; 
 
             state.dtrPostLoading = false;
-            console.log("fullfiled")
             state.isSuccess = success;
         })
         .addCase(postDtr.rejected, (state, action) => {
@@ -188,7 +188,6 @@ const dtrSlice = createSlice({
             state.isSuccess = false;
             state.dtrPostLoading = false;
             state.message = message;
-            console.log("rejected")
             // state.message = action.payload
         })
 

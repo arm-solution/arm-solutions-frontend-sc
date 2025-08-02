@@ -135,7 +135,7 @@ const AccessCamera = (props) => {
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title" id="exampleModalLongTitle">Modal title</h5>
+            <h5 className="modal-title" id="exampleModalLongTitle">Please face the front of the camera</h5>
           </div>
           <div className="modal-body">
             <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
