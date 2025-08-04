@@ -13,9 +13,7 @@ const DtrDetailsModal = (props) => {
     const [user, setUser] = useState(null);
     const dispatch = useDispatch();
 
-
     useEffect(() => {
-
         const getLoginImage = () => {
             const image_link = props.selectedDtr?.image_link;
     
@@ -25,7 +23,6 @@ const DtrDetailsModal = (props) => {
         }
 
         getLoginImage();
-
     }, [props.selectedDtr]);
 
     useEffect(() => {
@@ -56,54 +53,176 @@ const DtrDetailsModal = (props) => {
         }
 
         const url = `/${getLoggedInData().department_name}/common/map?data=${data}`;
-        window.open(url, '_blank'); // <-- opens in new tab
+        window.open(url, '_blank');
     };
 
     return (
-        <div ref={props.modalRef} className="modal fade modal-lg" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1" >
+        <div ref={props.modalRef} className="modal fade modal-xl" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalToggleLabel">DTR Details</h5>
+                <div className="modal-content dtr-modal-content">
+                    {/* Header */}
+                    <div className="modal-header dtr-modal-header">
+                        <div className="d-flex align-items-center">
+                            <div className="dtr-icon-wrapper me-3">
+                                <i className="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 className="modal-title dtr-modal-title mb-0">DTR Details</h4>
+                                <small className="text-muted">Daily Time Record Information</small>
+                            </div>
+                        </div>
                         <button
                             type="button"
-                            className="btn-close"
+                            className="btn-close dtr-btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"
                         ></button>
                     </div>
-                    <div className="modal-body">
-                        <div className="row">
-                            {imageUrl ? (
-                                <img src={imageUrl} alt="Captured Image" className="image-capture" />
-                            ) : (
-                                <img src={BrokenImage} alt="Placeholder Broken Image" className="image-capture" />
-                            )}
-                        </div>
-                        <div className="row">
-                            <p>Name: {user ? `${user.firstname} ${user.lastname}` : "Loading..."}</p>
-                            <p>
-                                Date:{" "}
-                                {props.selectedDtr?.shift_date
-                                    ? formatDateReadable(props.selectedDtr.shift_date)
-                                    : "No date available"}
-                            </p>
-                            <p>Break In: {props.selectedDtr?.break_start || "---"}</p>
-                            <p>Break Out: {props.selectedDtr?.break_end || "---"}</p>
-                            <p>Time In: {props.selectedDtr?.time_in || "---"}</p>
-                            <p>Time Outssss: {props.selectedDtr?.time_out || "---"}</p>
-                            <p>
-                                Over Time Start: {props.selectedDtr?.ot_start || "No Overtime"}
-                            </p>
-                            <p>
-                                Over Time End: {props.selectedDtr?.ot_end || "No Overtime"}
-                            </p>
-                            <p>Remarks: {props.selectedDtr?.remarks || "No Remarks"}</p>
+
+                    {/* Body */}
+                    <div className="modal-body dtr-modal-body">
+                        <div className="row g-4">
+                            {/* Image Section */}
+                            <div className="col-md-5">
+                                <div className="dtr-image-container">
+                                    <div className="dtr-image-wrapper">
+                                        {imageUrl ? (
+                                            <img src={imageUrl} alt="Captured Image" className="dtr-image" />
+                                        ) : (
+                                            <img src={BrokenImage} alt="Placeholder Broken Image" className="dtr-image" />
+                                        )}
+                                        <div className="dtr-image-overlay">
+                                            <i className="fas fa-camera"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Details Section */}
+                            <div className="col-md-7">
+                                <div className="dtr-details-container">
+                                    {/* Employee Info */}
+                                    <div className="dtr-section">
+                                        <h6 className="dtr-section-title">
+                                            <i className="fas fa-user me-2"></i>Employee Information
+                                        </h6>
+                                        <div className="dtr-info-card">
+                                            <div className="dtr-info-item">
+                                                <span className="dtr-label">Full Name</span>
+                                                <span className="dtr-value">
+                                                    {user ? `${user.firstname} ${user.lastname}` : (
+                                                        <div className="dtr-skeleton"></div>
+                                                    )}
+                                                </span>
+                                            </div>
+                                            <div className="dtr-info-item">
+                                                <span className="dtr-label">Date</span>
+                                                <span className="dtr-value">
+                                                    {props.selectedDtr?.shift_date
+                                                        ? formatDateReadable(props.selectedDtr.shift_date)
+                                                        : "No date available"}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Time Records */}
+                                    <div className="dtr-section">
+                                        <h6 className="dtr-section-title">
+                                            <i className="fas fa-clock me-2"></i>Time Records
+                                        </h6>
+                                        <div className="dtr-info-card">
+                                            <div className="row g-3">
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">Time In</span>
+                                                        <span className="dtr-time-value time-in">
+                                                            {props.selectedDtr?.time_in || "---"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">Time Out</span>
+                                                        <span className="dtr-time-value time-out">
+                                                            {props.selectedDtr?.time_out || "---"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">Break In</span>
+                                                        <span className="dtr-time-value">
+                                                            {props.selectedDtr?.break_start || "---"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">Break Out</span>
+                                                        <span className="dtr-time-value">
+                                                            {props.selectedDtr?.break_end || "---"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Overtime Records */}
+                                    <div className="dtr-section">
+                                        <h6 className="dtr-section-title">
+                                            <i className="fas fa-plus-circle me-2"></i>Overtime Records
+                                        </h6>
+                                        <div className="dtr-info-card">
+                                            <div className="row g-3">
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">OT Start</span>
+                                                        <span className="dtr-time-value ot-time">
+                                                            {props.selectedDtr?.ot_start || "No Overtime"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="col-6">
+                                                    <div className="dtr-time-item">
+                                                        <span className="dtr-time-label">OT End</span>
+                                                        <span className="dtr-time-value ot-time">
+                                                            {props.selectedDtr?.ot_end || "No Overtime"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Remarks */}
+                                    {props.selectedDtr?.remarks && (
+                                        <div className="dtr-section">
+                                            <h6 className="dtr-section-title">
+                                                <i className="fas fa-comment me-2"></i>Remarks
+                                            </h6>
+                                            <div className="dtr-remarks-card">
+                                                <p className="mb-0">{props.selectedDtr.remarks}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="modal-footer">
-                        <button onClick={handleViewMap} className="btn btn-primary">
-                            View Map
+
+                    {/* Footer */}
+                    <div className="modal-footer dtr-modal-footer">
+                        <button 
+                            type="button" 
+                            className="btn btn-light dtr-btn-secondary" 
+                            data-bs-dismiss="modal"
+                        >
+                            <i className="fas fa-times me-2"></i>Close
+                        </button>
+                        <button onClick={handleViewMap} className="btn dtr-btn-primary">
+                            <i className="fas fa-map-marker-alt me-2"></i>View Location
                         </button>
                     </div>
                 </div>
