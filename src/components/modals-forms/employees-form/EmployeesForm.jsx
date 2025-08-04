@@ -48,6 +48,7 @@ const EmployeesForm = (props) => {
     section: 0,
     user_type: '',
     user_password: '',
+    salary: 0,
     created_by: getLoggedInUser()?.id || '',
     created: formattedDateNow,
     start_date: formattedDateNow,
@@ -179,7 +180,7 @@ const EmployeesForm = (props) => {
 
     const oldEmailRef = props.selectedUser ? props.selectedUser.email : '';
 
-    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.contact_number) {
+    if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.user_password || !employeeData.contact_number || !employeeData.salary) {
       alert('Please fill in all required fields.');
       return;
     }

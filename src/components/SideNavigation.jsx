@@ -6,6 +6,7 @@ import { resetCurrentDtr } from '../store/features/dtrSlice';
 import { useDispatch } from 'react-redux';
 import "./../customs/css/SideNavigation.css";
 import { isDepartmentAllowed } from '../customs/global/manageLocalStorage';
+import { startTransition } from "react";
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const navigate = useNavigate();
@@ -15,9 +16,10 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
 
     const style = { display: !showSideNav && 'flex' }
 
+
     const handleLogout = () => {
         dispatch(resetCurrentDtr());
-        logout(navigate);
+        logout();
     };
 
     const toggleDropdown = (id) => {

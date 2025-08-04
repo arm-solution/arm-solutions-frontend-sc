@@ -17,9 +17,10 @@ import TotalAmount from '../../total-qoutation/TotalAmount';
 import { getUserById  } from '../../../store/features/userSlice';
 import QuotationFormsInputs from '../quotation-form-inputs/QuotationFormInputs';
 import AdditionalItemtable from '../../additional-items-table-editable/AdditionalItemtable';
-import { getAllProposal } from '../../../store/features/proposalSlice';
+import { getPositionByDepartmentID } from '../../../customs/global/manageObjects';
 import { getDepartmentLoggedIn, getApprovalState } from '../../../customs/global/manageLocalStorage';
 import TermsCondition from '../../terms-condition-editor/TermsCondition';
+import { createProposal } from '../../../store/features/proposalSlice';
 
 const QoutationForm = (props) => {
     // const navigate = useNavigate();
@@ -93,20 +94,26 @@ const QoutationForm = (props) => {
     }
 
     const getCreatorDetails = async(id) => {
-        let position = ''
         const { payload } = await dispatch(getUserById(id));
 
-        if(payload[0].department === 1) {
-            position = 'System Administrator'
-        } else if(payload[0].department === 'marketing') {
-            position = 'Marketing Specialist '
-        }
+        getPositionByDepartmentID(payload.data.department);
 
         return {
-            fullname: `${payload[0].firstname} ${payload[0].lastname}`,
-            position
+            fullname: `${payload.data.firstname} ${payload.data.lastname}`,
+            position: getPositionByDepartmentID(payload.data.department) || 'No Position Specified'
         };
     }
+
+    useEffect(() => {
+        // lance
+    console.log("props.proposalItemData", props.proposalItemData);
+    console.log("tax", tax);
+    console.log("discount", discount);
+    // console.log("addEditItem", addEditItem)
+    console.log("qoutationItem", qoutationItem)
+    // console.log("qoutationItem", taxDiscountModified)
+    }, [])
+    
 
     // update data from the database when the local storage is not empty
     // this is for delete items
@@ -199,7 +206,7 @@ const QoutationForm = (props) => {
     }
 
     const getTotalTax = (tax) => {
-        if (tax.length > 0) {
+        if (Array.isArray(tax) && tax.length > 0) {
           return tax.reduce((totals, item) => {
             const type = item.option_type || 'other'; // Default to 'other' if no type is provided
       
@@ -340,73 +347,73 @@ const QoutationForm = (props) => {
 
         console.log("quotation items", qoutationItem);
 
-        // try {
+        try {
 
-        //     const quotationResponse = await dispatch(createProposal({
-        //         ...quotation,
-        //         tax: taxDiscountTotal.tax,
-        //         discount: taxDiscountTotal.discount,
-        //         sub_total: props.taf.totalAmountref,
-        //         grand_total: props.totalAmountState.totalAmount,
-        //         additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
-        //         previous_department_stage_id: getDepartmentLoggedIn(),
-        //         department_stage_id: getDepartmentLoggedIn(),
-        //         terms_condition: termsCondition,
-        //         status: 'pending'
-        //     }));
+            const quotationResponse = await dispatch(createProposal({
+                ...quotation,
+                tax: taxDiscountTotal.tax,
+                discount: taxDiscountTotal.discount,
+                sub_total: props.taf.totalAmountref,
+                grand_total: props.totalAmountState.totalAmount,
+                additional: addtionalItems.reduce((sum, item) => sum + item.item_total, 0),
+                previous_department_stage_id: getDepartmentLoggedIn(),
+                department_stage_id: getDepartmentLoggedIn(),
+                terms_condition: termsCondition,
+                status: 'pending'
+            }));
 
-        //     const { lastid, success: qoutationSuccess } = quotationResponse.payload;
+            const { lastid, success: qoutationSuccess } = quotationResponse.payload;
 
 
-        //     if(lastid > 0 && qoutationItem.length > 0) {
-        //         const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
-        //         const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
+            if(lastid > 0 && qoutationItem.length > 0) {
+                const updatedQoutationItems = qoutationItem.map(data => ({ ...data, proposal_id: parseInt(lastid) }));
+                const taxAndDiscountMerge = [...tax, ...discount].map(({ isEditing, isSaved, rowId, ...rest }) => ({ ...rest, proposal_id: parseInt(lastid) }));
                 
-        //         const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
-        //             ...rest,
-        //             item_total: item_total,
-        //             proposal_id: parseInt(lastid), 
-        //         }));
+                const additionalItemsData = addtionalItems.map(({ isEditing, isSaved, item_total, rowId, ...rest }) => ({
+                    ...rest,
+                    item_total: item_total,
+                    proposal_id: parseInt(lastid), 
+                }));
 
 
-        //         setQoutationItem(updatedQoutationItems);
+                setQoutationItem(updatedQoutationItems);
 
-        //         // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
-        //         const promises = [
-        //             dispatch(postAdditionalItems(additionalItemsData)),
-        //             dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
-        //         ];
+                // dispatching 3 dispatch and push it to promises array to make sure execute it simultaneously
+                const promises = [
+                    dispatch(postAdditionalItems(additionalItemsData)),
+                    dispatch(saveProposalItems(updatedQoutationItems.map(({ proposal_item_id, amount, ...rest }) => ({...rest, item_total: amount }))))
+                ];
                 
-        //         if (taxAndDiscountMerge.length > 0) {
-        //             promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
-        //         } else {
-        //             promises.push(Promise.resolve({ payload: { success: true } }));
-        //         }
+                if (taxAndDiscountMerge.length > 0) {
+                    promises.push(dispatch(postDiscountAndTax(taxAndDiscountMerge)));
+                } else {
+                    promises.push(Promise.resolve({ payload: { success: true } }));
+                }
                 
-        //         const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
+                const [saveItemsResponse, saveAdditionalItemResponse, saveTaxDiscountResponse] = await Promise.all(promises);
                 
 
-        //         const { success: itemsStatus } = saveItemsResponse.payload;
-        //         const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
-        //         const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
+                const { success: itemsStatus } = saveItemsResponse.payload;
+                const { success: taxDiscountStatus } = saveTaxDiscountResponse.payload;
+                const { success: additionalItemStatus } = saveAdditionalItemResponse.payload;
         
-        //         if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
-        //             successDialog('Quotation is now available');
-        //         } else {
-        //             errorDialog('Failed to create a Quotation');
-        //         }
+                if (itemsStatus && taxDiscountStatus && additionalItemStatus) {
+                    successDialog('Quotation is now available');
+                } else {
+                    errorDialog('Failed to create a Quotation');
+                }
 
-        //     } else {
-        //         if(qoutationSuccess)  {
-        //             successDialog('Quotation is now available')
-        //             props.setSelectedTab('tab-one')
-        //         } else {
-        //             errorDialog('Failed to create a Quotation ');
-        //         }
-        //     }
-        // } catch (error) {
-        //     errorDialog('Failed To Save The Quotation');
-        // }
+            } else {
+                if(qoutationSuccess)  {
+                    successDialog('Quotation is now available')
+                    props.setSelectedTab('tab-one')
+                } else {
+                    errorDialog('Failed to create a Quotation ');
+                }
+            }
+        } catch (error) {
+            errorDialog('Failed To Save The Quotation');
+        }
     };
     
     // UPDATE PROPOSAL
@@ -506,25 +513,27 @@ const QoutationForm = (props) => {
 
 
         // Dispatch tax and discount updates if any
-        if (taxDiscountModified.length > 0) {
+        if (Array.isArray(taxDiscountModified) && taxDiscountModified.length > 0) {
             await dispatch(updateTaxAndDiscount(taxDiscountModified));
             status = true;
         }
 
         // this is for deletion of the items from the database
-        if(dataTotDelete.additionalItems.length > 0) {
+        if (Array.isArray(dataTotDelete?.additionalItems) && dataTotDelete.additionalItems.length > 0) {
             await dispatch(deleteMultipleAdditionalItems(dataTotDelete.additionalItems));
         }
-        if(dataTotDelete.quotationItems.length > 0) {
+
+        if (Array.isArray(dataTotDelete?.quotationItems) && dataTotDelete.quotationItems.length > 0) {
             await dispatch(deleteMultipleProposalItems(dataTotDelete.quotationItems));
         }
-        if(dataTotDelete.taxDiscount.length > 0) {
+
+        if (Array.isArray(dataTotDelete?.taxDiscount) && dataTotDelete.taxDiscount.length > 0) {
             await dispatch(deleteMultipleTaxDiscount(dataTotDelete.taxDiscount));
         }
     
         // Show success or error message
         if (status) {
-            await dispatch(getAllProposal());
+            // await dispatch(getAllProposal());
             successDialog("Updated Successfully");
         } else {
             errorDialog("No changes detected!");
@@ -533,7 +542,8 @@ const QoutationForm = (props) => {
         handleClearForm()
         props.setSelectedTab('tab-one')
        
-    };  // end of update
+    };  
+    // // end of update
 
 
     const handleQuotationApproval = async () => {
@@ -608,7 +618,7 @@ const QoutationForm = (props) => {
                          totalAmountref={props.taf.totalAmountref }
                          setTotalAmountref={ props.taf.setTotalAmountref }
                          actions={{ calculateAllTaxDiscount, calculateTaxDiscount, getTotalTax}}
-                         reference={{preAdditionalRef, preProductItemsRef}}
+                         reference={{ preAdditionalRef, preProductItemsRef}}
                          computeTotalProposal={computeTotalProposal}
                          setDataTotDelete={setDataTotDelete}
                     />
@@ -671,7 +681,7 @@ const QoutationForm = (props) => {
                     <div className="row row-btn-qout mt-3 justify-content-end gap-2">
                     {quotation.id > 0 ? (
                         <>                        
-                          <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button>
+                          {/* <button className="btn-qoutation" onClick={handleUpdateQoutation}>Save</button> */}
 
                          {quotation.department_stage_id === getDepartmentLoggedIn() && (
                              <button className="btn-qoutation btn-approval" onClick={handleQuotationApproval}>Submit For Approval</button>

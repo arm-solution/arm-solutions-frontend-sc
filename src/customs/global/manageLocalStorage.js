@@ -79,7 +79,7 @@ export const checkAuthAndNavigate = (navigate) => {
   }
 
 
-  export const logout = (navigate) => {
+  export const logout = () => {
     const authData = localStorage.getItem('authEmployee');
     const token = localStorage.getItem('token');
   
@@ -87,13 +87,10 @@ export const checkAuthAndNavigate = (navigate) => {
       localStorage.removeItem('authEmployee');
       localStorage.removeItem('token');
       
-      if (typeof navigate === 'function') {
-        navigate('/login');
         sessionStorage.clear();
         window.dispatchEvent(new Event('currentShift'));
-      } else {
-        console.error('Navigate function is not defined');
-      }
+        window.location.href = '/';
+
     } else {
       console.warn('No auth data or token found in localStorage');
     }

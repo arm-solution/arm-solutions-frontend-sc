@@ -169,7 +169,7 @@ const AdditionalItemtable = (props) => {
 
       if(updateData) {
         props.additionalState.setAddtionalItems(updateData);
-        preAdditionalRef.current = [...updateData];
+        // preAdditionalRef.current = [...updateData];
         props.computeTotalProposal(updateData);
 
         return true; 

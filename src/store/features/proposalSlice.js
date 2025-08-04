@@ -5,12 +5,12 @@ import axios from 'axios';
 export const getAllProposal = createAsyncThunk('proposals/getAllProposal', async (_, {rejectWithValue}) => {
 
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all`);
         
         return data;
 
     } catch (error) {
-        rejectWithValue(error.response.data);
+        return rejectWithValue(error.response.data);
     }
 });
 
@@ -35,7 +35,7 @@ export const updateProposal = createAsyncThunk('proposals/updateProposal', async
     }
 });
 
-export const   getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
+export const getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
     try {
         const { data } =  await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all-by-filter?page=1&limit=1`, filter);
         console.log("data", data);
@@ -50,6 +50,7 @@ const proposalSlice = createSlice({
     name: 'proposal',
     initialState: {
         data: [],
+        allProposal: [],
         dataByFilter:[],
         isSuccess: false,
         loading: true,
@@ -70,12 +71,11 @@ const proposalSlice = createSlice({
             state.isSuccess = false
         })
         .addCase(getAllProposal.fulfilled, (state, action) => {
-            console.log("getAllProposal payload:", action.payload);
+
             state.loading = false;
             state.isSuccess = true;
-            
-            const payload = action.payload;
-            state.data = Array.isArray(payload) ? payload : [];
+
+            state.data = action.payload;
             
         })
         .addCase(getAllProposal.rejected, (state, action) => {
@@ -123,6 +123,7 @@ const proposalSlice = createSlice({
             state.isSuccess = false;
             state.message = "rejected"
         })
+
     
     }, 
 
