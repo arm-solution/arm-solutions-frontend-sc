@@ -27,6 +27,11 @@ const handleView = (row) => {
     navigate(`/admin/dtr-record/${row.id}`);
 }
 
+useEffect(() => {
+  console.log("getPendingUserDtr", getPendingUserDtr)
+}, [getPendingDtrUsers])
+
+
   return (
     <>
         <div className="mt-5">

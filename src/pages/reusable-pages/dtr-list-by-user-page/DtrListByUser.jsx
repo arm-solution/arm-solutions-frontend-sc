@@ -86,12 +86,13 @@ const DtrListByUser = () => {
     <>
         <DtrByUserTable 
           setShowForm={setShowForm}
-          setDtrIds={setDtrIds} userId={userId}
+          setDtrIds={setDtrIds}
+          userId={userId}
           setDateRangeStatus={setDateRangeStatus}
           dateRangeStatus={dateRangeStatus}
         />
 
-        <hr></hr>/
+        <hr></hr>
  
         {/* list of all user payslip */}
         <EarningListByUser 
@@ -100,14 +101,14 @@ const DtrListByUser = () => {
         />
         <hr />
 
-        {/* {showForm && dtrIds.length > 0 && ( */}
+        {showForm && dtrIds.length > 0 && (
           <PaySlipInputForm 
             employee={userById} 
             deprtmentById={deprtmentById[0]}
             dateRangeStatus={dateRangeStatus}
             totalHours={totalHours}
           />
-        {/*  )} */}
+         )}
         
 
     </>
