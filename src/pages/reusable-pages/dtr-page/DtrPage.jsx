@@ -44,9 +44,9 @@ const Home = () => {
   useEffect(() => {
     const getDefaultLoad = () => {
       if(getLoggedInID()) {
-        // dispatch(getDtrById({ id: getLoggedInID() }));
-        // dispatch(getWeeklyDtr(getLoggedInID()));
-        // dispatch(getCurrentDtr(getLoggedInID()));
+        dispatch(getDtrById({ id: getLoggedInID() }));
+        dispatch(getWeeklyDtr(getLoggedInID()));
+        dispatch(getCurrentDtr({ user_id: getLoggedInID(), status: 'pending'}));
       }
     }
 
@@ -142,6 +142,7 @@ const Home = () => {
         // close camera modal
         closeCameraModal();
       } else {
+        console.log("payload message", payload);
         errorDialog(payload.message || 'Cannot log in');
       }
     } catch (error) {
