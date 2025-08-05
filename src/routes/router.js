@@ -38,6 +38,8 @@ const DtrStandalone = lazy(() => import('./../pages/reusable-pages/dtr-standalon
 const JobOrder = lazy(() => import('./../pages/reusable-pages/job-order/JobOrder'));
 const JobOrderForm = lazy(() => import('./../pages/reusable-pages/job-order-form/JobOrderForm'))
 
+const LoginForOnsite = lazy(() => import('./../pages/reusable-pages/dtr-onsite-login-page/LoginForOnsite'))
+
 // outlets
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const EmployeeHomePage = lazy(() => import('../pages/employees/EmployeesHomePage'));
@@ -195,6 +197,7 @@ export const router = createBrowserRouter(
       <Route path="pdf-viewer/:name/id/:id" element={LazyComponent(PdfViewPage)} />
       <Route path="under-maintenance" element={LazyComponent(UnderMaintenance)} />
       <Route path="dtr-onsite-access" element={LazyComponent(DtrStandalone)} />
+      <Route path="dtr-onsite-access-login" element={LazyComponent(LoginForOnsite)} />
       <Route path="forgot-password" element={LazyComponent(ForgotPassword)} />
       <Route path="not-found" element={<NotFound />} />
       <Route path="*" element={<NotFound />} />
