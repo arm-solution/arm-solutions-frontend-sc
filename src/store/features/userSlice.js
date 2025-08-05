@@ -104,6 +104,18 @@ export const forgotPasswordRequest = createAsyncThunk('user/forgotPassword', asy
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message); 
     }
+});
+
+export const searchUserForDtrOnsite = createAsyncThunk('user/searchUserForDtrOnsite', async(keyword, {rejectWithValue}) => {
+    try {
+        if(keyword !== '') {
+            const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees/search-user?keyword=${keyword}`);
+
+            return data; 
+        }
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message); 
+    }
 })
 
 const userSlice = createSlice({
@@ -111,6 +123,8 @@ const userSlice = createSlice({
     initialState: {
         data: [],
         userById: [],
+        userSearchResult: [],
+        userSearchLoding: false,
         isSuccess: false,
         loading: false,
         message: ''
@@ -118,6 +132,9 @@ const userSlice = createSlice({
     reducers: {
         clearMessage(state) {
             state.message = '';
+        },
+        clearUserSearchResult(state) {
+            state.userSearchResult = [];
         }
     },
     extraReducers(builder) {
@@ -190,6 +207,23 @@ const userSlice = createSlice({
             state.message = message;
 
         })
+        .addCase(searchUserForDtrOnsite.pending, (state, _) => {
+            state.userSearchLoding = true;
+            state.isSuccess = false;
+        })
+        .addCase(searchUserForDtrOnsite.fulfilled, (state, action) => {
+            state.userSearchLoding = false;
+            state.isSuccess = true;
+
+            state.userSearchResult = action.payload;
+        })
+        .addCase(searchUserForDtrOnsite.rejected, (state, action) => {
+            state.userSearchLoding = false;
+            state.isSuccess = false;
+
+            state.message = "The api request is rejected";
+        })
+
         // .addCase(changePassword.pending, (state, _) => {
         //     state.loading = true;
         // })
@@ -205,6 +239,6 @@ const userSlice = createSlice({
     }
 });
 
-export const { clearMessage } = userSlice.actions;
+export const { clearMessage, clearUserSearchResult } = userSlice.actions;
 
 export default userSlice;
