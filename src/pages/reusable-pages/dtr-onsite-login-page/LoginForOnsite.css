@@ -1,0 +1,11 @@
+.login-box {
+  background-color: rgba(255, 255, 255, 0.05);
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+input::placeholder {
+  color: #ccc;
+  letter-spacing: 4px;
+}
