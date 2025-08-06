@@ -3,7 +3,6 @@ import Map from '../../../../components/Map'
 import { useNavigate } from 'react-router-dom';
 import './Maps.css'
 
-
 const Maps = () => {
   const navigate = useNavigate();
 
@@ -13,47 +12,79 @@ const Maps = () => {
     setSelectedDate(e.target.value);
   };
 
-
   return (
     <>
-      <div className="container-fluid mt-5 ">
-        <div className="row mobile">
-          <div className="col col-md-3">
-            <h3 className='text-center info-label mb-4'>Information</h3>
+      <div className="maps-wrapper">
+        <div className="container-fluid">
+          <div className="row mobile g-4">
+            {/* Information Panel */}
+            <div className="col-12 col-lg-3">
+              <div className="info-panel">
+                <div className="panel-header">
+                  <h3 className='panel-title'>
+                    <i className="bi bi-info-circle me-2"></i>
+                    Information
+                  </h3>
+                </div>
+                
+                <div className="panel-body">
+                  <div className="info-field">
+                    <label className="field-label">
+                      <i className="bi bi-person me-2"></i>
+                      Full Name
+                    </label>
+                    <div className="field-content">John Doe</div>
+                  </div>
 
-            <div className="row">
-              <b>Full Name</b>
-            </div>
+                  <div className="info-field">
+                    <label className="field-label">
+                      <i className="bi bi-building me-2"></i>
+                      Department
+                    </label>
+                    <div className="field-content">IT Department</div>
+                  </div>
 
-            <div className="row mt-3">
-              <b>Department</b>
-            </div>
+                  <div className="info-field">
+                    <label htmlFor="datePicker" className="field-label">
+                      <i className="bi bi-calendar3 me-2"></i>
+                      Select Date
+                    </label>
+                    <div className="date-input-wrapper">
+                      <input
+                        type="date"
+                        id="datePicker"
+                        className="form-control date-input"
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                      />
+                    </div>
+                  </div>
 
-            <div className="row mt-3">
-
-            <label htmlFor="datePicker" className="form-label">Select Date</label>
-            <input
-              type="date"
-              id="datePicker"
-              className="form-control"
-              value={selectedDate}
-              onChange={handleDateChange}
-            />
-
-            </div>
-
-            <div className="row mt-4">
-              <div className="col-md-6">
-                <button className="btn btn-success">Search</button>
+                  <div className="search-section">
+                    <button className="btn search-btn">
+                      <i className="bi bi-search me-2"></i>
+                      Search
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
+            {/* Map Section */}
+            <div className="col-12 col-lg-9">
+              <div className="map-section">
+                <div className="map-header">
+                  <h4 className="map-title">
+                    <i className="bi bi-geo-alt me-2"></i>
+                    Location Map
+                  </h4>
+                </div>
+                <div className="map-wrapper">
+                  <Map coordinates={{ long: 0, lat: 0 }}/>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="col col-md-9 mt-3">
-            <Map coordinates={{ long: 0, lat: 0 }}/>
-          </div>
-
         </div>
       </div>
     </>
