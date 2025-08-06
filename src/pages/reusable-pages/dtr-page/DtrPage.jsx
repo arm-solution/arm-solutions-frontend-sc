@@ -37,6 +37,8 @@ const Home = () => {
   })
   const [accessOut, setAccessOut] = useState(false);
 
+  const [error, setError] = useState(null);
+
   const dispatch = useDispatch();
 
   const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
@@ -149,6 +151,8 @@ const Home = () => {
       errorDialog('An error occurred while logging in');
     }
   };
+
+  
   
   // time out method
   const timeOut = async (e) => {
@@ -159,12 +163,48 @@ const Home = () => {
     const formattedTime = format(currentDate, 'HH:mm:ss');
   
     const storeShift = sessionStorage.getItem('currentShift');
-  
+
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by this browser.");
+      return;
+    }
+
     if (!storeShift) return;
   
     try {
       const myShift = JSON.parse(storeShift);
       myShift.time_out = formattedTime;
+
+      // Helper function to get a single position sample
+      const getPositionSample = () =>
+        new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { enableHighAccuracy: true }
+          );
+       });
+
+      // Collect multiple position samples
+      const positionSamples = await Promise.all(
+        Array.from({ length: 3 }, () => getPositionSample())
+      );
+
+      // Destructure and calculate average latitude and longitude
+      const { latitude, longitude } = positionSamples
+        .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
+        .reduce(
+          (acc, { latitude, longitude }) => ({
+            latitude: acc.latitude + latitude,
+            longitude: acc.longitude + longitude,
+          }),
+          { latitude: 0, longitude: 0 }
+        );
+  
+      const avgCoords = {
+        time_out_latitude: latitude / positionSamples.length,
+        time_out_longitude: longitude / positionSamples.length,
+      };
   
       // Calculate total hours worked and break hours
       const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
@@ -174,6 +214,8 @@ const Home = () => {
   
       myShift.total_hours = totalHours - breakHours;
       myShift.status = 'completed';
+      myShift.time_out_latitude = avgCoords.time_out_latitude;
+      myShift.time_out_longitude = avgCoords.time_out_longitude;
 
       const { payload } = await dispatch(updateDtrById(myShift));
 
