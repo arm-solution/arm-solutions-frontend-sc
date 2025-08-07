@@ -45,7 +45,7 @@ const DtrByUserTable = (props) => {
   };
 
   const handleAppproveReject = async (dtrStatus) => {
-
+    
     const { payload } = await dispatch(updateMultipleDtrStatus({ status: dtrStatus, ids, imageLinks: imageLinks }));
     
     if (payload.success) {
