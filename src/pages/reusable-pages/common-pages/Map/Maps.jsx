@@ -1,12 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import Map from '../../../../components/Map'
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserById } from '../../../../store/features/userSlice';
 import './Maps.css'
 
 const Maps = () => {
   const navigate = useNavigate();
 
+  const myLocation = useLocation();
+  const dispatch = useDispatch();
+
+  const { userById, loading } = useSelector(state => state.users);
+
   const [selectedDate, setSelectedDate] = useState('');
+
+  useEffect(() => {
+    const getUserInformation = async () => {
+      const queryParams = new URLSearchParams(myLocation.search);
+      const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
+      
+      if(data) {
+        await dispatch(getUserById(data.user_id))
+      }
+    }
+
+    getUserInformation();
+  }, [dispatch])
+
+
+  useEffect(() => {
+    console.log("userById", userById?.data);
+  }, [userById])
+  
+
+
+  
 
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
@@ -33,7 +63,9 @@ const Maps = () => {
                       <i className="bi bi-person me-2"></i>
                       Full Name
                     </label>
-                    <div className="field-content">John Doe</div>
+                    <div className="field-content">
+                      { loading ? 'loading...' : `${userById?.data?.firstname} ${userById?.data?.lastname}`}
+                    </div>
                   </div>
 
                   <div className="info-field">
@@ -41,7 +73,9 @@ const Maps = () => {
                       <i className="bi bi-building me-2"></i>
                       Department
                     </label>
-                    <div className="field-content">IT Department</div>
+                    <div className="field-content">
+                      { loading ? 'loading...' : userById?.data?.department_details?.name }
+                    </div>
                   </div>
 
                   <div className="info-field">
