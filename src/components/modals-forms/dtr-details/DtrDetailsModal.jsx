@@ -56,6 +56,25 @@ const DtrDetailsModal = (props) => {
         window.open(url, '_blank');
     };
 
+
+    const closeModal = () => {
+        const modalElement = props.modalRef.current;
+
+        if (!modalElement) {
+            console.warn("Modal element is null");
+            return;
+        }
+
+        let modal = Modal.getInstance(modalElement);
+        
+        // If modal instance doesn't exist, create it
+        if (!modal) {
+            modal = new Modal(modalElement);
+        }
+
+        modal.hide();
+    };
+
     return (
         <div ref={props.modalRef} className="modal fade modal-xl" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
@@ -217,7 +236,7 @@ const DtrDetailsModal = (props) => {
                         <button 
                             type="button" 
                             className="btn btn-light dtr-btn-secondary" 
-                            data-bs-dismiss="modal"
+                            onClick={closeModal}
                         >
                             <i className="fas fa-times me-2"></i>Close
                         </button>

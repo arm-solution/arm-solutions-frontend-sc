@@ -89,7 +89,7 @@ const Map = (props) => {
             <Marker position={[parseFloat(positionsInsideGeofence.time_out_latitude), parseFloat(positionsInsideGeofence.time_out_longitude)]}  icon={customIcon}>
               <Popup>
                 You are logged out at this position.<br />
-                This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence.
+                {/* This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence. */}
               </Popup>
             </Marker>
           )}

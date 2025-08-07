@@ -92,6 +92,8 @@ export const getPendingDtrUsers = createAsyncThunk('dtr/getPendingUserDtr', asyn
 export const updateMultipleDtrStatus = createAsyncThunk('dtr/updateMultipleDtrStatus', async(status, {rejectWithValue}) => {
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/dtr/update-multiple-dtr`, status);
+
+        console.log("status", status)
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
