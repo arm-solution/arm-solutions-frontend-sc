@@ -23,7 +23,7 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
     try {
 
         const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/add-user`, employeeData);
-        console.log("data", data);
+        
         return data;
         
     } catch (error) {
