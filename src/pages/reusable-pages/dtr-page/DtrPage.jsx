@@ -66,7 +66,7 @@ const Home = () => {
 
   useEffect(() => {
 
-    if (shift.time_out) {
+    if (shift?.time_out) {
       setAccessOut(true);
     } else {
       setAccessOut(false);
@@ -192,7 +192,7 @@ const Home = () => {
 
       // Destructure and calculate average latitude and longitude
       const { latitude, longitude } = positionSamples
-        .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
+        .map(({ coords: { latitude, longitude }}) => ({ latitude, longitude }))
         .reduce(
           (acc, { latitude, longitude }) => ({
             latitude: acc.latitude + latitude,
@@ -265,6 +265,7 @@ const Home = () => {
     setLoadingSessionStorage(false);
   }
 
+  // break out function
   const handleBreakOut = async (e) => {
     e.preventDefault();
   
@@ -523,6 +524,7 @@ const Home = () => {
              dtrPostLoading={dtrPostLoading}
              capture={capture}
              closeCameraModal={closeCameraModal}
+             user_id={getLoggedInID()}
             />
 
           </div>

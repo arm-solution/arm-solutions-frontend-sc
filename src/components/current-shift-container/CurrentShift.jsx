@@ -1,30 +1,51 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './CurrentShift.css';
 import { dateFormatted } from '../../customs/global/manageDates';
+import { getCurrentDtr } from '../../store/features/dtrSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const CurrentShift = (props) => {
 
   const { shift, setShift } = props.shiftState
+  const dispatch = useDispatch();
+
+  const { currentDtr } = useSelector(state => state.dtr)
 
   useEffect(() => {
-    const shiftDetails = sessionStorage.getItem('currentShift');
-    if (shiftDetails) {
-      setShift(JSON.parse(shiftDetails));
-    }
+    const getCurrenUsertDtr = async() => {
+      if(props.position === 'onsite') {
+        await dispatch(getCurrentDtr({ user_id: props.user_id, status: 'pending'}));
+      } else {
   
-    const handleShiftUpdate = () => {
-      const updatedShiftDetails = sessionStorage.getItem('currentShift');
-      if (updatedShiftDetails) {
-        setShift(JSON.parse(updatedShiftDetails));
+        const shiftDetails = sessionStorage.getItem('currentShift');
+        if (shiftDetails) {
+          setShift(JSON.parse(shiftDetails));
+        }
+      
+        const handleShiftUpdate = () => {
+          const updatedShiftDetails = sessionStorage.getItem('currentShift');
+          if (updatedShiftDetails) {
+            setShift(JSON.parse(updatedShiftDetails));
+          }
+        };
+      
+        window.addEventListener('currentShift', handleShiftUpdate);
+      
+        return () => {
+          window.removeEventListener('currentShift', handleShiftUpdate);
+        };
+  
       }
-    };
-  
-    window.addEventListener('currentShift', handleShiftUpdate);
-  
-    return () => {
-      window.removeEventListener('currentShift', handleShiftUpdate);
-    };
+    }
+
+    getCurrenUsertDtr();
   }, [setShift]);
+
+  useEffect(() => {
+      setShift(currentDtr[0]);
+  }, [currentDtr])
+  
 
   return (
     <>

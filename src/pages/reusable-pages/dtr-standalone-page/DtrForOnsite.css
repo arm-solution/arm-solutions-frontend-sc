@@ -1,7 +1,15 @@
 /* Light pastel background for the page */
 .search-page {
+  display: flex;
+  flex-direction: column; /* Stack vertically */
+  align-items: center;
   background-color: #9b1010;
   padding: 20px;
+}
+
+
+h1 {
+  color: white; /* makes LANCE stand out on red bg */
 }
 
 /* Wider card with room for label and DTR details */
@@ -59,6 +67,18 @@
   background-color: #f0f4fa;
 }
 
+.centered-dtr-table {
+  position: relative; /* no fixed centering here */
+  z-index: auto; /* let the modal handle layering */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.page-specific-dtr {
+  margin-top: 20px; /* adjust space above the Time In button */
+}
+
 /* Mobile stacking */
 @media (max-width: 576px) {
   .input-group {
@@ -80,3 +100,11 @@
     font-size: 1.05rem;
   }
 }
+
+.employee-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+}
+
