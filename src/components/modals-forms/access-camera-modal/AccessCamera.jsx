@@ -87,7 +87,7 @@ const AccessCamera = (props) => {
         ot_start: '',
         ot_end: '',
         remarks: '',
-        user_id: getLoggedInID(),
+        user_id: props.user_id,
         status: 'pending',
       };
   
@@ -154,7 +154,7 @@ const AccessCamera = (props) => {
               Close
             </button>
     
-            <button className="btn btn-primary btn-sm" onClick={(e) => getTimeIn(e)}disabled={props.dtrPostLoading}>
+            <button className="btn btn-primary btn-sm" onClick={(e) => getTimeIn(e)} disabled={props.dtrPostLoading}>
               {props.dtrPostLoading ? "Loading..." : "Capture"}
             </button>
           </div>
