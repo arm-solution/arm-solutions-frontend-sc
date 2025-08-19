@@ -33,6 +33,18 @@ const DtrListByUser = () => {
   });
 
 
+   const { dtrWithDateRange } = useSelector(state => state.dtr);  
+
+   useEffect(() => {
+
+    if(dtrWithDateRange) {
+      console.log("dtrWithDateRange", dtrWithDateRange);
+    }
+    
+   }, [dtrWithDateRange])
+   
+
+
   useEffect(() => {
     const getEmployeeById = async () => {
       if(userId) {
@@ -42,8 +54,7 @@ const DtrListByUser = () => {
     }
 
     getEmployeeById();
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     
@@ -71,7 +82,6 @@ const DtrListByUser = () => {
   useEffect(() => {
     const fetchDepartment = async () => {
       if (userById && Array.isArray(userById) && userById[0]?.department) {
-        console.log("user", userById)
         await dispatch(getDepartmentById(userById[0].department));
       }
     };
@@ -84,13 +94,6 @@ const DtrListByUser = () => {
 
   return (
     <>
-        <DtrByUserTable 
-          setShowForm={setShowForm}
-          setDtrIds={setDtrIds}
-          userId={userId}
-          setDateRangeStatus={setDateRangeStatus}
-          dateRangeStatus={dateRangeStatus}
-        />
 
         <hr></hr>
  
@@ -101,15 +104,26 @@ const DtrListByUser = () => {
         />
         <hr />
 
-        {showForm && dtrIds.length > 0 && (
+        {dtrWithDateRange.length > 0 && (
+            <DtrByUserTable 
+              setShowForm={setShowForm}
+              setDtrIds={setDtrIds}
+              userId={userId}
+              setDateRangeStatus={setDateRangeStatus}
+              dateRangeStatus={dateRangeStatus}
+              dtrWithDateRange={dtrWithDateRange}
+            />
+        )}
+
           <PaySlipInputForm 
-            employee={userById} 
+            employee={userById?.data} 
             deprtmentById={deprtmentById[0]}
             dateRangeStatus={dateRangeStatus}
             totalHours={totalHours}
+            setDateRangeStatus={setDateRangeStatus}
+            dtrWithDateRange={dtrWithDateRange}
+            userId={userId}
           />
-         )}
-        
 
     </>
   )
