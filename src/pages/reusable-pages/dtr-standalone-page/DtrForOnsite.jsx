@@ -25,7 +25,7 @@ const DtrForOnsite = () => {
   const debouncedSearch = useMemo(() => 
     debounce((keyword) => {
       dispatch(searchUserForDtrOnsite(keyword));
-    }, 1500)
+    }, 1000)
   , [dispatch]);
 
   const handleChange = (e) => {

@@ -256,6 +256,9 @@ const DtrTableForOnsite = (props) => {
         try {
           const formData = new FormData();
 
+          coords.longitude = '121.114'
+          coords.latitude = '14.0401'
+
           coords.user_id = props.employee.id ? props.employee.id : getLoggedInID();
       
           formData.append('coords', JSON.stringify(coords));
@@ -268,8 +271,8 @@ const DtrTableForOnsite = (props) => {
           for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
           }
-      
-        //   // Dispatch action to post data
+ 
+          // Dispatch action to post data
           const { payload } = await dispatch(postDtr(formData));
       
           // Handle response
