@@ -6,6 +6,7 @@ import './DtrForOnsite.css';
 import debounce from 'lodash.debounce';
 import DtrTableForOnsite from '../../../components/dtr-table-for-onsite/DtrTableForOnsite';
 import { getCurrentDtr } from '../../../store/features/dtrSlice';
+import { useNavigate } from "react-router-dom";
 
 const DtrForOnsite = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,9 @@ const DtrForOnsite = () => {
   const [employee, setEmployee] = useState(null);
   const [showDtrTable, setShowDtrTable] = useState(false)
 
-  const [myDtr, setMyDtr] = useState(null)
+  const [myDtr, setMyDtr] = useState(null);
+
+  const navigate = useNavigate();
 
   const { userSearchResult, userSearchLoding } = useSelector(state => state.users);
   // const { currentDtr} = useSelector(state => state.dtr);
@@ -22,7 +25,7 @@ const DtrForOnsite = () => {
   const debouncedSearch = useMemo(() => 
     debounce((keyword) => {
       dispatch(searchUserForDtrOnsite(keyword));
-    }, 1500)
+    }, 1000)
   , [dispatch]);
 
   const handleChange = (e) => {
@@ -48,11 +51,20 @@ const DtrForOnsite = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if(currentDtr) {
-  //     setMyDtr(currentDtr);
-  //   }
-  // }, [currentDtr])
+
+useEffect(() => {
+  const getKioskSession = () => {
+    const kiosAccount = sessionStorage.getItem("qioskData");
+
+    if (!kiosAccount) {
+      navigate("/dtr-onsite-access-login");
+    } 
+  };
+
+  getKioskSession();
+}, []);
+
+  
   
 
   return (
@@ -67,7 +79,7 @@ const DtrForOnsite = () => {
             <input
               type="text"
               className="form-control shadow-sm"
-              placeholder="e.g. Ella Martinez"
+              placeholder="e.g. Jerimy Castillo"
               value={query}
               onChange={handleChange}
             />

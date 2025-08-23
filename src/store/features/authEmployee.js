@@ -12,11 +12,24 @@ export const loginEmployee = createAsyncThunk('employee/login', async ({ employe
     }
 );
 
+export const loginQiosk = createAsyncThunk('qiosk/login', async (pinCode,  { rejectWithValue }) => {
+  try {
+
+    const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/login-qiosk`, {pinCode});
+
+    return data;
+    
+  } catch (error) {
+    return rejectWithValue(error.response?.data || 'An unexpected error occurred');
+  }
+})
+
 
 const employeeAuthSlice = createSlice({
   name: 'employeeLogin',
   initialState: {
     data: [],
+    kioskData: [],
     token: '',
     isSuccess: false,
     loading: false,
@@ -52,7 +65,30 @@ const employeeAuthSlice = createSlice({
         state.loading = false;
         state.isSuccess = false;
         state.message = `Login failed - ${message}`;
-      });
+      })
+      .addCase(loginQiosk.pending, (state) => {
+        state.loading = true;
+        state.isSuccess = false;
+      })
+      .addCase(loginQiosk.fulfilled, (state, action) => {
+        const { data, success } = action.payload;
+
+        if (success) {
+          state.loading = false;
+          state.isSuccess = true;
+          state.data = data;
+
+          sessionStorage.setItem('qioskData', JSON.stringify({ data }));
+        }
+
+      })
+      .addCase(loginQiosk.rejected, (state, action) => {
+          const { message } = action.payload;
+          state.loading = false;
+          state.isSuccess = false;
+          state.message = `Login failed - ${message}`;
+      })
+
   },
 });
 
