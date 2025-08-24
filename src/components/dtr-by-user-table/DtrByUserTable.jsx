@@ -29,7 +29,7 @@ const DtrByUserTable = (props) => {
 
           <table className="table table-bordered mt-3">
             <thead className="table-success">
-              <tr>
+              <tr className='highlight-red'>
                 <th>Date</th>
                 <th>Time In</th>
                 <th>Time Out</th>
@@ -51,7 +51,10 @@ const DtrByUserTable = (props) => {
               ) : (
                 <tbody>
                   {props.dtrWithDateRange.map(d => (
-                    <tr key={d.id}>
+                    <tr 
+                      key={d.id}
+                      className={d?.total_hours < 8 ? 'highlight-red' : ''}
+                    >
   
                       <td>{d?.shift_date ? formatDateReadable(d?.shift_date) : 'No data available'}</td>
                       <td>{d?.time_in}</td>
