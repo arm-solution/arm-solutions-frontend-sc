@@ -60,6 +60,7 @@ const EarningListByUser = (props) => {
           headerColor='table-danger'
           tableLabel='PaySlip List'
         />
+        
         {_getFullEarnings && (
             <FullEarningModal  earningModalsRef={modalRef} _getFullEarnings={_getFullEarnings}/>
         )}

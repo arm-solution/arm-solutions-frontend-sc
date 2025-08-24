@@ -231,7 +231,7 @@ const PaySlipInputForm = (props) => {
                           value={props.dateRangeStatus.date_start}
                           name='date_start'
                           onChange={updateDateRangeStatus}
-                          disabled={!!props.dateRangeStatus?.date_start}
+                          // disabled={!!props.dateRangeStatus?.date_start}
                         />
                       </div>
                       <div className="col-sm-4">
@@ -242,7 +242,7 @@ const PaySlipInputForm = (props) => {
                           value={props.dateRangeStatus.date_end}
                           name='date_end'
                           onChange={updateDateRangeStatus}
-                          disabled={!!props.dateRangeStatus?.date_end}
+                          // disabled={!!props.dateRangeStatus?.date_end}
                         />
                       </div>
 
