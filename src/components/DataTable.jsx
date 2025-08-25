@@ -52,7 +52,7 @@ const DataTable = (props) => {
     <>
     <div className="row searc-container">
       <div className="col col-md-6">
-      { props.showAddButtonAndSearchInput.searchInput ? (
+      { props.showAddButtonAndSearchInput.searchInput && (
         
         <input
           type="text"
@@ -62,9 +62,12 @@ const DataTable = (props) => {
           className='form-control mb-5 search-input'
         />
 
-      ) : (
-        <input type="date" className="form-control mb-5 search-date" />
-      ) }
+      )}
+
+      {props.showAddButtonAndSearchInput.showDateInputSearch && (
+          <input type="date" className="form-control mb-5 search-date" />
+      )}
+
 
       </div>
       <div className="col col-md-6 text-end">
