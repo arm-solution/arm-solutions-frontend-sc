@@ -7,6 +7,7 @@ import { checkAuthAndNavigate } from './../../../customs/global/manageLocalStora
 // import { unwrapResult } from '@reduxjs/toolkit';
 import { Link } from 'react-router-dom';
 import Loading from '../../../components/loading-spinner/Loading';
+import armLogo from '../../../assets/images/armlogo.png';
 
 const Login = () => {
 
@@ -99,8 +100,17 @@ useEffect(() => {
 
                 {/* { loginLoading && ( <Loading /> )} */}
 
-                <h2 className="h2 mb-4 mt-0">Arm Solution Enterprises Portal</h2>
-                {/* <img className="img-fluid rounded mb-4" loading="lazy" src="./assets/img/bsb-logo-light.svg" width="245" height="80" alt="BootstrapBrain Logo"/> */}
+                {/* Logo and Title Section */}
+                <div className="logo-title-section text-center text-md-start mb-4">
+                  {/* Company Logo */}
+                  <img 
+                    src={armLogo} 
+                    alt="Arm Solution Enterprises Logo" 
+                    className="company-logo mb-3"
+                  />
+                  
+                  <h2 className="h2 mb-0 mt-0">Arm Solution Enterprises Portal</h2>
+                </div>
                 
                 <hr className="border-primary-subtle mb-4"/>
                 
