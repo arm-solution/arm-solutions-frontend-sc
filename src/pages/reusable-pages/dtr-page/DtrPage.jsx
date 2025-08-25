@@ -181,7 +181,7 @@ const Home = () => {
     const storeShift = sessionStorage.getItem('currentShift');
 
     if (storeShift) {
-      const myShift = JSON.parse(storeShift);
+      let myShift = JSON.parse(storeShift);
       
       if (actionType === 'break_end') {
         const { image_capture, ...cleanShift } = myShift;
