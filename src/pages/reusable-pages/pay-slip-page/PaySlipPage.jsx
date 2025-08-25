@@ -5,6 +5,7 @@ import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import './PaySlip.css'
 import { getEarningsByUserId, getFullEarnings } from '../../../store/features/earningSlice';
+import { getUserById } from '../../../store/features/userSlice';
 
 import { formatDateReadable } from '../../../customs/global/manageDates';
 
@@ -19,11 +20,15 @@ const PaySlipPage = () => {
   const [myEarnings, setMyEarnings] = useState([]);
 
   const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings); 
+  const { userById } = useSelector(state => state.users)
 
   useEffect(() => {
 
     const fetchGetEarningByUserId = async() => {
-      await dispatch(getEarningsByUserId(getLoggedInID()));
+      if(getLoggedInID()) {
+        await dispatch(getEarningsByUserId(getLoggedInID()));
+        await dispatch(getUserById(getLoggedInID()))
+      }
     }
 
     fetchGetEarningByUserId();
@@ -62,9 +67,7 @@ const PaySlipPage = () => {
 
        <div className="row">
         <div className="col col-md-6">
-            <PaySlipForm
-              _getFullEarnings={_getFullEarnings}
-            />
+          <PaySlipForm _getFullEarnings={_getFullEarnings || [] } _userById={userById || []} />
         </div>
 
 
