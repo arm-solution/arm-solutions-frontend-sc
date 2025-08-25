@@ -12,7 +12,12 @@ export const postEarning = createAsyncThunk('post/earning', async(earning, { rej
 
 export const getFullEarnings = createAsyncThunk('get/getFullEarnings', async(id, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
+        if(!id) {
+            return console.error("ERROR: No id provided");
+        }
+        const  data  = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
+
+        console.log("getFullEarnings", data)
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -21,7 +26,13 @@ export const getFullEarnings = createAsyncThunk('get/getFullEarnings', async(id,
 
 export const getEarningsByUserId = createAsyncThunk('get/getEarningsByUserId', async(id, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-employee-id/${id}`);
+
+        if(!id) {
+            return console.error("ERROR: No id provided");
+        }
+
+        const { data }  = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-employee-id/${id}`);
+
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
