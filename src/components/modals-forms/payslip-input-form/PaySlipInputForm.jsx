@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import './PaySlipInputForm.css';
+import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { postAdditionalEarnings } from '../../../store/features/additionalEarningsSlice';
 import { postEarning } from '../../../store/features/earningSlice';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getAllDtrWithDateRange, updateMultipleDtrStatus } from '../../../store/features/dtrSlice';
+import { getEarningsByUserId } from '../../../store/features/earningSlice';
 
 const PaySlipInputForm = (props) => {
 
@@ -16,6 +18,7 @@ const PaySlipInputForm = (props) => {
   const [deductions, setDeductions] = useState([]);
   const [cutOffTotalHours, setCutOffTotalHours] = useState(0);
 
+  // const { userId } = useParams();
 
   const [ids, setIds] = useState([]);
   const [imageLinks, setImageLinks] = useState([]);
@@ -125,6 +128,9 @@ const PaySlipInputForm = (props) => {
           const { payload: updateDtrStatusRes } = await dispatch(updateMultipleDtrStatus({ status: 'approved', ids, imageLinks: imageLinks }))
           
           if(updateDtrStatusRes.success) {
+            if(props.employee) {
+              await dispatch(getEarningsByUserId(props.employee.id));
+            }
             setIds([]);
             setImageLinks([]);
           }
@@ -255,7 +261,6 @@ const PaySlipInputForm = (props) => {
                           Search
                         </button>
                       </div>
-
 
                     </div>
                   </div>

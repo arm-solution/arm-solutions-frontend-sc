@@ -10,15 +10,20 @@ const PaySlipForm = (props) => {
   const showOnPdf = () => {
     if(props._getFullEarnings && getLoggedInUser()) {
         sessionStorage.setItem("paySlipSession", JSON.stringify(props._getFullEarnings));
-        sessionStorage.setItem("userLoggedIn", JSON.stringify(getLoggedInUser()));
+        // sessionStorage.setItem("userLoggedIn", JSON.stringify(getLoggedInUser()));
+        if(props._userById.data) {
+            sessionStorage.setItem("employeeData", JSON.stringify(props._userById.data));
+        }
          // Open the new tab and navigate to the desired path
-         window.open(`/pdf-viewer/payslip/id/3`, "_blank");
+        window.open(`/pdf-viewer/payslip/id/3`, "_blank");
     }
   }
 
   useEffect(() => {
 
     const earnings = props._getFullEarnings;
+
+    console.log("_userById", props._userById);
 
     const isNonEmptyArray = Array.isArray(earnings) && earnings.length > 0;
     const isNonEmptyObject =
@@ -29,7 +34,7 @@ const PaySlipForm = (props) => {
 
       setShowDocs(isNonEmptyArray || isNonEmptyObject);
 
-  }, [props._getFullEarnings])
+  }, [props._getFullEarnings, props._userById])
   
 
 
@@ -38,8 +43,8 @@ const PaySlipForm = (props) => {
         <h1 className='mb-5'>PAYSLIP</h1>
 
             <div className="row mt-3">
-            <p>Employee: {getLoggedInUser() ? `${capitalizeFirstLetter(getLoggedInUser().firstname)} ${capitalizeFirstLetter(getLoggedInUser().lastname)}` : '---'}</p> 
-            <p>Employee Number: {getLoggedInUser() ? getLoggedInUser().employee_id : '---'}</p>
+            <p>Employee: {props._userById.data ? `${props._userById.data.firstname} ${props._userById.data.lastname}` : '---'}</p> 
+            <p>Employee Number: {props._userById.data ? props._userById.data.employee_id : '---'}</p>
             <p>Date: July 24, 2024</p>
             </div>
 

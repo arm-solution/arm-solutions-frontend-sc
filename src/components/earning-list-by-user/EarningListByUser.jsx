@@ -12,7 +12,7 @@ const EarningListByUser = (props) => {
   const dispatch = useDispatch()  
   const modalRef = useRef(null);
 
-  const { userId } = useParams();
+  // const { userId } = useParams();
 
   const { _getFullEarnings } = useSelector(state => state.earnings);
 
@@ -20,7 +20,7 @@ const EarningListByUser = (props) => {
   const columns = [
     { header: 'Date', accessor: 'date_from' },
   ];
-  const [selectedEarnings, setSelectedEarnings] = useState({});
+  // const [selectedEarnings, setSelectedEarnings] = useState({});
 
   useEffect(() => {
     if (props._getEarningsByUserId.length > 0) {
@@ -60,9 +60,9 @@ const EarningListByUser = (props) => {
           headerColor='table-danger'
           tableLabel='PaySlip List'
         />
-        
+
         {_getFullEarnings && (
-            <FullEarningModal  earningModalsRef={modalRef} _getFullEarnings={_getFullEarnings}/>
+            <FullEarningModal  earningModalsRef={modalRef} _getFullEarnings={_getFullEarnings} _userById={props._userById}/>
         )}
 
     </>
