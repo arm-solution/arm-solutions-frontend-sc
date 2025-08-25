@@ -101,6 +101,7 @@ const DtrListByUser = () => {
         <EarningListByUser 
           _getEarningsByUserId={_getEarningsByUserId}
           _getFullEarnings={_getFullEarnings}
+          _userById={userById}
         />
         <hr />
 

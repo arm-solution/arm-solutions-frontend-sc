@@ -1,7 +1,12 @@
-import React, {useState, useRef} from 'react'
+import React, { useEffect } from 'react'
 import PaySlipForm from '../payslip-form/PaySlipForm'
 
 const FullEarningModal = (props) => {
+
+    useEffect(() => {
+        console.log("_getFullEarnings", props._getFullEarnings)
+    }, [props._getFullEarnings])
+    
 
   return (
     <>
@@ -13,7 +18,7 @@ const FullEarningModal = (props) => {
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
-                    <PaySlipForm _getFullEarnings={props._getFullEarnings}/>
+                    <PaySlipForm _getFullEarnings={props._getFullEarnings} _userById={props._userById}/>
                 </div>
                 <div className="modal-footer">
                     <button type="button" className="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
