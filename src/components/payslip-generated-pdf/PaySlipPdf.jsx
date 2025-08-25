@@ -135,10 +135,11 @@ const PaySlipPdf = () => {
     if (typeof window !== "undefined" && window.sessionStorage) {
         const pay = sessionStorage.getItem('paySlipSession');
         const userInfo = sessionStorage.getItem('userLoggedIn');
+        const employeeInfo = sessionStorage.getItem('employeeData')
 
-        if(pay && userInfo) {
+        if(pay && employeeInfo) {
           setEarnings(JSON.parse(pay));
-          setUser(JSON.parse(userInfo));
+          setUser(JSON.parse(employeeInfo));
         } else {
           window.location.href = '/not-found';
         }
