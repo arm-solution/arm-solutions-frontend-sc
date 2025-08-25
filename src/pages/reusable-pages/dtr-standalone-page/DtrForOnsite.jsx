@@ -7,6 +7,7 @@ import debounce from 'lodash.debounce';
 import DtrTableForOnsite from '../../../components/dtr-table-for-onsite/DtrTableForOnsite';
 import { getCurrentDtr } from '../../../store/features/dtrSlice';
 import { useNavigate } from "react-router-dom";
+import armLogo from '../../../assets/images/armlogo.png';
 
 const DtrForOnsite = () => {
   const dispatch = useDispatch();
@@ -70,8 +71,20 @@ useEffect(() => {
   return (
     <>
       <div className="search-page min-vh-100 d-flex flex-column align-items-center">
+        
+        {/* Logo Section */}
+        <div className="logo-section text-center mt-4 mb-3">
+          <img 
+            src={armLogo} 
+            alt="Arm Solution Enterprises Logo" 
+            className="dtr-page-logo"
+          />
+          <h2 className="company-title mt-2 mb-0">Arm Solution Enterprises</h2>
+          <p className="page-subtitle mb-0">Employee DTR System</p>
+        </div>
+
         {/* Search Input */}
-        <div className="search-wrapper container px-3 py-3 shadow rounded-4 bg-white mt-5" style={{ maxWidth: '600px' }}>
+        <div className="search-wrapper container px-3 py-3 shadow rounded-4 bg-white mt-3" style={{ maxWidth: '600px' }}>
           <label className="form-label text-muted fs-5 mb-3">
             🔍 Search for an employee
           </label>
@@ -79,7 +92,7 @@ useEffect(() => {
             <input
               type="text"
               className="form-control shadow-sm"
-              placeholder="e.g. Jerimy Castillo"
+              placeholder="e.g. Roneto Arago"
               value={query}
               onChange={handleChange}
             />
