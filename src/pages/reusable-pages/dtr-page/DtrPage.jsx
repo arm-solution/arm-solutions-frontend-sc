@@ -214,11 +214,12 @@ const Home = () => {
       if (storeShift) {
         const myShift = JSON.parse(storeShift);
         myShift.time_out = formattedTime;
+        myShift.status = 'completed';
 
         const { payload } = await dispatch(updateDtrById(myShift));
         if (payload.success) {
-          setShift([]);
-          sessionStorage.removeItem('currentShift');
+          sessionStorage.setItem('currentShift', JSON.stringify(myShift));
+          setShift(myShift);
           window.dispatchEvent(new Event('currentShift'));
           return true;
         }
