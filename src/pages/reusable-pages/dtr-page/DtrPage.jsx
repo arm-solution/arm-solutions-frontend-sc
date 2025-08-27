@@ -203,29 +203,76 @@ const Home = () => {
 
   const handleEarlyTimeOut = (e) => {
     e.preventDefault();
-    const formattedTime = format(new Date(), 'hh:mm:ss');
+    const currentDate = new Date();
+    const formattedTime = format(currentDate, 'HH:mm:ss');
     const storeShift = sessionStorage.getItem('currentShift');
 
-    handleConfirmation({
-      title: "Early Time Out",
-      text: "Are you sure you want to time out early?",
-      confirmButtonText: "Yes, Time Out"
-    }, async () => {
-      if (storeShift) {
-        const myShift = JSON.parse(storeShift);
-        myShift.time_out = formattedTime;
-        myShift.status = 'completed';
+    if (!navigator.geolocation || !storeShift) return;
 
-        const { payload } = await dispatch(updateDtrById(myShift));
-        if (payload.success) {
-          sessionStorage.setItem('currentShift', JSON.stringify(myShift));
-          setShift(myShift);
-          window.dispatchEvent(new Event('currentShift'));
-          return true;
+    try {
+
+      handleConfirmation({
+        title: "Early Time Out",
+        text: "Are you sure you want to time out early?",
+        confirmButtonText: "Yes, Time Out"
+      }, async () => {
+        if (storeShift) {
+          const myShift = JSON.parse(storeShift);
+          myShift.time_out = formattedTime;
+          myShift.status = 'completed';
+
+
+          // Get location samples
+          const getPositionSample = () => new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
+          });
+
+          const positionSamples = await Promise.all(Array.from({ length: 3 }, () => getPositionSample()));
+          const { latitude, longitude } = positionSamples
+            .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
+            .reduce(
+              (acc, { latitude, longitude }) => ({
+                latitude: acc.latitude + latitude,
+                longitude: acc.longitude + longitude,
+              }),
+              { latitude: 0, longitude: 0 }
+            );
+
+          const avgCoords = {
+            time_out_latitude: latitude / positionSamples.length,
+            time_out_longitude: longitude / positionSamples.length,
+          };
+
+          const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
+
+          const hasBreak = myShift.break_start !== "" && myShift.break_start !== "00:00:00";
+
+          const breakHours = hasBreak
+            ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime)
+            : 0;
+          
+          Object.assign(myShift, {
+            total_hours:  totalHours - breakHours,
+            status: 'completed',
+            ...avgCoords
+          });
+
+          const { payload } = await dispatch(updateDtrById(myShift));
+          if (payload.success) {
+            sessionStorage.setItem('currentShift', JSON.stringify(myShift));
+            setShift(myShift);
+            window.dispatchEvent(new Event('currentShift'));
+            return true;
+          }
         }
-      }
-      return false;
-    });
+        return false;
+      });
+      
+    } catch (error) {
+      console.error("Error processing timeout:", error);
+    }
+
+
   };
 
   const handleView = (dtr) => {
