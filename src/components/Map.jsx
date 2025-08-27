@@ -77,7 +77,12 @@ const Map = (props) => {
           <Polygon positions={geofenceCoords} color="blue" />
 
           {positionsInsideGeofence && (
-            <Marker position={[parseFloat(positionsInsideGeofence.latitude), parseFloat(positionsInsideGeofence.longitude)]}  icon={customIcon}>
+            <Marker position={[
+              parseFloat(positionsInsideGeofence.latitude),
+              parseFloat(positionsInsideGeofence.longitude)
+              ]}
+              icon={customIcon}
+            >
               <Popup>
                 You are logged in at this position.<br />
                 This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence.
@@ -85,11 +90,16 @@ const Map = (props) => {
             </Marker>
           )}
 
-          {positionsInsideGeofence && (
-            <Marker position={[parseFloat(positionsInsideGeofence.time_out_latitude), parseFloat(positionsInsideGeofence.time_out_longitude)]}  icon={customIcon}>
+          {positionsInsideGeofence && positionsInsideGeofence.time_out_latitude && (
+            <Marker
+              position={[
+                parseFloat(positionsInsideGeofence.time_out_latitude),
+                parseFloat(positionsInsideGeofence.time_out_longitude)
+              ]}
+              icon={customIcon}
+            >
               <Popup>
                 You are logged out at this position.<br />
-                {/* This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence. */}
               </Popup>
             </Marker>
           )}
