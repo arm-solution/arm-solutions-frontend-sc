@@ -37,7 +37,7 @@ const ProtectedRoute = ({ children }) => {
     } catch (error) {
       console.error("Error parsing auth data:", error);
       // If there's an error parsing, treat it as if the user is not authenticated
-      return <Navigate to="/login" />;
+      return <Navigate to="/" />;
     }
   }
 
