@@ -169,6 +169,7 @@ export const router = createBrowserRouter(
       <Route element={<RequireAuth />}>
         <Route path="/hr" element={LazyComponent(HrOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
+          <Route path="employeeList" element={LazyComponent(EmployeeList)} />
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>
