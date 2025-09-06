@@ -181,4 +181,14 @@ export const getWeekDates = () => {
   
     return { start: formattedMonday, end: formattedSunday };
   }
+
+
+  export const getCurrentDateFormatted = () => {
+  const today = new Date();
+  return today.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
   

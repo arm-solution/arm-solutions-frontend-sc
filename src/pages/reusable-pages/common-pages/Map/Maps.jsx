@@ -28,14 +28,6 @@ const Maps = () => {
 
     getUserInformation();
   }, [dispatch])
-
-
-  useEffect(() => {
-    console.log("userById", userById?.data);
-  }, [userById])
-  
-
-
   
 
   const handleDateChange = (e) => {

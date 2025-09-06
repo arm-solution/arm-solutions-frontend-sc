@@ -47,8 +47,6 @@ export const  updateMultipleAdditionalItems = createAsyncThunk('updateMultipleAd
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/additional-item/update-multiple-additiona-items`, additionalData);
 
-        console.log("data add", additionalData);
-
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

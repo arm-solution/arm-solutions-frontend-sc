@@ -38,7 +38,6 @@ export const updateProposal = createAsyncThunk('proposals/updateProposal', async
 export const getProposalByFilter = createAsyncThunk('proposal/getProposalByFilter', async(filter, {rejectWithValue}) => {
     try {
         const { data } =  await axios.post(`${process.env.REACT_APP_API_BASE_URL}/proposal/get-all-by-filter?page=1&limit=1`, filter);
-        console.log("data", data);
         return data 
     } catch (error) {
         return rejectWithValue(error.response.data);

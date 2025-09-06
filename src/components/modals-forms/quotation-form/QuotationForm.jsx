@@ -104,17 +104,6 @@ const QoutationForm = (props) => {
         };
     }
 
-    useEffect(() => {
-        // lance
-    console.log("props.proposalItemData", props.proposalItemData);
-    console.log("tax", tax);
-    console.log("discount", discount);
-    // console.log("addEditItem", addEditItem)
-    console.log("qoutationItem", qoutationItem)
-    // console.log("qoutationItem", taxDiscountModified)
-    }, [])
-    
-
     // update data from the database when the local storage is not empty
     // this is for delete items
     // useEffect(() => {
@@ -344,8 +333,6 @@ const QoutationForm = (props) => {
             });
             return;
         } 
-
-        console.log("quotation items", qoutationItem);
 
         try {
 
@@ -587,10 +574,6 @@ const QoutationForm = (props) => {
         window.open(`/pdf-viewer/quotation/id/${props.proposalEdit.id}`, "_blank");
     } 
 
-    const checkApproval = () => {
-        console.log("get approval state", getApprovalState().status)
-        console.log("quotation", quotation);
-    }
 
     return (
         <>

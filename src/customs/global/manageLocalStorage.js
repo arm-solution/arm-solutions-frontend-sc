@@ -7,9 +7,6 @@ export const checkAuthAndNavigate = (navigate) => {
       const { data } = JSON.parse(authData);
       const role = data.length > 0 ? data[0].department : null; // Assuming data is an array with role inside
 
-
-      console.log("my role", data[0]);
-  
       if (role === 1) {
         navigate('/admin');
       } else if (role === 10) {
