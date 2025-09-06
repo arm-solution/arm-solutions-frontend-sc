@@ -121,28 +121,37 @@ const PaySlipInputForm = (props) => {
             final_pay : calculateFinalPay(),
         }
 
-        const { payload } = await dispatch(postEarning(finalEarnings));
+        if(finalEarnings.final_pay > 0) {
 
-        if(payload.success && payload?.lastid > 0) {
-
-          const { payload: updateDtrStatusRes } = await dispatch(updateMultipleDtrStatus({ status: 'approved', ids, imageLinks: imageLinks }))
-          
-          if(updateDtrStatusRes.success) {
-            if(props.employee) {
-              await dispatch(getEarningsByUserId(props.employee.id));
+          const { payload } = await dispatch(postEarning(finalEarnings));
+  
+          if(payload.success && payload?.lastid > 0) {
+  
+            const { payload: updateDtrStatusRes } = await dispatch(updateMultipleDtrStatus({ status: 'approved', ids, imageLinks: imageLinks }))
+            
+            if(updateDtrStatusRes.success) {
+              if(props.employee) {
+                await dispatch(getEarningsByUserId(props.employee.id));
+              }
+              setIds([]);
+              setImageLinks([]);
             }
-            setIds([]);
-            setImageLinks([]);
+            
+            const finalAdditionalEarnings = [
+              ...additionalPays.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
+              ...deductions.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
+            ];
+  
+            await dispatch(postAdditionalEarnings(finalAdditionalEarnings)); 
+            resetForms();
           }
-          
-          const finalAdditionalEarnings = [
-            ...additionalPays.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
-            ...deductions.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
-          ];
-
-          await dispatch(postAdditionalEarnings(finalAdditionalEarnings)); 
-          resetForms();
+        } else {
+          setNotification({
+            message: 'Cannot generate with negative final pay',
+            type: 'error'
+          })
         }
+
     }
   }
 
