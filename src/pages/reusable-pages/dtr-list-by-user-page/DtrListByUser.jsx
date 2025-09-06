@@ -33,17 +33,7 @@ const DtrListByUser = () => {
   });
 
 
-   const { dtrWithDateRange } = useSelector(state => state.dtr);  
-
-   useEffect(() => {
-
-    if(dtrWithDateRange) {
-      console.log("dtrWithDateRange", dtrWithDateRange);
-    }
-    
-   }, [dtrWithDateRange])
-   
-
+   const { dtrWithDateRange } = useSelector(state => state.dtr);
 
   useEffect(() => {
     const getEmployeeById = async () => {
