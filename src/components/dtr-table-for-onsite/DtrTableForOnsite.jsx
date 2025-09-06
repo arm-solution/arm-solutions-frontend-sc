@@ -284,7 +284,6 @@ const DtrTableForOnsite = (props) => {
             // close camera modal
             closeCameraModal();
           } else {
-            console.log("payload message", payload);
             errorDialog(payload.message || 'Cannot log in');
           }
         } catch (error) {

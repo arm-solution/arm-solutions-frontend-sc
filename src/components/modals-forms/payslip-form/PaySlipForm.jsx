@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './PaySlipForm.css';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
 import { capitalizeFirstLetter } from '../../../customs/global/manageObjects';
+import { getCurrentDateFormatted } from '../../../customs/global/manageDates';
 
 const PaySlipForm = (props) => {
 
@@ -23,8 +24,6 @@ const PaySlipForm = (props) => {
 
     const earnings = props._getFullEarnings;
 
-    console.log("_userById", props._userById);
-
     const isNonEmptyArray = Array.isArray(earnings) && earnings.length > 0;
     const isNonEmptyObject =
       earnings &&
@@ -45,7 +44,7 @@ const PaySlipForm = (props) => {
             <div className="row mt-3">
             <p>Employee: {props._userById.data ? `${props._userById.data.firstname} ${props._userById.data.lastname}` : '---'}</p> 
             <p>Employee Number: {props._userById.data ? props._userById.data.employee_id : '---'}</p>
-            <p>Date: July 24, 2024</p>
+            <p>Date: { getCurrentDateFormatted() }</p>
             </div>
 
             <div className="custom-line"></div>

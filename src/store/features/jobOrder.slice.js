@@ -29,8 +29,6 @@ export const getAllJobOrderByFilter = createAsyncThunk('jobOrder/getAllJobOrderB
        const limitNum = limit > 0 ? limit : 10;
        
         const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job-order//get-all-by-filter?page=${pageNum}&limit=${limitNum}`, filter);
-        console.log("sdhfksfsshhifdiu", data);
-
         return data;
 
     } catch (error) {

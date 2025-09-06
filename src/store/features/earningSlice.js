@@ -17,7 +17,6 @@ export const getFullEarnings = createAsyncThunk('get/getFullEarnings', async(id,
         }
         const  data  = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
 
-        console.log("getFullEarnings", data)
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

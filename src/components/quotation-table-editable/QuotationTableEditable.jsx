@@ -184,8 +184,6 @@ const QoutationTableEditable = (props) => {
         preProductItemsRef.current = [...updatedDetails];
 
         props.computeTotalProposal(null, updatedDetails)
-
-        console.log("updatedDetails", updatedDetails)
     
         const updatedQuotationItems = updatedDetails.map(data => ({
             proposal_id: 0,

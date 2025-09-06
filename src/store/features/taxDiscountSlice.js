@@ -15,7 +15,6 @@ export const getDiscountAndTaxByproposalId = createAsyncThunk('taxDiscount/getAl
     try {
         const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/tax-discount-proposal-items/get-tax-discount-proposal-items/${proposalID}`);
 
-        console.log("data from database", data);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -44,12 +43,9 @@ export const updateTaxAndDiscount = createAsyncThunk('taxDiscount/updateTaxDisco
 export const deleteMultipleTaxDiscount = createAsyncThunk('taxDiscount/deleteMultipleTaxDiscount', async(ids, {rejectWithValue}) => {
     try {
         const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/additional-proposal-items/delete-tax-discount-multiple-proposal-items`, { data: ids });
-        console.log("deleteMultipleTaxDiscount", data);
 
         return data;
     } catch (error) {
-
-        console.log("nasa catch po")
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 })
