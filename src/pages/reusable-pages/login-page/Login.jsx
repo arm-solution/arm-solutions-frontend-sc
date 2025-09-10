@@ -23,6 +23,8 @@ const Login = () => {
       user_password: ''
   })
 
+  const [showPassword, setShowPassword] = useState(false);
+
 
 const navigate = useNavigate();
 const dispatch = useDispatch();
@@ -164,10 +166,35 @@ useEffect(() => {
                       </div>
                     </div>
                     <div className="col-12">
-                      <div className="form-floating mb-3">
-                        <input type="password" className="form-control" name="user_password" id="user_password" onChange={handleChange}  required />
+                      <div className="form-floating mb-3 position-relative">
+                        <input
+                          type={showPassword ? "text" : "password"} // 👈 switch type dynamically
+                          className="form-control pe-5"
+                          name="user_password"
+                          id="user_password"
+                          onChange={handleChange}
+                          required
+                        />
                         <label htmlFor="user_password" className="form-label">Password</label>
+
+                        {/* Eye / Eye-slash toggle */}
+                        <i
+                          className={`lni ${showPassword ? "lni lni-ban" : "lni-eye"}`}
+                          // className={"lni lni-arrow-right"}
+                          style={{
+                            position: "absolute",
+                            top: "50%",
+                            right: "15px",
+                            transform: "translateY(-50%)",
+                            cursor: "pointer",
+                            fontSize: "18px",
+                            color: "#666"
+                          }}
+                          onClick={() => setShowPassword(!showPassword)} // 👈 toggle state
+                        ></i>
                       </div>
+
+
                     </div>
                     <div className="col-12">
                     {/* This is for keep me logged in checkbox */}
