@@ -1,12 +1,6 @@
-import React, { useEffect } from 'react'
 import PaySlipForm from '../payslip-form/PaySlipForm'
 
 const FullEarningModal = (props) => {
-
-    useEffect(() => {
-        console.log("_getFullEarnings", props._getFullEarnings)
-    }, [props._getFullEarnings])
-    
 
   return (
     <>

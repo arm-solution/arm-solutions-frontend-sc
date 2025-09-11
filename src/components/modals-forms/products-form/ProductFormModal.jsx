@@ -47,8 +47,7 @@ const ProductsFormModal = ({modalRef, selectedProduct, setSelectedProduct }) => 
         } else {
             actionResult = await dispatch(addNewProduct([selectedProduct]));
         }
-
-        console.log("result", actionResult)
+        
         const result = unwrapResult(actionResult);
         if (result.success) {
             successDialog(selectedProduct.id ? 'Updated Successfully' : 'New Product Added');

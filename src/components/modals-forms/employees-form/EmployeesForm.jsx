@@ -63,12 +63,6 @@ const EmployeesForm = (props) => {
     dispatch(getDepartment());
     dispatch(fetchAllProvince());
   }, [dispatch]);
-
-
-    useEffect(() => {
-      console.log("province", provinces)
-    }, [])
-  
   
   
     const handleSelectedProvince = async (e) => {
@@ -145,7 +139,6 @@ const EmployeesForm = (props) => {
   const saveNewEmployee = async (e) => {
     e.preventDefault();
     
-    console.log("employee data", employeeData)
     if (!employeeData.employee_id || !employeeData.firstname || !employeeData.lastname || !employeeData.email || !employeeData.contact_number || !employeeData.birthday) {
       errorDialog('Please fill in all required fields.');
       return;

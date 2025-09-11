@@ -5,7 +5,6 @@ import axios from 'axios';
 export const postAdditionalEarnings = createAsyncThunk('additionalEarning/post', async(additional, { rejectWithValue }) =>{
     try {
         const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/earnings-additional/add`, additional);
-        console.log("postAdditionalEarnings", data);
         return data;
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);

@@ -32,8 +32,6 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
 
         }))
 
-        console.log("new set", newSet);
-
         return newSet
 
     } catch (error) {
@@ -45,7 +43,6 @@ export const getProposalItemsByProposalId = createAsyncThunk('proposalItems/geti
 export const updateProposalItems = createAsyncThunk('proposalItems/updateProposalItems', async(items, {rejectWithValue}) =>{
     try {
         const { data } = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/update-multiple-proposal-item`, items);
-        console.log("updare data response", data)
         return data;
     } catch (error) {
         return rejectWithValue(error.response.data);
@@ -67,7 +64,6 @@ export const deleteMultipleProposalItems = createAsyncThunk('proposalItems/delet
    
       try {
         const { data } = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/proposal-items/delete-proposal-items`, { data: ids });
-        console.log("deleteMultipleProposalItems", data);
         return data;
       } catch (error) {
         return rejectWithValue(error.response.data);

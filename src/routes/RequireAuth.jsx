@@ -6,7 +6,7 @@ const RequireAuth = () => {
   const authData = localStorage.getItem('authEmployee');
 
   if (!authData) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return <Outlet />;

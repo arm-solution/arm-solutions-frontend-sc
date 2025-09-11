@@ -55,8 +55,6 @@ const TaxDiscountTable = (props) => {
 
   const handleDelete = (rowId, type, row) => {
 
-    console.log("row id", row.id);
-
     if(row.id) {
         props.setDataTotDelete(prev => ({
           ...prev,

@@ -31,8 +31,8 @@ const UserProfilePage = () => {
 
     
   useEffect(() => {
-    if(userData[0]) {
-      setMyAccountData(userData[0]);
+    if(userData) {
+      setMyAccountData(userData.data);
 
     } else {
       setMyAccountData([]);
@@ -296,8 +296,9 @@ const UserProfilePage = () => {
         <div className="row flex-container" style={{ backgroundColor: '#D5DBDB', borderRadius: '10px', paddingTop: '10px'}}>
 
           <div className="form-group">
-            <label htmlFor="user_type">System status</label>
-            <p className='text-center'><b><span className="badge bg-success">Admin</span></b></p>
+            <label htmlFor="user_type">Department</label>
+            <p className='text-center'><b><span className="badge bg-success">
+            </span></b></p>
           </div>
 
           <div className="form-group">
@@ -307,21 +308,21 @@ const UserProfilePage = () => {
 
 
           <div className="form-group">
-            <label htmlFor="salary_grade">Salary</label>
-            <p className='text-center'><b>₱{myAccountData?.salary_grade ? myAccountData.salary_grade : '---'}</b></p>
+            <label htmlFor="salary_grade">Daily Salary</label>
+            <p className='text-center'><b>₱{myAccountData?.salary ? myAccountData?.salary : '---'}</b></p>
           </div>
 
 
         </div>
 
         <div className="row flex-container mt-3">
-
+        {/* 
           <div className="form-group">
             <label htmlFor="user_type">Created by</label>
             <p><b>Lance Jared Cabiscuelas</b> <br />
             <i>System Administrator</i>
             </p>
-          </div>
+          </div> */}
 
         </div>
 
