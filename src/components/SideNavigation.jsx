@@ -117,31 +117,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     </>
                 )}
 
-                {isDepartmentAllowed() && (
-                    <>
-                       {/* Services Dropdown */}
-                        <li className="sidebar-item">
-                            <a
-                                href="#"
-                                className={`sidebar-link has-dropdown ${expandedDropdown === 'services' ? '' : 'collapsed'}`}
-                                data-bs-toggle="collapse"
-                                aria-expanded={expandedDropdown === 'services'}
-                                onClick={() => toggleDropdown('services')}
-                            >
-                                <i className="lni lni-helmet"></i>
-                                <span>Services</span>
-                            </a>
-                            <ul id="services" className={`sidebar-dropdown list-unstyled collapse ${expandedDropdown === 'services' ? 'show' : ''}`}>
-                                <li className="sidebar-item">
-                                    <Link to='' className="sidebar-link">Installment</Link>
-                                </li>
-                                <li className="sidebar-item">
-                                    <Link to='' className="sidebar-link">Maintenance</Link>
-                                </li>
-                            </ul>
-                        </li>
-                    </>
-                )}
+          
 
                 {isDepartmentAllowed([1,5,7]) && (
                     <>
@@ -186,22 +162,6 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             <span>Employees</span>
                         </Link>
                     </li>
-                )}
-                {isDepartmentAllowed() && (
-                   <>
-                    <li className="sidebar-item">
-                        <Link to='message-request' className="sidebar-link">
-                            <i className="lni lni-popup"></i>
-                            <span>Inquiries</span>
-                        </Link>
-                    </li>
-                    <li className="sidebar-item">
-                        <Link to='common/announcement' className="sidebar-link">
-                            <i className="lni lni-bullhorn"></i>
-                            <span>Announcement</span>
-                        </Link>
-                    </li>
-                   </> 
                 )}
                 {isDepartmentAllowed() && (
                     <li className="sidebar-item">
