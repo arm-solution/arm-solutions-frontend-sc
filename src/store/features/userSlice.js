@@ -2,14 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getToken } from '../../customs/global/manageLocalStorage';
 import axios from 'axios';
 import { dateFormatted } from '../../customs/global/manageDates';
+import api from '../interceptors/api';
 
 export const getUser = createAsyncThunk('user/getAllUser', async (_, { rejectWithValue }) => {
     try {        
-        const {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees`, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
+        const {data} = await api.get('/employees');
 
         return data;
         
