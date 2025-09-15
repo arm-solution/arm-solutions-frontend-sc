@@ -9,7 +9,7 @@ export const checkAuthAndNavigate = (navigate) => {
 
       if (role === 1) {
         navigate('/admin');
-      } else if (role === 10) {
+      } else if (role === 14) {
         navigate('/production');
       } else if (role === 8) {
         navigate('/marketing');
