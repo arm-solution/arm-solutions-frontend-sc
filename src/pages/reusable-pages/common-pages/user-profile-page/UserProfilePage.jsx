@@ -22,6 +22,13 @@ const UserProfilePage = () => {
   const { data: userData, loading: userLoading } = useSelector(state => state.users); 
   const { data: deptData } = useSelector(state => state.departments);
 
+  useEffect(() => {
+    if(deptData) {
+      console.log("deptData", deptData);
+    }
+  }, [deptData])
+  
+
 
   useEffect(() => {
    dispatch(getUserById(getLoggedInID()));
