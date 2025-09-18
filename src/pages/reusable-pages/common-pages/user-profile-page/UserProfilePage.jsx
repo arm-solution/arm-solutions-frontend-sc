@@ -41,8 +41,8 @@ const UserProfilePage = () => {
   
   useEffect(() => {
     if(userData.data) {
-  
-      if(userData.data.province !== null && userData.data.province_code !==  null) {
+
+      if(userData.data && userData.data.province !== null && userData.data.province_code !==  null) {
         dispatch(fetchAllCities(userData.data.province_code));
       } 
   
@@ -118,6 +118,8 @@ const UserProfilePage = () => {
     }
 
     const { payload } = await dispatch(updateUser({...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''}))
+
+    console.log("data tot update", {...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''})
 
     if(payload.success) {
       successDialog('Updated Success');

@@ -32,10 +32,14 @@ const Client = () => {
   ]
 
   const handleView = (client) => {
-    const modalElement = modalRef.current;
-    const modal = new Modal(modalElement);
-    setSelectedClient(client);
-    modal.show();
+    if(client) {
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedClient(client);
+      modal.show();
+    } else {
+      console.error("No Client Selected!");
+    }
   }
 
   const handleDelete = (id) => {
@@ -90,9 +94,9 @@ const Client = () => {
         />
 
         <ClientDetails
-        modalRef={modalRef}
-        selectedClient={selectedClient}
-        setSelectedClient={setSelectedClient}
+          modalRef={modalRef}
+          selectedClient={selectedClient}
+          setSelectedClient={setSelectedClient}
         />
     </>
   )

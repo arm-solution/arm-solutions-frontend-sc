@@ -18,7 +18,7 @@ const DtrRequest = () => {
   ];
 
  useEffect(() => {
-    dispatch(getPendingDtrUsers());
+    dispatch(getPendingDtrUsers('for approval'));
  }, [dispatch])
 
  const { getPendingUserDtr, loading: pendingDtrLoading } = useSelector(state => state.dtr);

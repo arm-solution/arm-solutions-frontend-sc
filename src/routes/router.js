@@ -52,6 +52,9 @@ const WareHouseOutlet = lazy(() => import('../pages/warehouse/WareHouseOutlet'))
 const EngineeringOutlet = lazy(() => import('../pages/engineering/EngineeringOutlet'))
 const FinanceOutlet = lazy(() => import('../pages/finance/FinanceOutlet'));
 
+const DtrReview = lazy(() => import('../pages/reusable-pages/dtr-review/DtrReview'));
+const DtrReviewPerEmployee = lazy(() => import('./../pages/reusable-pages/dtr-review-per-employee/DtrReviewPerEmployee'))
+
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
   <Suspense fallback={Fallback}>
@@ -143,6 +146,8 @@ export const router = createBrowserRouter(
       <Route element={<RequireAuth />}>
         <Route path="/engineering" element={LazyComponent(EngineeringOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
+          <Route path="dtr-review" element={LazyComponent(DtrReview)} />
+          <Route path="dtr-review-employees/:userId" element={LazyComponent(DtrReviewPerEmployee)} />
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>

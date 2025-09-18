@@ -80,9 +80,13 @@ export const getCurrentDtr = createAsyncThunk('dtr/getCurrentDtr', async({user_i
     }
 })
 
-export const getPendingDtrUsers = createAsyncThunk('dtr/getPendingUserDtr', async(_, {rejectWithValue}) => {
+export const getPendingDtrUsers = createAsyncThunk('dtr/getPendingUserDtr', async(status, {rejectWithValue}) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/pending-dtr/pending-by-user`);
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/pending-dtr/pending-by-user`, {
+            params: {
+                status
+            }
+        });
         return data; 
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -109,6 +113,7 @@ export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRan
         return rejectWithValue(error.response ? error.response.data : error.message);
     }
 });
+
 
 export const getDtrByMultipleIds = createAsyncThunk('dtr/getDtrByMultipleIds', async(ids, { rejectWithValue }) => {
     try {
