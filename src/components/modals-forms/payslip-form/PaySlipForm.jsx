@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './PaySlipForm.css';
 import { getLoggedInUser } from '../../../customs/global/manageLocalStorage';
-import { capitalizeFirstLetter } from '../../../customs/global/manageObjects';
 import { getCurrentDateFormatted } from '../../../customs/global/manageDates';
 
 const PaySlipForm = (props) => {

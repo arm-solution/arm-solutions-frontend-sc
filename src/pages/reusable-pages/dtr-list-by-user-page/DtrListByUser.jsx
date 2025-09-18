@@ -80,8 +80,6 @@ const DtrListByUser = () => {
   }, [userById]);
   
   
-
-
   return (
     <>
 
