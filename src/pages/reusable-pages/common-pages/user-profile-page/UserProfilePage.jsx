@@ -23,14 +23,6 @@ const UserProfilePage = () => {
   const { data: deptData } = useSelector(state => state.departments);
 
   useEffect(() => {
-    if(deptData) {
-      console.log("deptData", deptData);
-    }
-  }, [deptData])
-  
-
-
-  useEffect(() => {
    dispatch(getUserById(getLoggedInID()));
    dispatch(getDepartment());
    dispatch(fetchAllProvince());
@@ -48,18 +40,18 @@ const UserProfilePage = () => {
 
   
   useEffect(() => {
-    if(userData[0]) {
-  
-      if(userData[0].province !== null && userData[0].province_code !==  null) {
-        dispatch(fetchAllCities(userData[0].province_code));
+    if(userData.data) {
+
+      if(userData.data && userData.data.province !== null && userData.data.province_code !==  null) {
+        dispatch(fetchAllCities(userData.data.province_code));
       } 
   
-      if(userData[0].city_mun_code !== null && userData[0].citymun !==  null) {
-        dispatch(fetchAllBarangays(userData[0].city_mun_code));
+      if(userData.data.city_mun_code !== null && userData.data.citymun !==  null) {
+        dispatch(fetchAllBarangays(userData.data.city_mun_code));
       } 
 
     }
-  }, [])
+  }, [userData])
   
 
   const handleAccountFormChange = (e) => {
@@ -119,13 +111,15 @@ const UserProfilePage = () => {
     e.preventDefault();
 
     // remove unecessary propertis
-    const { user_password, email, ...modifiedData} = myAccountData;
+    const { user_password, email, department_details, ...modifiedData} = myAccountData;
 
-    if(modifiedData.email === userData[0].email) {
+    if(modifiedData.email === userData.data.email) {
       modifiedData.email = email;
     }
 
     const { payload } = await dispatch(updateUser({...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''}))
+
+    console.log("data tot update", {...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''})
 
     if(payload.success) {
       successDialog('Updated Success');

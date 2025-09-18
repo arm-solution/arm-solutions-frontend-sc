@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { format } from 'date-fns';
 import './DtrPage.css';
-import { getLoggedInFullname, getLoggedInID } from '../../../customs/global/manageLocalStorage';
-import { dateFormatted } from '../../../customs/global/manageDates'; 
+import { getDepartmentLoggedIn, getLoggedInFullname, getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { postDtr, getDtrById, updateDtrById, getWeeklyDtr, getCurrentDtr } from '../../../store/features/dtrSlice';
 import Loading from '../../../components/loading-spinner/Loading';
@@ -317,6 +316,7 @@ const Home = () => {
     setLoadingSessionStorage(false);
   };
 
+  // submit dtr save to database
   const submitMyDtr = async (e) => {
     e.preventDefault();
     setLoadingSessionStorage(true);
@@ -324,14 +324,19 @@ const Home = () => {
 
     handleConfirmation({
       title: "Submit DTR",
-      text: "Submit your DTR for approval?",
+      text: "Submit your DTR for Engineering Review?",
       confirmButtonText: "Submit"
     }, async () => {
       if (storeShift) {
         const myShift = JSON.parse(storeShift);
         if (myShift.status === 'pending') return false;
 
-        myShift.status = 'for approval';
+        if(getDepartmentLoggedIn() === 10) {
+          myShift.status = 'for engineering review';
+        } else {
+          myShift.status = 'for approval';
+        }
+        
         const { payload } = await dispatch(updateDtrById(myShift));
 
         if (payload.success) {
