@@ -32,12 +32,8 @@ export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData
 export const getUserById = createAsyncThunk('user/getUserById', async (id, { rejectWithValue, getState }) => {
     
     try {
-        // console.log(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`);
-        const {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/employees/get-user-by-id/${parseInt(id)}`, {
-            headers: {
-                Authorization: `Bearer ${getToken()}`
-            }
-        });
+        const {data} = await api.get(`/employees/get-user-by-id/${parseInt(id)}`);
+        
         return data
     } catch (error) {
         return rejectWithValue(error.response ? error.response.data : error.message);
@@ -50,7 +46,7 @@ export const updateUser = createAsyncThunk('user/updateUser', async(user, { reje
             // removing id from user 
             const { id, fullname, created, start_date,  ...rest } = user;
             const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${id}`, {...rest, birthday: dateFormatted(rest.birthday)});
-        
+       
             return data;
         } else {
             return rejectWithValue({ error: "No ID selected"});
