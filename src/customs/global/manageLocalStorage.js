@@ -27,6 +27,8 @@ export const checkAuthAndNavigate = (navigate) => {
         navigate('/accounting');
       } else if (role === 2) {
         navigate('/hr');
+      } else if (role === 10) {
+        navigate('/production');
       }
     
     }

@@ -121,6 +121,7 @@ export const router = createBrowserRouter(
         <Route path="/production" element={LazyComponent(EmployeeHomePage)}>
           <Route path="" element={LazyComponent(DtrPage)} />
           {CommonAllUsersRoutes()}
+          {CommonRoutes()}
         </Route>
       </Route>
 
