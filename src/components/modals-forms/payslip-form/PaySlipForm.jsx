@@ -23,6 +23,8 @@ const PaySlipForm = (props) => {
 
     const earnings = props._getFullEarnings;
 
+    // console.log("earnings", earnings.data)
+
     const isNonEmptyArray = Array.isArray(earnings) && earnings.length > 0;
     const isNonEmptyObject =
       earnings &&
@@ -33,6 +35,9 @@ const PaySlipForm = (props) => {
       setShowDocs(isNonEmptyArray || isNonEmptyObject);
 
   }, [props._getFullEarnings, props._userById])
+
+
+
   
 
 
@@ -64,26 +69,26 @@ const PaySlipForm = (props) => {
             <tbody>
                 <tr>
                     <td>Gross Pay</td>
-                    <td>Php {props._getFullEarnings.gross_pay || '---'}</td>
+                    <td>Php {props._getFullEarnings.data.gross_pay || '---'}</td>
                 </tr>
                 <tr>
                     <td>Additional</td>
-                    <td>Php {props._getFullEarnings.total_additional_pay || '---'}</td>
+                    <td>Php {props._getFullEarnings.data.total_additional_pay || '---'}</td>
                 </tr>
                 <tr>
                     <td>Deduction</td>
-                    <td>Php {props._getFullEarnings.total_deduction || '---'}</td>
+                    <td>Php {props._getFullEarnings.data.total_deduction || '---'}</td>
                 </tr>
                 <tr>
                     <td>Total</td>
-                    <td>Php {props._getFullEarnings.final_pay || '---'}</td>
+                    <td>Php {props._getFullEarnings.data.final_pay || '---'}</td>
                 </tr>
 
                 <tr className="total-row">
                     <td><strong>Additional</strong></td>
                     <td><strong></strong></td>
                 </tr>
-                {Array.isArray(props._getFullEarnings?.additional) && props._getFullEarnings.additional.length > 0 ? props._getFullEarnings.additional.map(d => (
+                {Array.isArray(props._getFullEarnings?.data.additional) && props._getFullEarnings.data.additional.length > 0 ? props._getFullEarnings.data.additional.map(d => (
                     <tr>
                         <td>{d.title || '---'}</td>
                         <td>Php {d.amount || '---'}</td>
@@ -99,7 +104,7 @@ const PaySlipForm = (props) => {
                     <td><strong>Deduction</strong></td>
                     <td><strong></strong></td>
                 </tr>
-                {Array.isArray(props._getFullEarnings?.deduction) && props._getFullEarnings.deduction.length > 0 ? props._getFullEarnings.deduction.map(d => (
+                {Array.isArray(props._getFullEarnings?.data.deduction) && props._getFullEarnings.data.deduction.length > 0 ? props._getFullEarnings.data.deduction.map(d => (
                     <tr>
                         <td>{d.title || '---'}</td>
                         <td>Php {d.amount || '---'}</td>
