@@ -98,7 +98,7 @@ const DtrReviewPerEmployee = () => {
 
     handleConfirmation({
         title: "",
-        text: "Are you sure you want to time out early?",
+        text: "Are you sure you want to proceed for approval?",
         confirmButtonText: "Yes, Time Out"
     }, async () => {
 
