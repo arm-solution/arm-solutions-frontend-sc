@@ -26,7 +26,7 @@ const EmployeesList = () => {
     { header: 'Emp Id', accessor: 'employee_id' },
     { header: 'Email', accessor: 'email' },
     { header: 'Contact No', accessor: 'contact_number' },
-    // { header: 'Department', accessor: 'department' }
+    { header: 'Department', accessor: 'department_name' }
   ];
 
   useEffect(() => {

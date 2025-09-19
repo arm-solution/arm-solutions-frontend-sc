@@ -267,7 +267,7 @@ const UserProfilePage = () => {
 
           <div className="form-group">
             <label htmlFor="department">Department</label>
-            <select className="form-select" value={myAccountData?.department || ''} name='department' onChange={handleAccountFormChange}>
+            <select className="form-select" disabled value={myAccountData?.department || ''} name='department' onChange={handleAccountFormChange}>
               <option value="0" disabled>Open this select menu</option>
               {deptData.map(d => (
                 <option key={d.id} value={d.id}>{d.department}</option>
