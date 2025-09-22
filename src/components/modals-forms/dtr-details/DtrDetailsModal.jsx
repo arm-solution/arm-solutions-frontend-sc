@@ -39,41 +39,66 @@ const DtrDetailsModal = (props) => {
         fetchUserDetails();
     }, [props.selectedDtr, dispatch]);
 
-    const handleViewMap = () => {
-        const modalElement = props.modalRef.current;
-        const modal = new Modal(modalElement);
-        modal.hide();
+    useEffect(() => {
+        return () => {
+            const modalElement = props.modalRef.current;
+            if (modalElement) {
+            const modal = Modal.getInstance(modalElement);
+            if (modal) modal.dispose();
+            }
+        };
+    }, [props.modalRef]);
 
-        const data = encodeURIComponent(JSON.stringify(props.selectedDtr));
 
-        // Manually remove the backdrop
-        const backdrop = document.querySelector('.modal-backdrop');
-        if (backdrop) {
-            backdrop.remove();
+  const handleViewMap = () => {
+    const modalElement = props.modalRef.current;
+    if (modalElement) {
+        let modal = Modal.getInstance(modalElement);
+        if (!modal) {
+        modal = new Modal(modalElement);
         }
 
-        const url = `/${getLoggedInData().department_name}/common/map?data=${data}`;
-        window.open(url, '_blank');
+        modalElement.addEventListener(
+        "hidden.bs.modal",
+        () => {
+            modal.dispose();
+        },
+        { once: true }
+        );
+
+        modal.hide();
+    }
+
+    const data = encodeURIComponent(JSON.stringify(props.selectedDtr));
+    const url = `/${getLoggedInData().department_name}/common/map?data=${data}`;
+    window.open(url, "_blank");
     };
 
 
-    const closeModal = () => {
-        const modalElement = props.modalRef.current;
 
-        if (!modalElement) {
-            console.warn("Modal element is null");
-            return;
-        }
+
+    const closeModal = () => {
+    const modalElement = props.modalRef.current;
+        if (!modalElement) return;
 
         let modal = Modal.getInstance(modalElement);
-        
-        // If modal instance doesn't exist, create it
         if (!modal) {
             modal = new Modal(modalElement);
         }
 
+        // Wait until modal is fully hidden before disposing
+        modalElement.addEventListener(
+            "hidden.bs.modal",
+            () => {
+            modal.dispose();
+            },
+            { once: true } // run only once
+        );
+
         modal.hide();
     };
+
+
 
     return (
         <div ref={props.modalRef} className="modal fade modal-xl" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
