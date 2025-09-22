@@ -201,7 +201,13 @@ useEffect(() => {
                     </div>
                     <div className="col-12">
                       <div className="d-grid">
-                        <button className="btn btn-danger btn-lg" onClick={handleLogin}>Log in now</button>
+                       <button
+                        className="btn btn-danger btn-lg"
+                        onClick={handleLogin}
+                        disabled={loginLoading} // disable while loading
+                      >
+                        {loginLoading ? "Loading..." : "Log in now"}
+                      </button>
                       </div>
                     </div>
                     <div className="col-12">

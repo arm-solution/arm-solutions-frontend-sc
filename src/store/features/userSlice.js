@@ -44,9 +44,9 @@ export const updateUser = createAsyncThunk('user/updateUser', async(user, { reje
     try {
         if(user.id) {
             // removing id from user 
-            const { id, fullname, created, start_date,  ...rest } = user;
+            const { id, fullname, created, start_date, department_name,  ...rest } = user;
             const {data} = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/employees/update-user/${id}`, {...rest, birthday: dateFormatted(rest.birthday)});
-       
+           
             return data;
         } else {
             return rejectWithValue({ error: "No ID selected"});
