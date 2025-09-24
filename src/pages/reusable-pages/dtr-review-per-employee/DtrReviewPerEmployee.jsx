@@ -11,10 +11,12 @@ import { updateMultipleDtrStatus } from '../../../store/features/dtrSlice';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
 
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
+import DtrRemarks from '../../../components/modals-forms/dtr-remarks-approval-modal/DtrRemarks';
 
 const DtrReviewPerEmployee = () => {
 
   const modalEngrRevRef = useRef(null);
+  const modalForApproval = useRef(null);
 
   const dispatch = useDispatch();
   const { userId } = useParams();
@@ -58,13 +60,6 @@ const DtrReviewPerEmployee = () => {
     return pages;
   };
 
-  useEffect(() => {
-    console.log("dtrWithDateRange", dtrWithDateRange)
-    if(userById.data) {
-        console.log("userById", userById.data.firstname)
-    }
-
-  }, [dtrWithDateRange, userById])
 
   const reviewDtrModal = (event, dtr) => {
     event.preventDefault();
@@ -88,32 +83,19 @@ const DtrReviewPerEmployee = () => {
     }
   }, [])
 
-  const handleApproval = async (event, status, itemSelected) => {
+  // handle approval
+  const handleApproval = async (event, dtr) => {
     event.preventDefault();
 
-    if(!status && !itemSelected) {
-      console.error("Missing parameter");
-      return;
+    if(dtr) {
+      const modalElement = modalForApproval.current;
+      const modal = new Modal(modalElement);
+      setSelectedDtr(dtr);
+
+      modal.show()
+    } else {
+      console.error("No DTR selected!");
     }
-
-    handleConfirmation({
-        title: "",
-        text: "Are you sure you want to proceed for approval?",
-        confirmButtonText: "Yes, Time Out"
-    }, async () => {
-
-      const { payload } = await dispatch(updateMultipleDtrStatus({status, ids: [itemSelected.id] }))
-      
-      if(payload.success) {
-        // refetch the data displaying to table
-        await dispatch(getAllDtrWithDateRange({userId, dtrParams: {status: 'for engineering review'}}))
-        return true;
-      }
-      
-      return false
-      
-    })
-
   }
   
 
@@ -164,11 +146,8 @@ const DtrReviewPerEmployee = () => {
                                         Details
                                       </button>
         
-                                      <button className="btn btn-outline-success me-2" onClick={(e) => handleApproval(e, 'for approval', item)}>
-                                        Approve
-                                      </button>
-                                      <button className="btn btn-outline-danger" onClick={(e) => handleApproval(e, 'rejected', item)}>
-                                        Reject
+                                      <button className="btn btn-outline-success me-2" onClick={(e) => handleApproval(e, item)}>
+                                        Approval
                                       </button>
                                   </td>
                                 </tr>
@@ -251,6 +230,7 @@ const DtrReviewPerEmployee = () => {
         </div>
 
         <DtrDetailsModal modalRef={modalEngrRevRef} selectedDtr={selectedDtr}/>
+        <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} department='engineering' userId={userId} status='for engineering review'/>
     </>
   )
 }

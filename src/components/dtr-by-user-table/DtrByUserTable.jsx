@@ -3,9 +3,11 @@ import { formatDateReadable } from '../../customs/global/manageDates';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import './DtrByUser.css';
+import DtrRemarks from '../modals-forms/dtr-remarks-approval-modal/DtrRemarks';
 
 const DtrByUserTable = (props) => {
   const modalRef = useRef(null);
+  const modalForApproval = useRef(null);
 
   const [selectedDtr, setSelectedDtr] = useState(null);
 
@@ -15,10 +17,26 @@ const DtrByUserTable = (props) => {
     new Modal(modalRef.current).show();
   };
 
+  // handle approval
+  const handleApproval = async (event, dtr) => {
+    event.preventDefault();
+
+    if(dtr) {
+      const modalElement = modalForApproval.current;
+      const modal = new Modal(modalElement);
+      setSelectedDtr(dtr);
+
+      modal.show()
+    } else {
+      console.error("No DTR selected!");
+    }
+  }
+
 
   return (
     <>
       <DtrDetailsModal selectedDtr={selectedDtr} modalRef={modalRef} />
+      <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} userId={props.userId} department='engineering' status='for engineering review' />
 
       <div className="card mt-5">
         <div className="card-body">
@@ -70,8 +88,11 @@ const DtrByUserTable = (props) => {
                           )}
                        </td>
                       <td>
-                        <button className="btn btn-info text-white btn-sm" onClick={() => handleView(d)}>
+                        <button className="btn btn-info text-white btn-sm me-2" onClick={() => handleView(d)}>
                           View
+                        </button>
+                        <button className="btn btn-secondary text-white btn-sm" onClick={(e) => handleApproval(e, d)} >
+                          Approval
                         </button>
                       </td>
                     </tr>
