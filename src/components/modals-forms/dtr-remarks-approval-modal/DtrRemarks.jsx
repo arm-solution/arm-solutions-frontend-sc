@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './DtrRemarks.css'
 import { updateMultipleDtrStatus, getAllDtrWithDateRange } from '../../../store/features/dtrSlice'
 import { handleConfirmation } from './../../../customs/global/alertDialog'
@@ -45,7 +45,7 @@ const DtrRemarks = (props) => {
 
         if (payload.success) {
 
-          await dispatch(getAllDtrWithDateRange({userId: props.userId, dtrParams: {status: props.status}}))
+          await dispatch(getAllDtrWithDateRange({userId: props.userId, dtrParams: {status: [props.status]}}))
 
           return true
         }
@@ -54,6 +54,11 @@ const DtrRemarks = (props) => {
       }
     )
   }
+
+  useEffect(() => {
+    console.log("props.selectedDtr", props.selectedDtr)
+  }, [])
+  
 
   return (
     <>
@@ -91,12 +96,12 @@ const DtrRemarks = (props) => {
                 onChange={(e) => setRemarks(e.target.value)}
               ></textarea>
 
-              {props.selectedDtr.engineering_remarks && (
-                <div className="alert alert-dark mt-2" role="alert">
-                  <b>Remarks :</b> 
-                  <p>{props.selectedDtr.engineering_remarks}</p>                  
-                </div>
-              )}
+            {props.selectedDtr?.engineering_remarks && (
+              <div className="alert alert-dark mt-2" role="alert">
+                <b>Remarks :</b> 
+                <p>{props.selectedDtr.engineering_remarks}</p>                  
+              </div>
+            )}
 
 
             </div>

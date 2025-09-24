@@ -79,7 +79,7 @@ const DtrReviewPerEmployee = () => {
   useEffect(() => {
     if(userId) {
         dispatch(getUserById(userId));
-        dispatch(getAllDtrWithDateRange({userId, dtrParams: {status: 'for engineering review'}}))
+        dispatch(getAllDtrWithDateRange({userId, dtrParams: {status: ['for engineering review']}}))
     }
   }, [])
 
