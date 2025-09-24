@@ -127,15 +127,16 @@ const PaySlipInputForm = (props) => {
   
           if(payload.success && payload?.lastid > 0) {
   
-            const { payload: updateDtrStatusRes } = await dispatch(updateMultipleDtrStatus({ status: 'approved', ids, imageLinks: imageLinks }))
+            // const { payload: updateDtrStatusRes } = await dispatch(updateMultipleDtrStatus({ status: 'approved', ids, imageLinks: imageLinks }))
+            await dispatch(getEarningsByUserId(props.employee.id));
             
-            if(updateDtrStatusRes.success) {
-              if(props.employee) {
-                await dispatch(getEarningsByUserId(props.employee.id));
-              }
-              setIds([]);
-              setImageLinks([]);
-            }
+            // if(updateDtrStatusRes.success) {
+            //   await dispatch(getEarningsByUserId(props.employee.id));
+            //   if(props.employee) {
+            //   }
+            //   setIds([]);
+            //   setImageLinks([]);
+            // }
             
             const finalAdditionalEarnings = [
               ...additionalPays.map(({label, ...item}) => ({ ...item, earnings_id: payload?.lastid, title: label })),
@@ -159,17 +160,19 @@ const PaySlipInputForm = (props) => {
     props.setDateRangeStatus(prev => ({ ...prev, [name]: value }));
   };
 
-  const searchDtr = async () => {
-
-    const newStatus = {
-      ...props.dateRangeStatus,
-      status: 'for approval',
-    };
-
-    props.setDateRangeStatus(newStatus);
-
-    await dispatch(getAllDtrWithDateRange({userId: props.userId, dtrParams: props.dateRangeStatus}));
+const searchDtr = async () => {
+  const newStatus = {
+    ...props.dateRangeStatus,
+    status: ['for approval', 'rejected', 'reject by engineering'],
   };
+
+  props.setDateRangeStatus(newStatus);
+
+  await dispatch(getAllDtrWithDateRange({ 
+    userId: props.userId, 
+    dtrParams: newStatus 
+  }));
+};
 
   useEffect(() => {
     if(props.dtrWithDateRange.length > 0) {
