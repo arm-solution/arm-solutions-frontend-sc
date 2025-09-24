@@ -77,7 +77,7 @@ const DtrListByUser = () => {
     };
   
     fetchDepartment();
-  }, [userById]);
+  }, [userById]);  
   
   
   return (
