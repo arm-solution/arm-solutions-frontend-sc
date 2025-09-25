@@ -36,7 +36,7 @@ const DtrByUserTable = (props) => {
   return (
     <>
       <DtrDetailsModal selectedDtr={selectedDtr} modalRef={modalRef} />
-      <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} userId={props.userId} department='engineering' status='for engineering review' />
+      <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} userId={props.userId} department='hr' status='for approval' />
 
       <div className="card mt-5">
         <div className="card-body">

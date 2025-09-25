@@ -3,7 +3,6 @@ import './AccessCamera.css'
 import { dateFormatted } from '../../../customs/global/manageDates'
 import { format } from 'date-fns';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
-import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 
 const AccessCamera = (props) => {
 
