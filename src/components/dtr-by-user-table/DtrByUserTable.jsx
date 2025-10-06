@@ -42,7 +42,7 @@ const DtrByUserTable = (props) => {
         <div className="card-body">
 
           <div className="card-header">
-            DTR from <b>{`${formatDateReadable(props.dateRangeStatus?.date_start)} to ${formatDateReadable(props.dateRangeStatus?.date_end)}`}</b>
+            DTR from <b>{`${props.dateRangeStatus?.date_start ? formatDateReadable(props.dateRangeStatus?.date_start) : '---'}  to ${props.dateRangeStatus?.date_end ? formatDateReadable(props.dateRangeStatus?.date_end) : '---'}`}</b>
           </div>
 
           <table className="table table-bordered mt-3">

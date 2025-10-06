@@ -93,7 +93,7 @@ const DtrListByUser = () => {
         />
         <hr />
 
-        {dtrWithDateRange.length > 0 && (
+  
             <DtrByUserTable 
               setShowForm={setShowForm}
               setDtrIds={setDtrIds}
@@ -102,7 +102,7 @@ const DtrListByUser = () => {
               dateRangeStatus={dateRangeStatus}
               dtrWithDateRange={dtrWithDateRange}
             />
-        )}
+
 
           <PaySlipInputForm 
             employee={userById?.data} 

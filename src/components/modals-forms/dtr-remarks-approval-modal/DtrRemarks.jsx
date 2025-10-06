@@ -5,6 +5,7 @@ import { handleConfirmation } from './../../../customs/global/alertDialog'
 import { useDispatch } from 'react-redux'
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min'
 
+// this is a modal for dtr remarks
 const DtrRemarks = (props) => {
   const dispatch = useDispatch()
   const [remarks, setRemarks] = useState('')
@@ -43,7 +44,7 @@ const DtrRemarks = (props) => {
     handleConfirmation(
       {
         title: '',
-        text: 'Are you sure you want to proceed for approval?',
+        text: 'Are you sure you want to proceed this action',
         confirmButtonText: 'Yes',
       },
       async () => {
@@ -79,6 +80,7 @@ const DtrRemarks = (props) => {
           return true
         }
 
+        closeDtrRemarksModal()
         return false
       }
     )
