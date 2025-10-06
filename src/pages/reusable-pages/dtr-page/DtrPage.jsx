@@ -151,10 +151,10 @@ const Home = () => {
       };
 
       const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
-      const breakHours = myShift.break_start ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime) : 0;
+      // const breakHours = myShift.break_start ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime) : 0;
 
       Object.assign(myShift, {
-        total_hours: totalHours - breakHours,
+        total_hours: totalHours,
         status: 'completed',
         ...avgCoords
       });
@@ -171,34 +171,34 @@ const Home = () => {
     }
   };
 
-  const handleBreakAction = async (e, actionType) => {
-    e.preventDefault();
-    setLoadingSessionStorage(true);
+  // const handleBreakAction = async (e, actionType) => {
+  //   e.preventDefault();
+  //   setLoadingSessionStorage(true);
 
-    const currentDate = new Date();
-    const formattedTime = format(currentDate, 'HH:mm:ss');
-    const storeShift = sessionStorage.getItem('currentShift');
+  //   const currentDate = new Date();
+  //   const formattedTime = format(currentDate, 'HH:mm:ss');
+  //   const storeShift = sessionStorage.getItem('currentShift');
 
-    if (storeShift) {
-      let myShift = JSON.parse(storeShift);
+  //   if (storeShift) {
+  //     let myShift = JSON.parse(storeShift);
       
-      if (actionType === 'break_end') {
-        const { image_capture, ...cleanShift } = myShift;
-        cleanShift.break_end = formattedTime;
-        myShift = cleanShift;
-      } else {
-        myShift[actionType] = formattedTime;
-      }
+  //     if (actionType === 'break_end') {
+  //       const { image_capture, ...cleanShift } = myShift;
+  //       cleanShift.break_end = formattedTime;
+  //       myShift = cleanShift;
+  //     } else {
+  //       myShift[actionType] = formattedTime;
+  //     }
 
-      const { payload } = await dispatch(updateDtrById(myShift));
-      if (payload.success) {
-        sessionStorage.setItem('currentShift', JSON.stringify(myShift));
-        setShift(myShift);
-        window.dispatchEvent(new Event('currentShift'));
-      }
-    }
-    setLoadingSessionStorage(false);
-  };
+  //     const { payload } = await dispatch(updateDtrById(myShift));
+  //     if (payload.success) {
+  //       sessionStorage.setItem('currentShift', JSON.stringify(myShift));
+  //       setShift(myShift);
+  //       window.dispatchEvent(new Event('currentShift'));
+  //     }
+  //   }
+  //   setLoadingSessionStorage(false);
+  // };
 
   const handleEarlyTimeOut = (e) => {
     e.preventDefault();
@@ -244,14 +244,14 @@ const Home = () => {
 
           const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
 
-          const hasBreak = myShift.break_start !== "" && myShift.break_start !== "00:00:00";
+          // const hasBreak = myShift.break_start !== "" && myShift.break_start !== "00:00:00";
 
-          const breakHours = hasBreak
-            ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime)
-            : 0;
+          // const breakHours = hasBreak
+          //   ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime)
+          //   : 0;
           
           Object.assign(myShift, {
-            total_hours:  totalHours - breakHours,
+            total_hours:  totalHours,
             status: 'completed',
             ...avgCoords
           });
@@ -408,11 +408,11 @@ const Home = () => {
         </div>
 
         {/* Action Buttons Section */}
-        <div className="action-section">
+        {/* <div className="action-section">
           <div className="action-buttons">
             {hasActiveShift ? (
               <>
-                {!shift.break_start || shift.break_start === '00:00:00' ? (
+                {!shift.time_out || shift.time_out === '00:00:00' ? (
                   <button 
                     className="action-btn break-in-btn" 
                     onClick={(e) => handleBreakAction(e, 'break_start')}
@@ -471,7 +471,55 @@ const Home = () => {
               </button>
             )}
           </div>
+        </div> */}
+
+        <div className="action-section">
+          <div className="action-buttons">
+            {hasActiveShift ? (
+              <>
+                {/* Show Time Out button only if not yet timed out */}
+                {!shift.time_out || shift.time_out === '00:00:00' ? (
+                  <>
+                    <button 
+                      className="action-btn time-out-btn" 
+                      onClick={timeOut} 
+                      disabled={accessOut || loadingSessionStorage}
+                    >
+                      <div className="btn-content">
+                        <i className="fas fa-clock btn-icon" aria-hidden="true"></i>
+                        <span>Time Out</span>
+                      </div>
+                    </button>
+
+                    <button 
+                      className="action-btn early-out-btn" 
+                      onClick={handleEarlyTimeOut} 
+                      disabled={accessOut || loadingSessionStorage}
+                    >
+                      <div className="btn-content">
+                        <i className="fas fa-door-open btn-icon" aria-hidden="true"></i>
+                        <span>Early Time Out</span>
+                      </div>
+                    </button>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              // Show Time In if no active shift
+              <button 
+                className="action-btn time-in-btn primary" 
+                onClick={handleCameraModal}
+                disabled={loadingSessionStorage}
+              >
+                <div className="btn-content">
+                  <i className="fas fa-camera btn-icon" aria-hidden="true"></i>
+                  <span>Time In</span>
+                </div>
+              </button>
+            )}
+          </div>
         </div>
+
 
         {/* Current Shift Section */}
         <div className="current-shift-section">
