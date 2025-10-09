@@ -40,6 +40,8 @@ const JobOrderForm = lazy(() => import('./../pages/reusable-pages/job-order-form
 
 const LoginForOnsite = lazy(() => import('./../pages/reusable-pages/dtr-onsite-login-page/LoginForOnsite'))
 
+const ApprovedDtr = lazy(() => import('./../pages/reusable-pages/approved-dtr-page/ApprovedDtr'));
+
 // outlets
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const EmployeeHomePage = lazy(() => import('../pages/employees/EmployeesHomePage'));
@@ -176,6 +178,7 @@ export const router = createBrowserRouter(
         <Route path="/hr" element={LazyComponent(HrOutlet)}>
           <Route path="" element={LazyComponent(DtrPage)} /> 
           <Route path="employeeList" element={LazyComponent(EmployeeList)} />
+          <Route path='approved-dtr' element={<ApprovedDtr/>}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>
