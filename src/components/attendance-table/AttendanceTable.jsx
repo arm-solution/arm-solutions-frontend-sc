@@ -72,66 +72,71 @@ const AttendanceTable = (props) => {
   return (
     <>
         <div className="attendance-table-container mt-5">
-            <div className="search-date-container">
-            <div className="row">
-                <div className="col-md-6">
+            <div className="card mt-3">
+                <div className="card-header fw-bold bg-light">
+                    <div className="search-date-container">
+                    <div className="row">
+                        <div className="col-md-6">
+                            
+                        <p>Search By Date Range</p>
+                        <div className="input-group">
+                        <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateFrom')} />
+                        <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateTo')} />
+                        <button className="btn btn-primary" onClick={searchAttendance}>Search</button>
+                        </div>
+
+
+                        </div>
+                        <div className="col-md-6">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div className="card-body">
                     
-                <p>Search By Date Range</p>
-                <div className="input-group">
-                <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateFrom')} />
-                <input type="date" className="form-control" onChange={(e) => getDateChange(e, 'dateTo')} />
-                <button className="btn btn-primary" onClick={searchAttendance}>Search</button>
-                </div>
-
-
-                </div>
-                <div className="col-md-6">
-                </div>
-            </div>
-            </div>
-
-        <div className="card mt-3">
-            <div className="card-body">
-                
-            <table className="table table-hover">
-                <thead>
-                    <tr>
-                    <th scope="col">DATE</th>
-                    <th scope="col">STATUS</th>
-                    <th scope="col">ACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    { dtrById.map((row, index) => (
-                        <tr key={index}>
-                        <th>{row.shift_date ? formatDateReadable(row.shift_date) : 'no-date' }</th>
-                        <td> { row.status ? <span className="badge bg-success"> Approved <FaCheckCircle/></span> : <span className="badge bg-danger"> Rejected <VscError /></span>} </td>
-                        <td>
-                            <button className="btn btn-sm btn-danger me-3"><FaMapMarker /></button>
-                            <button className="btn btn-sm btn-info text-white"><FaInfo /></button>
-                        </td>
+                <table className="table table-hover">
+                    <thead>
+                        <tr>
+                        <th scope="col">DATE</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">ACTION</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        { dtrById.map((row, index) => (
+                            <tr key={index}>
+                            <th>{row.shift_date ? formatDateReadable(row.shift_date) : 'no-date' }</th>
+                            <td> { row.status ? <span className="badge bg-success"> Approved <FaCheckCircle/></span> : <span className="badge bg-danger"> Rejected <VscError /></span>} </td>
+                            <td>
+                                {/* <button className="btn btn-sm btn-danger me-3"><FaMapMarker /></button> */}
+                                {/* <button className="btn btn-sm btn-info text-white"><FaInfo /></button> */}
+                                <button
+                                    className="btn btn-sm btn-info text-white"
+                                    // onClick={() => props.handleViewDetails(row)}
+                                    aria-label={`View details for ${formatDateReadable(row.shift_date)}`}
+                                >
+                                    Details
+                                </button>
+                            </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className="row">
+                    <div className="pagination">
+                        <button onClick={handlePrevPage} disabled={currentPage === 1}>
+                            Previous
+                        </button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                            Next
+                        </button>
+                    </div>
+                </div>
 
-            <div className="row">
-
-            <div className="pagination">
-            <button onClick={handlePrevPage} disabled={currentPage === 1}>
-                Previous
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-                Next
-            </button>
+                </div>
             </div>
-
-            </div>
-
-
-            </div>
-        </div>
         </div>
     </>
   )
