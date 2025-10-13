@@ -30,13 +30,30 @@ const QuotationFormsInputs = (props) => {
 
             <div className="row mt-5">
                 <div className="col col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="client">Client</label>
-                        <select className="form-select form-select-sm" name='client_id' aria-label=".form-select-sm example" onChange={handleQoutationInput} value={quotation.client_id} >
-                            <option value='0' disabled>Select Client</option>
-                            {props.clientData.map(client => <option key={client.id} value={client.id}>{client.name}</option>)}
-                        </select>
-                    </div>
+                <div className="form-group">
+                <label htmlFor="client">Client</label>
+                    <select
+                        className="form-select form-select-sm"
+                        name="client_id"
+                        aria-label=".form-select-sm example"
+                        onChange={handleQoutationInput}
+                        value={quotation.client_id}
+                    >
+                        <option value="0" disabled>
+                        Select Client
+                        </option>
+                        {Array.isArray(props.clientData) && props.clientData.length > 0 ? (
+                        props.clientData.map((client) => (
+                            <option key={client.id} value={client.id}>
+                            {client.name}
+                            </option>
+                        ))
+                        ) : (
+                        <option disabled>No clients available</option>
+                        )}
+                    </select>
+                </div>
+
                 </div>
                 <div className="col col-md-6">
                     <div className="form-group justify-content-center">
