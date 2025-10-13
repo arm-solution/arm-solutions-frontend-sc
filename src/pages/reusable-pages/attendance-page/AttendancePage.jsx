@@ -36,22 +36,8 @@ const AttendancePage = () => {
 
   return (
     <>
-
-    <h1 className='text-center'>My Attendance</h1>
-
-    {/* <DataTable 
-    data={users.data}
-    columns={columns}
-    actions={{ handleViewEmployee, handleDeleteEmployee }}
-    perPage={10}
-    showAddButtonAndSearchInput={ false }
-    tableLabel = 'Records'
-    /> */}
-
-
-    <AttendanceTable />
-
-
+      <h1 className='text-center'>My Attendance</h1>
+      <AttendanceTable />
     </>
   )
 }

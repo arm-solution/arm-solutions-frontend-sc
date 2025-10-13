@@ -47,15 +47,17 @@ const Quotations = () => {
       {header: 'Status', accessor: 'status'},
     ]
 
+    // get all proposal lists
     useEffect(() => {
       dispatch(getAllProposal());
-      console.log("dispatch")
     }, [dispatch]);
 
 
     const handleView = async (row) => {
       try {
         setSelectedTab('tab-two');
+
+
         setProposalEdit(row);
     
         const [discountTaxResult, proposalItemsResult, additionalItems] = await Promise.all([
@@ -82,7 +84,7 @@ const Quotations = () => {
         window.dispatchEvent(new Event('sessionUpdated'));
     
       } catch (error) {
-        console.log("Error: ", error);
+        console.error("Error: ", error);
       }
     };
   
