@@ -86,10 +86,6 @@ const DtrRemarks = (props) => {
     )
   }
 
-  useEffect(() => {
-    console.log('props.selectedDtr', props.selectedDtr)
-  }, [])
-
   return (
     <>
       <div

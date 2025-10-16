@@ -491,7 +491,7 @@ const Home = () => {
                       </div>
                     </button>
 
-                    <button 
+                    {/* <button 
                       className="action-btn early-out-btn" 
                       onClick={handleEarlyTimeOut} 
                       disabled={accessOut || loadingSessionStorage}
@@ -500,7 +500,7 @@ const Home = () => {
                         <i className="fas fa-door-open btn-icon" aria-hidden="true"></i>
                         <span>Early Time Out</span>
                       </div>
-                    </button>
+                    </button> */}
                   </>
                 ) : null}
               </>
