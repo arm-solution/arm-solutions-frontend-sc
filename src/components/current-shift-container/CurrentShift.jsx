@@ -87,8 +87,8 @@ const CurrentShift = (props) => {
     const shiftData = [
       { label: 'Date', value: shift.shift_date ? dateFormatted(shift.shift_date) : '--' },
       { label: 'Time In', value: formatTime(shift.time_in) },
-      { label: 'Break In', value: formatTime(shift.break_start) },
-      { label: 'Break Out', value: formatTime(shift.break_end) },
+      // { label: 'Break In', value: formatTime(shift.break_start) },
+      // { label: 'Break Out', value: formatTime(shift.break_end) },
       { label: 'Time Out', value: formatTime(shift.time_out) },
     ];
 
