@@ -3,7 +3,7 @@ import './Employees.css';
 import { useScreenWidth } from '../../../customs/global/forMobile';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteUser, getUser } from '../../../store/features/userSlice';
+import { deleteUser, getAllUsers } from '../../../store/features/userSlice';
 import EmployeesForm from '../../../components/modals-forms/employees-form/EmployeesForm';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import { deleteConfirmation } from '../../../customs/global/alertDialog';
@@ -30,7 +30,7 @@ const EmployeesList = () => {
   ];
 
   useEffect(() => {
-    dispatch(getUser());
+    dispatch(getAllUsers());
   }, [dispatch]);
    
 
@@ -58,7 +58,7 @@ const EmployeesList = () => {
     }, async () => {
      const { payload } =  await dispatch(deleteUser(id)) 
      const result = payload.affectedRows > 0 ? true : false;
-    dispatch(getUser());
+    dispatch(getAllUsers());
      return result;
     })
 
