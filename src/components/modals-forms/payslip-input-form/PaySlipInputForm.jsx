@@ -119,6 +119,7 @@ const PaySlipInputForm = (props) => {
             total_additional_pay : addTotal,
             total_deduction : dedTotal,
             final_pay : calculateFinalPay(),
+            date_created: new Date().toISOString().split('T')[0]
         }
 
         if(finalEarnings.final_pay > 0) {
