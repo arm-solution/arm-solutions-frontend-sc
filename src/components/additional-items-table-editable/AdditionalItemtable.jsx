@@ -43,11 +43,12 @@ const AdditionalItemtable = (props) => {
         const { additionalItems } = JSON.parse(proposalDetails);
 
         // Ensure database items use their ID as rowId
-        const updatedItems = additionalItems.map((item) => ({
-          ...item,
-          rowId: item.id, // Replace rowId with actual database ID
-        }));
-
+        const updatedItems = Array.isArray(additionalItems)
+          ? additionalItems.map((item) => ({
+              ...item,
+              rowId: item.id, // Replace rowId with actual database ID
+            }))
+          : [];
         props.additionalState.setAddtionalItems(updatedItems); 
 
         // Determine the next rowId based on the highest existing rowId
