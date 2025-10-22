@@ -1,15 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./PaySlipUserRecords.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { getFullEarnings } from "../../../store/features/earningSlice";
 import { getEarningsByUserIdWithPagination } from "../../../store/features/earningSlice";
 import { formatDateReadable } from "../../../customs/global/manageDates";
-import PaySlipForm from "../../../components/modals-forms/payslip-form/PaySlipForm";
+import { getUserById } from "../../../store/features/userSlice";
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import FullEarningModal from "../../../components/modals-forms/full-earnings-details-modal/FullEarningModal";
 
 const PaySlipUserRecords = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { userIdParams } = useParams();
+
+  const modalForFullEarningRef = useRef(null);
+
+  const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
+  const { userById } = useSelector(state => state.users)
 
   const { _getEarningsByUserWithPagination, loading } = useSelector(
     (state) => state.earnings
@@ -25,15 +33,28 @@ const PaySlipUserRecords = () => {
   // Fetch paginated data
   useEffect(() => {
     const getUserRecord = async () => {
-      if (userId) {
-        await dispatch(getEarningsByUserIdWithPagination({ employeeId: userId, page, limit }));
+      if (userIdParams) {
+        await dispatch(getEarningsByUserIdWithPagination({ employeeId: userIdParams, page, limit }));
       } else {
         navigate("/not-found");
       }
     };
 
     getUserRecord();
-  }, [dispatch, userId, page, limit, navigate]);
+  }, [dispatch, userIdParams, page, limit, navigate]);
+
+  // get user details by user ids
+  useEffect(() => {
+
+      const fetchGetEarningByUserId = async() => {
+        if(userIdParams) {
+          await dispatch(getUserById(userIdParams));
+        }
+      }
+
+      fetchGetEarningByUserId();
+  }, [userIdParams])
+  
 
   // Handle pagination
   const handlePageChange = (newPage) => {
@@ -44,8 +65,19 @@ const PaySlipUserRecords = () => {
 
 
   // Handle View button
-  const handleView = (recordId) => {
-    navigate(`/payslip/view/${recordId}`);
+  const handleView = async (recordId) => {
+
+    const modalElement = modalForFullEarningRef.current;
+    const modal = new Modal(modalElement);
+
+    if(recordId) {
+      await dispatch(getFullEarnings(recordId));
+      modal.show();
+    } else {
+      console.error("Error getting full earnings")
+    }
+
+
   };
 
   return (
@@ -180,6 +212,14 @@ const PaySlipUserRecords = () => {
           </div>
         </div>
       </div>
+
+
+
+    {
+      _getFullEarnings && (
+        <FullEarningModal earningModalsRef={modalForFullEarningRef} _getFullEarnings={_getFullEarnings} _userById={userById} />
+      )
+    }
     </div>
   );
 };

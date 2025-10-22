@@ -115,7 +115,7 @@ export const router = createBrowserRouter(
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
           <Route path='cutoff' element={LazyComponent(CutOff)}/>
-          <Route path='payslip-records/:userId' element={LazyComponent(PaySlipUserRecords)}/>
+          <Route path='payslip-records/:userIdParams' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>
