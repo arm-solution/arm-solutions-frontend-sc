@@ -38,6 +38,11 @@ const CutOff = () => {
   const total = paginatedUser?.total || 0;
   const totalPages = Math.ceil(total / limit);
 
+  useEffect(() => {
+    console.log("Pay Slip Records", paginatedUser);
+  }, [paginatedUser])
+  
+
   return (
     <div className="container" style={{ marginTop: '3rem' }}>
       <div className="card shadow-sm cutoff-card" style={{ borderRadius: '1rem' }}>

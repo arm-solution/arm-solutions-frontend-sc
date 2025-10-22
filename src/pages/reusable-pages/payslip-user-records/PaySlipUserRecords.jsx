@@ -3,6 +3,8 @@ import "./PaySlipUserRecords.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getEarningsByUserIdWithPagination } from "../../../store/features/earningSlice";
+import { formatDateReadable } from "../../../customs/global/manageDates";
+import PaySlipForm from "../../../components/modals-forms/payslip-form/PaySlipForm";
 
 const PaySlipUserRecords = () => {
   const dispatch = useDispatch();
@@ -40,10 +42,6 @@ const PaySlipUserRecords = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("data", data)
-  }, [data])
-  
 
   // Handle View button
   const handleView = (recordId) => {
@@ -67,7 +65,7 @@ const PaySlipUserRecords = () => {
                 </label>
                 <input type="date" className="form-control form-control-sm" id="dateFrom" />
               </div>
-
+``
               <div className="form-group mb-0">
                 <label htmlFor="dateTo" className="form-label" style={{ fontSize: "0.85rem" }}>
                   Date To
@@ -132,7 +130,7 @@ const PaySlipUserRecords = () => {
                     <tr key={item.id}>
                       <td>
                         {item.date_created
-                          ? new Date(item.date_created).toLocaleDateString()
+                          ? formatDateReadable(new Date(item.date_created).toLocaleDateString())
                           : "—"}
                       </td>
                       <td>
