@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import './Attendance.css';
 import DataTable from '../../../components/DataTable';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUser } from '../../../store/features/userSlice';
+import { getAllUsers } from '../../../store/features/userSlice';
 import AttendanceTable from '../../../components/attendance-table/AttendanceTable';
 
 const AttendancePage = () => {
@@ -20,7 +20,7 @@ const AttendancePage = () => {
   ]
   
   useEffect(() => {
-    dispatch(getUser())
+    dispatch(getAllUsers())
   }, [dispatch])
   
 

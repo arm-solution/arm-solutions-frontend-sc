@@ -42,6 +42,8 @@ const LoginForOnsite = lazy(() => import('./../pages/reusable-pages/dtr-onsite-l
 
 const ApprovedDtr = lazy(() => import('./../pages/reusable-pages/approved-dtr-page/ApprovedDtr'));
 
+const PaySlipUserRecords = lazy(() => import('./../pages/reusable-pages/payslip-user-records/PaySlipUserRecords'))
+
 // outlets
 const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
 const EmployeeHomePage = lazy(() => import('../pages/employees/EmployeesHomePage'));
@@ -113,6 +115,7 @@ export const router = createBrowserRouter(
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
           <Route path='cutoff' element={LazyComponent(CutOff)}/>
+          <Route path='payslip-records/:userIdParams' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { dateFormatted } from '../../customs/global/manageDates';
 import api from '../interceptors/api';
 
-export const getUser = createAsyncThunk('user/getAllUser', async (_, { rejectWithValue }) => {
+export const getAllUsers = createAsyncThunk('user/getAllUser', async (_, { rejectWithValue }) => {
     try {        
         const {data} = await api.get('/employees');
 
@@ -14,6 +14,21 @@ export const getUser = createAsyncThunk('user/getAllUser', async (_, { rejectWit
     return rejectWithValue(error.response ? error.response.data : error.message);
   }
 });
+
+export const getAllUsersWithPagination = createAsyncThunk(
+  "user/getAllUsersWithPagination",
+  async ({ page = 1, limit = 10, search = "" } = {}, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/employees/get-all-with-pagination", {
+        params: { page, limit, search },
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+  }
+);
+
 
 export const addUser = createAsyncThunk('user/AddEmployee',  async (employeeData, { rejectWithValue }) => {
 
@@ -115,6 +130,7 @@ const userSlice = createSlice({
     name: 'users',
     initialState: {
         data: [],
+        paginatedUser: [],
         userById: [],
         userSearchResult: [],
         userSearchLoding: false,
@@ -132,17 +148,32 @@ const userSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-        .addCase(getUser.pending, (state, action) =>{
+        .addCase(getAllUsers.pending, (state, action) =>{
             state.loading = true;
         })
-        .addCase(getUser.fulfilled, (state, action) => {
+        .addCase(getAllUsers.fulfilled, (state, action) => {
             state.loading = false;
             state.isSuccess = true;
 
             state.data = action.payload
 
         })
-        .addCase(getUser.rejected, (state, action) => {
+        .addCase(getAllUsers.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload
+        })
+        .addCase(getAllUsersWithPagination.pending, (state, action) =>{
+            state.loading = true;
+        })
+        .addCase(getAllUsersWithPagination.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+
+            state.paginatedUser = action.payload
+
+        })
+        .addCase(getAllUsersWithPagination.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload
