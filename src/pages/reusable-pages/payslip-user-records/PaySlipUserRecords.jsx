@@ -14,9 +14,13 @@ const PaySlipUserRecords = () => {
   const navigate = useNavigate();
   const { userIdParams } = useParams();
 
+  // Local state for date inputs
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const modalForFullEarningRef = useRef(null);
 
-  const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
+  const { _getFullEarnings } = useSelector(state => state.earnings);
   const { userById } = useSelector(state => state.users)
 
   const { _getEarningsByUserWithPagination, loading } = useSelector(
@@ -76,9 +80,24 @@ const PaySlipUserRecords = () => {
     } else {
       console.error("Error getting full earnings")
     }
-
-
   };
+
+  const handleSearchDateFilter = async() => {
+    if (!startDate || !endDate) {
+      alert("Please select both Date From and Date To before searching.");
+      return;
+    }
+
+    await dispatch(
+      getEarningsByUserIdWithPagination({
+        employeeId: userIdParams,
+        page,
+        limit,
+        startDate,
+        endDate,
+      })
+    );
+  }
 
   return (
     <div className="container" style={{ marginTop: "3rem" }}>
@@ -95,14 +114,24 @@ const PaySlipUserRecords = () => {
                 <label htmlFor="dateFrom" className="form-label" style={{ fontSize: "0.85rem" }}>
                   Date From
                 </label>
-                <input type="date" className="form-control form-control-sm" id="dateFrom" />
+                <input 
+                    type="date"
+                    className="form-control form-control-sm"
+                    id="dateFrom" 
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
               </div>
 ``
               <div className="form-group mb-0">
                 <label htmlFor="dateTo" className="form-label" style={{ fontSize: "0.85rem" }}>
                   Date To
                 </label>
-                <input type="date" className="form-control form-control-sm" id="dateTo" />
+                <input 
+                    type="date"
+                    className="form-control form-control-sm"
+                    id="dateTo"
+                    onChange={(e) => setEndDate(e.target.value)} 
+                  />
               </div>
 
               <div className="form-group mb-0">
@@ -111,6 +140,7 @@ const PaySlipUserRecords = () => {
                   type="button"
                   id="searchButton"
                   style={{ marginTop: "1.45rem" }}
+                  onClick={handleSearchDateFilter}
                 >
                   Search
                 </button>
