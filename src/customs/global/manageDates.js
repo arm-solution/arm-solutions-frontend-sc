@@ -145,6 +145,20 @@ export const calculateDecimalHours = (date, timeIn, timeOut) => {
     return parseFloat(totalHours.toFixed(2));
 }
 
+// this function can calculate a hour in 2days
+export const calculateFlexibleDecimalHours = (shift_start, shift_end, time_in, time_out) => {
+  // Combine date + time
+  const inDate = new Date(`${shift_start}T${time_in}`);
+  const outDate = new Date(`${shift_end}T${time_out}`);
+
+  // Compute difference in hours
+  const diffMs = outDate - inDate;
+  const totalHours = diffMs / (1000 * 60 * 60);
+
+  return parseFloat(totalHours.toFixed(2));
+};
+
+
 export const getWeekDates = () => {
     const today = new Date();
     const dayOfWeek = today.getDay();
@@ -183,7 +197,7 @@ export const getWeekDates = () => {
   }
 
 
-  export const getCurrentDateFormatted = () => {
+export const getCurrentDateFormatted = () => {
   const today = new Date();
   return today.toLocaleDateString("en-US", {
     year: "numeric",

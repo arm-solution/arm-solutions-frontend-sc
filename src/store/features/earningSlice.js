@@ -38,6 +38,40 @@ export const getEarningsByUserId = createAsyncThunk('get/getEarningsByUserId', a
     }
 });
 
+export const getEarningsByUserIdWithPagination = createAsyncThunk(
+  'earnings/getByUserIdWithPagination',
+  async (
+    { employeeId, page = 1, limit = 10, startDate = '', endDate = '' },
+    { rejectWithValue }
+  ) => {
+    try {
+      if (!employeeId) {
+        throw new Error('ERROR: No employee ID provided');
+      }
+
+      const params = new URLSearchParams();
+
+      // ✅ Append pagination + optional filters
+      params.append('page', String(page));
+      params.append('limit', String(limit));
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id-with-pagination/${employeeId}?${params.toString()}`
+      );
+
+
+      // Response already has: success, message, page, limit, total, totalPages, data[]
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response ? error.response.data : error.message
+      );
+    }
+  }
+);
+
 
 const earningSlice = createSlice({
     name: 'earnings',
@@ -45,6 +79,7 @@ const earningSlice = createSlice({
         postEarning: [],
         _getFullEarnings: [],
         _getEarningsByUserId: [],
+        _getEarningsByUserWithPagination: [],
         isSuccess: false,
         loading: false,
         message: ''
@@ -91,6 +126,19 @@ const earningSlice = createSlice({
             state._getEarningsByUserId = action.payload;
         })
         .addCase(getEarningsByUserId.rejected, (state, action) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = action.payload
+        })
+        .addCase(getEarningsByUserIdWithPagination.pending, (state, _) => {
+            state.loading = true;
+        })
+        .addCase(getEarningsByUserIdWithPagination.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state._getEarningsByUserWithPagination = action.payload;
+        })
+        .addCase(getEarningsByUserIdWithPagination.rejected, (state, action) => {
             state.isSuccess = false;
             state.loading = false;
             state.message = action.payload

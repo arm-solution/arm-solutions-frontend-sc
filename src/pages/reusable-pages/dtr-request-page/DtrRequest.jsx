@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import './DtrRequest.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { getPendingDtrUsers } from '../../../store/features/dtrSlice';
