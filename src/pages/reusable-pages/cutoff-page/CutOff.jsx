@@ -40,8 +40,13 @@ const CutOff = () => {
 
   useEffect(() => {
     console.log("Pay Slip Records", paginatedUser);
-  }, [paginatedUser])
-  
+  }, [paginatedUser]);
+
+  // ✅ Safely extract a readable message
+  const displayMessage =
+    typeof message === 'object'
+      ? message?.message || 'No data available'
+      : message || 'No data available';
 
   return (
     <div className="container" style={{ marginTop: '3rem' }}>
@@ -50,7 +55,7 @@ const CutOff = () => {
           className="card-header bg-primary text-white d-flex justify-content-between align-items-center cutoff-header"
           style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
         >
-          <h5 className="mb-0">Cut-off recods</h5>
+          <h5 className="mb-0">Cut-off Records</h5>
         </div>
 
         <div className="card-body p-0">
@@ -75,14 +80,11 @@ const CutOff = () => {
             </div>
           </div>
 
+          {/* 🧾 Table Section */}
           <div className="table-responsive">
             <table
               className={`table table-bordered table-hover align-middle mb-0 cutoff-table ${
-                !(
-                  paginatedUser &&
-                  paginatedUser.data &&
-                  paginatedUser.data.length > 0
-                )
+                !(paginatedUser?.data && paginatedUser.data.length > 0)
                   ? 'empty-state'
                   : ''
               }`}
@@ -97,15 +99,18 @@ const CutOff = () => {
                 </tr>
               </thead>
 
-              {paginatedUser && paginatedUser.data && paginatedUser.data.length > 0 ? (
+              {paginatedUser?.data && paginatedUser.data.length > 0 ? (
                 <tbody>
                   {paginatedUser.data.map((item, index) => (
                     <tr key={item.id || index}>
                       <td>{item.firstname} {item.lastname}</td>
-                      <td>{item.lastname}</td>
+                      <td>{item.email}</td>
                       <td>{item.employee_id}</td>
-                      <td className='text-center'>
-                        <button className="btn btn-outline-primary" onClick={() => handleCutOffPerUser(item)}>
+                      <td className="text-center">
+                        <button
+                          className="btn btn-outline-primary"
+                          onClick={() => handleCutOffPerUser(item)}
+                        >
                           Show Records
                         </button>
                       </td>
@@ -116,11 +121,7 @@ const CutOff = () => {
                 <tbody>
                   <tr>
                     <td colSpan={4} className="no-data cutoff-no-data text-center" role="cell">
-                      {loading
-                        ? 'Loading...'
-                        : message
-                        ? message
-                        : 'No data available'}
+                      {loading ? 'Loading...' : displayMessage}
                     </td>
                   </tr>
                 </tbody>
@@ -132,11 +133,11 @@ const CutOff = () => {
           <div className="d-flex justify-content-between align-items-center px-3 py-3 flex-wrap gap-2 border-top">
             <span className="text-muted small">
               Showing{' '}
-              {paginatedUser && paginatedUser.data && paginatedUser.data.length > 0
+              {paginatedUser?.data && paginatedUser.data.length > 0
                 ? (page - 1) * limit + 1
                 : 0}
               –
-              {paginatedUser && paginatedUser.data && paginatedUser.data.length > 0
+              {paginatedUser?.data && paginatedUser.data.length > 0
                 ? Math.min(page * limit, total)
                 : 0}{' '}
               of {total} entries
