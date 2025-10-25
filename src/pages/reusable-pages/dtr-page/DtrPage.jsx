@@ -10,11 +10,12 @@ import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
-import { calculateDecimalHours, getCurrentDateForCalculation } from '../../../customs/global/manageDates';
+import { calculateDecimalHours, getCurrentDateForCalculation, dateFormatted, calculateFlexibleDecimalHours } from '../../../customs/global/manageDates';
 import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
 import FloatNotification from '../../../components/float-notification/FloatNotification';
 import DtrRemarksModal from '../../../components/modals-forms/dtr-remarks-modal/DtrRemarksModal';
 import AccessCamera from '../../../components/modals-forms/access-camera-modal/AccessCamera';
+
 
 const Home = () => {
   // Refs
@@ -117,6 +118,7 @@ const Home = () => {
     }
   };
 
+  // handle time out function
   const timeOut = async (e) => {
     e.preventDefault();
     const currentDate = new Date();
@@ -150,11 +152,13 @@ const Home = () => {
         time_out_longitude: longitude / positionSamples.length,
       };
 
-      const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
+      // const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
+      const totalHours = calculateFlexibleDecimalHours(dateFormatted(myShift.shift_date), getCurrentDateForCalculation(), myShift.time_in, myShift.time_out);
       // const breakHours = myShift.break_start ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime) : 0;
 
       Object.assign(myShift, {
-        total_hours: totalHours,
+        total_hours: totalHours ? totalHours : 0,
+        shift_date_end: getCurrentDateForCalculation(),
         status: 'completed',
         ...avgCoords
       });
