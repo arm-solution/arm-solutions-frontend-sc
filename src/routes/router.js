@@ -57,7 +57,9 @@ const EngineeringOutlet = lazy(() => import('../pages/engineering/EngineeringOut
 const FinanceOutlet = lazy(() => import('../pages/finance/FinanceOutlet'));
 
 const DtrReview = lazy(() => import('../pages/reusable-pages/dtr-review/DtrReview'));
-const DtrReviewPerEmployee = lazy(() => import('./../pages/reusable-pages/dtr-review-per-employee/DtrReviewPerEmployee'))
+const DtrReviewPerEmployee = lazy(() => import('./../pages/reusable-pages/dtr-review-per-employee/DtrReviewPerEmployee'));
+
+const DtrLogs = lazy(() => import('../components/dtr-logs/DtrLogs'));
 
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
@@ -115,6 +117,7 @@ export const router = createBrowserRouter(
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
           <Route path='cutoff' element={LazyComponent(CutOff)}/>
+          <Route path='dtrlogs' element={LazyComponent(DtrLogs)}/>
           <Route path='payslip-records/:userId' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}

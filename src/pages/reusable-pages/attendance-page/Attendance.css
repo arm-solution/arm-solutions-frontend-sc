@@ -1,0 +1,9 @@
+/* Simple card styling to match Products table */
+.attendance-page {
+  padding: 1rem;
+}
+
+.attendance-page h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+}

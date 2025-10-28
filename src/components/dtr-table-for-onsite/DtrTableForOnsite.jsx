@@ -398,21 +398,25 @@ const DtrTableForOnsite = (props) => {
         <div className="row">
           {shift && Object.keys(shift).length > 0 ? (
             <>
-              {shift.break_start === '' || shift.break_start === '00:00:00' ? (
+              {/* {shift.break_start === '' || shift.break_start === '00:00:00' ? 
+              (
                 <button
                   className="btn btn-warning time-in-btn"
                   onClick={(e) => handleBreakIn(e)}
                 >
                   Break In
                 </button>
-              ) : shift.break_end === '' || shift.break_end === '00:00:00' ? (
+              ) 
+              : shift.break_end === '' || shift.break_end === '00:00:00' ? (
                 <button
                   className="btn btn-warning time-in-btn"
                   onClick={(e) => handleBreakOut(e)}
                 >
                   Break Out
                 </button>
-              ) : (
+              ) 
+              : 
+              (
                   <button
                     className="btn btn-danger time-in-btn"
                     onClick={(e) => timeOut(e)}
@@ -420,7 +424,17 @@ const DtrTableForOnsite = (props) => {
                   >
                     Time Out
                   </button>
+              )} */}
+              {shift.time_in && ( // only show Time Out if there's a Time In
+                <button
+                  className="btn btn-danger time-in-btn"
+                  onClick={(e) => timeOut(e)}
+                  disabled={accessOut}
+                >
+                  Time Out
+                </button>
               )}
+
               {(shift.time_out === '' || shift.time_out === '00:00:00') && (
                   <button
                     className="btn btn-success time-in-btn"
