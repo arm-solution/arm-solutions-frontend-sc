@@ -52,6 +52,8 @@ const PaySlipPage = () => {
 
     if(row) {
       await dispatch(getFullEarnings(row.id));
+    } else {
+      console.error("Error getting full earnings")
     }
     
   }

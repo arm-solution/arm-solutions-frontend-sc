@@ -15,6 +15,11 @@ export const loginEmployee = createAsyncThunk('employee/login', async ({ employe
 export const loginQiosk = createAsyncThunk('qiosk/login', async (pinCode,  { rejectWithValue }) => {
   try {
 
+    if(!pinCode) {
+      console.error("Pin code is requried!!!");
+      return
+    }
+
     const { data } = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/employees/login-qiosk`, {pinCode});
 
     return data;
