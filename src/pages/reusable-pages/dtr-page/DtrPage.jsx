@@ -32,7 +32,6 @@ const Home = () => {
   const [loadingSessionStorage, setLoadingSessionStorage] = useState(false);
   const [notification, setNotification] = useState({ message: '', type: '' });
   const [accessOut, setAccessOut] = useState(false);
-  const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
   const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
@@ -285,7 +284,7 @@ const Home = () => {
     modal.show();
   };
 
-  const handleOt = async (e) => {
+ const handleOt = async (e) => {
     const { value, name } = e.target;
     e.preventDefault();
     setLoadingSessionStorage(true);
@@ -377,6 +376,12 @@ const Home = () => {
 
   const timeComponents = getTimeComponents();
   const hasActiveShift = shift && Object.keys(shift).length > 0;
+
+  useEffect(() => {
+    console.log("hasActiveShift", hasActiveShift)
+    console.log("shift", shift)
+  }, [])
+  
 
   return (
     <>

@@ -105,7 +105,7 @@ const CurrentShift = (props) => {
           ))}
 
           {/* OT Start */}
-          <div className="shift-item">
+          {/* <div className="shift-item">
             <div className="shift-label">OT Start</div>
             <input
               type="time"
@@ -115,10 +115,10 @@ const CurrentShift = (props) => {
               onChange={props.handleOt}
               aria-label="Overtime start time"
             />
-          </div>
+          </div> */}
 
           {/* OT End */}
-          <div className="shift-item">
+          {/* <div className="shift-item">
             <div className="shift-label">OT End</div>
             <input
               type="time"
@@ -128,7 +128,7 @@ const CurrentShift = (props) => {
               onChange={props.handleOt}
               aria-label="Overtime end time"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Submit Button */}

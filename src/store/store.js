@@ -17,6 +17,7 @@ import earningSlice from './features/earningSlice';
 import dashboardSlice from "./features/dashboardDataSlice";
 import categorySlice from "./features/categorySlice";
 import jobOrderSlice from './features/jobOrder.slice'
+import overtimeSlice from "./features/overtime.Slice";
 
 export const store = configureStore({
     reducer: {
@@ -37,6 +38,7 @@ export const store = configureStore({
         earnings: earningSlice.reducer,
         dasboardData: dashboardSlice.reducer,
         categories: categorySlice.reducer,
-        jobOrders: jobOrderSlice.reducer
+        jobOrders: jobOrderSlice.reducer,
+        overtime: overtimeSlice.reducer,
     }
 })

@@ -193,7 +193,7 @@ const DtrDetailsModal = (props) => {
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div className="col-6">
+                                                {/* <div className="col-6">
                                                     <div className="dtr-time-item">
                                                         <span className="dtr-time-label">Break In</span>
                                                         <span className="dtr-time-value">
@@ -208,7 +208,7 @@ const DtrDetailsModal = (props) => {
                                                             {props.selectedDtr?.break_end || "---"}
                                                         </span>
                                                     </div>
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                     </div>
