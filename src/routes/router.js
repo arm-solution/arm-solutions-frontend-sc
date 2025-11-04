@@ -62,6 +62,8 @@ const Overtime = lazy(() => import('./../pages/reusable-pages/over-time-page/Ove
 const OvertimeReview = lazy(() => import('./../pages/reusable-pages/overtime-review/OvertimeReview'));
 const OvertimeRecordByUser = lazy(() => import('./../pages/reusable-pages/overtime-records-user-page/OvertimeRecords'))
 
+const DtrLogs = lazy(() => import('../components/dtr-logs/DtrLogs'));
+
 // Helper Component for Lazy Loading with Suspense
 const LazyComponent = (Component, Fallback = <Loading />) => (
   <Suspense fallback={Fallback}>
@@ -122,6 +124,8 @@ export const router = createBrowserRouter(
           <Route path='overtime-review' element={<OvertimeReview/>}/>
           <Route path='payslip-records/:userIdParams' element={LazyComponent(PaySlipUserRecords)}/>
           <Route path='overtime-records/:userId' element={LazyComponent(OvertimeRecordByUser)}/>
+          <Route path='dtrlogs' element={LazyComponent(DtrLogs)}/>
+          <Route path='payslip-records/:userId' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>
