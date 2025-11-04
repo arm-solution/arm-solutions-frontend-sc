@@ -57,7 +57,10 @@ const EngineeringOutlet = lazy(() => import('../pages/engineering/EngineeringOut
 const FinanceOutlet = lazy(() => import('../pages/finance/FinanceOutlet'));
 
 const DtrReview = lazy(() => import('../pages/reusable-pages/dtr-review/DtrReview'));
-const DtrReviewPerEmployee = lazy(() => import('./../pages/reusable-pages/dtr-review-per-employee/DtrReviewPerEmployee'));
+const DtrReviewPerEmployee = lazy(() => import('./../pages/reusable-pages/dtr-review-per-employee/DtrReviewPerEmployee'))
+const Overtime = lazy(() => import('./../pages/reusable-pages/over-time-page/OverTime'));
+const OvertimeReview = lazy(() => import('./../pages/reusable-pages/overtime-review/OvertimeReview'));
+const OvertimeRecordByUser = lazy(() => import('./../pages/reusable-pages/overtime-records-user-page/OvertimeRecords'))
 
 const DtrLogs = lazy(() => import('../components/dtr-logs/DtrLogs'));
 
@@ -90,6 +93,7 @@ const CommonAllUsersRoutes = () => (
       <Route path="user-profile" element={LazyComponent(UserProfilePage)} />
       <Route path="my-attendance" element={LazyComponent(AttendancePage)} />
       <Route path="my-payslip" element={LazyComponent(PaySlipPage)} />
+      <Route path="file-overtime" element={LazyComponent(Overtime)} />
   </Route>
 );
 
@@ -117,6 +121,9 @@ export const router = createBrowserRouter(
           <Route path="message-request" element={LazyComponent(MessageRequest)} />
           <Route path="dtr-record/:userId" element={LazyComponent(DtrListByUser)} />
           <Route path='cutoff' element={LazyComponent(CutOff)}/>
+          <Route path='overtime-review' element={<OvertimeReview/>}/>
+          <Route path='payslip-records/:userIdParams' element={LazyComponent(PaySlipUserRecords)}/>
+          <Route path='overtime-records/:userId' element={LazyComponent(OvertimeRecordByUser)}/>
           <Route path='dtrlogs' element={LazyComponent(DtrLogs)}/>
           <Route path='payslip-records/:userId' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}
@@ -185,6 +192,8 @@ export const router = createBrowserRouter(
           <Route path="" element={LazyComponent(DtrPage)} /> 
           <Route path="employeeList" element={LazyComponent(EmployeeList)} />
           <Route path='approved-dtr' element={<ApprovedDtr/>}/>
+          <Route path='overtime-review' element={<OvertimeReview/>}/>
+          <Route path='overtime-records/:userIdParams' element={LazyComponent(OvertimeRecordByUser)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>

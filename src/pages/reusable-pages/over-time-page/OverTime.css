@@ -1,0 +1,14 @@
+.overtime-container {
+  position: relative;
+}
+
+.overtime-submit-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.overtime-submit-container .btn-success {
+  min-width: 120px;
+  font-weight: 500;
+}

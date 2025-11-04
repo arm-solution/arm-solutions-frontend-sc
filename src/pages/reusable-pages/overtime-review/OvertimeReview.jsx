@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import './DtrRequest.css';
+import './OvertimeReview.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../components/loading-spinner/Loading';
 import { getAllUsersWithPagination } from '../../../store/features/userSlice';
 
-const DtrRequest = () => {
+const OvertimeReview = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const DtrRequest = () => {
           className="card-header bg-primary text-white d-flex justify-content-between align-items-center cutoff-header"
           style={{ borderTopLeftRadius: '1rem', borderTopRightRadius: '1rem' }}
         >
-          <h5 className="mb-0">DTR Request Records</h5>
+          <h5 className="mb-0">Overtime Review</h5>
         </div>
 
         <div className="card-body p-0">
@@ -94,7 +94,7 @@ const DtrRequest = () => {
                         <td className="text-center">
                           <button
                             className="btn btn-outline-primary btn-sm"
-                            onClick={() => navigate(`/admin/dtr-record/${user.id}`)}
+                            onClick={() => navigate(`/admin/overtime-records/${user.id}`)}
                           >
                             View Request
                           </button>
@@ -113,7 +113,7 @@ const DtrRequest = () => {
             )}
           </div>
 
-          {/* 🔸 Pagination Section */}
+          {/* Pagination Section */}
           {!loading && paginatedUser && (
             <div className="d-flex justify-content-between align-items-center px-3 py-3 flex-wrap gap-2 border-top">
               <span className="text-muted small">
@@ -167,4 +167,4 @@ const DtrRequest = () => {
   );
 };
 
-export default DtrRequest;
+export default OvertimeReview;

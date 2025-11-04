@@ -75,6 +75,11 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                                 <Link to='common/dtr-request' className="sidebar-link">Dtr Requests</Link>
                             </li>
                         )}
+                        {isDepartmentAllowed([1,2]) && (
+                            <li className="sidebar-item">
+                                <Link to='overtime-review' className="sidebar-link">Overtime Requests</Link>
+                            </li>
+                        )}
                         {isDepartmentAllowed([6]) && (
                             <li className="sidebar-item">
                                 <Link to='dtr-review' className="sidebar-link">Dtr Review</Link>
@@ -123,7 +128,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                                 <Link to='general/my-attendance' className="sidebar-link">My Attendance</Link>
                             </li>
                             <li className="sidebar-item">
-                                <Link to='general/my-attendance' className="sidebar-link">File Over Time</Link>
+                                <Link to='general/file-overtime' className="sidebar-link">File Over Time</Link>
                             </li>
                         </ul>
                     </li>
