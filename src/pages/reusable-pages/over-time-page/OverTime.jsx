@@ -4,6 +4,7 @@ import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import { useDispatch } from 'react-redux';
 import { postOvertime } from '../../../store/features/overtime.Slice';
 import { successDialog, errorDialog } from '../../../customs/global/alertDialog';
+import { calculateFlexibleDecimalHours } from '../../../customs/global/manageDates';
 
 const Overtime = () => {
 
@@ -63,6 +64,7 @@ const handleSubmit = async () => {
       ot_date_time_end: `${item.dateEnd}T${item.timeOut}:00`,
       user_id: getLoggedInID(),
       status: 'for approval',
+      total_hours: calculateFlexibleDecimalHours(item.dateStart, item.dateEnd, item.timeIn, item.timeOut),
       // dtr_id: dtr_id,
       remarks: item.remarks || ''
   }));
