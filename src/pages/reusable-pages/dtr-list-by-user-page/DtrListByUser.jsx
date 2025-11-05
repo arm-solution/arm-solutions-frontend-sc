@@ -9,6 +9,7 @@ import { getUserById } from '../../../store/features/userSlice';
 import { getDepartmentById } from '../../../store/features/departmentSlice';
 import { getEarningsByUserId, getFullEarnings } from '../../../store/features/earningSlice';
 import EarningListByUser from '../../../components/earning-list-by-user/EarningListByUser';
+import OvertimeTablePerUser from '../../../components/overtime-table-per-user/OvertimeTablePerUser';
 
 const DtrListByUser = () => {
 
@@ -24,6 +25,9 @@ const DtrListByUser = () => {
   const { deprtmentById } = useSelector(state => state.departments);
   const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
 
+  // for overtime state
+  const { _getOtByUserId, message, loading } = useSelector(state => state.overtime);
+
   const [totalHours, setTotalHours] = useState(0);
 
   const [dateRangeStatus, setDateRangeStatus] = useState({
@@ -32,8 +36,7 @@ const DtrListByUser = () => {
     status: ''
   });
 
-
-   const { dtrWithDateRange } = useSelector(state => state.dtr);
+  const { dtrWithDateRange } = useSelector(state => state.dtr);
 
   useEffect(() => {
     const getEmployeeById = async () => {
@@ -45,6 +48,11 @@ const DtrListByUser = () => {
 
     getEmployeeById();
   }, []);
+
+  useEffect(() => {
+    console.log("_getOtByUserId", _getOtByUserId)
+  }, [_getOtByUserId])
+  
 
   useEffect(() => {
     
@@ -93,16 +101,23 @@ const DtrListByUser = () => {
         />
         <hr />
 
-  
-            <DtrByUserTable 
-              setShowForm={setShowForm}
-              setDtrIds={setDtrIds}
-              userId={userId}
-              setDateRangeStatus={setDateRangeStatus}
-              dateRangeStatus={dateRangeStatus}
-              dtrWithDateRange={dtrWithDateRange}
-            />
+         <OvertimeTablePerUser 
+            setShowForm={setShowForm}
+            setDtrIds={setDtrIds}
+            userId={userId}
+            setDateRangeStatus={setDateRangeStatus}
+            dateRangeStatus={dateRangeStatus}
+            _getOtByUserId={_getOtByUserId}
+         />
 
+          <DtrByUserTable 
+            setShowForm={setShowForm}
+            setDtrIds={setDtrIds}
+            userId={userId}
+            setDateRangeStatus={setDateRangeStatus}
+            dateRangeStatus={dateRangeStatus}
+            dtrWithDateRange={dtrWithDateRange}
+          />
 
           <PaySlipInputForm 
             employee={userById?.data} 
@@ -111,6 +126,7 @@ const DtrListByUser = () => {
             totalHours={totalHours}
             setDateRangeStatus={setDateRangeStatus}
             dtrWithDateRange={dtrWithDateRange}
+            _getOtByUserId={_getOtByUserId}
             userId={userId}
           />
 
