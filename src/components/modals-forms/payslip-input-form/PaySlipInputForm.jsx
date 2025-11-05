@@ -8,15 +8,20 @@ import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import FloatNotification from '../../float-notification/FloatNotification';
 import { getAllDtrWithDateRange, updateMultipleDtrStatus } from '../../../store/features/dtrSlice';
 import { getEarningsByUserId } from '../../../store/features/earningSlice';
+import { getOvertimeByUserId } from '../../../store/features/overtime.Slice';
 
 const PaySlipInputForm = (props) => {
 
   const dispatch = useDispatch();
 
+  const _getOtByUserIdVar = props._getOtByUserId?.data || [];
+
   const [grossPay, setGrossPay] = useState(0);
   const [additionalPays, setAdditionalPays] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [cutOffTotalHours, setCutOffTotalHours] = useState(0);
+  const [totalOvertime, setTotalOvertime] = useState(0)
+  const [grossOtPay, setGrossOtPay] = useState(0)
 
   // const { userId } = useParams();
 
@@ -164,8 +169,15 @@ const PaySlipInputForm = (props) => {
 const searchDtr = async () => {
   const newStatus = {
     ...props.dateRangeStatus,
-    status: ['for approval', 'rejected', 'reject by engineering'],
+    status: ['for approval', 'rejected', 'reject by engineering', 'approved'],
   };
+
+  const overtimeparams = {
+    id: props.userId,
+    status: 'approved',
+    form: props.dateRangeStatus.date_start,
+    to: props.dateRangeStatus.date_start
+  }
 
   props.setDateRangeStatus(newStatus);
 
@@ -173,18 +185,46 @@ const searchDtr = async () => {
     userId: props.userId, 
     dtrParams: newStatus 
   }));
+
+  await dispatch(getOvertimeByUserId(overtimeparams))
 };
 
-  useEffect(() => {
-    if(props.dtrWithDateRange.length > 0) {
-        setIds(props.dtrWithDateRange.map(d => d.id));
-        setImageLinks(props.dtrWithDateRange.map(d=> d.image_link))
-        setGrossPay(props.employee?.salary * props.dtrWithDateRange.length);
-        const sum = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
-        setCutOffTotalHours(sum)
+useEffect(() => {
+  if (props.dtrWithDateRange.length > 0) {
+    setIds(props.dtrWithDateRange.map(d => d.id));
+    setImageLinks(props.dtrWithDateRange.map(d => d.image_link));
+
+    const baseGross = props.employee?.salary * props.dtrWithDateRange.length;
+    setGrossPay(baseGross);
+
+    const sum = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
+    setCutOffTotalHours(sum);
+  }
+
+  // getting total hours for overtime
+  if (_getOtByUserIdVar.length > 0) {
+    const otSum = _getOtByUserIdVar.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
+    setTotalOvertime(otSum);
+
+    if (otSum > 0 && getOvertimeRate() > 0) {
+      const otPay = getOvertimeRate() * otSum;
+      setGrossOtPay(otPay);
+
+      // ✅ Add OT pay to Gross Pay
+      setGrossPay(prev => (prev || 0) + otPay);
     }
-  }, [props.dtrWithDateRange, props.employee])
-  
+  }
+}, [props.dtrWithDateRange, props.employee, _getOtByUserIdVar]);
+
+
+  // getting total overtime hrs
+  const getOvertimeRate = () => {
+    if (props.employee?.salary && props.employee?.salary > 0) {
+      return (props.employee.salary / 8) * 1.25
+    }
+    return 0
+  }
+    
 
   return (
     <>
@@ -223,6 +263,16 @@ const searchDtr = async () => {
                     <div>{ props.employee?.salary || '---' }</div>
                   </div>
                   
+                  <div className="info-value mb-0">
+                    <span className="info-label">Total Overtime Hours:</span>
+                    <div>{ totalOvertime || '---' }</div>
+                  </div>
+
+                  <div className="info-value mb-0">
+                    <span className="info-label">Overtime Rate:</span>
+                    <div>{ getOvertimeRate() }</div>
+                  </div>
+
                   <div className="info-value mb-0">
                     <span className="info-label">Total Hours:</span>
                     <div>{ cutOffTotalHours || '---' }</div>
@@ -278,8 +328,30 @@ const searchDtr = async () => {
                     </div>
                   </div>
 
-                  {/* Gross Pay */}
                   <div className="gross-pay-section">
+
+                  {/* OT Gross Pay */}
+                    <div className="row align-items-center">
+                      <div className="col-sm-6">
+                        <label className="form-label mb-0">Overtime</label>
+                      </div>
+                      <div className="col-sm-6">
+                        <div className="input-group">
+                          <span className="input-group-text">₱</span>
+                          <input
+                            type="number"
+                            className="form-control"
+                            value={grossOtPay}
+                            onChange={(e) => setGrossOtPay(e.target.value)}
+                            min="0"
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+
+                    {/* Gross Pay */}
                     <div className="row align-items-center">
                       <div className="col-sm-6">
                         <label className="form-label mb-0">Base Gross Pay</label>
