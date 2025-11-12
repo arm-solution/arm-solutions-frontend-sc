@@ -193,6 +193,11 @@ const searchDtr = async () => {
 };
 
 useEffect(() => {
+
+}, [props.userId])
+
+
+useEffect(() => {
   if (props.dtrWithDateRange.length > 0) {
     setIds(props.dtrWithDateRange.map(d => d.id));
     setImageLinks(props.dtrWithDateRange.map(d => d.image_link));
