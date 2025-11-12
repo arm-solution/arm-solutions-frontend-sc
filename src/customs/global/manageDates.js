@@ -70,6 +70,30 @@ export const formatDateTime = (dateTimeStr) => {
     return;
 }
 
+// this function get the formatter mysql datetime without adding +8 just plain display only
+export const formatDateTimeReadable = (dateTimeStr) => {
+    if (dateTimeStr) {
+        // Keep the 'Z' to ensure it's parsed as UTC
+        const date = new Date(dateTimeStr);
+
+        let month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        let day = String(date.getUTCDate()).padStart(2, '0');
+        let year = date.getUTCFullYear();
+
+        let hours = date.getUTCHours();
+        let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // convert 0 to 12
+        hours = String(hours).padStart(2, '0');
+
+        // Format as 'MM/DD/YYYY HH:MM AM/PM'
+        return `${month}/${day}/${year} ${hours}:${minutes} ${ampm}`;
+    }
+
+    return;
+}
+
 export const formatDateToString = (dateString) => {
     const date = new Date(dateString);
   

@@ -1,4 +1,4 @@
-import { formatDateReadable, formatDateTime } from '../../customs/global/manageDates';
+import { formatDateReadable, formatDateAndTimeReadable } from '../../customs/global/manageDates';
 import './OvertimeTablePerUser.css';
 
 const OvertimeTablePerUser = (props) => {
@@ -39,8 +39,8 @@ const OvertimeTablePerUser = (props) => {
                   key={e.id}
                   className={e?.total_hours < 8 ? 'highlight-red' : ''}
                 >
-                  <td>{e?.ot_date_time_start ? formatDateTime(e?.ot_date_time_start) : '---'}</td>
-                  <td>{e?.ot_date_time_end ? formatDateTime(e?.ot_date_time_end) : '---'}</td>
+                  <td>{e?.ot_date_time_start ? formatDateAndTimeReadable(e?.ot_date_time_start) : '---'}</td>
+                  <td>{e?.ot_date_time_end ? formatDateAndTimeReadable(e?.ot_date_time_end) : '---'}</td>
                   <td>{e?.total_hours || 0}</td>
                   <td>
                     {e?.status === 'for approval' ? (
