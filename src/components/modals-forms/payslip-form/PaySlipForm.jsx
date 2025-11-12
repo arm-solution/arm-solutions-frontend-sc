@@ -9,6 +9,8 @@ const PaySlipForm = (props) => {
   const showOnPdf = () => {
     if (!props._getFullEarnings || !getLoggedInUser()) return;
 
+    // console.log("_getFullEarnings", props._getFullEarnings)
+
     sessionStorage.setItem("paySlipSession", JSON.stringify(props._getFullEarnings));
     if (props._userById?.data) {
       sessionStorage.setItem("employeeData", JSON.stringify(props._userById.data));
@@ -81,6 +83,10 @@ const PaySlipForm = (props) => {
             <tr>
               <td>Additional</td>
               <td>{formatAmount(props._getFullEarnings?.data?.total_additional_pay)}</td>
+            </tr>
+            <tr>
+              <td>Overtime</td>
+              <td>{props._getFullEarnings?.data?.total_gross_overtime ? formatAmount(props._getFullEarnings?.data?.total_gross_overtime) : '---'}</td>
             </tr>
             <tr>
               <td>Deduction</td>

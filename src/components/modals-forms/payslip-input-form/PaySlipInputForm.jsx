@@ -124,7 +124,10 @@ const PaySlipInputForm = (props) => {
             total_additional_pay : addTotal,
             total_deduction : dedTotal,
             final_pay : calculateFinalPay(),
-            date_created: new Date().toISOString().split('T')[0]
+            date_created: new Date().toISOString().split('T')[0],
+            total_overtime_hours: totalOvertime,
+            total_gross_overtime: grossOtPay,
+            overtime_rate: getOvertimeRate()
         }
 
         if(finalEarnings.final_pay > 0) {
