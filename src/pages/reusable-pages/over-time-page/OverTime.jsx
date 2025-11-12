@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './OverTime.css';
-import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
+import { getLoggedInID, getDepartmentLoggedIn } from '../../../customs/global/manageLocalStorage';
 import { useDispatch } from 'react-redux';
 import { postOvertime } from '../../../store/features/overtime.Slice';
 import { successDialog, errorDialog } from '../../../customs/global/alertDialog';
@@ -43,6 +43,7 @@ const Overtime = () => {
 
 const handleSubmit = async () => {
   // Check if any field is empty in any row
+
   const hasEmptyFields = overtimeRows.some(row => {
     return (
       !row.dateStart.trim() ||
@@ -63,14 +64,11 @@ const handleSubmit = async () => {
       ot_date_time_start: `${item.dateStart}T${item.timeIn}:00`,
       ot_date_time_end: `${item.dateEnd}T${item.timeOut}:00`,
       user_id: getLoggedInID(),
-      status: 'for approval',
+      status: parseInt(getDepartmentLoggedIn()) === 10 ? 'for engineering review' : 'for approval',
       total_hours: calculateFlexibleDecimalHours(item.dateStart, item.dateEnd, item.timeIn, item.timeOut),
       // dtr_id: dtr_id,
       remarks: item.remarks || ''
   }));
-
-
-  console.log('transformOvertimeData', transformOvertimeData);
 
   const { payload } = await dispatch(postOvertime(transformOvertimeData))
 

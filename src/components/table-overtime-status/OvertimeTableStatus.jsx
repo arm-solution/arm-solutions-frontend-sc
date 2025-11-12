@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getOvertimeByUserId, updateOvertimeByID } from '../../store/features/overtime.Slice';
 import { getDepartmentLoggedIn } from '../../customs/global/manageLocalStorage';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
+import { formatDateAndTimeReadable, formatDateTimeReadable } from '../../customs/global/manageDates';
 
 const OvertimeTableStatus = (props) => {
   const dispatch = useDispatch();
@@ -73,6 +74,8 @@ const OvertimeTableStatus = (props) => {
   };
 
   const records = _getOtByUserId?.data || [];
+
+  console.log('records', records)
 
   const handleDetailsClick = (record) => {
     setSelectedRecord(record);
@@ -165,8 +168,8 @@ const OvertimeTableStatus = (props) => {
               {records.length > 0 ? (
                 records.map((item) => (
                   <tr key={item.id}>
-                    <td>{formatDateTime(item.ot_date_time_start)}</td>
-                    <td>{formatDateTime(item.ot_date_time_end)}</td>
+                    <td>{formatDateTimeReadable(item.ot_date_time_start)}</td>
+                    <td>{formatDateTimeReadable(item.ot_date_time_end)}</td>
                     <td>{item.status}</td>
                     <td>{item.date_filed ? new Date(item.date_filed).toLocaleDateString() : '-'}</td>
                     <td>
