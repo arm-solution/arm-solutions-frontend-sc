@@ -50,10 +50,6 @@ const DtrListByUser = () => {
     getEmployeeById();
   }, []);
 
-  useEffect(() => {
-    console.log("_getOtByUserId", _getOtByUserId)
-  }, [_getOtByUserId])
-  
 
   useEffect(() => {
     
@@ -82,15 +78,18 @@ const DtrListByUser = () => {
     const fetchDepartment = async () => {
       if (userById && Array.isArray(userById) && userById[0]?.department) {
         await dispatch(getDepartmentById(userById[0].department));
-      }
-
-      // if user id change dtr state is reset to []
-      await dispatch(resetDaterangeDtr())
-
+      } 
     };
-  
+    
     fetchDepartment();
-  }, [userById]);  
+  }, [userById]); 
+
+  
+  useEffect(() => {
+    // if user id change dtr state is reset to []
+    dispatch(resetDaterangeDtr())
+  }, [userId])
+  
   
   
   return (

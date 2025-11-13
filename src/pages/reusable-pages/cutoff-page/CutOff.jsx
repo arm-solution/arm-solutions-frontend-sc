@@ -38,9 +38,6 @@ const CutOff = () => {
   const total = paginatedUser?.total || 0;
   const totalPages = Math.ceil(total / limit);
 
-  useEffect(() => {
-    console.log("Pay Slip Records", paginatedUser);
-  }, [paginatedUser]);
 
   // ✅ Safely extract a readable message
   const displayMessage =

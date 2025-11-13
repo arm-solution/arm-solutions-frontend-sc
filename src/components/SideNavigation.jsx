@@ -75,7 +75,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                                 <Link to='common/dtr-request' className="sidebar-link">Dtr Requests</Link>
                             </li>
                         )}
-                        {isDepartmentAllowed([1,2]) && (
+                        {isDepartmentAllowed([1,2,6]) && (
                             <li className="sidebar-item">
                                 <Link to='overtime-review' className="sidebar-link">Overtime Requests</Link>
                             </li>
