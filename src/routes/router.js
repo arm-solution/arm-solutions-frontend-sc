@@ -164,6 +164,8 @@ export const router = createBrowserRouter(
           <Route path="" element={LazyComponent(DtrPage)} /> 
           <Route path="dtr-review" element={LazyComponent(DtrReview)} />
           <Route path="dtr-review-employees/:userId" element={LazyComponent(DtrReviewPerEmployee)} />
+          <Route path='overtime-review' element={<OvertimeReview/>}/>
+          <Route path='overtime-records/:userId' element={LazyComponent(OvertimeRecordByUser)}/>
           {CommonAllUsersRoutes()}
           {CommonRoutes()}
         </Route>
