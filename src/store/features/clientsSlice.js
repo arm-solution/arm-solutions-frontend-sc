@@ -15,7 +15,7 @@ export const getClientById  =createAsyncThunk('getClientById', async(id, {reject
     try {
 
         if(!id) {
-            console.log("no id provided");
+            console.error("no id provided");
             return;
         }
 

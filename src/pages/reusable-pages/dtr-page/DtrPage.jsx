@@ -376,11 +376,6 @@ const Home = () => {
 
   const timeComponents = getTimeComponents();
   const hasActiveShift = shift && Object.keys(shift).length > 0;
-
-  useEffect(() => {
-    console.log("hasActiveShift", hasActiveShift)
-    console.log("shift", shift)
-  }, [])
   
 
   return (

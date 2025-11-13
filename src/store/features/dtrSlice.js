@@ -149,6 +149,9 @@ const dtrSlice = createSlice({
         },
         resetCurrentDtr(state) {
             state.currentDtr = [];
+        },
+        resetDaterangeDtr(state) {
+            state.dtrWithDateRange = [];
         }
     },
     extraReducers(builder){
@@ -266,5 +269,5 @@ const dtrSlice = createSlice({
 })
 
 
-export const { resetSuccess, resetCurrentDtr } = dtrSlice.actions;
+export const { resetSuccess, resetCurrentDtr, resetDaterangeDtr } = dtrSlice.actions;
 export default dtrSlice;

@@ -19,10 +19,6 @@ const OvertimeTableStatus = (props) => {
     limit: 10,
   });
 
-  useEffect(() => {
-    console.log("department", getDepartmentLoggedIn());
-  }, [])
-  
 
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -74,8 +70,6 @@ const OvertimeTableStatus = (props) => {
   };
 
   const records = _getOtByUserId?.data || [];
-
-  console.log('records', records)
 
   const handleDetailsClick = (record) => {
     setSelectedRecord(record);

@@ -127,7 +127,7 @@ export const checkAuthAndNavigate = (navigate) => {
 
       return token;
     } catch (error) {
-      console.log("Error getting the token")
+      console.error("Error getting the token")
     }
   }
 
