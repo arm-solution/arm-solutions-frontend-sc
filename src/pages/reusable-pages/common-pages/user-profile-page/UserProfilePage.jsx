@@ -119,8 +119,6 @@ const UserProfilePage = () => {
 
     const { payload } = await dispatch(updateUser({...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''}))
 
-    console.log("data tot update", {...modifiedData, birthday: modifiedData.birthday ? dateFormatted(modifiedData.birthday) : ''})
-
     if(payload.success) {
       successDialog('Updated Success');
     } else {
