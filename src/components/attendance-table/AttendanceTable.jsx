@@ -1,203 +1,213 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaMapMarker, FaCheckCircle, FaInfo } from "react-icons/fa";
-import { VscError } from "react-icons/vsc";
-import { getDtrById } from '../../store/features/dtrSlice';
-import { dateFormatted } from '../../customs/global/manageDates';
+import { FaInfo } from "react-icons/fa";
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
+
+import { 
+    getAllDtrByStatusAndUserIdPaginated 
+} from '../../store/features/dtrSlice';
+
 import { getLoggedInID } from '../../customs/global/manageLocalStorage';
 import { formatDateReadable } from '../../customs/global/manageDates';
+
+import './AttendanceTable.css';
 
 const AttendanceTable = (props) => {
 
     const dispatch = useDispatch();
 
-    const { dtrById } = useSelector(state => state.dtr);
+    const modalRef = useRef(null);
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const { getDtrWithUserIdStatusPaginated } = useSelector(state => state.dtr);
+
     const [dateRange, setDateRange] = useState({
         dateFrom: '',
         dateTo: ''
-    })
-    
-    useEffect(() => {
-        dispatch(getDtrById({
-          id: getLoggedInID(),
-          from: dateRange.dateFrom | undefined,
-          to: dateRange.dateTo | undefined
-        }));
-      }, []);
+    });
 
-    const getIndex = () => {
-      const startIndex = (currentPage - 1) * parseInt(props.perPage, 10);
-      const endIndex = startIndex + parseInt(props.perPage, 10);
-      return { start: startIndex, end: endIndex };
-    }
-    
-    const totalPages = Math.ceil(dtrById.length / 10);
+    const [selectedDtr, setSelectedDtr] = useState(null);
+
+    const page = getDtrWithUserIdStatusPaginated?.page ?? 1;
+    const limit = (getDtrWithUserIdStatusPaginated?.limit ?? props.perPage) || 10;
+    const total = getDtrWithUserIdStatusPaginated?.total ?? 0;
+    const totalPages = Math.ceil(total / limit);
+
+    useEffect(() => {
+        fetchData(1);
+    }, []);
+
+    const fetchData = (pageToLoad) => {
+        dispatch(
+            getAllDtrByStatusAndUserIdPaginated({
+                userId: getLoggedInID(),
+                dtrParams: {
+                    page: pageToLoad,
+                    limit: props.perPage || 10,
+                    fromDate: dateRange.dateFrom || undefined,
+                    toDate: dateRange.dateTo || undefined
+                }
+            })
+        );
+    };
 
     const handlePrevPage = () => {
-        setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+        if (page > 1) fetchData(page - 1);
     };
-    
+
     const handleNextPage = () => {
-        setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+        if (page < totalPages) fetchData(page + 1);
     };
 
     const getDateChange = (e, field) => {
-        setDateRange((pre) => ({
-            ...pre,
+        setDateRange(prev => ({
+            ...prev,
             [field]: e.target.value
-        }))
-    }
+        }));
+    };
 
     const searchAttendance = () => {
-        if(dateRange.dateFrom === '' || dateRange.dateTo === '') {
-            return;
+        if (!dateRange.dateFrom || !dateRange.dateTo) return;
+        fetchData(1);
+    };
+
+    const handleShowDetails = (row) => {
+        setSelectedDtr(row);
+
+        if(selectedDtr) {
+            new Modal(modalRef.current).show();
+        } else {
+            return
         }
-        
-        dispatch(getDtrById({
-            id: getLoggedInID(),
-            from: dateRange.dateFrom || undefined,
-            to: dateRange.dateTo || undefined
-          }));
     }
 
-  return (
-    <div className="container-fluid p-3 bg-light min-vh-100">
-        {/* Header Section */}
-        <div className="card mb-4 border-0 shadow-sm">
-            <div className="card-body bg-gradient text-center py-4" style={{background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)'}}>
-                <h1 className="h3 mb-0 text-secondary fw-semibold">Attendance Records</h1>
-            </div>
-        </div>
+    return (
+        <div className="attendance-wrapper">
 
-        {/* Search Section */}
-        <div className="card mb-4 border-0 shadow-sm">
-            <div className="card-body p-4">
-                <h6 className="text-muted mb-3">Search By Date Range</h6>
-                <div className="row g-3">
-                    <div className="col-md-5">
-                        <input 
-                            type="date" 
-                            className="form-control form-control-sm" 
-                            placeholder="From Date"
-                            onChange={(e) => getDateChange(e, 'dateFrom')} 
-                        />
-                    </div>
-                    <div className="col-md-5">
-                        <input 
-                            type="date" 
-                            className="form-control form-control-sm" 
-                            placeholder="To Date"
-                            onChange={(e) => getDateChange(e, 'dateTo')} 
-                        />
-                    </div>
-                    <div className="col-md-2">
-                        <button 
-                            className="btn btn-primary btn-sm w-100" 
-                            onClick={searchAttendance}
-                        >
-                            Search
-                        </button>
+            <DtrDetailsModal selectedDtr={selectedDtr} modalRef={modalRef} />
+
+            <div className="container-fluid">
+                
+                {/* Header */}
+                <div className="attendance-header">
+                    <h1 className="attendance-title">Attendance Records</h1>
+                </div>
+
+                {/* Search Filter */}
+                <div className="attendance-search">
+                    <h6 className="search-label">Search By Date Range</h6>
+                    <div className="row g-2">
+                        <div className="col-12 col-sm-6 col-lg-5">
+                            <label className="form-label-sm">From Date</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={dateRange.dateFrom}
+                                onChange={(e) => getDateChange(e, 'dateFrom')}
+                            />
+                        </div>
+                        <div className="col-12 col-sm-6 col-lg-5">
+                            <label className="form-label-sm">To Date</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={dateRange.dateTo}
+                                onChange={(e) => getDateChange(e, 'dateTo')}
+                            />
+                        </div>
+                        <div className="col-12 col-lg-2">
+                            <label className="form-label-sm d-none d-lg-block">&nbsp;</label>
+                            <button 
+                                className="btn btn-primary w-100" 
+                                onClick={searchAttendance}
+                            >
+                                Search
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        {/* Table Section */}
-        <div className="card border-0 shadow-sm">
-            <div className="card-body p-0">
-                <div className="table-responsive">
-                    <table className="table table-hover mb-0">
-                        <thead className="table-light">
-                            <tr>
-                                <th scope="col" className="fw-semibold text-uppercase small text-muted py-3">Date</th>
-                                <th scope="col" className="fw-semibold text-uppercase small text-muted py-3">Status</th>
-                                <th scope="col" className="fw-semibold text-uppercase small text-muted py-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {dtrById && dtrById.length > 0 ? (
-                                dtrById.map((row, index) => (
-                                    <tr key={index}>
-                                        <td className="py-3 fw-medium text-dark">
-                                            {row.shift_date ? formatDateReadable(row.shift_date) : 'No Date'}
-                                        </td>
-                                        <td className="py-3">
-                                            {row.status ? (
-                                                <span className="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
-                                                    <FaCheckCircle className="me-1" style={{fontSize: '0.75rem'}} /> 
-                                                    <span className="d-none d-md-inline">Approved</span>
+                {/* Table Card */}
+                <div className="attendance-table-card">
+                    <div className="table-responsive">
+                        <table className="table attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th className="text-center">Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {getDtrWithUserIdStatusPaginated?.data?.length > 0 ? (
+                                    getDtrWithUserIdStatusPaginated.data.map((row, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <span className="date-text">
+                                                    {row.shift_date ? formatDateReadable(row.shift_date) : 'No Date'}
                                                 </span>
-                                            ) : (
-                                                <span className="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">
-                                                    <VscError className="me-1" style={{fontSize: '0.75rem'}} /> 
-                                                    <span className="d-none d-md-inline">Rejected</span>
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="py-3 text-center">
-                                            <button 
-                                                className="btn btn-warning btn-sm rounded-circle me-2 d-inline-flex align-items-center justify-content-center"
-                                                style={{width: '32px', height: '32px'}}
-                                                title="View Location"
-                                            >
-                                                <FaMapMarker style={{fontSize: '0.75rem'}} />
-                                            </button>
-                                            <button 
-                                                className="btn btn-info btn-sm rounded-circle d-inline-flex align-items-center justify-content-center"
-                                                style={{width: '32px', height: '32px'}}
-                                                title="View Details"
-                                            >
-                                                <FaInfo style={{fontSize: '0.75rem'}} />
-                                            </button>
+                                            </td>
+
+                                            <td>
+                                                {row.status}
+                                            </td>
+
+                                            <td className="text-center">
+                                                <div className="action-buttons">
+                                                    <button 
+                                                        className="btn btn-primary" 
+                                                        onClick={() => handleShowDetails(row)}
+                                                    >
+                                                        Details
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="3" className="no-records">
+                                            <div className="no-records-content">
+                                                <FaInfo className="no-records-icon" />
+                                                <p className="no-records-text">No attendance records found</p>
+                                            </div>
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="3" className="text-center py-5 text-muted">
-                                        <div className="d-flex flex-column align-items-center">
-                                            <div className="mb-2 opacity-50">
-                                                <FaInfo size={24} />
-                                            </div>
-                                            <span>No attendance records found</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                
-                {/* Pagination Section */}
-                {dtrById && dtrById.length > 0 && (
-                    <div className="bg-light border-top p-3">
-                        <div className="d-flex justify-content-center align-items-center gap-3">
-                            <button 
-                                className="btn btn-outline-secondary btn-sm" 
-                                onClick={handlePrevPage} 
-                                disabled={currentPage === 1}
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Pagination */}
+                    {getDtrWithUserIdStatusPaginated?.data?.length > 0 && (
+                        <div className="attendance-pagination">
+                            <button
+                                className="btn btn-pagination"
+                                onClick={handlePrevPage}
+                                disabled={page === 1}
                             >
                                 Previous
                             </button>
-                            <span className="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-2 fs-6">
-                                Page {currentPage} of {totalPages}
+
+                            <span className="pagination-info">
+                                Page <strong>{page}</strong> of <strong>{totalPages}</strong>
                             </span>
-                            <button 
-                                className="btn btn-outline-secondary btn-sm" 
-                                onClick={handleNextPage} 
-                                disabled={currentPage === totalPages}
+
+                            <button
+                                className="btn btn-pagination"
+                                onClick={handleNextPage}
+                                disabled={page === totalPages}
                             >
                                 Next
                             </button>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
+
             </div>
         </div>
-    </div>
-  )
-}
+    );
+};
 
-export default AttendanceTable
+export default AttendanceTable;
