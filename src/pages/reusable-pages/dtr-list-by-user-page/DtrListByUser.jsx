@@ -89,6 +89,12 @@ const DtrListByUser = () => {
     // if user id change dtr state is reset to []
     dispatch(resetDaterangeDtr())
   }, [userId])
+
+
+  useEffect(() => {
+    console.log("_getOtByUserId", _getOtByUserId)
+  }, [_getOtByUserId])
+  
   
   
   
