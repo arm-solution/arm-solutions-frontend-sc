@@ -114,6 +114,18 @@ export const getAllDtrWithDateRange = createAsyncThunk('dtr/getAllDtrWithDateRan
     }
 });
 
+export const getAllDtrByStatusAndUserIdPaginated = createAsyncThunk('dtr/getAllDtrByStatusAndUserIdPaginated', async({userId, dtrParams}, { rejectWithValue }) => {
+    try {
+        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/dtr/get-all-paginated/${userId}`, {
+            params: dtrParams
+        });
+
+        return data;
+    } catch (error) {
+        return rejectWithValue(error.response ? error.response.data : error.message);
+    }
+})
+
 
 export const getDtrByMultipleIds = createAsyncThunk('dtr/getDtrByMultipleIds', async(ids, { rejectWithValue }) => {
     try {
@@ -138,6 +150,7 @@ const dtrSlice = createSlice({
         updateDtrStatus: [],
         dtrWithDateRange: [],
         listDtrByMultipleId: [],
+        getDtrWithUserIdStatusPaginated: [],
         isSuccess: false,
         loading: false,
         dtrPostLoading: false,
@@ -211,7 +224,7 @@ const dtrSlice = createSlice({
         .addCase(getCurrentDtr.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
-            state.message = "Un able to fetch the current dtr";
+            state.message = "Unable to fetch the current dtr";
         })
         .addCase(getPendingDtrUsers.pending, (state, _) => {
             state.loading = true
@@ -224,7 +237,7 @@ const dtrSlice = createSlice({
         .addCase(getPendingDtrUsers.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
-            state.message = "Un able to fetch the current dtr";
+            state.message = "Unable to fetch the current dtr";
         })
         .addCase(getWeeklyDtr.pending, (state, _) => {
             state.loading = true
@@ -237,7 +250,7 @@ const dtrSlice = createSlice({
         .addCase(getWeeklyDtr.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
-            state.message = "Un able to fetch the current dtr";
+            state.message = "Unable to fetch the current dtr";
         })
         .addCase(getAllDtrWithDateRange.pending, (state, _) => {
             state.loading = true
@@ -250,7 +263,7 @@ const dtrSlice = createSlice({
         .addCase(getAllDtrWithDateRange.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
-            state.message = "Un able to fetch the current dtr";
+            state.message = "Unable to fetch the current dtr";
         })
         .addCase(getDtrByMultipleIds.pending, (state, _) => {
             state.loading = true
@@ -263,7 +276,20 @@ const dtrSlice = createSlice({
         .addCase(getDtrByMultipleIds.rejected, (state, _) => {
             state.isSuccess = false;
             state.loading = false;
-            state.message = "Un able to fetch the dtr by ids";
+            state.message = "Unable to fetch the dtr by ids";
+        })
+        .addCase(getAllDtrByStatusAndUserIdPaginated.pending, (state, _) => {
+            state.loading = true
+        })
+        .addCase(getAllDtrByStatusAndUserIdPaginated.fulfilled, (state, action) => {
+            state.loading = false;
+            state.isSuccess = true;
+            state.getDtrWithUserIdStatusPaginated = action.payload
+        })
+        .addCase(getAllDtrByStatusAndUserIdPaginated.rejected, (state, _) => {
+            state.isSuccess = false;
+            state.loading = false;
+            state.message = "Unable to fetch the dtr by ids";
         })
     }
 })
