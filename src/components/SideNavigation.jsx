@@ -1,15 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from 'react';
-import { getLoggedInUser, logout } from '../customs/global/manageLocalStorage';
+import { useState } from 'react';
+import { logout } from '../customs/global/manageLocalStorage';
 import { Link, useNavigate } from 'react-router-dom';
 import { resetCurrentDtr } from '../store/features/dtrSlice';
 import { useDispatch } from 'react-redux';
 import "./../customs/css/SideNavigation.css";
 import { isDepartmentAllowed } from '../customs/global/manageLocalStorage';
-import { startTransition } from "react";
+// import { getDepartmentName } from '../customs/global/manageLocalStorage';
+// import { getDepartmentLoggedIn } from '../customs/global/manageLocalStorage';
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [expandedDropdown, setExpandedDropdown] = useState(null); // State to track expanded dropdown
@@ -25,6 +26,11 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const toggleDropdown = (id) => {
         setExpandedDropdown(expandedDropdown === id ? null : id); // Toggle dropdown state
     };
+
+    // useEffect(() => {
+    //     console.log("department id", getDepartmentName(getDepartmentLoggedIn()));
+    // }, [])
+    
 
     return (
         <>

@@ -87,8 +87,6 @@ const CurrentShift = (props) => {
     const shiftData = [
       { label: 'Date', value: shift.shift_date ? dateFormatted(shift.shift_date) : '--' },
       { label: 'Time In', value: formatTime(shift.time_in) },
-      // { label: 'Break In', value: formatTime(shift.break_start) },
-      // { label: 'Break Out', value: formatTime(shift.break_end) },
       { label: 'Time Out', value: formatTime(shift.time_out) },
     ];
 
@@ -103,45 +101,6 @@ const CurrentShift = (props) => {
               </div>
             </div>
           ))}
-
-          {/* OT Start */}
-          {/* <div className="shift-item">
-            <div className="shift-label">OT Start</div>
-            <input
-              type="time"
-              name="ot_start"
-              className="ot-input"
-              value={shift.ot_start || ''}
-              onChange={props.handleOt}
-              aria-label="Overtime start time"
-            />
-          </div> */}
-
-          {/* OT End */}
-          {/* <div className="shift-item">
-            <div className="shift-label">OT End</div>
-            <input
-              type="time"
-              name="ot_end"
-              className="ot-input"
-              value={shift.ot_end || ''}
-              onChange={props.handleOt}
-              aria-label="Overtime end time"
-            />
-          </div> */}
-        </div>
-
-        {/* Submit Button */}
-        <div className="submit-section">
-          <button
-            className="submit-btn"
-            onClick={props.submitMyDtr}
-            // disabled={shift.status === 'pending' || shift.status === 'for approval'}
-            aria-label="Submit DTR for approval"
-          >
-            <i className="fas fa-paper-plane" style={{ marginRight: '0.5rem' }} aria-hidden="true"></i>
-            Submit DTR
-          </button>
         </div>
       </>
     );

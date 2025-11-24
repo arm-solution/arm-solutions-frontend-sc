@@ -20,6 +20,7 @@ const PaySlipInputForm = (props) => {
   const [additionalPays, setAdditionalPays] = useState([]);
   const [deductions, setDeductions] = useState([]);
   const [cutOffTotalHours, setCutOffTotalHours] = useState(0);
+  const [estimatedCutOffTotalHours, setEstimatedCutOffTotalHours] = useState(0)
   const [totalOvertime, setTotalOvertime] = useState(0)
   const [grossOtPay, setGrossOtPay] = useState(0)
 
@@ -127,7 +128,9 @@ const PaySlipInputForm = (props) => {
             date_created: new Date().toISOString().split('T')[0],
             total_overtime_hours: totalOvertime,
             total_gross_overtime: grossOtPay,
-            overtime_rate: getOvertimeRate()
+            overtime_rate: getOvertimeRate(),
+            total_hours: cutOffTotalHours,
+            total_estimated_hours: estimatedCutOffTotalHours
         }
 
         if(finalEarnings.final_pay > 0) {
@@ -178,7 +181,7 @@ const searchDtr = async () => {
   const overtimeparams = {
     id: props.userId,
     status: 'approved',
-    form: props.dateRangeStatus.date_start,
+    from: props.dateRangeStatus.date_start,
     to: props.dateRangeStatus.date_start
   }
 
@@ -201,7 +204,9 @@ useEffect(() => {
     setGrossPay(baseGross);
 
     const sum = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
+    const estimatedTotalHours = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.is_full_shift || 0), 0);
     setCutOffTotalHours(sum);
+    setEstimatedCutOffTotalHours(estimatedTotalHours)
   }
 
   // getting total hours for overtime
@@ -277,8 +282,13 @@ useEffect(() => {
                   </div>
 
                   <div className="info-value mb-0">
-                    <span className="info-label">Total Hours:</span>
+                    <span className="info-label">Total Hours Recorded:</span>
                     <div>{ cutOffTotalHours || '---' }</div>
+                  </div>
+
+                  <div className="info-value mb-0">
+                    <span className="info-label">Estimated Total Hours :</span>
+                    <div>{ estimatedCutOffTotalHours || '---' }</div>
                   </div>
 
                 </div>

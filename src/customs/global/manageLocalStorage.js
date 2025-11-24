@@ -269,5 +269,24 @@ export const getApprovalState = (status) => {
 
 }
   
+
+export const getDepartmentName = (id) => {
+  const departments = {
+    1: "Admin",
+    2: "HR",
+    3: "Accounting",
+    4: "Finance",
+    5: "Warehouse",
+    6: "Engineering",
+    7: "Purchasing",
+    8: "Marketing",
+    9: "Sales",
+    10: "Production",
+    11: "Others",
+    14: "Fire Ex"
+  };
+
+  return departments[id] || "Unknown Department";
+}
   
   

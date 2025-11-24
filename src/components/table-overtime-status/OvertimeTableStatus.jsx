@@ -99,6 +99,7 @@ const OvertimeTableStatus = (props) => {
 
       if(payload.success) {
          successDialog('Approved Successfully');
+         await dispatch(getOvertimeByUserId(params));
       } else {
         errorDialog('Faild to approved this overtime');
       }
