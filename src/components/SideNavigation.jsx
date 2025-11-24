@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { logout } from '../customs/global/manageLocalStorage';
 import { Link, useNavigate } from 'react-router-dom';
 import { resetCurrentDtr } from '../store/features/dtrSlice';
@@ -10,7 +10,7 @@ import { isDepartmentAllowed } from '../customs/global/manageLocalStorage';
 // import { getDepartmentLoggedIn } from '../customs/global/manageLocalStorage';
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [expandedDropdown, setExpandedDropdown] = useState(null); // State to track expanded dropdown
