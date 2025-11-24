@@ -128,7 +128,9 @@ const PaySlipInputForm = (props) => {
             date_created: new Date().toISOString().split('T')[0],
             total_overtime_hours: totalOvertime,
             total_gross_overtime: grossOtPay,
-            overtime_rate: getOvertimeRate()
+            overtime_rate: getOvertimeRate(),
+            total_hours: cutOffTotalHours,
+            total_estimated_hours: estimatedCutOffTotalHours
         }
 
         if(finalEarnings.final_pay > 0) {
