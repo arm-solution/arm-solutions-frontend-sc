@@ -118,164 +118,96 @@ const Home = () => {
   };
 
   // handle time out function
-  const timeOut = async (e) => {
-    e.preventDefault();
-    const currentDate = new Date();
-    const formattedTime = format(currentDate, 'HH:mm:ss');
-    const storeShift = sessionStorage.getItem('currentShift');
+// handle time out function
+const timeOut = async (e) => {
+  e.preventDefault();
 
-    if (!navigator.geolocation || !storeShift) return;
+  const storeShift = sessionStorage.getItem('currentShift');
+  if (!navigator.geolocation || !storeShift) return;
 
-    try {
-      const myShift = JSON.parse(storeShift);
-      myShift.time_out = formattedTime;
+  // 🔥 show confirmation before doing ANYTHING
+  handleConfirmation(
+    {
+      title: "Submit DTR",
+      text: "Submit your DTR for Engineering Review?",
+      confirmButtonText: "Submit",
+    },
+    async () => {
+      try {
+        const currentDate = new Date();
+        const formattedTime = format(currentDate, 'HH:mm:ss');
 
-      // Get location samples
-      const getPositionSample = () => new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
-      });
+        const myShift = JSON.parse(storeShift);
+        myShift.time_out = formattedTime;
 
-      const positionSamples = await Promise.all(Array.from({ length: 3 }, () => getPositionSample()));
-      const { latitude, longitude } = positionSamples
-        .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
-        .reduce(
-          (acc, { latitude, longitude }) => ({
-            latitude: acc.latitude + latitude,
-            longitude: acc.longitude + longitude,
-          }),
-          { latitude: 0, longitude: 0 }
+        // Get location samples
+        const getPositionSample = () =>
+          new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+            });
+          });
+
+        const positionSamples = await Promise.all(
+          Array.from({ length: 3 }, () => getPositionSample())
         );
 
-      const avgCoords = {
-        time_out_latitude: latitude / positionSamples.length,
-        time_out_longitude: longitude / positionSamples.length,
-      };
+        const { latitude, longitude } = positionSamples
+          .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
+          .reduce(
+            (acc, { latitude, longitude }) => ({
+              latitude: acc.latitude + latitude,
+              longitude: acc.longitude + longitude,
+            }),
+            { latitude: 0, longitude: 0 }
+          );
 
-      // const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
-      const totalHours = calculateFlexibleDecimalHours(dateFormatted(myShift.shift_date), getCurrentDateForCalculation(), myShift.time_in, myShift.time_out);
-      // const breakHours = myShift.break_start ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime) : 0;
+        const avgCoords = {
+          time_out_latitude: latitude / positionSamples.length,
+          time_out_longitude: longitude / positionSamples.length,
+        };
 
-      Object.assign(myShift, {
-        total_hours: totalHours ? totalHours : 0,
-        shift_date_end: getCurrentDateForCalculation(),
-        status: 'completed',
-        ...avgCoords
-      });
+        const totalHours = calculateFlexibleDecimalHours(
+          dateFormatted(myShift.shift_date),
+          getCurrentDateForCalculation(),
+          myShift.time_in,
+          formattedTime
+        );
 
-      const { payload } = await dispatch(updateDtrById(myShift));
-      if (payload.success) {
-        sessionStorage.setItem('currentShift', JSON.stringify(myShift));
-        setShift(myShift);
-        dispatch(getWeeklyDtr(getLoggedInID()));
-        window.dispatchEvent(new Event('currentShift'));
-      }
-    } catch (error) {
-      console.error("Error processing timeout:", error);
-    }
-  };
+        Object.assign(myShift, {
+          total_hours: totalHours ?? 0,
+          is_full_shift: totalHours > 8 ? 8 : totalHours,
+          shift_date_end: getCurrentDateForCalculation(),
+          ...avgCoords,
+        });
 
-  // const handleBreakAction = async (e, actionType) => {
-  //   e.preventDefault();
-  //   setLoadingSessionStorage(true);
-
-  //   const currentDate = new Date();
-  //   const formattedTime = format(currentDate, 'HH:mm:ss');
-  //   const storeShift = sessionStorage.getItem('currentShift');
-
-  //   if (storeShift) {
-  //     let myShift = JSON.parse(storeShift);
-      
-  //     if (actionType === 'break_end') {
-  //       const { image_capture, ...cleanShift } = myShift;
-  //       cleanShift.break_end = formattedTime;
-  //       myShift = cleanShift;
-  //     } else {
-  //       myShift[actionType] = formattedTime;
-  //     }
-
-  //     const { payload } = await dispatch(updateDtrById(myShift));
-  //     if (payload.success) {
-  //       sessionStorage.setItem('currentShift', JSON.stringify(myShift));
-  //       setShift(myShift);
-  //       window.dispatchEvent(new Event('currentShift'));
-  //     }
-  //   }
-  //   setLoadingSessionStorage(false);
-  // };
-
-  const handleEarlyTimeOut = (e) => {
-    e.preventDefault();
-    const currentDate = new Date();
-    const formattedTime = format(currentDate, 'HH:mm:ss');
-    const storeShift = sessionStorage.getItem('currentShift');
-
-    if (!navigator.geolocation || !storeShift) return;
-
-    try {
-
-      handleConfirmation({
-        title: "Early Time Out",
-        text: "Are you sure you want to time out early?",
-        confirmButtonText: "Yes, Time Out"
-      }, async () => {
-        if (storeShift) {
-          const myShift = JSON.parse(storeShift);
-          myShift.time_out = formattedTime;
-          myShift.status = 'completed';
-
-
-          // Get location samples
-          const getPositionSample = () => new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
-          });
-
-          const positionSamples = await Promise.all(Array.from({ length: 3 }, () => getPositionSample()));
-          const { latitude, longitude } = positionSamples
-            .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
-            .reduce(
-              (acc, { latitude, longitude }) => ({
-                latitude: acc.latitude + latitude,
-                longitude: acc.longitude + longitude,
-              }),
-              { latitude: 0, longitude: 0 }
-            );
-
-          const avgCoords = {
-            time_out_latitude: latitude / positionSamples.length,
-            time_out_longitude: longitude / positionSamples.length,
-          };
-
-          const totalHours = calculateDecimalHours(getCurrentDateForCalculation(), myShift.time_in, formattedTime);
-
-          // const hasBreak = myShift.break_start !== "" && myShift.break_start !== "00:00:00";
-
-          // const breakHours = hasBreak
-          //   ? calculateDecimalHours(getCurrentDateForCalculation(), myShift.break_start, formattedTime)
-          //   : 0;
-          
-          Object.assign(myShift, {
-            total_hours:  totalHours,
-            status: 'completed',
-            ...avgCoords
-          });
-
-          const { payload } = await dispatch(updateDtrById(myShift));
-          if (payload.success) {
-            sessionStorage.setItem('currentShift', JSON.stringify(myShift));
-            setShift(myShift);
-            window.dispatchEvent(new Event('currentShift'));
-            return true;
-          }
+        // 🔥 AUTO-SET STATUS BASED ON DEPARTMENT
+        if (getDepartmentLoggedIn() === 10) {
+          myShift.status = "for engineering review";
+        } else {
+          myShift.status = "for approval";
         }
+
+        // 🔥 AUTO SUBMIT — no sessionStorage update
+        const { payload } = await dispatch(updateDtrById(myShift));
+
+        if (payload.success) {
+          setShift([]);
+          sessionStorage.removeItem("currentShift");
+          window.dispatchEvent(new Event("currentShift"));
+
+          dispatch(getWeeklyDtr(getLoggedInID()));
+          return true;
+        }
+
         return false;
-      });
-      
-    } catch (error) {
-      console.error("Error processing timeout:", error);
+      } catch (error) {
+        console.error("Error processing timeout:", error);
+        return false;
+      }
     }
-
-
-  };
+  );
+};
 
   const handleView = (dtr) => {
     const modalElement = modalRef.current;
@@ -317,40 +249,6 @@ const Home = () => {
       }
     }
     setLoadingSessionStorage(false);
-  };
-
-  // submit dtr save to database
-  const submitMyDtr = async (e) => {
-    e.preventDefault();
-    setLoadingSessionStorage(true);
-    const storeShift = sessionStorage.getItem('currentShift');
-
-    handleConfirmation({
-      title: "Submit DTR",
-      text: "Submit your DTR for Engineering Review?",
-      confirmButtonText: "Submit"
-    }, async () => {
-      if (storeShift) {
-        const myShift = JSON.parse(storeShift);
-        if (myShift.status === 'pending') return false;
-
-        if(getDepartmentLoggedIn() === 10) {
-          myShift.status = 'for engineering review';
-        } else {
-          myShift.status = 'for approval';
-        }
-        
-        const { payload } = await dispatch(updateDtrById(myShift));
-
-        if (payload.success) {
-          setShift([]);
-          sessionStorage.removeItem('currentShift');
-          window.dispatchEvent(new Event('currentShift'));
-          return true;
-        }
-      }
-      return false;
-    });
   };
 
   const handleCameraModal = async (e) => {
@@ -410,73 +308,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        {/* Action Buttons Section */}
-        {/* <div className="action-section">
-          <div className="action-buttons">
-            {hasActiveShift ? (
-              <>
-                {!shift.time_out || shift.time_out === '00:00:00' ? (
-                  <button 
-                    className="action-btn break-in-btn" 
-                    onClick={(e) => handleBreakAction(e, 'break_start')}
-                    disabled={loadingSessionStorage}
-                  >
-                    <div className="btn-content">
-                      <i className="fas fa-coffee btn-icon" aria-hidden="true"></i>
-                      <span>Break In</span>
-                    </div>
-                  </button>
-                ) : !shift.break_end || shift.break_end === '00:00:00' ? (
-                  <button 
-                    className="action-btn break-out-btn" 
-                    onClick={(e) => handleBreakAction(e, 'break_end')}
-                    disabled={loadingSessionStorage}
-                  >
-                    <div className="btn-content">
-                      <i className="fas fa-play btn-icon" aria-hidden="true"></i>
-                      <span>Break Out</span>
-                    </div>
-                  </button>
-                ) : (
-                  <button 
-                    className="action-btn time-out-btn" 
-                    onClick={timeOut} 
-                    disabled={accessOut || loadingSessionStorage}
-                  >
-                    <div className="btn-content">
-                      <i className="fas fa-clock btn-icon" aria-hidden="true"></i>
-                      <span>Time Out</span>
-                    </div>
-                  </button>
-                )}
-                
-                <button 
-                  className="action-btn early-out-btn" 
-                  onClick={handleEarlyTimeOut} 
-                  disabled={accessOut || loadingSessionStorage}
-                >
-                  <div className="btn-content">
-                    <i className="fas fa-door-open btn-icon" aria-hidden="true"></i>
-                    <span>Early Time Out</span>
-                  </div>
-                </button>
-              </>
-            ) : (
-              <button 
-                className="action-btn time-in-btn primary" 
-                onClick={handleCameraModal}
-                disabled={loadingSessionStorage}
-              >
-                <div className="btn-content">
-                  <i className="fas fa-camera btn-icon" aria-hidden="true"></i>
-                  <span>Time In</span>
-                </div>
-              </button>
-            )}
-          </div>
-        </div> */}
-
         <div className="action-section">
           <div className="action-buttons">
             {hasActiveShift ? (
@@ -494,17 +325,6 @@ const Home = () => {
                         <span>Time Out</span>
                       </div>
                     </button>
-
-                    {/* <button 
-                      className="action-btn early-out-btn" 
-                      onClick={handleEarlyTimeOut} 
-                      disabled={accessOut || loadingSessionStorage}
-                    >
-                      <div className="btn-content">
-                        <i className="fas fa-door-open btn-icon" aria-hidden="true"></i>
-                        <span>Early Time Out</span>
-                      </div>
-                    </button> */}
                   </>
                 ) : null}
               </>
@@ -530,7 +350,6 @@ const Home = () => {
           <CurrentShift 
             shiftState={{ shift, setShift }}
             handleOt={handleOt}
-            submitMyDtr={submitMyDtr}
           />
         </div>
 

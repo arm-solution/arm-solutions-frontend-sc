@@ -178,7 +178,7 @@ const searchDtr = async () => {
   const overtimeparams = {
     id: props.userId,
     status: 'approved',
-    form: props.dateRangeStatus.date_start,
+    from: props.dateRangeStatus.date_start,
     to: props.dateRangeStatus.date_start
   }
 

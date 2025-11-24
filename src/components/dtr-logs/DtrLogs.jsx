@@ -5,7 +5,7 @@ import DataTable from '../DataTable';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../loading-spinner/Loading';
 
-const DtrRequest = () => {
+const DtrLogs = () => {
 
  const columns = [
     { header: 'DATE', accessor: 'shift_date' },
@@ -61,14 +61,14 @@ const handleTabChange = (event) => {
 
                         {(
                             <DataTable
-                            //   data={Array.isArray(getPendingUserDtr) ? getPendingUserDtr : []} // Ensure data is an array
-                            data={[]} // Ensure data is an array
-                            columns={columns}
-                            actions={{}}
-                            perPage={10}
-                            showAddButtonAndSearchInput={{ searchInput: false, addButton: false }}
-                            deleteAccess={false}
-                            tableLabel='DTR LOGS'
+                                //   data={Array.isArray(getPendingUserDtr) ? getPendingUserDtr : []} // Ensure data is an array
+                                data={[]} // Ensure data is an array
+                                columns={columns}
+                                actions={{}}
+                                perPage={10}
+                                showAddButtonAndSearchInput={{ searchInput: false, addButton: false }}
+                                deleteAccess={false}
+                                tableLabel='DTR LOGS'
                             />
                         )}
                     </div>
@@ -88,4 +88,4 @@ const handleTabChange = (event) => {
   )
 }
 
-export default DtrRequest
+export default DtrLogs

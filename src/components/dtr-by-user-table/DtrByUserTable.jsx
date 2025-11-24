@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { formatDateReadable } from '../../customs/global/manageDates';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -14,7 +14,7 @@ const DtrByUserTable = (props) => {
 
   const handleView = (dtr) => {
     setSelectedDtr(dtr);
-    new Modal(modalRef.current).show();
+      
   };
 
   // handle approval
@@ -91,9 +91,14 @@ const DtrByUserTable = (props) => {
                         <button className="btn btn-info text-white btn-sm me-2" onClick={() => handleView(d)}>
                           View
                         </button>
-                        <button className="btn btn-secondary text-white btn-sm" onClick={(e) => handleApproval(e, d)} >
-                          Approval
-                        </button>
+                        {d?.status !== 'approved' && (
+                          <button
+                            className="btn btn-secondary text-white btn-sm"
+                            onClick={(e) => handleApproval(e, d)}
+                          >
+                            Approval
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}
