@@ -287,7 +287,7 @@ useEffect(() => {
                   </div>
 
                   <div className="info-value mb-0">
-                    <span className="info-label">Estimated Total Hours :</span>
+                    <span className="info-label">System Estimated Total Hours :</span>
                     <div>{ estimatedCutOffTotalHours || '---' }</div>
                   </div>
 

@@ -13,14 +13,21 @@ const DtrByUserTable = (props) => {
 
 
   const handleView = (dtr) => {
-    setSelectedDtr(dtr);
-      
+    if(dtr) {
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedDtr(dtr);
+
+      modal.show()
+    } else {
+      console.error("No DTR selected!");
+    }
   };
 
   // handle approval
   const handleApproval = async (event, dtr) => {
     event.preventDefault();
-
+    
     if(dtr) {
       const modalElement = modalForApproval.current;
       const modal = new Modal(modalElement);
