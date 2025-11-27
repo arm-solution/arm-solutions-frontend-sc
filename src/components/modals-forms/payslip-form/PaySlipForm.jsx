@@ -85,7 +85,7 @@ const PaySlipForm = (props) => {
               <td>{formatAmount(props._getFullEarnings?.data?.total_additional_pay)}</td>
             </tr>
             <tr>
-              <td>Overtime</td>
+              <td>Total Hours Overtime</td>
               <td>{props._getFullEarnings?.data?.total_gross_overtime ? formatAmount(props._getFullEarnings?.data?.total_gross_overtime) : '---'}</td>
             </tr>
             <tr>
