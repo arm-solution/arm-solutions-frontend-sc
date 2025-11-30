@@ -72,6 +72,7 @@ const OvertimeRecords = () => {
                 status="for approval"
                 userId={userId}
                 canApprove={isDepartmentAllowed(departmentAccess['for-approval'])}
+                canEdit={false}
               />
             )}
 
@@ -80,6 +81,7 @@ const OvertimeRecords = () => {
                 status="for engineering review"
                 userId={userId}
                 canApprove={isDepartmentAllowed(departmentAccess['engineering-review'])}
+                canEdit={false}
               />
             )}
 
@@ -88,6 +90,7 @@ const OvertimeRecords = () => {
                 status="rejected"
                 userId={userId}
                 canApprove={false}
+                canEdit={true}
               />
             )}
 
@@ -96,6 +99,7 @@ const OvertimeRecords = () => {
                 status="approved"
                 userId={userId}
                 canApprove={false}
+                canEdit={false}
               />
             )}
           </div>
