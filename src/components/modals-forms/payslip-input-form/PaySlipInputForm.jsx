@@ -182,7 +182,7 @@ const searchDtr = async () => {
     id: props.userId,
     status: 'approved',
     from: props.dateRangeStatus.date_start,
-    to: props.dateRangeStatus.date_start
+    to: props.dateRangeStatus.date_end
   }
 
   props.setDateRangeStatus(newStatus);
