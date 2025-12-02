@@ -174,6 +174,16 @@ const OvertimeTableStatus = (props) => {
                       >
                         Details
                       </button>
+                      
+                    {props.canEdit && (
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={() => handleDetailsClick(item)}
+                      >
+                        Edit
+                      </button>
+                    )}
+
                     </td>
                   </tr>
                 ))
