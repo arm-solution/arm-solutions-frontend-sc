@@ -35,13 +35,8 @@ export const getOvertimeByUserId = createAsyncThunk(
         queryString ? `?${queryString}` : ''
       }`;
 
-
-      console.log("url", url)
-      
-
       const { data } = await axios.get(url);
-
-      console.log("ot date range", data)    
+ 
       return data;
     } catch (error) {
       return rejectWithValue(

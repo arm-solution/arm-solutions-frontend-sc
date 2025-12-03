@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './OvertimeTableStatus.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { getOvertimeByUserId, updateOvertimeByID } from '../../store/features/overtime.Slice';
 import { getDepartmentLoggedIn } from '../../customs/global/manageLocalStorage';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
-import { formatDateAndTimeReadable, formatDateTimeReadable } from '../../customs/global/manageDates';
+import { formatDateTimeReadable } from '../../customs/global/manageDates';
+import RejectedDtrModal from '../modals-forms/rejected-overtime-dtr/RejectedDtrModal';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import { getLoggedInID } from '../../customs/global/manageLocalStorage';
 
 const OvertimeTableStatus = (props) => {
   const dispatch = useDispatch();
   const { _getOtByUserId, loading } = useSelector((state) => state.overtime);
+
+  const overtimeEditModal = useRef(null);
 
   const [params, setParams] = useState({
     id: props.userId,
@@ -19,7 +24,7 @@ const OvertimeTableStatus = (props) => {
     limit: 10,
   });
 
-
+  const [selectedOt, setSelectedOt] = useState(null)
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [engrRemarks, setEngrRemarks] = useState('');
@@ -113,6 +118,25 @@ const OvertimeTableStatus = (props) => {
     handleModalClose();
   };
 
+
+  const handleEditRejectedModal = (ot) => {
+
+    if(ot) {
+
+      const modalElement = overtimeEditModal.current;
+      const modal = new Modal(modalElement);
+
+      console.log("ot", ot)
+
+      setSelectedOt(ot)
+
+      modal.show();
+    } else {
+      console.error("No ot selected");
+    }
+
+  }
+
   return (
     <>
       <div className="overtime-status-wrapper">
@@ -169,13 +193,13 @@ const OvertimeTableStatus = (props) => {
                     <td>{item.date_filed ? new Date(item.date_filed).toLocaleDateString() : '-'}</td>
                     <td>
                       <button
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary me-3"
                         onClick={() => handleDetailsClick(item)}
                       >
                         Details
                       </button>
                       
-                    {props.canEdit && (
+                    {props.canEdit && props.userId === getLoggedInID() && (
                       <button
                         className="btn btn-outline-danger"
                         onClick={() => handleDetailsClick(item)}
@@ -183,6 +207,7 @@ const OvertimeTableStatus = (props) => {
                         Edit
                       </button>
                     )}
+
 
                     </td>
                   </tr>
@@ -311,6 +336,11 @@ const OvertimeTableStatus = (props) => {
           </div>
         </div>
       )}
+
+
+
+      {/* modal for rejected dtr for edit */}
+      <RejectedDtrModal overtimeEditModal={overtimeEditModal} selectedOt={selectedOt}/>
     </>
   );
 };
