@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './OvertimeRecords.css';
 import OvertimeTableStatus from '../../../components/table-overtime-status/OvertimeTableStatus';
 import { useParams } from 'react-router-dom';
 import { isDepartmentAllowed } from '../../../customs/global/manageLocalStorage';
+import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
+import { logout } from '../../../customs/global/manageLocalStorage';
+
 
 const OvertimeRecords = () => {
   const [activeTab, setActiveTab] = useState('for-approval');
@@ -15,6 +18,18 @@ const OvertimeRecords = () => {
     'rejected': [], // everyone can view
     'approved': [], // everyone can view
   };
+
+  // if the userid is change it will auto logout on the specific department
+  useEffect(() => {
+    if(isDepartmentAllowed([14, 11, 10, 9, 8, 7, 5, 4, 3])) {
+      if(parseInt(userId) !== parseInt(getLoggedInID())) {
+        alert("You are not allowed to access this");
+        logout();
+        return;
+      }
+    }
+  }, [userId])
+  
 
   return (
     <div className="overtime-container">
