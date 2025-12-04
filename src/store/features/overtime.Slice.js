@@ -12,7 +12,7 @@ export const postOvertime = createAsyncThunk('ot/postOvertime', async(ot, {rejec
     }
 });
 
-
+// get ot with user id, pagination and date range
 export const getOvertimeByUserId = createAsyncThunk(
   'ot/getOvertimeByUserId',
   async (params, { rejectWithValue }) => {
@@ -75,7 +75,11 @@ const overtimeSlice = createSlice({
         loading: false,
         message: ''
     },
-    reducers: {},
+    reducers: {
+        resetOvertimeState(state) {
+            state._getOtByUserId = [];
+        }
+    },
     extraReducers(builder) {
       builder
         .addCase(postOvertime.pending, (state, _) => {
@@ -107,4 +111,6 @@ const overtimeSlice = createSlice({
     }
 })
 
+
+export const { resetOvertimeState } = overtimeSlice.actions; 
 export default overtimeSlice;
