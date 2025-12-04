@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { formatDateReadable } from '../../customs/global/manageDates';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';

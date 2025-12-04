@@ -7,10 +7,11 @@ import { getDtrByMultipleIds } from '../../../store/features/dtrSlice';
 import { useParams } from 'react-router-dom';
 import { getUserById } from '../../../store/features/userSlice'; 
 import { getDepartmentById } from '../../../store/features/departmentSlice';
-import { getEarningsByUserId, getFullEarnings } from '../../../store/features/earningSlice';
+import { getEarningsByUserId } from '../../../store/features/earningSlice';
 import EarningListByUser from '../../../components/earning-list-by-user/EarningListByUser';
 import OvertimeTablePerUser from '../../../components/overtime-table-per-user/OvertimeTablePerUser';
 import { resetDaterangeDtr } from '../../../store/features/dtrSlice';
+import { resetOvertimeState } from '../../../store/features/overtime.Slice';
 
 const DtrListByUser = () => {
 
@@ -88,15 +89,9 @@ const DtrListByUser = () => {
   useEffect(() => {
     // if user id change dtr state is reset to []
     dispatch(resetDaterangeDtr())
+    dispatch(resetOvertimeState())
   }, [userId])
 
-
-  useEffect(() => {
-    console.log("_getOtByUserId", _getOtByUserId)
-  }, [_getOtByUserId])
-  
-  
-  
   
   return (
     <>
