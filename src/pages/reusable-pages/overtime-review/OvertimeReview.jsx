@@ -94,7 +94,7 @@ const OvertimeReview = () => {
                         <td className="text-center">
                           <button
                             className="btn btn-outline-primary btn-sm"
-                            onClick={() => navigate(`/admin/overtime-records/${user.id}`)}
+                            onClick={() => navigate(`/common/overtime-records/${user.id}`)}
                           >
                             View Request
                           </button>
