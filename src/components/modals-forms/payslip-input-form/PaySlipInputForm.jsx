@@ -192,6 +192,7 @@ const searchDtr = async () => {
     dtrParams: newStatus 
   }));
 
+  // get ot with user id, pagination and date range
   await dispatch(getOvertimeByUserId(overtimeparams))
 };
 
