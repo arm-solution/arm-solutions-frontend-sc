@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import Map from '../../../../components/Map'
-import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserById } from '../../../../store/features/userSlice';
+import { getAllDtrWithDateRange } from '../../../../store/features/dtrSlice';
 import './Maps.css'
 
 const Maps = () => {
-  const navigate = useNavigate();
 
   const myLocation = useLocation();
   const dispatch = useDispatch();
 
   const { userById, loading } = useSelector(state => state.users);
+  const { dtrWithDateRange } = useSelector(state => state.dtr);
 
-  const [selectedDate, setSelectedDate] = useState('');
+  const [userId, setUserId] = useState(0)
+  const [selectedDate, setSelectedDate] = useState({
+    date_from: '',
+    date_to: '',
+    status: ['approved', 'for approval', 'rejected', 'for engineering review']
+  });
 
   useEffect(() => {
     const getUserInformation = async () => {
@@ -22,6 +27,7 @@ const Maps = () => {
       const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
       
       if(data) {
+        setUserId(data.user_id);
         await dispatch(getUserById(data.user_id))
       }
     }
@@ -30,9 +36,34 @@ const Maps = () => {
   }, [dispatch])
   
 
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
-  };
+const handleDateChange = (e) => {
+  const { name, value } = e.target;
+  setSelectedDate((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
+const handleSearch = async () => {
+
+  if(selectedDate.date_from === '' || selectedDate.date_to === '') {
+    alert("Need to input date");
+    return;
+  }
+
+  if(userId) {
+   const { payload } = await dispatch(getAllDtrWithDateRange({
+      userById,
+      dtrParams: selectedDate
+    }));
+
+    console.log("payload", payload);
+  } else {
+    alert("Need to provide user id");
+    return
+  }
+
+}
 
   return (
     <>
@@ -73,21 +104,39 @@ const Maps = () => {
                   <div className="info-field">
                     <label htmlFor="datePicker" className="field-label">
                       <i className="bi bi-calendar3 me-2"></i>
-                      Select Date
+                      From
                     </label>
                     <div className="date-input-wrapper">
                       <input
                         type="date"
                         id="datePicker"
+                        name="date_from"
                         className="form-control date-input"
-                        value={selectedDate}
+                        value={selectedDate.date_from}
+                        onChange={handleDateChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="info-field">
+                    <label htmlFor="datePicker" className="field-label">
+                      <i className="bi bi-calendar3 me-2"></i>
+                      To
+                    </label>
+                    <div className="date-input-wrapper">
+                      <input
+                        type="date"
+                        id="datePicker"
+                        name="date_to"
+                        className="form-control date-input"
+                        value={selectedDate.date_to}
                         onChange={handleDateChange}
                       />
                     </div>
                   </div>
 
                   <div className="search-section">
-                    <button className="btn search-btn">
+                    <button className="btn search-btn" onClick={handleSearch}>
                       <i className="bi bi-search me-2"></i>
                       Search
                     </button>
