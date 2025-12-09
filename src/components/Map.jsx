@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import home from './../assets/icon/home.png';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import * as turf from '@turf/turf';
+import { formatDateReadable } from '../customs/global/manageDates';
 
 const Map = (props) => {
   const bilucaoCoordinates = [14.0371, 121.1109];
@@ -25,31 +26,42 @@ const Map = (props) => {
   // ⭐ FIX: initialize as empty array, NOT null
   const [positionsInsideGeofence, setPositionsInsideGeofence] = useState([]);
 
+
   useEffect(() => {
-    const checkGeofence = () => {
-      const queryParams = new URLSearchParams(myLocation.search);
-      const data = JSON.parse(decodeURIComponent(queryParams.get("data")));
+    // If date-range search results are being used, skip URL parsing
+    if (props.dtrWithDateRange && props.dtrWithDateRange.length > 0) return;
 
-      const polygon = turf.polygon([geofenceCoords]);
+    const queryParams = new URLSearchParams(myLocation.search);
+    const raw = queryParams.get("data");
+    if (!raw) return;
 
-      const point = turf.point([
-        parseFloat(data.longitude),
-        parseFloat(data.latitude)
-      ]);
+    const data = JSON.parse(decodeURIComponent(raw));
 
-      const inside = turf.booleanPointInPolygon(point, polygon);
+    const polygon = turf.polygon([geofenceCoords]);
+    const point = turf.point([+data.longitude, +data.latitude]);
 
-      const updatedPosition = {
-        ...data,
-        insideGeofence: inside
-      };
+    const inside = turf.booleanPointInPolygon(point, polygon);
 
-      // Add this record to the array
-      setPositionsInsideGeofence(prev => [...prev, updatedPosition]);
-    };
+    const updatedPosition = { ...data, insideGeofence: inside };
 
-    checkGeofence();
-  }, [myLocation.search, geofenceCoords]);
+    setPositionsInsideGeofence(prev => {
+      const exists = prev.some(
+        p =>
+          p.latitude === updatedPosition.latitude &&
+          p.longitude === updatedPosition.longitude &&
+          p.shift_date === updatedPosition.shift_date
+      );
+
+      return exists ? prev : [...prev, updatedPosition];
+    });
+  }, [myLocation.search, props.dtrWithDateRange]);
+
+  useEffect(() => {
+    if (props.dtrWithDateRange && props.dtrWithDateRange.length > 0) {
+      setPositionsInsideGeofence(props.dtrWithDateRange);
+    }
+  }, [props.dtrWithDateRange]);
+
 
   const customIcon = new Icon({
     iconUrl: locationImg,
@@ -60,6 +72,12 @@ const Map = (props) => {
     iconUrl: home,
     iconSize: [38, 38]
   });
+
+
+  useEffect(() => {
+    console.log("positionsInsideGeofence", positionsInsideGeofence)
+  }, [positionsInsideGeofence])
+  
 
   return (
     <div className='map-container'>
@@ -92,7 +110,7 @@ const Map = (props) => {
               icon={customIcon}
             >
               <Popup>
-                You are logged in at this position.<br />
+                You are logged in at this position. - {pos.shift_date ? formatDateReadable(pos.shift_date) : ''}<br />
                 This position is {pos.insideGeofence ? "inside" : "outside"} the geofence.
               </Popup>
             </Marker>
@@ -109,7 +127,7 @@ const Map = (props) => {
                 ]}
                 icon={customIcon}
               >
-                <Popup>You logged out at this position.</Popup>
+                <Popup>You logged out at this position. - {pos.shift_date_end ? formatDateReadable(pos.shift_date_end) : ''}</Popup>
               </Marker>
             ) : null
           )}
