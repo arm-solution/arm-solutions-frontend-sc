@@ -67,11 +67,11 @@ const DtrRemarks = (props) => {
         )
 
         if (payload.success) {
-          await dispatch(
-            getAllDtrWithDateRange({
-              userId: props.userId,
-              dtrParams: { status: [props.status] },
-            })
+            await dispatch(
+              getAllDtrWithDateRange({
+                userId: props.userId,
+                dtrParams: props.dateRangeStatus,
+              })
           )
 
           // ✅ Close modal after success
