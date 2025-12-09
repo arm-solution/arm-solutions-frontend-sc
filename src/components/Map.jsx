@@ -20,34 +20,36 @@ const Map = (props) => {
     [14.0415, 121.1150],
     [14.0415, 121.1130],
     [14.0385, 121.1130] 
-  ])
+  ], []);
 
-  // Check if positions are inside the geofence
-  const [positionsInsideGeofence, setPositionsInsideGeofence] = useState(null);
+  // ⭐ FIX: initialize as empty array, NOT null
+  const [positionsInsideGeofence, setPositionsInsideGeofence] = useState([]);
+
   useEffect(() => {
     const checkGeofence = () => {
-
       const queryParams = new URLSearchParams(myLocation.search);
-      const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
+      const data = JSON.parse(decodeURIComponent(queryParams.get("data")));
 
       const polygon = turf.polygon([geofenceCoords]);
 
-      // Position is now a single object instead of an array
-      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]); // Use the longitude and latitude from the data
+      const point = turf.point([
+        parseFloat(data.longitude),
+        parseFloat(data.latitude)
+      ]);
+
       const inside = turf.booleanPointInPolygon(point, polygon);
-      
-      // Create the updated position object with the insideGeofence property
+
       const updatedPosition = {
-          ...data,
-          insideGeofence: inside
+        ...data,
+        insideGeofence: inside
       };
-      
-      // Update the state with the updated position
-      setPositionsInsideGeofence(updatedPosition);
+
+      // Add this record to the array
+      setPositionsInsideGeofence(prev => [...prev, updatedPosition]);
     };
-  
+
     checkGeofence();
-  }, []);
+  }, [myLocation.search, geofenceCoords]);
 
   const customIcon = new Icon({
     iconUrl: locationImg,
@@ -67,6 +69,8 @@ const Map = (props) => {
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MarkerClusterGroup>
+
+          {/* Home Marker */}
           <Marker position={[14.0401, 121.1140]} icon={ArmSolIcon}>
             <Popup>
               <b>Arm Solution Enterprises</b><br />
@@ -74,34 +78,40 @@ const Map = (props) => {
             </Popup>
           </Marker>
 
+          {/* Geofence Polygon */}
           <Polygon positions={geofenceCoords} color="blue" />
 
-          {positionsInsideGeofence && (
-            <Marker position={[
-              parseFloat(positionsInsideGeofence.latitude),
-              parseFloat(positionsInsideGeofence.longitude)
+          {/* LOGIN MARKERS */}
+          {positionsInsideGeofence.map((pos, index) => (
+            <Marker
+              key={index}
+              position={[
+                parseFloat(pos.latitude),
+                parseFloat(pos.longitude)
               ]}
               icon={customIcon}
             >
               <Popup>
                 You are logged in at this position.<br />
-                This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence.
+                This position is {pos.insideGeofence ? "inside" : "outside"} the geofence.
               </Popup>
             </Marker>
-          )}
+          ))}
 
-          {positionsInsideGeofence && positionsInsideGeofence.time_out_latitude && (
-            <Marker
-              position={[
-                parseFloat(positionsInsideGeofence.time_out_latitude),
-                parseFloat(positionsInsideGeofence.time_out_longitude)
-              ]}
-              icon={customIcon}
-            >
-              <Popup>
-                You are logged out at this position.<br />
-              </Popup>
-            </Marker>
+          {/* LOGOUT MARKERS */}
+          {positionsInsideGeofence.map((pos, index) =>
+            pos.time_out_latitude ? (
+              <Marker
+                key={`timeout-${index}`}
+                position={[
+                  parseFloat(pos.time_out_latitude),
+                  parseFloat(pos.time_out_longitude)
+                ]}
+                icon={customIcon}
+              >
+                <Popup>You logged out at this position.</Popup>
+              </Marker>
+            ) : null
           )}
 
         </MarkerClusterGroup>
