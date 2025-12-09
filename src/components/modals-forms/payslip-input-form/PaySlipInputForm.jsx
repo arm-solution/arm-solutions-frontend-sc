@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import './PaySlipInputForm.css';
-import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { postAdditionalEarnings } from '../../../store/features/additionalEarningsSlice';
 import { postEarning } from '../../../store/features/earningSlice';
 import { getLoggedInID } from '../../../customs/global/manageLocalStorage';
 import FloatNotification from '../../float-notification/FloatNotification';
-import { getAllDtrWithDateRange, updateMultipleDtrStatus } from '../../../store/features/dtrSlice';
+import { getAllDtrWithDateRange } from '../../../store/features/dtrSlice';
 import { getEarningsByUserId } from '../../../store/features/earningSlice';
 import { getOvertimeByUserId } from '../../../store/features/overtime.Slice';
 
@@ -175,7 +174,7 @@ const PaySlipInputForm = (props) => {
 const searchDtr = async () => {
   const newStatus = {
     ...props.dateRangeStatus,
-    status: ['for approval', 'rejected', 'reject by engineering', 'approved'],
+    status: ['for approval', 'approved'],
   };
 
   const overtimeparams = {
@@ -210,6 +209,7 @@ useEffect(() => {
     setEstimatedCutOffTotalHours(estimatedTotalHours)
   }
 
+
   // getting total hours for overtime
   if (_getOtByUserIdVar.length > 0) {
     const otSum = _getOtByUserIdVar.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
@@ -221,9 +221,12 @@ useEffect(() => {
 
       // ✅ Add OT pay to Gross Pay
       setGrossPay(prev => (prev || 0) + otPay);
-    }
+    } 
+  } else {
+    setTotalOvertime(0);
+    setGrossOtPay(0);
   }
-}, [props.dtrWithDateRange, props.employee, _getOtByUserIdVar]);
+}, [props.dtrWithDateRange, props.employee, _getOtByUserIdVar, props.userId]);
 
 
   // getting total overtime hrs
