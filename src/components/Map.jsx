@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import home from './../assets/icon/home.png';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import * as turf from '@turf/turf';
+import { formatDateReadable } from '../customs/global/manageDates';
 
 const Map = (props) => {
   const bilucaoCoordinates = [14.0371, 121.1109];
@@ -20,34 +21,47 @@ const Map = (props) => {
     [14.0415, 121.1150],
     [14.0415, 121.1130],
     [14.0385, 121.1130] 
-  ])
+  ], []);
 
-  // Check if positions are inside the geofence
-  const [positionsInsideGeofence, setPositionsInsideGeofence] = useState(null);
+  // ⭐ FIX: initialize as empty array, NOT null
+  const [positionsInsideGeofence, setPositionsInsideGeofence] = useState([]);
+
+
   useEffect(() => {
-    const checkGeofence = () => {
+    // If date-range search results are being used, skip URL parsing
+    if (props.dtrWithDateRange && props.dtrWithDateRange.length > 0) return;
 
-      const queryParams = new URLSearchParams(myLocation.search);
-      const data = JSON.parse(decodeURIComponent(queryParams.get('data')));
+    const queryParams = new URLSearchParams(myLocation.search);
+    const raw = queryParams.get("data");
+    if (!raw) return;
 
-      const polygon = turf.polygon([geofenceCoords]);
+    const data = JSON.parse(decodeURIComponent(raw));
 
-      // Position is now a single object instead of an array
-      const point = turf.point([parseFloat(data.longitude), parseFloat(data.latitude)]); // Use the longitude and latitude from the data
-      const inside = turf.booleanPointInPolygon(point, polygon);
-      
-      // Create the updated position object with the insideGeofence property
-      const updatedPosition = {
-          ...data,
-          insideGeofence: inside
-      };
-      
-      // Update the state with the updated position
-      setPositionsInsideGeofence(updatedPosition);
-    };
-  
-    checkGeofence();
-  }, []);
+    const polygon = turf.polygon([geofenceCoords]);
+    const point = turf.point([+data.longitude, +data.latitude]);
+
+    const inside = turf.booleanPointInPolygon(point, polygon);
+
+    const updatedPosition = { ...data, insideGeofence: inside };
+
+    setPositionsInsideGeofence(prev => {
+      const exists = prev.some(
+        p =>
+          p.latitude === updatedPosition.latitude &&
+          p.longitude === updatedPosition.longitude &&
+          p.shift_date === updatedPosition.shift_date
+      );
+
+      return exists ? prev : [...prev, updatedPosition];
+    });
+  }, [myLocation.search, props.dtrWithDateRange]);
+
+  useEffect(() => {
+    if (props.dtrWithDateRange && props.dtrWithDateRange.length > 0) {
+      setPositionsInsideGeofence(props.dtrWithDateRange);
+    }
+  }, [props.dtrWithDateRange]);
+
 
   const customIcon = new Icon({
     iconUrl: locationImg,
@@ -59,6 +73,12 @@ const Map = (props) => {
     iconSize: [38, 38]
   });
 
+
+  useEffect(() => {
+    console.log("positionsInsideGeofence", positionsInsideGeofence)
+  }, [positionsInsideGeofence])
+  
+
   return (
     <div className='map-container'>
       <MapContainer center={bilucaoCoordinates} zoom={13} scrollWheelZoom={false} style={{ height: '100%' }}>
@@ -67,6 +87,8 @@ const Map = (props) => {
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MarkerClusterGroup>
+
+          {/* Home Marker */}
           <Marker position={[14.0401, 121.1140]} icon={ArmSolIcon}>
             <Popup>
               <b>Arm Solution Enterprises</b><br />
@@ -74,34 +96,40 @@ const Map = (props) => {
             </Popup>
           </Marker>
 
+          {/* Geofence Polygon */}
           <Polygon positions={geofenceCoords} color="blue" />
 
-          {positionsInsideGeofence && (
-            <Marker position={[
-              parseFloat(positionsInsideGeofence.latitude),
-              parseFloat(positionsInsideGeofence.longitude)
-              ]}
-              icon={customIcon}
-            >
-              <Popup>
-                You are logged in at this position.<br />
-                This position is {positionsInsideGeofence.insideGeofence ? 'inside' : 'outside'} the geofence.
-              </Popup>
-            </Marker>
-          )}
-
-          {positionsInsideGeofence && positionsInsideGeofence.time_out_latitude && (
+          {/* LOGIN MARKERS */}
+          {positionsInsideGeofence.map((pos, index) => (
             <Marker
+              key={index}
               position={[
-                parseFloat(positionsInsideGeofence.time_out_latitude),
-                parseFloat(positionsInsideGeofence.time_out_longitude)
+                parseFloat(pos.latitude),
+                parseFloat(pos.longitude)
               ]}
               icon={customIcon}
             >
               <Popup>
-                You are logged out at this position.<br />
+                You are logged in at this position. - {pos.shift_date ? formatDateReadable(pos.shift_date) : ''}<br />
+                This position is {pos.insideGeofence ? "inside" : "outside"} the geofence.
               </Popup>
             </Marker>
+          ))}
+
+          {/* LOGOUT MARKERS */}
+          {positionsInsideGeofence.map((pos, index) =>
+            pos.time_out_latitude ? (
+              <Marker
+                key={`timeout-${index}`}
+                position={[
+                  parseFloat(pos.time_out_latitude),
+                  parseFloat(pos.time_out_longitude)
+                ]}
+                icon={customIcon}
+              >
+                <Popup>You logged out at this position. - {pos.shift_date_end ? formatDateReadable(pos.shift_date_end) : ''}</Popup>
+              </Marker>
+            ) : null
           )}
 
         </MarkerClusterGroup>

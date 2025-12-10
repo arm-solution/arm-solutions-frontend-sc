@@ -1,3 +1,5 @@
+import { logout } from "./manageLocalStorage";
+
 // check 2 arrays if equals
 export function shallowEqualArrays(arr1, arr2) {
     if (arr1.length !== arr2.length) {
@@ -88,8 +90,14 @@ export function compareIfExist(array1, array2) {
   export const getPositionByDepartmentID = (deptID) => {
     let position = '';
 
+    if(!deptID) {
+        console.error("No department specified");
+        logout();
+        return;
+    } 
+
     if(deptID === 1) {
-        position = 'System Administrator'
+        position = 'Admin'
     } else if(deptID === 2) {
         position = 'Hr'
     } else if(deptID === 3) {
