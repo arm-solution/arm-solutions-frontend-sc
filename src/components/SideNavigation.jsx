@@ -146,7 +146,6 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                 )}
 
           
-
                 {isDepartmentAllowed([1,5,7]) && (
                     <>
                     {/* Products */}

@@ -50,14 +50,12 @@ const handleSearch = async () => {
     alert("Need to input date");
     return;
   }
-
   if(userId) {
-   const { payload } = await dispatch(getAllDtrWithDateRange({
-      userById,
+   await dispatch(getAllDtrWithDateRange({
+      userId,
       dtrParams: selectedDate
     }));
 
-    console.log("payload", payload);
   } else {
     alert("Need to provide user id");
     return
@@ -155,7 +153,7 @@ const handleSearch = async () => {
                   </h4>
                 </div>
                 <div className="map-wrapper">
-                  <Map coordinates={{ long: 0, lat: 0 }}/>
+                  <Map dtrWithDateRange={dtrWithDateRange} />
                 </div>
               </div>
             </div>
