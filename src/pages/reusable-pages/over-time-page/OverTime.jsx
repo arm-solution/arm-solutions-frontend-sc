@@ -14,6 +14,8 @@ const Overtime = () => {
     { id: 1, dateStart: '', timeIn: '', dateEnd: '', remarks: '', timeOut: '', status: '', user_id: 0 }
   ]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleInputChange = (id, field, value) => {
     setOvertimeRows(overtimeRows.map(row =>
       row.id === id ? { ...row, [field]: value } : row
@@ -42,44 +44,63 @@ const Overtime = () => {
   };
 
 const handleSubmit = async () => {
-  // Check if any field is empty in any row
+    if (isSubmitting) return;        // ⛔ Prevent double submit
+    setIsSubmitting(true);           // 🔒 Lock button
 
-  const hasEmptyFields = overtimeRows.some(row => {
-    return (
+    // Check empty fields
+    const hasEmptyFields = overtimeRows.some(row =>
       !row.dateStart.trim() ||
       !row.timeIn.trim() ||
       !row.dateEnd.trim() ||
       !row.timeOut.trim() ||
       !row.remarks.trim()
     );
-  });
 
-  if (hasEmptyFields) {
-    errorDialog("All fields are required!");
-    return;
-  }
+    if (hasEmptyFields) {
+      errorDialog("All fields are required!");
+      setIsSubmitting(false); // Unlock
+      return;
+    }
 
-
-  const transformOvertimeData =  overtimeRows.map(item => ({
+    const transformOvertimeData = overtimeRows.map(item => ({
       ot_date_time_start: `${item.dateStart}T${item.timeIn}:00`,
       ot_date_time_end: `${item.dateEnd}T${item.timeOut}:00`,
       user_id: getLoggedInID(),
-      status: parseInt(getDepartmentLoggedIn()) === 10 ? 'for engineering review' : 'for approval',
-      total_hours: calculateFlexibleDecimalHours(item.dateStart, item.dateEnd, item.timeIn, item.timeOut),
-      // dtr_id: dtr_id,
-      remarks: item.remarks || ''
-  }));
+      status:
+        parseInt(getDepartmentLoggedIn()) === 10
+          ? "for engineering review"
+          : "for approval",
+      total_hours: calculateFlexibleDecimalHours(
+        item.dateStart,
+        item.dateEnd,
+        item.timeIn,
+        item.timeOut
+      ),
+      remarks: item.remarks || "",
+    }));
 
-  const { payload } = await dispatch(postOvertime(transformOvertimeData))
+    const { payload } = await dispatch(postOvertime(transformOvertimeData));
 
-  if(payload.success) {
-    setOvertimeRows([{ id: 1, dateStart: '', timeIn: '', dateEnd: '', remarks: '', timeOut: '', status: '', user_id: 0 }])
-    successDialog("Filed Overtime Success");
-  } else {
-    errorDialog("Error while file overtime please report to technical team")
-  }
+    if (payload.success) {
+      setOvertimeRows([
+        {
+          id: 1,
+          dateStart: "",
+          timeIn: "",
+          dateEnd: "",
+          remarks: "",
+          timeOut: "",
+          status: "",
+          user_id: 0,
+        },
+      ]);
+      successDialog("Filed Overtime Success");
+    } else {
+      errorDialog("Error while filing overtime. Please report to technical team.");
+    }
 
-};
+    setIsSubmitting(false);
+  };
 
   return (
     <div className="container py-4 overtime-container">
@@ -165,9 +186,12 @@ const handleSubmit = async () => {
 
       {/* Submit button outside the card */}
       <div className="overtime-submit-container">
-        <button className="btn btn-success" onClick={handleSubmit}>
-          Submit
-        </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </button>
       </div>
     </div>
   );
