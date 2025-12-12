@@ -113,29 +113,30 @@ const OvertimeTableStatus = (props) => {
     handleModalClose();
   };
 
-  const handleReject = () => {
-    alert(`Rejected OT ID: ${selectedRecord.id}`);
-    handleModalClose();
-  };
-
-
-  const handleEditRejectedModal = (ot) => {
-
-    if(ot) {
-
-      const modalElement = overtimeEditModal.current;
-      const modal = new Modal(modalElement);
-
-      console.log("ot", ot)
-
-      setSelectedOt(ot)
-
-      modal.show();
+  const handleReject = async () => {
+    
+    let reshapeData = {id: selectedRecord.id }
+    if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
+       reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'rejected' }
     } else {
-      console.error("No ot selected");
+       reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
     }
 
-  }
+    if(selectedRecord.id) {
+      const { payload } = await dispatch(updateOvertimeByID(reshapeData));
+
+      if(payload.success) {
+         successDialog('Rejected Successfully');
+         await dispatch(getOvertimeByUserId(params));
+      } else {
+        errorDialog('Faild to reject this overtime');
+      }
+    }
+
+
+
+    handleModalClose();
+  };
 
   return (
     <>
