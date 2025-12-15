@@ -186,8 +186,6 @@ const searchDtr = async () => {
 
   props.setDateRangeStatus(newStatus);
 
-  console.log("newStatus", newStatus);
-
   await dispatch(getAllDtrWithDateRange({ 
     userId: props.userId, 
     dtrParams: newStatus 
