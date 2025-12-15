@@ -133,8 +133,6 @@ const OvertimeTableStatus = (props) => {
       }
     }
 
-
-
     handleModalClose();
   };
 
