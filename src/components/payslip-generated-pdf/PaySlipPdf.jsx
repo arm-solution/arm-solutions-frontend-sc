@@ -9,120 +9,184 @@ import {
   StyleSheet
 } from '@react-pdf/renderer';
 
-// Styles
+// Enhanced Styles
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
     fontSize: 10,
     fontFamily: 'Helvetica',
+    backgroundColor: '#ffffff',
+  },
+  // Header Section
+  headerContainer: {
+    backgroundColor: '#841a21',
+    padding: 20,
+    marginBottom: 25,
+    borderRadius: 4,
   },
   header: {
-    fontSize: 19,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#ffffff',
+    letterSpacing: 2,
   },
-  subHeader: {
-    marginBottom: 10,
-    fontSize: 12,
+  headerSubtext: {
+    fontSize: 9,
+    color: '#f0f0f0',
+    marginTop: 4,
   },
-  section: {
-    marginBottom: 10,
+  
+  // Employee Info Section
+  employeeSection: {
+    backgroundColor: '#f8f9fa',
+    padding: 15,
+    marginBottom: 20,
+    borderRadius: 4,
+    borderLeft: '4 solid #841a21',
   },
+  employeeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  employeeItem: {
+    width: '50%',
+    marginBottom: 8,
+    flexDirection: 'row',
+  },
+  employeeLabel: {
+    fontSize: 9,
+    color: '#666666',
+    fontWeight: 'bold',
+    width: 110,
+  },
+  employeeValue: {
+    fontSize: 10,
+    color: '#333333',
+    flex: 1,
+  },
+  
   divider: {
-    borderBottom: '1 solid #000',
-    marginVertical: 10,
+    borderBottom: '2 solid #e0e0e0',
+    marginVertical: 15,
   },
+  
+  // Summary Section
+  summaryContainer: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#841a21',
+    marginBottom: 10,
+    paddingBottom: 5,
+    borderBottom: '2 solid #841a21',
+  },
+  
+  // Table Styles
   table: {
     display: 'table',
     width: 'auto',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#bfbfbf',
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
+    marginBottom: 15,
   },
   tableRow: {
     flexDirection: 'row',
+    borderBottom: '1 solid #e0e0e0',
   },
-  tableColHeader: {
-    width: '50%',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#bfbfbf',
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    backgroundColor: '#007bff',
+  tableRowHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#841a21',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+  },
+  tableRowTotal: {
+    flexDirection: 'row',
+    backgroundColor: '#f0e6e7',
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
   },
   tableCol: {
     width: '50%',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#bfbfbf',
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
+    padding: 10,
+  },
+  tableColRight: {
+    width: '50%',
+    padding: 10,
+    textAlign: 'right',
   },
   tableCellHeader: {
-    margin: 5,
     fontSize: 10,
-    color: 'white',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   tableCell: {
-    margin: 5,
-  },
-  groupHeader: {
-    marginTop: 10,
     fontSize: 10,
-    fontWeight: 'bold',
-    backgroundColor: '#e6f2f7',
-    padding: 4,
-  },
-  note: {
-    fontStyle: 'italic',
-    marginTop: 10,
-  },
-  labelRow: {
-    flexDirection: 'row',
-    marginBottom: 2,
-  },
-  labelKey: {
-    width: '40%',
-    textAlign: 'right',
-    paddingRight: 5,
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  labelValue: {
-    width: '60%',
-    textAlign: 'left',
-    fontSize: 12,
-  },
-
-
-  subHeaderTable: {
-    display: 'table',
-    width: 'auto',
-    marginBottom: 10,
-  },
-  subHeaderRow: {
-    flexDirection: 'row',
-  },
-  subHeaderCellLabel: {
-    width: 130, // fixed width for labels
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  subHeaderCellValue: {
-    fontSize: 12,
-  },
-
-  tableRowHighlight: {
-    flexDirection: 'row',
-    backgroundColor: '#dff0d8', // light green for highlight
+    color: '#333333',
   },
   tableCellBold: {
-    margin: 5,
+    fontSize: 11,
+    color: '#841a21',
     fontWeight: 'bold',
+  },
+  tableCellAmount: {
+    fontSize: 10,
+    color: '#333333',
+    textAlign: 'right',
+  },
+  
+  // Detail Sections
+  detailSection: {
+    marginBottom: 15,
+  },
+  detailHeader: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#841a21',
+    marginBottom: 8,
+    paddingLeft: 5,
+    borderLeft: '3 solid #841a21',
+    paddingVertical: 3,
+  },
+  detailTable: {
+    backgroundColor: '#fafafa',
+    borderRadius: 4,
+    padding: 5,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderBottom: '1 solid #eeeeee',
+  },
+  detailLabel: {
+    width: '70%',
+    fontSize: 9,
+    color: '#555555',
+  },
+  detailAmount: {
+    width: '30%',
+    fontSize: 9,
+    color: '#333333',
+    textAlign: 'right',
+  },
+  
+  // Footer
+  footer: {
+    marginTop: 25,
+    paddingTop: 15,
+    borderTop: '1 solid #e0e0e0',
+  },
+  note: {
+    fontSize: 8,
+    color: '#666666',
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+  confidential: {
+    fontSize: 7,
+    color: '#999999',
+    textAlign: 'center',
+    marginTop: 5,
   },
 });
 
@@ -149,106 +213,154 @@ const PaySlipPdf = () => {
     }
   }, [])
   
-
-
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>
  
-        {/* Title */}
-        <Text style={styles.header}>PAYSLIP</Text>
+        {/* Enhanced Header */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>PAYSLIP</Text>
+          <Text style={styles.headerSubtext}>
+            Period: {earnings?.data?.date_from ? formatDateReadable(earnings.data.date_from) : '---'} to {earnings?.data?.date_to ? formatDateReadable(earnings.data.date_to) : '---'}
+          </Text>
+        </View>
 
-        {/* Employee Details */}
-        <View style={styles.subHeaderTable}>
-          <View style={styles.subHeaderRow}>
-            <Text style={styles.subHeaderCellLabel}>Employee:</Text>
-            <Text style={styles.subHeaderCellValue}>
-              {user?.firstname && user?.lastname
-                ? `${capitalizeFirstLetter(user.firstname)} ${capitalizeFirstLetter(user.lastname)}`
-                : '---'}
-            </Text>
-          </View>
+        {/* Employee Details Section */}
+        <View style={styles.employeeSection}>
+          <View style={styles.employeeGrid}>
+            <View style={styles.employeeItem}>
+              <Text style={styles.employeeLabel}>Employee Name:</Text>
+              <Text style={styles.employeeValue}>
+                {user?.firstname && user?.lastname
+                  ? `${capitalizeFirstLetter(user.firstname)} ${capitalizeFirstLetter(user.lastname)}`
+                  : '---'}
+              </Text>
+            </View>
 
-          <View style={styles.subHeaderRow}>
-            <Text style={styles.subHeaderCellLabel}>Employee Number:</Text>
-            <Text style={styles.subHeaderCellValue}>{user?.employee_id || '---'}</Text>
-          </View>
+            <View style={styles.employeeItem}>
+              <Text style={styles.employeeLabel}>Employee ID:</Text>
+              <Text style={styles.employeeValue}>{user?.employee_id || '---'}</Text>
+            </View>
 
-          <View style={styles.subHeaderRow}>
-            <Text style={styles.subHeaderCellLabel}>Date From:</Text>
-            <Text style={styles.subHeaderCellValue}>
-              {earnings?.date_from ? formatDateReadable(earnings.date_from) : '---'}
-            </Text>
-          </View>
+            <View style={styles.employeeItem}>
+              <Text style={styles.employeeLabel}>Date From:</Text>
+              <Text style={styles.employeeValue}>
+                {earnings?.data?.date_from ? formatDateReadable(earnings.data.date_from) : '---'}
+              </Text>
+            </View>
 
-          <View style={styles.subHeaderRow}>
-            <Text style={styles.subHeaderCellLabel}>Date To:</Text>
-            <Text style={styles.subHeaderCellValue}>
-              {earnings?.date_to ? formatDateReadable(earnings.date_to) : '---'}
-            </Text>
+            <View style={styles.employeeItem}>
+              <Text style={styles.employeeLabel}>Date To:</Text>
+              <Text style={styles.employeeValue}>
+                {earnings?.data?.date_to ? formatDateReadable(earnings.data.date_to) : '---'}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.divider}></View>
-
-        {/* Summary Table */}
-        <View style={styles.table}>
-          <View style={styles.tableRow}>
-            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Description</Text></View>
-            <View style={styles.tableColHeader}><Text style={styles.tableCellHeader}>Amount (Php)</Text></View>
-          </View>
-
-          <View style={styles.tableRow}>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Gross Pay</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.gross_pay : '---' } </Text></View>
-          </View>
-          <View style={styles.tableRow}>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Additional</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.total_additional_pay : '---' }</Text></View>
-          </View>
-          <View style={styles.tableRow}>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Deduction</Text></View>
-            <View style={styles.tableCol}><Text style={styles.tableCell}>Php { earnings ? earnings.total_deduction : '---' }</Text></View>
-          </View>
-
-          <View style={styles.tableRowHighlight}>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCellBold}>Total</Text>
+        {/* Summary Section */}
+        <View style={styles.summaryContainer}>
+          <Text style={styles.sectionTitle}>EARNINGS SUMMARY</Text>
+          
+          <View style={styles.table}>
+            <View style={styles.tableRowHeader}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellHeader}>Description</Text>
+              </View>
+              <View style={styles.tableColRight}>
+                <Text style={styles.tableCellHeader}>Amount (PHP)</Text>
+              </View>
             </View>
-            <View style={styles.tableCol}>
-              <Text style={styles.tableCellBold}>Php {earnings ? earnings.final_pay : '---'}</Text>
-            </View>
-          </View>
 
-        </View>
-
-        {/* Additional Section */}
-        <Text style={styles.groupHeader}>Additional</Text>
-        <View style={styles.table}>
-          {Array.isArray(earnings.additional) && earnings.additional.length > 0 && earnings.additional.map(d => (
             <View style={styles.tableRow}>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>{d.title}</Text></View>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>Php {d.amount}</Text></View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>Gross Pay</Text>
+              </View>
+              <View style={styles.tableColRight}>
+                <Text style={styles.tableCellAmount}>
+                  {earnings?.data?.gross_pay ? `Php ${parseFloat(earnings.data.gross_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                </Text>
+              </View>
             </View>
-          ))}
-        </View>
 
-        {/* Deduction Section */}
-        <Text style={styles.groupHeader}>Deduction</Text>
-        <View style={styles.table}>
-          {Array.isArray(earnings.deduction) && earnings.deduction.length > 0 && earnings.deduction.map(d => (
             <View style={styles.tableRow}>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>{d.title}</Text></View>
-              <View style={styles.tableCol}><Text style={styles.tableCell}>Php {d.amount}</Text></View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>Additional Earnings</Text>
+              </View>
+              <View style={styles.tableColRight}>
+                <Text style={styles.tableCellAmount}>
+                  {earnings?.data?.total_additional_pay ? `Php ${parseFloat(earnings.data.total_additional_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                </Text>
+              </View>
             </View>
-          ))}
+
+            <View style={styles.tableRow}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>Total Deductions</Text>
+              </View>
+              <View style={styles.tableColRight}>
+                <Text style={styles.tableCellAmount}>
+                  {earnings?.data?.total_deduction ? `Php ${parseFloat(earnings.data.total_deduction).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.tableRowTotal}>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCellBold}>NET PAY</Text>
+              </View>
+              <View style={styles.tableColRight}>
+                <Text style={styles.tableCellBold}>
+                  {earnings?.data?.final_pay ? `Php ${parseFloat(earnings.data.final_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                </Text>
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Footer Note */}
-        <Text style={styles.note}>
-          Note: Please contact HR for any discrepancies in your payslip.
-        </Text>
+        {/* Additional Earnings Detail */}
+        {Array.isArray(earnings?.data?.additional) && earnings?.data?.additional.length > 0 && (
+          <View style={styles.detailSection}>
+            <Text style={styles.detailHeader}>Additional Earnings Breakdown</Text>
+            <View style={styles.detailTable}>
+              {earnings.data.additional.map((d, index) => (
+                <View key={index} style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>{d.title}</Text>
+                  <Text style={styles.detailAmount}>
+                    Php {parseFloat(d.amount).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Deductions Detail */}
+        {Array.isArray(earnings?.data?.deduction) && earnings?.data?.deduction.length > 0 && (
+          <View style={styles.detailSection}>
+            <Text style={styles.detailHeader}>Deductions Breakdown</Text>
+            <View style={styles.detailTable}>
+              {earnings.data.deduction.map((d, index) => (
+                <View key={index} style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>{d.title}</Text>
+                  <Text style={styles.detailAmount}>
+                    Php {parseFloat(d.amount).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.note}>
+            Note: Please contact the Human Resources Department for any discrepancies or questions regarding your payslip.
+          </Text>
+          <Text style={styles.confidential}>
+            This document is confidential and intended solely for the addressee.
+          </Text>
+        </View>
 
       </Page>
     </Document>
