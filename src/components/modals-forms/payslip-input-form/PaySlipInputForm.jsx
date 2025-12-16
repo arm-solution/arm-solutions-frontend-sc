@@ -236,7 +236,12 @@ useEffect(() => {
     }
     return 0
   }
-    
+
+
+  const formatTwoDecimal = (num) => {
+    return Number(num).toFixed(2);
+  };
+      
 
   return (
     <>
@@ -358,7 +363,7 @@ useEffect(() => {
                           <input
                             type="number"
                             className="form-control"
-                            value={grossOtPay}
+                            value={formatTwoDecimal(grossOtPay)}
                             onChange={(e) => setGrossOtPay(e.target.value)}
                             min="0"
                             step="0.01"
@@ -379,7 +384,7 @@ useEffect(() => {
                           <input
                             type="number"
                             className="form-control"
-                            value={grossPay}
+                            value={formatTwoDecimal(grossPay)}
                             onChange={(e) => setGrossPay(e.target.value)}
                             min="0"
                             step="0.01"

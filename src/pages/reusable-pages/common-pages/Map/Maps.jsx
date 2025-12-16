@@ -16,8 +16,8 @@ const Maps = () => {
 
   const [userId, setUserId] = useState(0)
   const [selectedDate, setSelectedDate] = useState({
-    date_from: '',
-    date_to: '',
+    date_start: '',
+    date_end: '',
     status: ['approved', 'for approval', 'rejected', 'for engineering review']
   });
 
@@ -108,9 +108,9 @@ const handleSearch = async () => {
                       <input
                         type="date"
                         id="datePicker"
-                        name="date_from"
+                        name="date_start"
                         className="form-control date-input"
-                        value={selectedDate.date_from}
+                        value={selectedDate.date_start}
                         onChange={handleDateChange}
                       />
                     </div>
@@ -125,9 +125,9 @@ const handleSearch = async () => {
                       <input
                         type="date"
                         id="datePicker"
-                        name="date_to"
+                        name="date_end"
                         className="form-control date-input"
-                        value={selectedDate.date_to}
+                        value={selectedDate.date_end}
                         onChange={handleDateChange}
                       />
                     </div>

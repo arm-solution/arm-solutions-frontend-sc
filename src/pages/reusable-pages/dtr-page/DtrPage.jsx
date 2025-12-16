@@ -10,7 +10,7 @@ import { errorDialog } from '../../../customs/global/alertDialog';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
 import DtrDetailsModal from '../../../components/modals-forms/dtr-details/DtrDetailsModal';
 import { handleConfirmation } from '../../../customs/global/alertDialog';
-import { calculateDecimalHours, getCurrentDateForCalculation, dateFormatted, calculateFlexibleDecimalHours } from '../../../customs/global/manageDates';
+import { getCurrentDateForCalculation, dateFormatted, calculateFlexibleDecimalHours } from '../../../customs/global/manageDates';
 import WeekDtr from '../../../components/week-dtr-table/WeekDtr';
 import FloatNotification from '../../../components/float-notification/FloatNotification';
 import DtrRemarksModal from '../../../components/modals-forms/dtr-remarks-modal/DtrRemarksModal';
@@ -23,6 +23,9 @@ const Home = () => {
   const modalDtrRemarks = useRef(null);
   const modalCameraRef = useRef(null);
   const videoRef = useRef(null);
+
+  const isOpeningCamera = useRef(false);
+  const currentStream = useRef(null);
   
   // State
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -34,7 +37,7 @@ const Home = () => {
   const [accessOut, setAccessOut] = useState(false);
 
   const dispatch = useDispatch();
-  const { dtr, weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
+  const { weeklyDtr, currentDtr, loading: dtrLoading, dtrPostLoading } = useSelector(state => state.dtr);
 
   // Initialize data on component mount
   useEffect(() => {
@@ -253,22 +256,45 @@ const timeOut = async (e) => {
 
   const handleCameraModal = async (e) => {
     e.preventDefault();
+
+    // Prevent rapid multiple clicks
+    if (isOpeningCamera.current) return;
+    isOpeningCamera.current = true;
+
     try {
+      // Stop previous stream if exists
+      if (currentStream.current) {
+        currentStream.current.getTracks().forEach(track => track.stop());
+        currentStream.current = null;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user" }
       });
-      
+
+      currentStream.current = stream;
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+
+        // Wait until video is ready before calling play()
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current.play().catch(() => {});
+        };
       }
-      
+
       const modalElement = modalCameraRef.current;
       const modal = new Modal(modalElement);
       modal.show();
+
     } catch (err) {
       console.error("Error accessing camera:", err);
       alert("Unable to access the camera. Please check your permissions.");
+    } finally {
+      // Allow clicking again after camera opens
+      setTimeout(() => { 
+        isOpeningCamera.current = false;
+      }, 300);
     }
   };
 
