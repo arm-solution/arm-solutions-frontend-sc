@@ -314,8 +314,35 @@ const OvertimeTableStatus = (props) => {
                     {selectedRecord.date_filed ? new Date(selectedRecord.date_filed).toLocaleDateString() : '-'}
                   </div>
                 </div>
+                <div className="row mb-2">
+                  <div className="col-md-12">
+                    <strong>Remarks:</strong> {selectedRecord.remarks}
+                  </div>
+                </div>
 
-              {(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) && (
+                {(selectedRecord.status == 'rejected' || selectedRecord.status == 'approved') && (
+                <div className="row mb-2">
+                  <div className="col-md-6">
+                    <strong>Engineering Remarks:</strong> {selectedRecord.engr_remarks}
+                  </div>
+                  <div className="col-md-6">
+                    <strong>HR Remarks:</strong> {selectedRecord.hr_remarks}
+                  </div>
+                </div>
+                )}
+
+                {(selectedRecord.status == 'for approval') && (
+                <div className="row mb-2">
+                  <div className="col-md-6">
+                    <strong>Engineering Remarks:</strong> {selectedRecord.engr_remarks}
+                  </div>
+                </div>
+                )}
+
+              
+
+
+              {(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1 && selectedRecord.status == 'for approval') && (
                   <div className="mb-3">
                     <label className="form-label">HR Remarks</label>
                     <textarea
@@ -329,7 +356,7 @@ const OvertimeTableStatus = (props) => {
                 )}
 
 
-                {parseInt(getDepartmentLoggedIn()) === 6 && (
+                {(parseInt(getDepartmentLoggedIn()) === 6 && selectedRecord.status == 'for engineering review') && (
                   <div className="mb-3">
                     <label className="form-label">Engineering Remarks</label>
                     <textarea
