@@ -4,6 +4,7 @@ import { getCurrentDate } from "../../../customs/global/manageDates";
 import { updateOvertimeByID } from "../../../store/features/overtime.Slice";
 import { useDispatch } from "react-redux";
 import { successDialog, errorDialog } from "../../../customs/global/alertDialog";
+import { getDepartmentLoggedIn } from "../../../customs/global/manageLocalStorage";
 
 const RejectedDtrModal = (props) => {
 
@@ -55,10 +56,11 @@ const RejectedDtrModal = (props) => {
     ot_date_time_end: endISO,
     user_id: props.selectedOt.user_id,
     remarks: formData.remarks,
-    date_modified: dateModified
+    date_modified: dateModified,
+    status: parseInt(getDepartmentLoggedIn()) === 10 ? 'for engineering review' : 'for approval'
   };
 
-  console.log("params being sent:", params);
+  // console.log("params being sent:", params);
 
   const { payload } = await dispatch(updateOvertimeByID(params));
 
