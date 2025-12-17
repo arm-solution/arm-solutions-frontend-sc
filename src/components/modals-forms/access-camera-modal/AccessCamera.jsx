@@ -149,7 +149,7 @@ const getTimeIn = async (e) => {
             )}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={props.closeCameraModal}>
+            <button type="button" className="btn btn-secondary btn-sm" disabled={isSubmitting || props.dtrPostLoading} onClick={props.closeCameraModal}>
               Close
             </button>
     

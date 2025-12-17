@@ -68,11 +68,6 @@ const OvertimeTableStatus = (props) => {
     }
   };
 
-  const formatDateTime = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-  };
 
   const records = _getOtByUserId?.data || [];
 
@@ -81,6 +76,20 @@ const OvertimeTableStatus = (props) => {
     setEngrRemarks(record.engr_remarks || '');
     setHrRemarks(record.hr_remarks || '');
     setShowModal(true);
+  };
+
+  const handleResubmitEditOt = (record) => {
+    setSelectedOt(record);
+    setEngrRemarks(record.engr_remarks || '');
+    setHrRemarks(record.hr_remarks || '');
+    // setShowModal(true);
+
+    if(record) {
+      new Modal(overtimeEditModal.current).show();
+    } else {
+      console.error("No Recored Provided");
+      return;
+    }
   };
 
   const handleModalClose = () => {
@@ -135,6 +144,7 @@ const OvertimeTableStatus = (props) => {
 
     handleModalClose();
   };
+  
 
   return (
     <>
@@ -198,10 +208,10 @@ const OvertimeTableStatus = (props) => {
                         Details
                       </button>
                       
-                    {props.canEdit && props.userId === getLoggedInID() && (
+                    {props.canEdit && parseInt(props.userId) === parseInt(getLoggedInID()) && (
                       <button
                         className="btn btn-outline-danger"
-                        onClick={() => handleDetailsClick(item)}
+                        onClick={() => handleResubmitEditOt(item)}
                       >
                         Edit
                       </button>
@@ -272,10 +282,10 @@ const OvertimeTableStatus = (props) => {
                 </div>
                 <div className="row mb-2">
                   <div className="col-md-6">
-                    <strong>Start:</strong> {formatDateTime(selectedRecord.ot_date_time_start)}
+                    <strong>Start:</strong> {formatDateTimeReadable(selectedRecord.ot_date_time_start)}
                   </div>
                   <div className="col-md-6">
-                    <strong>End:</strong> {formatDateTime(selectedRecord.ot_date_time_end)}
+                    <strong>End:</strong> {formatDateTimeReadable(selectedRecord.ot_date_time_end)}
                   </div>
                 </div>
                 <div className="row mb-2">
