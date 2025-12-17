@@ -30,6 +30,8 @@ const RejectedDtrModal = (props) => {
         endDate: end.toISOString().slice(0, 10),
         endTime: end.toISOString().slice(11, 16),
         remarks: props.selectedOt.remarks || "",
+        engr_remarks: props.selectedOt.engr_remarks || "",
+        hr_remarks: props.selectedOt.hr_remarks || "",
       });
     }
   }, [props.selectedOt]);
@@ -140,6 +142,32 @@ const RejectedDtrModal = (props) => {
                       className="form-control"
                       name="endTime"
                       value={formData.endTime}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Engineering Remarks</label>
+                    <textarea
+                      disabled
+                      className="form-control"
+                      rows="2"
+                      name="remarks"
+                      value={formData.engr_remarks}
+                      onChange={handleChange}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label">HR Remarks</label>
+                    <textarea
+                      disabled
+                      className="form-control"
+                      rows="2"
+                      name="remarks"
+                      value={formData.hr_remarks}
                       onChange={handleChange}
                     />
                   </div>
