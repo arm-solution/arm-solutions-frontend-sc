@@ -104,8 +104,10 @@ const OvertimeTableStatus = (props) => {
     let reshapeData = {id: selectedRecord.id }
     if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
       reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'approved' }
+    } else if(parseInt(getDepartmentLoggedIn()) === 6) {
+       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'approved' }
     } else {
-       reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
+      reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
     }
 
     if(selectedRecord.id) {
@@ -127,6 +129,8 @@ const OvertimeTableStatus = (props) => {
     let reshapeData = {id: selectedRecord.id }
     if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
        reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'rejected' }
+    } else if(parseInt(getDepartmentLoggedIn()) === 6) {
+       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'rejected' }
     } else {
        reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
     }
