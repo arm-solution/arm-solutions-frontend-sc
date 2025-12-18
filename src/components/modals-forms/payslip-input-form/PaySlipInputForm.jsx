@@ -13,7 +13,7 @@ const PaySlipInputForm = (props) => {
 
   const dispatch = useDispatch();
 
-  const _getOtByUserIdVar = props._getOtByUserId?.data || [];
+  const _getOtByUserIdVar = props._getOtByUserId || [];
 
   const [grossPay, setGrossPay] = useState(0);
   const [additionalPays, setAdditionalPays] = useState([]);
@@ -196,37 +196,56 @@ const searchDtr = async () => {
 };
 
 useEffect(() => {
+  // -------------------------
+  // DTR computations
+  // -------------------------
   if (props.dtrWithDateRange.length > 0) {
-    setIds(props.dtrWithDateRange.map(d => d.id));
-    setImageLinks(props.dtrWithDateRange.map(d => d.image_link));
+    const newIds = props.dtrWithDateRange.map(d => d.id)
+    const newImages = props.dtrWithDateRange.map(d => d.image_link)
 
-    const baseGross = props.employee?.salary * props.dtrWithDateRange.length;
-    setGrossPay(baseGross);
+    setIds(prev => (
+      JSON.stringify(prev) !== JSON.stringify(newIds) ? newIds : prev
+    ))
 
-    const sum = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
-    const estimatedTotalHours = props.dtrWithDateRange.reduce((acc, curr) => acc + (curr.is_full_shift || 0), 0);
-    setCutOffTotalHours(sum);
-    setEstimatedCutOffTotalHours(estimatedTotalHours)
+    setImageLinks(prev => (
+      JSON.stringify(prev) !== JSON.stringify(newImages) ? newImages : prev
+    ))
+
+    const baseGross =
+      (props.employee?.salary || 0) * props.dtrWithDateRange.length
+
+    setGrossPay(prev => (prev !== baseGross ? baseGross : prev))
+
+    const sum = props.dtrWithDateRange.reduce(
+      (acc, curr) => acc + (curr.total_hours || 0),
+      0
+    )
+
+    const estimated = props.dtrWithDateRange.reduce(
+      (acc, curr) => acc + (curr.is_full_shift || 0),
+      0
+    )
+
+    setCutOffTotalHours(prev => (prev !== sum ? sum : prev))
+    setEstimatedCutOffTotalHours(prev => (prev !== estimated ? estimated : prev))
   }
 
+  // -------------------------
+  // OT computations
+  // -------------------------
+  const otSum = _getOtByUserIdVar.reduce(
+    (acc, curr) => acc + (curr.hrs_payable || 0),
+    0
+  )
 
-  // getting total hours for overtime
-  if (_getOtByUserIdVar.length > 0) {
-    const otSum = _getOtByUserIdVar.reduce((acc, curr) => acc + (curr.total_hours || 0), 0);
-    setTotalOvertime(otSum);
+  setTotalOvertime(prev => (prev !== otSum ? otSum : prev))
 
-    if (otSum > 0 && getOvertimeRate() > 0) {
-      const otPay = getOvertimeRate() * otSum;
-      setGrossOtPay(otPay);
+  const otPay = otSum * getOvertimeRate()
+  setGrossOtPay(prev => (prev !== otPay ? otPay : prev))
 
-      // ✅ Add OT pay to Gross Pay
-      setGrossPay(prev => (prev || 0) + otPay);
-    } 
-  } else {
-    setTotalOvertime(0);
-    setGrossOtPay(0);
-  }
-}, [props.dtrWithDateRange, props.employee, _getOtByUserIdVar, props.userId]);
+}, [props.dtrWithDateRange, props.employee?.salary, _getOtByUserIdVar])
+
+
 
 
   // getting total overtime hrs
@@ -287,17 +306,17 @@ useEffect(() => {
 
                   <div className="info-value mb-0">
                     <span className="info-label">Overtime Rate:</span>
-                    <div>{ getOvertimeRate() }</div>
+                    <div>{ formatTwoDecimal(getOvertimeRate()) }</div>
                   </div>
 
                   <div className="info-value mb-0">
                     <span className="info-label">Total Hours Recorded:</span>
-                    <div>{ cutOffTotalHours || '---' }</div>
+                    <div>{ formatTwoDecimal(cutOffTotalHours) || '---' }</div>
                   </div>
 
                   <div className="info-value mb-0">
                     <span className="info-label">System Estimated Total Hours :</span>
-                    <div>{ estimatedCutOffTotalHours || '---' }</div>
+                    <div>{ formatTwoDecimal(estimatedCutOffTotalHours) || '---' }</div>
                   </div>
 
                 </div>

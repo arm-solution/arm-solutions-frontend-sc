@@ -127,9 +127,22 @@ const OvertimeTableStatus = (props) => {
   const handleReject = async () => {
     
     let reshapeData = {id: selectedRecord.id }
+
     if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
+
+       if(hrRemarks === '') {
+        errorDialog("Need to input a remarks");
+        return;
+       }
+
        reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'rejected' }
     } else if(parseInt(getDepartmentLoggedIn()) === 6) {
+
+       if(engrRemarks === '') {
+         errorDialog("Need to input a remarks");
+         return;
+       }
+
        reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'rejected' }
     } else {
        reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }

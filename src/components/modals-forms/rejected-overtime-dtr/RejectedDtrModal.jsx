@@ -5,6 +5,8 @@ import { updateOvertimeByID } from "../../../store/features/overtime.Slice";
 import { useDispatch } from "react-redux";
 import { successDialog, errorDialog } from "../../../customs/global/alertDialog";
 import { getDepartmentLoggedIn } from "../../../customs/global/manageLocalStorage";
+import { getOvertimeByUserId } from "../../../store/features/overtime.Slice";
+
 
 const RejectedDtrModal = (props) => {
 
@@ -68,6 +70,17 @@ const RejectedDtrModal = (props) => {
 
   if(payload.success) {
     successDialog("Overtime is now updated");
+
+    if(props.selectedOt) {
+      await dispatch(getOvertimeByUserId({
+        id: props.selectedOt.user_id,
+        status: 'rejected',
+        from: '',
+        to: '',
+        page: 1,
+        limit: 10,
+      }))
+    }
   } else {
     errorDialog('Failed to update the overtime');
   }
