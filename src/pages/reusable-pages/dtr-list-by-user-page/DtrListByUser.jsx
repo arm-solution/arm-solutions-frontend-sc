@@ -1,35 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './DtrListByUser.css';
+
 import DtrByUserTable from '../../../components/dtr-by-user-table/DtrByUserTable';
-import PaySlipInputForm from '../../../components/modals-forms/payslip-input-form/PaySlipInputForm'
-import { useDispatch, useSelector } from 'react-redux';
-import { getDtrByMultipleIds } from '../../../store/features/dtrSlice';
-import { useParams } from 'react-router-dom';
-import { getUserById } from '../../../store/features/userSlice'; 
-import { getDepartmentById } from '../../../store/features/departmentSlice';
-import { getEarningsByUserId } from '../../../store/features/earningSlice';
+import PaySlipInputForm from '../../../components/modals-forms/payslip-input-form/PaySlipInputForm';
 import EarningListByUser from '../../../components/earning-list-by-user/EarningListByUser';
 import OvertimeTablePerUser from '../../../components/overtime-table-per-user/OvertimeTablePerUser';
-import { resetDaterangeDtr } from '../../../store/features/dtrSlice';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+
+import { getDtrByMultipleIds, resetDaterangeDtr } from '../../../store/features/dtrSlice';
+import { getUserById } from '../../../store/features/userSlice';
+import { getDepartmentById } from '../../../store/features/departmentSlice';
+import { getEarningsByUserId } from '../../../store/features/earningSlice';
 import { resetOvertimeState } from '../../../store/features/overtime.Slice';
 
+// =====================
+// OT PAYABLE CALC
+// =====================
+const computePayableOt = (totalHours = 0) => {
+  const blocks = totalHours / 0.5;
+  return Math.floor(blocks) * 0.5;
+};
+
 const DtrListByUser = () => {
-
   const dispatch = useDispatch();
-
   const { userId } = useParams();
 
   const [showForm, setShowForm] = useState(false);
   const [dtrIds, setDtrIds] = useState([]);
-
-  const { listDtrByMultipleId } = useSelector(state => state.dtr);
-  const { userById } = useSelector(state => state.users);
-  const { deprtmentById } = useSelector(state => state.departments);
-  const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
-
-  // for overtime state
-  const { _getOtByUserId, message, loading } = useSelector(state => state.overtime);
-
   const [totalHours, setTotalHours] = useState(0);
 
   const [dateRangeStatus, setDateRangeStatus] = useState({
@@ -38,105 +37,115 @@ const DtrListByUser = () => {
     status: ''
   });
 
-  const { dtrWithDateRange } = useSelector(state => state.dtr);
+  const { listDtrByMultipleId, dtrWithDateRange } = useSelector(state => state.dtr);
+  const { userById } = useSelector(state => state.users);
+  const { deprtmentById } = useSelector(state => state.departments);
+  const { _getEarningsByUserId, _getFullEarnings } = useSelector(state => state.earnings);
+  const { _getOtByUserId } = useSelector(state => state.overtime);
 
+  // =====================
+  // FETCH USER
+  // =====================
   useEffect(() => {
-    const getEmployeeById = async () => {
-      if(userId) {
-        await dispatch(getUserById(userId));
-        await dispatch(getEarningsByUserId(userId));
-      }
+    if (userId) {
+      dispatch(getUserById(userId));
+      dispatch(getEarningsByUserId(userId));
     }
+  }, [userId, dispatch]);
 
-    getEmployeeById();
-  }, []);
-
-
+  // =====================
+  // FETCH DTR IDS
+  // =====================
   useEffect(() => {
-    
-    const getDtrList = async() => {
-
-      if(showForm && dtrIds > 0) {
-       await dispatch(getDtrByMultipleIds(dtrIds))
-      }
-
+    if (showForm && dtrIds.length > 0) {
+      dispatch(getDtrByMultipleIds(dtrIds));
     }
+  }, [showForm, dtrIds, dispatch]);
 
-    getDtrList();
-
-  }, [dtrIds, showForm])
-
+  // =====================
+  // TOTAL HOURS
+  // =====================
   useEffect(() => {
+    const total = listDtrByMultipleId.reduce(
+      (sum, log) => sum + Number(log.total_hours || 0),
+      0
+    );
+    setTotalHours(total);
+  }, [listDtrByMultipleId]);
 
-    if (listDtrByMultipleId.length > 0) {
-      const totalHours = listDtrByMultipleId.reduce((sum, log) => sum + log.total_hours, 0);
-      setTotalHours(totalHours);
+  // =====================
+  // FETCH DEPARTMENT
+  // =====================
+  useEffect(() => {
+    if (userById?.[0]?.department) {
+      dispatch(getDepartmentById(userById[0].department));
     }
+  }, [userById, dispatch]);
 
-  }, [listDtrByMultipleId, userById, deprtmentById]);
-
+  // =====================
+  // RESET ON USER CHANGE
+  // =====================
   useEffect(() => {
-    const fetchDepartment = async () => {
-      if (userById && Array.isArray(userById) && userById[0]?.department) {
-        await dispatch(getDepartmentById(userById[0].department));
-      } 
-    };
-    
-    fetchDepartment();
-  }, [userById]); 
+    dispatch(resetDaterangeDtr());
+    dispatch(resetOvertimeState());
+  }, [userId, dispatch]);
 
-  
-  useEffect(() => {
-    // if user id change dtr state is reset to []
-    dispatch(resetDaterangeDtr())
-    dispatch(resetOvertimeState())
-  }, [userId])
+  // =====================
+  // RESHAPE OT DATA
+  // =====================
+const reshapedOtByUser = useMemo(() => {
+  const otList = _getOtByUserId?.data || [];
 
-  
+  if (otList.length === 0) return [];
+
+  return otList.map(ot => ({
+    ...ot,
+    hrs_payable: computePayableOt(ot.total_hours)
+  }));
+}, [_getOtByUserId]);
+
   return (
     <>
+      <hr />
 
-        <hr></hr>
- 
-        {/* list of all user payslip */}
-        <EarningListByUser 
-          _getEarningsByUserId={_getEarningsByUserId}
-          _getFullEarnings={_getFullEarnings}
-          _userById={userById}
-        />
-        <hr />
+      <EarningListByUser
+        _getEarningsByUserId={_getEarningsByUserId}
+        _getFullEarnings={_getFullEarnings}
+        _userById={userById}
+      />
 
-         <OvertimeTablePerUser 
-            setShowForm={setShowForm}
-            setDtrIds={setDtrIds}
-            userId={userId}
-            setDateRangeStatus={setDateRangeStatus}
-            dateRangeStatus={dateRangeStatus}
-            _getOtByUserId={_getOtByUserId}
-         />
+      <hr />
 
-          <DtrByUserTable 
-            setShowForm={setShowForm}
-            setDtrIds={setDtrIds}
-            userId={userId}
-            setDateRangeStatus={setDateRangeStatus}
-            dateRangeStatus={dateRangeStatus}
-            dtrWithDateRange={dtrWithDateRange}
-          />
+      <OvertimeTablePerUser
+        setShowForm={setShowForm}
+        setDtrIds={setDtrIds}
+        userId={userId}
+        setDateRangeStatus={setDateRangeStatus}
+        dateRangeStatus={dateRangeStatus}
+        _getOtByUserId={reshapedOtByUser}
+      />
 
-          <PaySlipInputForm 
-            employee={userById?.data} 
-            deprtmentById={deprtmentById[0]}
-            dateRangeStatus={dateRangeStatus}
-            totalHours={totalHours}
-            setDateRangeStatus={setDateRangeStatus}
-            dtrWithDateRange={dtrWithDateRange}
-            _getOtByUserId={_getOtByUserId}
-            userId={userId}
-          />
+      <DtrByUserTable
+        setShowForm={setShowForm}
+        setDtrIds={setDtrIds}
+        userId={userId}
+        setDateRangeStatus={setDateRangeStatus}
+        dateRangeStatus={dateRangeStatus}
+        dtrWithDateRange={dtrWithDateRange}
+      />
 
+      <PaySlipInputForm
+        employee={userById?.data}
+        deprtmentById={deprtmentById?.[0]}
+        dateRangeStatus={dateRangeStatus}
+        totalHours={totalHours}
+        setDateRangeStatus={setDateRangeStatus}
+        dtrWithDateRange={dtrWithDateRange}
+        _getOtByUserId={reshapedOtByUser}
+        userId={userId}
+      />
     </>
-  )
-}
+  );
+};
 
-export default DtrListByUser
+export default DtrListByUser;
