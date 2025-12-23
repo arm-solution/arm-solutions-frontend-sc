@@ -12,18 +12,19 @@ export const getCurrentDate = () => {
 }
 
 export const formatDateAndTimeReadable = (isoDate) => {
-    const date = new Date(isoDate);
     return new Intl.DateTimeFormat('en-US', {
-        timeZone: 'Asia/Manila', // Replace with your desired timezone
+        timeZone: 'Asia/Manila',
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-        hour: '2-digit',
+        hour: 'numeric',
         minute: '2-digit',
         second: '2-digit',
         hour12: true
-    }).format(date);
+    }).format(new Date(isoDate));
 };
+
+
 
 // posible params 2025-04-14T00:00:00.000Z
 export const formatDateReadable = (isoDate) => {
@@ -69,6 +70,44 @@ export const formatDateTime = (dateTimeStr) => {
 
     return;
 }
+
+// sample december 25, 2025 9:00:00
+export const formatDateTimeReadableAlp = (dateTimeStr) => {
+    if (!dateTimeStr) return '';
+
+    // Remove timezone info so JS won't convert it
+    const cleanStr = dateTimeStr
+        .replace('T', ' ')
+        .replace('.000Z', '')
+        .replace('Z', '');
+
+    // Manually split date & time
+    const [datePart, timePart] = cleanStr.split(' ');
+    const [year, month, day] = datePart.split('-');
+    const [hour, minute, second] = timePart.split(':');
+
+    const date = new Date(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute),
+        Number(second)
+    );
+
+    return date.toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    });
+
+};
+
+
 
 // this function get the formatter mysql datetime without adding +8 just plain display only
 export const formatDateTimeReadable = (dateTimeStr) => {
