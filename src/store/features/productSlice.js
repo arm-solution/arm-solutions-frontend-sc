@@ -41,21 +41,29 @@ export const updateProduct = createAsyncThunk('updateProduct', async (product, {
 //         return error.message;
 //     }
 // })
-export const getAllProducts = createAsyncThunk('getAllProducts', async (_, {rejectWithValue}) => {
 
+
+export const getAllProducts = createAsyncThunk("products/getAllProducts", async ({ page = 1, limit = 10, search = "" }, { rejectWithValue }) => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`);
-        return data;
+      const { data } = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`,{
+          params: { page, limit, search },
+        }
+      );
+
+      return data;
     } catch (error) {
-        return rejectWithValue(error.response ? error.response.data : error.message);
+      return rejectWithValue(
+        error.response?.data || error.message
+      );
     }
-});
+  }
+)
 
 const productSlice = createSlice({
     name: 'products',
     initialState: {
         data: [],
-        getAllProduct: [],
+        allProducts: [],
         isSuccess: false,
         loading: true,
         message: '',
@@ -82,7 +90,7 @@ const productSlice = createSlice({
             state.loading = false;
             state.isSuccess = true;
 
-            state.data = action.payload;
+            state.allProducts = action.payload;
         })
         .addCase(getAllProducts.rejected, (state, action) => {
             state.isSuccess = false;
