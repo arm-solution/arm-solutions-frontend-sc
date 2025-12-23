@@ -105,7 +105,7 @@ const OvertimeTableStatus = (props) => {
     if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
       reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'approved' }
     } else if(parseInt(getDepartmentLoggedIn()) === 6) {
-       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'approved' }
+       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'for approval' }
     } else {
       reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
     }

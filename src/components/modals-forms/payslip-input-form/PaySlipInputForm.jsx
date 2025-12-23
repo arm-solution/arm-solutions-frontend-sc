@@ -81,11 +81,16 @@ const PaySlipInputForm = (props) => {
     type === "additional" ? setAdditionalPays(updater) : setDeductions(updater);
   };
 
-  const calculateFinalPay = () => {
-    const addTotal = additionalPays.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
-    const dedTotal = deductions.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
-    return (parseFloat(grossPay || 0) + addTotal - dedTotal).toFixed(2);
-  };
+const calculateFinalPay = () => {
+  const addTotal = additionalPays.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+
+  const dedTotal = deductions.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+  
+  const gross = parseFloat(grossPay || 0);
+  const otPay = parseFloat(grossOtPay || 0);
+  return (gross + addTotal + otPay - dedTotal).toFixed(2);
+};
+
 
   const removeRow = (index, type) => {
     const updated = type === "additional" ? [...additionalPays] : [...deductions];
