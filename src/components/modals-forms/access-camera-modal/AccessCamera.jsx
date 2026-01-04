@@ -9,6 +9,8 @@ const AccessCamera = (props) => {
   const canvasRef = useRef(null);
 
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const showError = (error) => {
     switch (error.code) {
@@ -30,73 +32,71 @@ const AccessCamera = (props) => {
     }
   };
 
-  const getTimeIn = async (e) => {
-    e.preventDefault();
-  
+const getTimeIn = async (e) => {
+  e.preventDefault();
+
+  // ⛔ Prevent double click immediately
+  if (isSubmitting) return;
+
+  setIsSubmitting(true);
+
+  try {
     const currentDate = new Date();
     const formattedDate = dateFormatted(currentDate);
     const formattedTime = format(currentDate, 'HH:mm:ss');
-  
+
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by this browser.");
       return;
     }
-  
-    try {
-      const imageBlob = await captureImage();
-  
-      // Helper function to get a single position sample
-      const getPositionSample = () =>
-        new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            { enableHighAccuracy: true }
-          );
-        });
-  
-      // Collect multiple position samples
-      const positionSamples = await Promise.all(
-        Array.from({ length: 3 }, () => getPositionSample())
-      );
-  
-      // Destructure and calculate average latitude and longitude
-      const { latitude, longitude } = positionSamples
-        .map(({ coords: { latitude, longitude } }) => ({ latitude, longitude }))
-        .reduce(
-          (acc, { latitude, longitude }) => ({
-            latitude: acc.latitude + latitude,
-            longitude: acc.longitude + longitude,
-          }),
-          { latitude: 0, longitude: 0 }
+
+    const imageBlob = await captureImage();
+
+    const getPositionSample = () =>
+      new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { enableHighAccuracy: true }
         );
-  
-      const avgCoords = {
-        latitude: latitude / positionSamples.length,
-        longitude: longitude / positionSamples.length,
-      };
-  
-      // Construct coordinates object
-      const coords = {
-        ...avgCoords,
-        shift_date: formattedDate,
-        time_in: formattedTime,
-        break_start: '',
-        break_end: '',
-        ot_start: '',
-        ot_end: '',
-        remarks: '',
-        user_id: props.user_id,
-        status: 'pending',
-      };
-  
-      // Saving data to database
-      props.submitTimeIn(coords, imageBlob);
-    } catch (error) {
-      showError(error);
-    }
-  };
-  
+      });
+
+    const positionSamples = await Promise.all(
+      Array.from({ length: 3 }, () => getPositionSample())
+    );
+
+    const { latitude, longitude } = positionSamples
+      .map(p => p.coords)
+      .reduce(
+        (acc, { latitude, longitude }) => ({
+          latitude: acc.latitude + latitude,
+          longitude: acc.longitude + longitude,
+        }),
+        { latitude: 0, longitude: 0 }
+      );
+
+    const coords = {
+      latitude: latitude / positionSamples.length,
+      longitude: longitude / positionSamples.length,
+      shift_date: formattedDate,
+      time_in: formattedTime,
+      break_start: '',
+      break_end: '',
+      ot_start: '',
+      ot_end: '',
+      remarks: '',
+      user_id: props.user_id,
+      status: 'pending',
+    };
+
+    await props.submitTimeIn(coords, imageBlob); // 👈 wait for save
+  } catch (error) {
+    showError(error);
+  } finally {
+    setIsSubmitting(false); // ✅ unlock button
+  }
+};
+
 
   const captureImage = async () => {
     if (!props.videoRef.current || !canvasRef.current) return;
@@ -149,12 +149,16 @@ const AccessCamera = (props) => {
             )}
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary btn-sm" onClick={props.closeCameraModal}>
+            <button type="button" className="btn btn-secondary btn-sm" disabled={isSubmitting || props.dtrPostLoading} onClick={props.closeCameraModal}>
               Close
             </button>
     
-            <button className="btn btn-primary btn-sm" onClick={(e) => getTimeIn(e)} disabled={props.dtrPostLoading}>
-              {props.dtrPostLoading ? "Loading..." : "Capture"}
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={getTimeIn}
+              disabled={isSubmitting || props.dtrPostLoading}
+            >
+              {(isSubmitting || props.dtrPostLoading) ? "Loading..." : "Capture"}
             </button>
           </div>
         </div>

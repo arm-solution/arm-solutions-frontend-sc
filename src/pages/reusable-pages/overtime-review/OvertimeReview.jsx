@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../components/loading-spinner/Loading';
 import { getAllUsersWithPagination } from '../../../store/features/userSlice';
+import { getPositionByDepartmentID } from '../../../customs/global/manageObjects';
+import { getDepartmentLoggedIn } from '../../../customs/global/manageLocalStorage'; 
 
 const OvertimeReview = () => {
   const dispatch = useDispatch();
@@ -94,7 +96,7 @@ const OvertimeReview = () => {
                         <td className="text-center">
                           <button
                             className="btn btn-outline-primary btn-sm"
-                            onClick={() => navigate(`/admin/overtime-records/${user.id}`)}
+                            onClick={() => navigate(`/${getPositionByDepartmentID(getDepartmentLoggedIn())}/common/overtime-records/${user.id}`)}
                           >
                             View Request
                           </button>

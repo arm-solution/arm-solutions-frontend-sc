@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { formatDateReadable } from '../../customs/global/manageDates';
 import DtrDetailsModal from '../modals-forms/dtr-details/DtrDetailsModal';
 import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
@@ -13,14 +13,21 @@ const DtrByUserTable = (props) => {
 
 
   const handleView = (dtr) => {
-    setSelectedDtr(dtr);
-      
+    if(dtr) {
+      const modalElement = modalRef.current;
+      const modal = new Modal(modalElement);
+      setSelectedDtr(dtr);
+
+      modal.show()
+    } else {
+      console.error("No DTR selected!");
+    }
   };
 
   // handle approval
   const handleApproval = async (event, dtr) => {
     event.preventDefault();
-
+    
     if(dtr) {
       const modalElement = modalForApproval.current;
       const modal = new Modal(modalElement);
@@ -36,7 +43,7 @@ const DtrByUserTable = (props) => {
   return (
     <>
       <DtrDetailsModal selectedDtr={selectedDtr} modalRef={modalRef} />
-      <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} userId={props.userId} department='hr' status='for approval' />
+      <DtrRemarks modalDtrRemarks={modalForApproval} selectedDtr={selectedDtr} userId={props.userId} department='hr' status='for approval' dateRangeStatus={props.dateRangeStatus} />
 
       <div className="card mt-5">
         <div className="card-body">

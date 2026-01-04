@@ -12,29 +12,31 @@ export const postOvertime = createAsyncThunk('ot/postOvertime', async(ot, {rejec
     }
 });
 
-
+// get ot with user id, pagination and date range
 export const getOvertimeByUserId = createAsyncThunk(
   'ot/getOvertimeByUserId',
   async (params, { rejectWithValue }) => {
     try {
       const { id, ...rest } = params;
 
+      
       if (!id) {
-        console.error("No user ID provided");
-        return rejectWithValue("No user ID provided");
-      }
+          console.error("No user ID provided");
+          return rejectWithValue("No user ID provided");
+        }
+        
+        // Build query string dynamically from rest of the parameters
+        const queryString = new URLSearchParams(rest).toString();
 
-      // Build query string dynamically from rest of the parameters
-      const queryString = new URLSearchParams(rest).toString();
+        // console.log("params from slice", queryString)
 
       // Example URL: /overtime/get-overtime-by-userid-with-pagination/67?page=1&limit=10
       const url = `${process.env.REACT_APP_API_BASE_URL}/overtime/get-overtime-by-userid-with-pagination/${id}${
         queryString ? `?${queryString}` : ''
       }`;
 
-      console.log("url", url);
-
       const { data } = await axios.get(url);
+ 
       return data;
     } catch (error) {
       return rejectWithValue(
@@ -73,7 +75,11 @@ const overtimeSlice = createSlice({
         loading: false,
         message: ''
     },
-    reducers: {},
+    reducers: {
+        resetOvertimeState(state) {
+            state._getOtByUserId = [];
+        }
+    },
     extraReducers(builder) {
       builder
         .addCase(postOvertime.pending, (state, _) => {
@@ -105,4 +111,6 @@ const overtimeSlice = createSlice({
     }
 })
 
+
+export const { resetOvertimeState } = overtimeSlice.actions; 
 export default overtimeSlice;

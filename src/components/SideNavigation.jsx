@@ -1,16 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { logout } from '../customs/global/manageLocalStorage';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { resetCurrentDtr } from '../store/features/dtrSlice';
 import { useDispatch } from 'react-redux';
 import "./../customs/css/SideNavigation.css";
 import { isDepartmentAllowed } from '../customs/global/manageLocalStorage';
+import { getLoggedInID } from '../customs/global/manageLocalStorage';
 // import { getDepartmentName } from '../customs/global/manageLocalStorage';
 // import { getDepartmentLoggedIn } from '../customs/global/manageLocalStorage';
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [expandedDropdown, setExpandedDropdown] = useState(null); // State to track expanded dropdown
@@ -136,13 +137,15 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                             <li className="sidebar-item">
                                 <Link to='general/file-overtime' className="sidebar-link">File Over Time</Link>
                             </li>
+                            <li className="sidebar-item">
+                                <Link to={`common/overtime-records/${getLoggedInID()}`} className="sidebar-link">Overtime Records</Link>
+                            </li>
                         </ul>
                     </li>
                     </>
                 )}
 
           
-
                 {isDepartmentAllowed([1,5,7]) && (
                     <>
                     {/* Products */}

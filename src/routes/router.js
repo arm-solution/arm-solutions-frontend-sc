@@ -84,6 +84,7 @@ const CommonRoutes = () => (
     <Route path="map" element={LazyComponent(Maps)} />
     <Route path="job-order" element={LazyComponent(JobOrder)} />
     <Route path="job-order-form/:proposalID" element={LazyComponent(JobOrderForm)} />
+    <Route path='overtime-records/:userId' element={LazyComponent(OvertimeRecordByUser)}/>
   </Route>
 );
 
@@ -123,7 +124,6 @@ export const router = createBrowserRouter(
           <Route path='cutoff' element={LazyComponent(CutOff)}/>
           <Route path='overtime-review' element={<OvertimeReview/>}/>
           <Route path='payslip-records/:userIdParams' element={LazyComponent(PaySlipUserRecords)}/>
-          <Route path='overtime-records/:userId' element={LazyComponent(OvertimeRecordByUser)}/>
           <Route path='dtrlogs' element={LazyComponent(DtrLogs)}/>
           <Route path='payslip-records/:userId' element={LazyComponent(PaySlipUserRecords)}/>
           {CommonAllUsersRoutes()}

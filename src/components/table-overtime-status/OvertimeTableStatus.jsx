@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './OvertimeTableStatus.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { getOvertimeByUserId, updateOvertimeByID } from '../../store/features/overtime.Slice';
 import { getDepartmentLoggedIn } from '../../customs/global/manageLocalStorage';
 import { successDialog, errorDialog } from '../../customs/global/alertDialog';
-import { formatDateAndTimeReadable, formatDateTimeReadable } from '../../customs/global/manageDates';
+import { formatDateTimeReadable } from '../../customs/global/manageDates';
+import RejectedDtrModal from '../modals-forms/rejected-overtime-dtr/RejectedDtrModal';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min';
+import { getLoggedInID } from '../../customs/global/manageLocalStorage';
 
 const OvertimeTableStatus = (props) => {
   const dispatch = useDispatch();
   const { _getOtByUserId, loading } = useSelector((state) => state.overtime);
+
+  const overtimeEditModal = useRef(null);
 
   const [params, setParams] = useState({
     id: props.userId,
@@ -19,7 +24,7 @@ const OvertimeTableStatus = (props) => {
     limit: 10,
   });
 
-
+  const [selectedOt, setSelectedOt] = useState(null)
   const [showModal, setShowModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [engrRemarks, setEngrRemarks] = useState('');
@@ -63,11 +68,6 @@ const OvertimeTableStatus = (props) => {
     }
   };
 
-  const formatDateTime = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-  };
 
   const records = _getOtByUserId?.data || [];
 
@@ -76,6 +76,20 @@ const OvertimeTableStatus = (props) => {
     setEngrRemarks(record.engr_remarks || '');
     setHrRemarks(record.hr_remarks || '');
     setShowModal(true);
+  };
+
+  const handleResubmitEditOt = (record) => {
+    setSelectedOt(record);
+    setEngrRemarks(record.engr_remarks || '');
+    setHrRemarks(record.hr_remarks || '');
+    // setShowModal(true);
+
+    if(record) {
+      new Modal(overtimeEditModal.current).show();
+    } else {
+      console.error("No Recored Provided");
+      return;
+    }
   };
 
   const handleModalClose = () => {
@@ -90,8 +104,10 @@ const OvertimeTableStatus = (props) => {
     let reshapeData = {id: selectedRecord.id }
     if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
       reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'approved' }
+    } else if(parseInt(getDepartmentLoggedIn()) === 6) {
+       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'for approval' }
     } else {
-       reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
+      reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
     }
 
     if(selectedRecord.id) {
@@ -108,10 +124,44 @@ const OvertimeTableStatus = (props) => {
     handleModalClose();
   };
 
-  const handleReject = () => {
-    alert(`Rejected OT ID: ${selectedRecord.id}`);
+  const handleReject = async () => {
+    
+    let reshapeData = {id: selectedRecord.id }
+
+    if(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) {
+
+       if(hrRemarks === '') {
+        errorDialog("Need to input a remarks");
+        return;
+       }
+
+       reshapeData = { ...reshapeData, hr_remarks: hrRemarks, status: 'rejected' }
+    } else if(parseInt(getDepartmentLoggedIn()) === 6) {
+
+       if(engrRemarks === '') {
+         errorDialog("Need to input a remarks");
+         return;
+       }
+
+       reshapeData = { ...reshapeData, engr_remarks: engrRemarks, status: 'rejected' }
+    } else {
+       reshapeData = { ...reshapeData, engr_remarks: hrRemarks, status: 'for approval' }
+    }
+
+    if(selectedRecord.id) {
+      const { payload } = await dispatch(updateOvertimeByID(reshapeData));
+
+      if(payload.success) {
+         successDialog('Rejected Successfully');
+         await dispatch(getOvertimeByUserId(params));
+      } else {
+        errorDialog('Faild to reject this overtime');
+      }
+    }
+
     handleModalClose();
   };
+  
 
   return (
     <>
@@ -169,11 +219,22 @@ const OvertimeTableStatus = (props) => {
                     <td>{item.date_filed ? new Date(item.date_filed).toLocaleDateString() : '-'}</td>
                     <td>
                       <button
-                        className="btn btn-outline-primary"
+                        className="btn btn-outline-primary me-3"
                         onClick={() => handleDetailsClick(item)}
                       >
                         Details
                       </button>
+                      
+                    {props.canEdit && parseInt(props.userId) === parseInt(getLoggedInID()) && (
+                      <button
+                        className="btn btn-outline-danger"
+                        onClick={() => handleResubmitEditOt(item)}
+                      >
+                        Edit
+                      </button>
+                    )}
+
+
                     </td>
                   </tr>
                 ))
@@ -238,10 +299,10 @@ const OvertimeTableStatus = (props) => {
                 </div>
                 <div className="row mb-2">
                   <div className="col-md-6">
-                    <strong>Start:</strong> {formatDateTime(selectedRecord.ot_date_time_start)}
+                    <strong>Start:</strong> {formatDateTimeReadable(selectedRecord.ot_date_time_start)}
                   </div>
                   <div className="col-md-6">
-                    <strong>End:</strong> {formatDateTime(selectedRecord.ot_date_time_end)}
+                    <strong>End:</strong> {formatDateTimeReadable(selectedRecord.ot_date_time_end)}
                   </div>
                 </div>
                 <div className="row mb-2">
@@ -253,8 +314,35 @@ const OvertimeTableStatus = (props) => {
                     {selectedRecord.date_filed ? new Date(selectedRecord.date_filed).toLocaleDateString() : '-'}
                   </div>
                 </div>
+                <div className="row mb-2">
+                  <div className="col-md-12">
+                    <strong>Remarks:</strong> {selectedRecord.remarks}
+                  </div>
+                </div>
 
-              {(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1) && (
+                {(selectedRecord.status == 'rejected' || selectedRecord.status == 'approved') && (
+                <div className="row mb-2">
+                  <div className="col-md-6">
+                    <strong>Engineering Remarks:</strong> {selectedRecord.engr_remarks}
+                  </div>
+                  <div className="col-md-6">
+                    <strong>HR Remarks:</strong> {selectedRecord.hr_remarks}
+                  </div>
+                </div>
+                )}
+
+                {(selectedRecord.status == 'for approval') && (
+                <div className="row mb-2">
+                  <div className="col-md-6">
+                    <strong>Engineering Remarks:</strong> {selectedRecord.engr_remarks}
+                  </div>
+                </div>
+                )}
+
+              
+
+
+              {(parseInt(getDepartmentLoggedIn()) === 2 || parseInt(getDepartmentLoggedIn()) === 1 && selectedRecord.status == 'for approval') && (
                   <div className="mb-3">
                     <label className="form-label">HR Remarks</label>
                     <textarea
@@ -268,7 +356,7 @@ const OvertimeTableStatus = (props) => {
                 )}
 
 
-                {parseInt(getDepartmentLoggedIn()) === 6 && (
+                {(parseInt(getDepartmentLoggedIn()) === 6 && selectedRecord.status == 'for engineering review') && (
                   <div className="mb-3">
                     <label className="form-label">Engineering Remarks</label>
                     <textarea
@@ -301,6 +389,11 @@ const OvertimeTableStatus = (props) => {
           </div>
         </div>
       )}
+
+
+
+      {/* modal for rejected dtr for edit */}
+      <RejectedDtrModal overtimeEditModal={overtimeEditModal} selectedOt={selectedOt}/>
     </>
   );
 };
