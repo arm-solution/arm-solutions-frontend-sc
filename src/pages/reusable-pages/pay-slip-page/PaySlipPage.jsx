@@ -14,7 +14,7 @@ const PaySlipPage = () => {
   const dispatch = useDispatch();
 
   const columns = [
-    { header: 'Date', accessor: 'date_from' },
+    { header: 'Date', accessor: 'date_created' },
   ];
 
   const [myEarnings, setMyEarnings] = useState([]);
@@ -40,7 +40,7 @@ const PaySlipPage = () => {
     if (_getEarningsByUserId.length > 0) {
       const formattedEarnings = _getEarningsByUserId.map(item => ({
         ...item,
-        date_from: formatDateReadable(item.date_from)
+        date_created: formatDateReadable(item.date_created)
       }));
   
       setMyEarnings(formattedEarnings);
