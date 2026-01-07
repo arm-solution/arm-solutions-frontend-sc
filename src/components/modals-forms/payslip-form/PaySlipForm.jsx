@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./PaySlipForm.css";
 import { getLoggedInUser } from "../../../customs/global/manageLocalStorage";
-import { getCurrentDateFormatted } from "../../../customs/global/manageDates";
+import { formatDateReadable } from "../../../customs/global/manageDates";
 
 const PaySlipForm = (props) => {
   const [showDocs, setShowDocs] = useState(false);
@@ -29,6 +29,7 @@ const PaySlipForm = (props) => {
 
     setShowDocs(hasArray || hasObject);
   }, [props._getFullEarnings, props._userById]);
+  
 
   const formatAmount = (val) => (val ? `Php ${val}` : "Php ---");
 
@@ -62,7 +63,8 @@ const PaySlipForm = (props) => {
             : "---"}
         </p>
         <p>Employee Number: {props._userById?.data?.employee_id ?? "---"}</p>
-        <p>Date: {getCurrentDateFormatted()}</p>
+        {/* <p>Date: {getCurrentDateFormatted()}</p> */}
+        <p>Date Generate: { props._getFullEarnings?.date_created ? formatDateReadable(props._getFullEarnings?.date_created) : '' }</p>
       </div>
 
       <div className="custom-line"></div>
@@ -78,27 +80,27 @@ const PaySlipForm = (props) => {
           <tbody>
             <tr>
               <td>Gross Pay</td>
-              <td>{formatAmount(props._getFullEarnings?.data?.gross_pay)}</td>
+              <td>{formatAmount(props._getFullEarnings?.gross_pay)}</td>
             </tr>
             <tr>
               <td>Additional</td>
-              <td>{formatAmount(props._getFullEarnings?.data?.total_additional_pay)}</td>
+              <td>{formatAmount(props._getFullEarnings?.total_additional_pay)}</td>
             </tr>
             <tr>
               <td>Total Hours Overtime</td>
-              <td>{props._getFullEarnings?.data?.total_gross_overtime ? formatAmount(props._getFullEarnings?.data?.total_gross_overtime) : '---'}</td>
+              <td>{props._getFullEarnings?.total_gross_overtime ? formatAmount(props._getFullEarnings?.total_gross_overtime) : '---'}</td>
             </tr>
             <tr>
               <td>Overtime Rate</td>
-              <td>{props._getFullEarnings?.data?.overtime_rate ? formatAmount(props._getFullEarnings?.data?.overtime_rate) : '---'}</td>
+              <td>{props._getFullEarnings?.overtime_rate ? formatAmount(props._getFullEarnings?.overtime_rate) : '---'}</td>
             </tr>
             <tr>
               <td>Deduction</td>
-              <td>{formatAmount(props._getFullEarnings?.data?.total_deduction)}</td>
+              <td>{formatAmount(props._getFullEarnings?.total_deduction)}</td>
             </tr>
             <tr>
               <td>Total</td>
-              <td>{formatAmount(props._getFullEarnings?.data?.final_pay)}</td>
+              <td>{formatAmount(props._getFullEarnings?.final_pay)}</td>
             </tr>
 
             <tr className="total-row">
@@ -107,7 +109,7 @@ const PaySlipForm = (props) => {
               </td>
               <td></td>
             </tr>
-            {renderList(props._getFullEarnings?.data?.additional)}
+            {renderList(props._getFullEarnings?.additional)}
 
             <tr className="net-salary-row">
               <td>
@@ -115,7 +117,7 @@ const PaySlipForm = (props) => {
               </td>
               <td></td>
             </tr>
-            {renderList(props._getFullEarnings?.data?.deduction)}
+            {renderList(props._getFullEarnings?.deduction)}
           </tbody>
           <tfoot>
             <tr>

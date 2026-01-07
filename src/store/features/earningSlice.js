@@ -15,7 +15,7 @@ export const getFullEarnings = createAsyncThunk('get/getFullEarnings', async(id,
         if(!id) {
             return console.error("ERROR: No id provided");
         }
-        const  data  = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
+        const { data }  = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/earnings/get-by-id/${id}`);
 
         return data;
     } catch (error) {
