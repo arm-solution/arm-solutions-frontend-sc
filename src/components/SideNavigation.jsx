@@ -127,7 +127,7 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                                 <Link to='general/my-payslip' className="sidebar-link">Pay Slip</Link>
                             </li>
                             <li className="sidebar-item">
-                                <Link to='general/my-attendance' className="sidebar-link">My Attendance</Link>
+                                <Link to='general/my-attendance' className="sidebar-link">DTR Logs</Link>
                             </li>
                             <li className="sidebar-item">
                                 <Link to='general/file-overtime' className="sidebar-link">File Over Time</Link>
