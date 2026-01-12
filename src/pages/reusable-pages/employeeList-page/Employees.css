@@ -1,49 +1,253 @@
-h1 {
-    margin-top: 5rem;
+/* Scoped styles for EmployeesList component */
+.employees-container {
+  padding: 20px;
+  height: 100%;
 }
 
-.table-sm td,
-.table-sm th {
-  padding: 0.3rem;
-  font-size: 0.875rem; /* Adjust font size as needed */
+.employees-container h1 {
+  margin-top: 5rem;
 }
 
-.search-input {
-    width: 20rem;
-    border: 1px solid gray;
+/* Table Specific Styles */
+.employees-container .table-sm td,
+.employees-container .table-sm th {
+  padding: 0.3rem !important;
+  font-size: 0.875rem !important;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-  }
-  
-  .pagination button {
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    background-color: white;
-    cursor: pointer;
-  }
-  
-  .pagination button.active {
-    background-color: #007bff;
-    color: white;
-  }
+.employees-container .search-input {
+  width: 20rem;
+  border: 1px solid gray;
+}
 
+/* Pagination */
+.employees-container .pagination {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.employees-container .pagination button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+}
+
+.employees-container .pagination button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Card Layout - Normal height, no fixed viewport */
+.employees-container .card {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.employees-container .card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem !important;
+}
+
+/* Table Container - Normal flow, no overflow */
+.employees-container .table-responsive {
+  margin-bottom: 1rem !important;
+  width: 100% !important;
+}
+
+.employees-container .table-responsive .table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+
+/* Pagination Wrapper */
+.employees-container .pagination-wrapper {
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+  background-color: #fff;
+}
+
+/* Pagination Buttons Styling */
+.employees-container .pagination .page-link {
+  color: #0d6efd !important;
+  border: 1px solid #dee2e6 !important;
+  padding: 0.5rem 0.75rem !important;
+  transition: all 0.2s ease;
+}
+
+.employees-container .pagination .page-link:hover {
+  background-color: #e9ecef !important;
+  border-color: #dee2e6 !important;
+}
+
+.employees-container .pagination .page-item.active .page-link {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.employees-container .pagination .page-item.disabled .page-link {
+  color: #6c757d !important;
+  pointer-events: none;
+  background-color: #fff !important;
+  border-color: #dee2e6 !important;
+  opacity: 0.6;
+}
+
+/* Search and Info Section */
+.employees-container .card-body .row.mb-3 {
+  flex-shrink: 0;
+}
+
+/* Table Styling - Normal table, no sticky header */
+.employees-container .table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+.employees-container .table thead th {
+  background-color: #212529 !important;
+  color: white !important;
+}
+
+.employees-container .table {
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+.employees-container .table td,
+.employees-container .table th {
+  vertical-align: middle !important;
+}
+
+/* Loading Spinner */
+.employees-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Button Group Styling */
+.employees-container .btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Badge Styling */
+.employees-container .badge {
+  font-weight: 500 !important;
+  padding: 0.35em 0.65em !important;
+}
+
+/* Action Buttons */
+.employees-container .btn-outline-primary,
+.employees-container .btn-outline-danger {
+  margin: 0 0.25rem;
+  padding: 0.375rem 0.75rem !important;
+}
+
+/* Card Header */
+.employees-container .card-header {
+  padding: 1rem 1.5rem !important;
+}
+
+.employees-container .card-header h5 {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+}
+
+/* Input Group */
+.employees-container .input-group-text {
+  background-color: #f8f9fa !important;
+  border: 1px solid #ced4da !important;
+}
+
+.employees-container .form-control {
+  border: 1px solid #ced4da !important;
+}
+
+.employees-container .form-control:focus {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Search Button Styling */
+.employees-container .input-group .btn-primary {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.employees-container .input-group .btn-outline-secondary {
+  border-left: 0 !important;
+}
+
+/* Responsive Design */
 @media screen and (max-width: 768px) {
+  .employees-container .search-input {
+    width: 100%;
+    border: 1px solid gray;
+  }
 
-    .search-input {
-        width: 100%;
-        border: 1px solid gray;
-    }
+  .employees-container .mob {
+    display: none;
+  }
 
-    .mob {
-        display: none;
-    }
-    .table-sm td,
-        .table-sm th {
-        padding: 0.3rem;
-        font-size: 2px !important; /* Adjust font size as needed */
-        }
+  .employees-container .table-sm td,
+  .employees-container .table-sm th {
+    padding: 0.3rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .employees-container .card-body .row.mb-3 .col-md-6 {
+    margin-bottom: 1rem;
+  }
+
+  .employees-container .card-body .row.mb-3 .col-md-6:last-child {
+    text-align: left !important;
+  }
+
+  .employees-container .btn-outline-primary,
+  .employees-container .btn-outline-danger {
+    font-size: 0.875rem !important;
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  /* Mobile search button adjustments */
+  .employees-container .input-group .btn {
+    font-size: 0.875rem !important;
+    padding: 0.375rem 0.75rem !important;
+  }
+}
+
+/* Extra specificity for table cells */
+.employees-container table.table tbody td,
+.employees-container table.table thead th {
+  border-color: #dee2e6 !important;
+}
+
+/* Ensure Bootstrap classes work properly within container */
+.employees-container .text-center {
+  text-align: center !important;
+}
+
+.employees-container .text-end {
+  text-align: end !important;
+}
+
+.employees-container .fw-bold {
+  font-weight: 700 !important;
+}
+
+.employees-container .text-muted {
+  color: #6c757d !important;
+}
+
+.employees-container .bg-info {
+  background-color: #0dcaf0 !important;
+}
+
+.employees-container .text-dark {
+  color: #212529 !important;
 }

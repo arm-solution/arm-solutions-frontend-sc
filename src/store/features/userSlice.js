@@ -22,6 +22,7 @@ export const getAllUsersWithPagination = createAsyncThunk(
       const { data } = await api.get("/employees/get-all-with-pagination", {
         params: { page, limit, search },
       });
+
       return data;
     } catch (error) {
       return rejectWithValue(error.response ? error.response.data : error.message);
