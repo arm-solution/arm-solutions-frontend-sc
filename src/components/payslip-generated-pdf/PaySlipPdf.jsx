@@ -219,9 +219,9 @@ const PaySlipPdf = () => {
  
         {/* Enhanced Header */}
         <View style={styles.headerContainer}>
-          <Text style={styles.header}>PAYSLIP</Text>
+          <Text style={styles.header}>ARM SOLUTION ENTERPRISES</Text>
           <Text style={styles.headerSubtext}>
-            Period: {earnings?.data?.date_from ? formatDateReadable(earnings.data.date_from) : '---'} to {earnings?.data?.date_to ? formatDateReadable(earnings.data.date_to) : '---'}
+            Payslip Period: {earnings?.date_from ? formatDateReadable(earnings.date_from) : '---'} to {earnings?.date_to ? formatDateReadable(earnings.date_to) : '---'}
           </Text>
         </View>
 
@@ -245,14 +245,14 @@ const PaySlipPdf = () => {
             <View style={styles.employeeItem}>
               <Text style={styles.employeeLabel}>Date From:</Text>
               <Text style={styles.employeeValue}>
-                {earnings?.data?.date_from ? formatDateReadable(earnings.data.date_from) : '---'}
+                {earnings?.date_from ? formatDateReadable(earnings.date_from) : '---'}
               </Text>
             </View>
 
             <View style={styles.employeeItem}>
               <Text style={styles.employeeLabel}>Date To:</Text>
               <Text style={styles.employeeValue}>
-                {earnings?.data?.date_to ? formatDateReadable(earnings.data.date_to) : '---'}
+                {earnings?.date_to ? formatDateReadable(earnings.date_to) : '---'}
               </Text>
             </View>
           </View>
@@ -278,7 +278,7 @@ const PaySlipPdf = () => {
               </View>
               <View style={styles.tableColRight}>
                 <Text style={styles.tableCellAmount}>
-                  {earnings?.data?.gross_pay ? `Php ${parseFloat(earnings.data.gross_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                  {earnings?.gross_pay ? `Php ${parseFloat(earnings.gross_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
                 </Text>
               </View>
             </View>
@@ -289,7 +289,7 @@ const PaySlipPdf = () => {
               </View>
               <View style={styles.tableColRight}>
                 <Text style={styles.tableCellAmount}>
-                  {earnings?.data?.total_additional_pay ? `Php ${parseFloat(earnings.data.total_additional_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                  {earnings?.total_additional_pay ? `Php ${parseFloat(earnings.total_additional_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
                 </Text>
               </View>
             </View>
@@ -300,7 +300,7 @@ const PaySlipPdf = () => {
               </View>
               <View style={styles.tableColRight}>
                 <Text style={styles.tableCellAmount}>
-                  {earnings?.data?.total_deduction ? `Php ${parseFloat(earnings.data.total_deduction).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                  {earnings?.total_deduction ? `Php ${parseFloat(earnings.total_deduction).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
                 </Text>
               </View>
             </View>
@@ -311,7 +311,7 @@ const PaySlipPdf = () => {
               </View>
               <View style={styles.tableColRight}>
                 <Text style={styles.tableCellBold}>
-                  {earnings?.data?.final_pay ? `Php ${parseFloat(earnings.data.final_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
+                  {earnings?.final_pay ? `Php ${parseFloat(earnings.final_pay).toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '---'}
                 </Text>
               </View>
             </View>
@@ -319,11 +319,11 @@ const PaySlipPdf = () => {
         </View>
 
         {/* Additional Earnings Detail */}
-        {Array.isArray(earnings?.data?.additional) && earnings?.data?.additional.length > 0 && (
+        {Array.isArray(earnings?.additional) && earnings?.additional.length > 0 && (
           <View style={styles.detailSection}>
             <Text style={styles.detailHeader}>Additional Earnings Breakdown</Text>
             <View style={styles.detailTable}>
-              {earnings.data.additional.map((d, index) => (
+              {earnings.additional.map((d, index) => (
                 <View key={index} style={styles.detailRow}>
                   <Text style={styles.detailLabel}>{d.title}</Text>
                   <Text style={styles.detailAmount}>
@@ -336,11 +336,11 @@ const PaySlipPdf = () => {
         )}
 
         {/* Deductions Detail */}
-        {Array.isArray(earnings?.data?.deduction) && earnings?.data?.deduction.length > 0 && (
+        {Array.isArray(earnings?.deduction) && earnings?.deduction.length > 0 && (
           <View style={styles.detailSection}>
             <Text style={styles.detailHeader}>Deductions Breakdown</Text>
             <View style={styles.detailTable}>
-              {earnings.data.deduction.map((d, index) => (
+              {earnings.deduction.map((d, index) => (
                 <View key={index} style={styles.detailRow}>
                   <Text style={styles.detailLabel}>{d.title}</Text>
                   <Text style={styles.detailAmount}>
