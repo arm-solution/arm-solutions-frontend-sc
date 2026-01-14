@@ -198,10 +198,10 @@ const RejectedDtrModal = (props) => {
                 </div>
 
                 <button
-                  className="btn btn-primary w-100"
+                  className="btn btn-danger w-100"
                   onClick={handleSubmit}
                 >
-                  Save Changes
+                  Resubmit
                 </button>
               </div>
             </div>
