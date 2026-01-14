@@ -77,22 +77,15 @@ export const checkAuthAndNavigate = (navigate) => {
   
   }
 
-
   export const logout = () => {
-    const authData = localStorage.getItem('authEmployee');
-    const token = localStorage.getItem('token');
-  
-    if (authData || token) {
-      localStorage.removeItem('authEmployee');
-      localStorage.removeItem('token');
-      
-        sessionStorage.clear();
-        window.dispatchEvent(new Event('currentShift'));
-        window.location.href = '/';
+    localStorage.removeItem('authEmployee');
+    localStorage.removeItem('token');
 
-    } else {
-      console.warn('No auth data or token found in localStorage');
-    }
+    sessionStorage.clear();
+
+    window.dispatchEvent(new Event('currentShift'));
+
+    window.location.replace('/'); // prevents back navigation
   };
   
 
