@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import SideNavigation from '../SideNavigation';
+import SideNavigation from '../side-navigation/SideNavigation';
 import { useNavigate } from 'react-router-dom';
 import MobileFirstNavigation from '../MobileFirstNavigation'
 import { Outlet } from 'react-router-dom';
