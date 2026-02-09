@@ -8,6 +8,7 @@ import "./../../customs/css/SideNavigation.css";
 import "./TopNavbar.css";
 import { isDepartmentAllowed } from '../../customs/global/manageLocalStorage';
 import { getLoggedInID } from '../../customs/global/manageLocalStorage';
+import NotificationButton from '../notification-button/NotificationButton';
 
 const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
     const dispatch = useDispatch();
@@ -46,48 +47,13 @@ const SideNavigation = ({ isExpanded, handleToggle, showSideNav }) => {
                     <button className="toggle-btn-mobile" type="button" onClick={handleToggle}>
                         <i className="lni lni-grid-alt"></i>
                     </button>
-                    <span className="navbar-title">Dashboard</span>
+                    {/* <span className="navbar-title">Dashboard</span> */}
                 </div>
                 
                 <div className="navbar-right">
                     {/* Notification Button */}
-                    <div className="notification-wrapper">
-                        <button className="notification-btn" onClick={toggleNotifications}>
-                            <i className="lni lni-alarm"></i>
-                            {notificationCount > 0 && (
-                                <span className="notification-badge">{notificationCount}</span>
-                            )}
-                        </button>
-                        
-                        {/* Notification Dropdown */}
-                        {showNotifications && (
-                            <div className="notification-dropdown">
-                                <div className="notification-header">
-                                    <h4>Notifications</h4>
-                                    <button className="mark-read-btn">Mark all as read</button>
-                                </div>
-                                <div className="notification-list">
-                                    {notifications.map((notif) => (
-                                        <div 
-                                            key={notif.id} 
-                                            className={`notification-item ${notif.unread ? 'unread' : ''}`}
-                                        >
-                                            <div className="notification-icon">
-                                                <i className="lni lni-checkmark-circle"></i>
-                                            </div>
-                                            <div className="notification-content">
-                                                <p className="notification-message">{notif.message}</p>
-                                                <span className="notification-time">{notif.time}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <div className="notification-footer">
-                                    <Link to="/notifications">See all notifications</Link>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+
+                    <NotificationButton />
 
                     {/* User Profile */}
                     <Link to={`general/user-profile`} className="user-profile-btn">

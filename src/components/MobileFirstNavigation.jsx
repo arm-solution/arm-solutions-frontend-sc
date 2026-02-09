@@ -1,4 +1,5 @@
 import React from 'react'
+import NotificationButton from './notification-button/NotificationButton'
 
 const MobileFirstNavigation = ({ handleToggle }) => {
 
@@ -9,9 +10,11 @@ const MobileFirstNavigation = ({ handleToggle }) => {
           <button className="toggle-btn-mobile button-toggle-mobile text-dark" onClick={handleToggle}>
                   <i className="lni lni-grid-alt text-white font-weight-bold"></i>
           </button>
-          <div className="flex-grow-1 text-center">
-                <p className="text-white m-0 mx-3 mr-5">Dashboard</p>
+            <div className="flex-grow-1 text-center">
+                  {/* <p className="text-white m-0 mx-3 mr-5">Dashboard</p> */}
             </div>
+
+            <NotificationButton />
           </div>
         </nav>    
     </>

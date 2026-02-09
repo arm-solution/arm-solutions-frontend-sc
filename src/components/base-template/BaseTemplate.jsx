@@ -22,7 +22,7 @@ const BaseTemplate = () => {
       <div className="wrapper">
           <SideNavigation handleToggle={ () => setShowSideNav(!showSideNav) } isExpanded={showSideNav} showSideNav={showSideNav} />
   
-          <div className="main p-3">
+          <div className="main p-3 mt-5">
            <MobileFirstNavigation handleToggle={ () => setShowSideNav(!showSideNav) }  className="mb-3"/>
               <Outlet />
           </div>
