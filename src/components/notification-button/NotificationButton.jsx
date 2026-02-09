@@ -6,10 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { connectNotificationSocket } from '../../customs/global/notificationSocket';
 import { getLoggedInID } from '../../customs/global/manageLocalStorage';
 import { getCurrentDate } from '../../customs/global/manageDates';
+import { getDepartmentLoggedIn } from '../../customs/global/manageLocalStorage';
 
 const NotificationButton = () => {
 
     const dispatch = useDispatch();
+
+    const departmentId = parseInt(getDepartmentLoggedIn());
 
     const [showNotifications, setShowNotifications] = useState(false);
 
@@ -22,8 +25,8 @@ const NotificationButton = () => {
     useEffect(() => {
         if(parseInt(getLoggedInID())) {
             const userId = parseInt(getLoggedInID())
-            dispatch(getNotification({userId}))
-            connectNotificationSocket(dispatch, {userId})
+            dispatch(getNotification({userId, departmentId}))
+            connectNotificationSocket(dispatch, {userId, departmentId})
         }
     }, [dispatch])
     
@@ -82,7 +85,7 @@ const NotificationButton = () => {
                         ))}
                     </div>
                     <div className="notification-footer">
-                        <Link onClick={showMore}>See all notifications</Link>
+                        <Link onClick={showMore}>See more</Link>
                     </div>
                 </div>
             )}

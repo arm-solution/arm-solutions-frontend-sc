@@ -3,25 +3,30 @@ import { getNotification } from "../../store/features/notificationSlice";
 
 let socket;
 
-export const connectNotificationSocket = (dispatch, userId) => {
+export const connectNotificationSocket = (dispatch, params) => {
   if (socket) return;
+
+  const {userId, departmentId} = params
 
   socket = io("http://localhost:8000", {
     transports: ["websocket"],
   });
 
   socket.on("connect", () => {
-    console.log("🔔 Socket connected:", socket.id);
-    socket.emit("join-notification", userId.userId);
+    socket.emit("join-notification", {
+      userId,
+      department_id: departmentId,
+    });
   });
 
-  // 🔥 WHEN BACKEND SAYS "REFRESH"
-  socket.on("notification:refresh", async (userId) => {
-    console.log("🔄 Refresh notifications for user:", userId);
-    await dispatch(getNotification(userId));
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ Socket disconnected");
+  socket.on("notification:refresh", () => {
+    dispatch(
+      getNotification({
+        userId,
+        departmentId,
+        page: 1,
+        limit: 5,
+      })
+    );
   });
 };

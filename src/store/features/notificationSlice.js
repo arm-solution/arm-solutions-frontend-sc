@@ -12,10 +12,10 @@ export const addNotification = createAsyncThunk('add/notification', async(not, {
 });
 
 
-export const getNotification = createAsyncThunk('get/notification', async({page = 1, limit=5, userId}, {rejectWithValue}) => {
+export const getNotification = createAsyncThunk('get/notification', async({page = 1, limit=5, userId, departmentId}, {rejectWithValue}) => {
     try {
         const {data} = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/notification/${userId}`, {
-            params: {page, limit}
+            params: {page, limit, department_id: departmentId }
         });
         return data;
     } catch (error) {

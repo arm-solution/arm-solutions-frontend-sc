@@ -129,3 +129,4 @@ export const successDialog = (message) => {
     timer: 1500
   })
 }
+
